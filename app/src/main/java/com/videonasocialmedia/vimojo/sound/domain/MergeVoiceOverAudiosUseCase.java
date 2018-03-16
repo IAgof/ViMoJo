@@ -26,10 +26,10 @@ public class MergeVoiceOverAudiosUseCase {
     public MergeVoiceOverAudiosUseCase() {
     }
 
-    public void mergeAudio(String pathAudioMerge, final OnMergeVoiceOverAudiosListener listener) {
+    public void mergeAudio(Project project, String pathAudioMerge,
+                           final OnMergeVoiceOverAudiosListener listener) {
         // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?
         //                Move this to presenter and pass composition as an argument?
-        Project project = Project.getInstance(null,null,null,null);
         ArrayList<String> audioPathList =
             createAudioPathList(project.getProjectPathIntermediateAudioFilesVoiceOverRecord());
         final String pathAudioEdited = pathAudioMerge;

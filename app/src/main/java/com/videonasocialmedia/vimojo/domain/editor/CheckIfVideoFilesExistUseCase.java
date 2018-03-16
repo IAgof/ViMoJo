@@ -9,8 +9,10 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,19 +22,25 @@ import javax.inject.Inject;
 
 public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved,
         OnRemoveMediaFinishedListener {
-    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
+    private ProjectRepository projectRepository;
+    private Project currentProject;
 
     @Inject
     public CheckIfVideoFilesExistUseCase(
+        ProjectRepository projectRepository,
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
         RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase) {
+        this.projectRepository = projectRepository;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
+        this.currentProject = projectRepository.getCurrentProject();
     }
 
     public void check() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject,
+            this);
     }
 
     @Override
@@ -45,7 +53,8 @@ public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved,
             }
         }
         if(mediasToDeleteFromProject.size() > 0) {
-            removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediasToDeleteFromProject,
+            removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
+                mediasToDeleteFromProject,
                     this);
         }
     }

@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -73,6 +74,7 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
 
     @Inject
     public VoiceOverRecordPresenter(Context context, VoiceOverRecordView voiceOverRecordView,
+                                    ProjectRepository projectRepository,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     GetPreferencesTransitionFromProjectUseCase
                                             getPreferencesTransitionFromProjectUseCase,
@@ -86,28 +88,24 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
         this.addAudioUseCase = addAudioUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.userEventTracker = userEventTracker;
-        this.currentProject = loadCurrentProject();
-        directoryVoiceOverRecorded =
-                currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord();
+        this.currentProject = projectRepository.getCurrentProject();
+        directoryVoiceOverRecorded = projectRepository.getCurrentProject()
+            .getProjectPathIntermediateAudioFilesVoiceOverRecord();
     }
 
     public void init() {
         obtainVideos();
-        if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
+        if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
             voiceOverRecordView.setVideoFadeTransitionAmongVideos();
         }
-        if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+        if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated(currentProject) &&
                 !currentProject.getVMComposition().hasMusic()) {
             voiceOverRecordView.setAudioFadeTransitionAmongVideos();
         }
     }
 
     private void obtainVideos() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
-    }
-
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, this);
     }
 
     @Override

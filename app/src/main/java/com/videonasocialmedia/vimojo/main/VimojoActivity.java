@@ -25,7 +25,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.LoadCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -51,7 +50,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
-    @Inject protected LoadCurrentProjectUseCase loadCurrentProjectUseCase;
     @Inject ProjectRepository projectRepository;
     @Inject SharedPreferences sharedPreferences;
 
@@ -63,7 +61,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSystemComponent().inject(this);
-        loadCurrentProjectUseCase.loadCurrentProject();
         updateThemeApp();
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();

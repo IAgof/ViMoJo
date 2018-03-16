@@ -34,6 +34,7 @@ public class SplitVideoUseCase {
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     Video endVideo;
     private VideoRepository videoRepository;
+    private Project currentProject;
 
     @Inject
     public SplitVideoUseCase(AddVideoToProjectUseCase addVideoToProjectUseCase,
@@ -44,17 +45,19 @@ public class SplitVideoUseCase {
         this.videoRepository = videoRepository;
     }
 
-    public void splitVideo(final Video initialVideo, int positionInAdapter, int splitTimeMs,
+    public void splitVideo(Project currentProject, final Video initialVideo, int positionInAdapter,
+                           int splitTimeMs,
                            final OnSplitVideoListener listener) {
         splitTimeMs += initialVideo.getStartTime();
-
+        this.currentProject = currentProject;
         endVideo = new Video(initialVideo);
         endVideo.setStartTime(splitTimeMs);
         endVideo.setStopTime(initialVideo.getStopTime());
         endVideo.setTranscodingTask(initialVideo.getTranscodingTask());
         initialVideo.setStopTime(splitTimeMs);
 
-        addVideoToProjectUseCase.addVideoToProjectAtPosition(endVideo, positionInAdapter + 1,
+        addVideoToProjectUseCase.addVideoToProjectAtPosition(currentProject, endVideo,
+            positionInAdapter + 1,
             new OnAddMediaFinishedListener() {
             @Override
             public void onAddMediaItemToTrackError() {
@@ -69,23 +72,18 @@ public class SplitVideoUseCase {
 
     }
 
-    void runTrimTasks(Video initialVideo, Video endVideo) {
+    protected void runTrimTasks(Video initialVideo, Video endVideo) {
         trimVideo(initialVideo, initialVideo.getStartTime(), initialVideo.getStopTime());
         trimVideo(endVideo, endVideo.getStartTime(), endVideo.getStopTime());
     }
 
     private void trimVideo(Video video, int startTime, int stopTime) {
-        Project currentProject = loadCurrentProject();
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
         // TODO(jliarte): 30/10/17 consider not calling Trim UC and manage errors here
         ListenableFuture<Video> result = modifyVideoDurationUseCase
                 .trimVideo(video, startTime, stopTime, currentProject);
         FutureCallback<? super Video> trimCallback = new SplitTaskCallback(video, currentProject);
         Futures.addCallback(result, trimCallback);
-    }
-
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
     }
 
     private class SplitTaskCallback implements FutureCallback<Video> {

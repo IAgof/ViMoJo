@@ -30,7 +30,6 @@ import javax.inject.Inject;
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
     protected ProjectRepository projectRepository;
-    private Project currentProject;
     private ApplyAVTransitionsUseCase applyAVTransitionsUseCase;
 
     /**
@@ -45,15 +44,14 @@ public class AddVideoToProjectUseCase {
         this.applyAVTransitionsUseCase = applyAVTransitionsUseCase;
     }
 
-    public void addVideoToTrack(String videoPath) {
+    public void addVideoToTrack(Project currentProject, String videoPath) {
         Video videoToAdd = new Video(videoPath, Video.DEFAULT_VOLUME);
-        addVideoToTrack(videoToAdd);
+        addVideoToTrack(currentProject, videoToAdd);
         checkIfVideoNeedAVTransitionTempFile(videoToAdd, currentProject);
     }
 
-    private void addVideoToTrack(Video video) {
+    private void addVideoToTrack(Project currentProject, Video video) {
         try {
-            Project currentProject = getCurrentProject();
             Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(video);
             projectRepository.update(currentProject);
@@ -62,10 +60,9 @@ public class AddVideoToProjectUseCase {
         }
     }
 
-    public void addVideoToProjectAtPosition(Video video, int position,
+    public void addVideoToProjectAtPosition(Project currentProject, Video video, int position,
                                             OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = getCurrentProject();
             Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             video.addListener(currentProject);
@@ -76,9 +73,10 @@ public class AddVideoToProjectUseCase {
         }
     }
 
-    public void addVideoListToTrack(List<Video> videoList, OnAddMediaFinishedListener listener) {
+    public void addVideoListToTrack(Project currentProject, List<Video> videoList,
+                                    OnAddMediaFinishedListener listener) {
         try {
-            Project currentProject = getCurrentProject();
+
             Track mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
@@ -92,9 +90,8 @@ public class AddVideoToProjectUseCase {
     }
 
     private void checkIfVideoNeedAVTransitionTempFile(Video videoToAdd, Project currentProject) {
-        this.currentProject = getCurrentProject();
-        if (this.currentProject.getVMComposition().isAudioFadeTransitionActivated()
-                || this.currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
+        if (currentProject.getVMComposition().isAudioFadeTransitionActivated()
+                || currentProject.getVMComposition().isVideoFadeTransitionActivated()) {
 //            listener.videoToLaunchAVTransitionTempFile(videoToAdd,
 //                    currentProject.getProjectPathIntermediateFileAudioFade());
             applyAVTransitions(videoToAdd, currentProject);
@@ -102,10 +99,10 @@ public class AddVideoToProjectUseCase {
     }
 
     private void applyAVTransitions(Video video, Project currentProject) {
-        video.setTempPath(this.currentProject.getProjectPathIntermediateFiles());
+        video.setTempPath(currentProject.getProjectPathIntermediateFiles());
 
-        VideonaFormat videoFormat = this.currentProject.getVMComposition().getVideoFormat();
-        Drawable drawableFadeTransitionVideo = this.currentProject.getVMComposition()
+        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
+        Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
                 .getDrawableFadeTransitionVideo();
 
         applyAVTransitionsUseCase.applyAVTransitions(drawableFadeTransitionVideo, video,
@@ -121,9 +118,5 @@ public class AddVideoToProjectUseCase {
                         // TODO(jliarte): 31/08/17 implement this method
                     }
                 });
-    }
-
-    private Project getCurrentProject() {
-        return Project.getInstance(null, null, null, null);
     }
 }

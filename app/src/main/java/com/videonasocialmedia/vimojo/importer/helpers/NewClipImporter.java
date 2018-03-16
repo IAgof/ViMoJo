@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.importer.helpers;
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.common.base.Function;
@@ -16,6 +17,7 @@ import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -28,25 +30,32 @@ import java.util.List;
  */
 public class NewClipImporter {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
+  private ProjectRepository projectRepository;
   private final VideoRepository videoRepository;
   protected VideoToAdaptRepository videoToAdaptRepository;
   private AdaptVideoToFormatUseCase adaptVideoToFormatUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+  private Project currentProject;
+  protected VideoToAdapt videoToAdapt;
+  protected AdaptVideoToFormatUseCase.AdaptListener adaptListener;
 
   public NewClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository) {
+          ProjectRepository projectRepository, VideoRepository videoRepository,
+          VideoToAdaptRepository videoToAdaptRepository) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
+    this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;
     this.videoToAdaptRepository = videoToAdaptRepository;
+    this.currentProject = projectRepository.getCurrentProject();
   }
 
   public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
@@ -55,8 +64,7 @@ public class NewClipImporter {
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator
             + new File(video.getMediaPath()).getName();
     VideonaFormat videoFormat = getVideoFormat(cameraRotation);
-    AdaptVideoToFormatUseCase.AdaptListener adaptListener =
-            new AdaptVideoToFormatUseCase.AdaptListener() {
+    adaptListener = new AdaptVideoToFormatUseCase.AdaptListener() {
       @Override
       public void onSuccessAdapting(Video video) {
         // TODO(jliarte): 31/08/17 implement this method
@@ -69,15 +77,20 @@ public class NewClipImporter {
     };
     // TODO(jliarte): 11/09/17 check if video is retrieved on error
 //    saveVideoToAdapt(video, destVideoRecorded, videoPosition, cameraRotation, retries);
-    VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
-            cameraRotation, retries);
+    videoToAdapt = getVideoToAdapt(video, videoPosition, cameraRotation, retries, destVideoRecorded);
     try {
-      adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, adaptListener);
+      adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, adaptListener);
       applyAVTransitions(video, currentProject);
     } catch (IOException e) {
       e.printStackTrace();
       adaptListener.onErrorAdapting(video, "adaptVideoToFormatUseCase");
     }
+  }
+
+  @NonNull
+  public VideoToAdapt getVideoToAdapt(Video video, int videoPosition, int cameraRotation, int retries, String destVideoRecorded) {
+    return new VideoToAdapt(video, destVideoRecorded, videoPosition,
+            cameraRotation, retries);
   }
 
   private void applyAVTransitions(Video video, Project currentProject) {
@@ -123,7 +136,7 @@ public class NewClipImporter {
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
     // Fix problems with profile MotoG, LG_pablo, ...
     return getVideoFormatFromCurrentProjectUseCase
-              .getVideonaFormatToAdaptVideoRecordedAudioAndVideo();
+              .getVideonaFormatToAdaptVideoRecordedAudioAndVideo(currentProject);
   }
 
   public void relaunchUnfinishedAdaptTasks(Project currentProject) {

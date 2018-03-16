@@ -196,7 +196,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     public void addVideoExportedToProject(String videoPath) {
-        addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(videoPath,
+        addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(currentProject, videoPath,
                 DateUtils.getDateRightNow());
     }
 

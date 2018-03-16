@@ -54,16 +54,6 @@ public class VideoTimeLineAdapterTest {
   @Before
   public void setUpTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-  }
-
-  private Project getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    List<String> productType = new ArrayList<>();
-    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
-        compositionProfile);
   }
 
   @Before

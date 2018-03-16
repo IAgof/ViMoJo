@@ -11,6 +11,7 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 
 import java.util.ArrayList;
@@ -25,5 +26,6 @@ public interface RemoveMediaFromProjectListener {
      * @param list     the list of the media items which wants to remove
      * @param listener the listener which monitoring when this items have been deleted from the project
      */
-    void removeMediaItemsFromProject(ArrayList<Media> list, OnRemoveMediaFinishedListener listener);
+    void removeMediaItemsFromProject(Project currentProject, ArrayList<Media> list,
+                                     OnRemoveMediaFinishedListener listener);
 }

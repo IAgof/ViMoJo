@@ -26,15 +26,13 @@ public class GetMediaListFromProjectUseCase {
     /**
      * @return
      */
-    public List<Media> getMediaListFromProject() {
-        Project project = getCurrentProject();
-        Track track = project.getMediaTrack();
+    public List<Media> getMediaListFromProject(Project currentProject) {
+        Track track = currentProject.getMediaTrack();
         return track.getItems();
     }
 
-    public void getMediaListFromProject(OnVideosRetrieved listener) {
-        Project project = getCurrentProject();
-        Track track = project.getMediaTrack();
+    public void getMediaListFromProject(Project currentProject, OnVideosRetrieved listener) {
+        Track track = currentProject.getMediaTrack();
         List items = track.getItems();
         if ( items.size() > 0 ) {
             listener.onVideosRetrieved(items);
@@ -43,8 +41,4 @@ public class GetMediaListFromProjectUseCase {
         }
     }
 
-    // TODO:(alvaro.martinez) 3/01/17 project should be passed as a parameter?
-    public Project getCurrentProject() {
-        return Project.getInstance(null, null, null, null);
-    }
 }

@@ -27,10 +27,14 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -43,6 +47,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -60,24 +65,24 @@ public class EditPresenterTest {
   @Mock private UserEventTracker mockedUserEventTracker;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
-  @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
+  @Mock ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock ListenableFuture<Video> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
+  private Project currentProject;
+
+  @InjectMocks EditPresenter injectedEditPresenter;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
-  }
-
-  @After
-  public void clearProjectInstance() {
-    Project.INSTANCE.clear();
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
   public void constructorSetsUserTracker() {
     EditPresenter editPresenter = getEditPresenter();
+
     assertThat(editPresenter.userEventTracker, is(mockedUserEventTracker));
   }
 
@@ -91,7 +96,6 @@ public class EditPresenterTest {
 
   @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
     Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
@@ -103,7 +107,7 @@ public class EditPresenterTest {
     List<Video> videoList = new ArrayList<>();
     videoList.add(video1);
     videoList.add(video2);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video1);
     EditPresenter presenter = getEditPresenter();
 
@@ -125,41 +129,42 @@ public class EditPresenterTest {
 
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
-    assertThat(getAProject().getVMComposition().hasVideos(), is(false));
+    assertThat(currentProject.getVMComposition().hasVideos(), is(false));
     verify(mockedEditorView).goToRecordOrGallery();
   }
 
   @Test
   public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdateTimeLine() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video1 = new Video("video/path", 1f);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video1);
     EditPresenter editPresenter = getEditPresenter();
 
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
-    assertThat(getAProject().getVMComposition().hasVideos(), is(true));
+    assertThat(currentProject.getVMComposition().hasVideos(), is(true));
     verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
   }
 
   @Test
-  public void moveItemCallsObtainVideoOnSuccess() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    Media media1 = new Video("video/path", 1f);
-    Media media2 = new Video("video/path", 1f);
-    MediaTrack mediaTrack = project.getMediaTrack();
-    mediaTrack.insertItemAt(0, media1);
-    mediaTrack.insertItemAt(1,media2);
+  public void moveItemCallsUpdatePlayerVideoListChanged() throws IllegalItemOnTrack {
+    Video video1 = new Video("video/path", 1f);
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
+    mediaTrack.insertItem(video1);
+    mediaTrack.insertItem(video1);
     int fromPosition = 1;
     int toPosition = 0;
-    doAnswer(new Answer() {
+    Answer<Void> answer = new Answer<Void>() {
       @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((OnReorderMediaListener)invocation.getArguments()[2]).onSuccessMediaReordered();
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        OnReorderMediaListener listener = invocation.getArgument(3);
+        listener.onSuccessMediaReordered();
         return null;
       }
-    }).when(mockedMediaItemReorderer).moveMediaItem(anyInt(),anyInt(), any(OnReorderMediaListener.class));
+    };
+    doAnswer(answer).when(mockedMediaItemReorderer).moveMediaItem(eq(currentProject), eq(fromPosition),
+        eq(toPosition), Matchers.any(OnReorderMediaListener.class));
+    assertThat(currentProject.getMediaTrack().getItems().size(), is(2));
     EditPresenter editPresenter = getEditPresenter();
 
     editPresenter.finishedMoveItem(fromPosition, toPosition);
@@ -175,11 +180,26 @@ public class EditPresenterTest {
         mockedVideoRemover, mockedMediaItemReorderer);
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", profile);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
+  }
+
+  @NonNull
+  private OnReorderMediaListener getOnReorderMediaListener() {
+    return new OnReorderMediaListener() {
+      @Override
+      public void onSuccessMediaReordered() {
+
+      }
+
+      @Override
+      public void onErrorReorderingMedia() {
+
+      }
+    };
   }
 }

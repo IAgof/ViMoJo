@@ -62,10 +62,12 @@ public class ModifyVideoDurationUseCaseTest {
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock private VideoToAdaptRepository mockedVideoToAdaptRepository;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() throws Exception {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   // TODO(jliarte): 22/08/17 cant make this pass when invoked all class tests
@@ -73,7 +75,6 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsUpdateIntermediateFileIfVideoHasText()
           throws IOException {
-    Project currentProject = getAProject();
     Video video = getVideoWithText();
     assert video.hasText();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -94,7 +95,6 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void testTrimVideoCallsGenerateOutputVideoWithTrimmingIfVideoHasntText()
           throws IOException {
-    Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     // TODO(jliarte): 19/10/16 should check if video is trimmed?
     assert ! video.hasText();
@@ -113,7 +113,6 @@ public class ModifyVideoDurationUseCaseTest {
 
   @Test
   public void trimVideoCallsVideoRepositoryUpdate() throws IOException {
-    Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
     // TODO(jliarte): 19/09/17 dunno why automatically injected video repo is not mockedVideoRepository
@@ -132,7 +131,6 @@ public class ModifyVideoDurationUseCaseTest {
 
   @Test
   public void trimVideoUpdatesVideoParams() throws IOException {
-    Project currentProject = getAProject();
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assert video.isTranscodingTempFileFinished();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -156,7 +154,6 @@ public class ModifyVideoDurationUseCaseTest {
   @Test
   public void handleTaskErrorModifiesVideoTrimmingTimes() throws IOException {
     PowerMockito.mockStatic(Log.class);
-    Project currentProject = getAProject();
     String message = "Error message";
     Video video = spy(new Video("media/path", Video.DEFAULT_VOLUME));
     video.setStartTime(50);
@@ -187,16 +184,9 @@ public class ModifyVideoDurationUseCaseTest {
     return video;
   }
 
-  private Project getAProject() {
-    clearProject();
-    return Project.getInstance(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+  private void getAProject() {
+    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
-  }
-
-  private void clearProject() {
-    if (Project.INSTANCE != null) {
-      Project.INSTANCE.clear();
-    }
   }
 
 }

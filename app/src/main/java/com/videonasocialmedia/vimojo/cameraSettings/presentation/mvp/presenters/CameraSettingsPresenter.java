@@ -42,6 +42,7 @@ public class CameraSettingsPresenter {
   private HashMap<Integer, VideoQuality.Quality> qualityValues;
 
   private HashMap<Integer, String> proInterfaceNames;
+  private Project currentProject;
 
   @Inject
   public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
@@ -56,7 +57,7 @@ public class CameraSettingsPresenter {
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.projectRepository = projectRepository;
-
+    this.currentProject = projectRepository.getCurrentProject();
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
@@ -132,10 +133,6 @@ public class CameraSettingsPresenter {
     qualityValues.put(CameraSettings.CAMERA_SETTING_QUALITY_50_ID, VideoQuality.Quality.HIGH);
   }
 
-  private Project loadCurrentProject() {
-    return Project.getInstance(null, null, null, null);
-  }
-
   public void getCameraSettingsList() {
     List<CameraSettingViewModel> cameraSettingViewModels =
             getSettingListUseCase.getCameraSettingsList(resolutionNames, qualityNames,
@@ -154,7 +151,6 @@ public class CameraSettingsPresenter {
   }
 
   public void setCameraResolutionSetting(int resolutionSelectedId) {
-    Project currentProject = loadCurrentProject();
     String resolution = resolutionNames.get(resolutionSelectedId);
     if (resolution == null) { resolution = DEFAULT_CAMERA_SETTING_RESOLUTION; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
@@ -170,7 +166,6 @@ public class CameraSettingsPresenter {
     if (frameRate == null) { frameRate = DEFAULT_CAMERA_SETTING_FRAME_RATE; }
     VideoFrameRate.FrameRate videoFrameRate = frameRateValues.get(frameRateSelectedId);
     if (videoFrameRate == null) { videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE; }
-    Project currentProject = loadCurrentProject();
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
     projectRepository.updateFrameRate(currentProject, videoFrameRate);
@@ -182,7 +177,6 @@ public class CameraSettingsPresenter {
     if (quality == null) { quality = DEFAULT_CAMERA_SETTING_QUALITY; }
     VideoQuality.Quality videoQuality = qualityValues.get(qualitySelectedId);
     if (videoQuality == null) { videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY; }
-    Project currentProject = loadCurrentProject();
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
     projectRepository.updateQuality(currentProject, videoQuality);

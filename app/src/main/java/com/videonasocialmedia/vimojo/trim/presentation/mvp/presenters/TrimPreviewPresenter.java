@@ -19,6 +19,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -41,6 +42,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
+    private final ProjectRepository projectRepository;
 
     private Video videoToEdit;
 
@@ -59,25 +61,22 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     @Inject
     public TrimPreviewPresenter(TrimView trimView, SharedPreferences sharedPreferences,
                                 UserEventTracker userEventTracker,
+                                ProjectRepository projectRepository,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
         //this.trimView = new WeakReference<>(trimView);
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
-        this.currentProject = loadCurrentProject();
+        this.projectRepository = projectRepository;
+        this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
     }
 
-    private Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
-    }
-
     public void init(int videoToTrimIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoToTrimIndex);

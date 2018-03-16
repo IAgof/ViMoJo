@@ -17,7 +17,7 @@ public class UpdateWatermarkPreferenceToProjectUseCase {
   }
 
   public void setWatermarkActivated(boolean data) {
-    currentProject = Project.getInstance(null,null, null,null);
+    currentProject = projectRepository.getCurrentProject();
     currentProject.setWatermarkActivated(data);
     projectRepository.update(currentProject);
   }

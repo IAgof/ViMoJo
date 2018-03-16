@@ -9,10 +9,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -20,27 +22,22 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 5/09/16.
  */
 public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
+  private Project currentProject;
+  @Mock ProjectRepository mockedProjectRepository;
+
   @Before
   public void setUp() throws Exception {
     // FIXME: tests are not independent as Project keeps state between tests
-    Project.getInstance(null, null, null, null).clear();
     MockitoAnnotations.initMocks(this);
-  }
-
-  @Test
-  public void constructorSetsProjectInstance() {
-    Project currentProject = getAProject();
-
-    GetVideoFormatFromCurrentProjectUseCase useCase =
-        new GetVideoFormatFromCurrentProjectUseCase();
-
-    assertThat("Project field set after construction", useCase.project, is(currentProject));
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   // TODO:(alvaro.martinez) 24/10/16 Profile.setQuality(null), Profile.setResolution(null)
@@ -48,10 +45,9 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   @Ignore
   @Test
   public void getVideoTranscoderFormatFromCurrentProjectReturnsDefaultFormatIfANullValueInProfile() {
-    Project currentProject = getAProject();
     currentProject.getProfile().setQuality(null);
     GetVideoFormatFromCurrentProjectUseCase useCase =
-        new GetVideoFormatFromCurrentProjectUseCase();
+        new GetVideoFormatFromCurrentProjectUseCase(mockedProjectRepository);
     VideonaFormat defaultVideoTranscoderFormat = new VideonaFormat();
 
     VideoCameraFormat videoTranscoderFormat =
@@ -68,11 +64,10 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   @Test
   public void getVideoTranscoderFormatFromCurrentProjectReturnsFormatWithProfileValues() {
 
-    Project currentProject = getAProject();
     GetVideoFormatFromCurrentProjectUseCase useCase =
-        new GetVideoFormatFromCurrentProjectUseCase();
+        new GetVideoFormatFromCurrentProjectUseCase(mockedProjectRepository);
 
-    VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject();
+    VideonaFormat videonaFormat = useCase.getVideonaFormatFromCurrentProject(currentProject);
 
     assertThat("videoBitRate", 50 * 1000 * 1000, is(videonaFormat.getVideoBitrate()));
     assertThat("videoWidth", 1280, is(videonaFormat.getVideoWidth()));
@@ -80,14 +75,14 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     String rootPath = "project/root/path";
     String privatePath = "private/path";
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, rootPath, privatePath, compositionProfile);
+    currentProject = new Project(projectInfo, rootPath, privatePath, compositionProfile);
   }
 
 }

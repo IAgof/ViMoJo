@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -42,32 +43,30 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TrimPreviewPresenterTest {
-    @InjectMocks private TrimPreviewPresenter trimPreviewPresenter;
     @Mock private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Mock private TrimView mockedTrimView;
     @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
+    @Mock private ProjectRepository mockedProjectRepository;
 
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
+    private Project currentProject;
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @After
-    public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        getAProject();
+        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
     }
 
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
-            mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase);
+            mockedSharedPreferences, userEventTracker, mockedProjectRepository,
+            mockedGetMediaListFromProjectUseCase,mockedModifyVideoDurationUseCase);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -75,20 +74,18 @@ public class TrimPreviewPresenterTest {
     @Test
     public void constructorSetsCurrentProject() {
         TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
-        Project videonaProject = getAProject();
 
-        assertThat(trimPreviewPresenter.currentProject, is(videonaProject));
+        assertThat(trimPreviewPresenter.currentProject, is(currentProject));
     }
 
 
     @Test
     public void setTrimCallsTracking() {
-        Project videonaProject = getAProject();
+        TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
 
-        //trimPreviewPresenter.setTrim(0, 10);
         trimPreviewPresenter.trackVideoTrimmed();
 
-        verify(mockedUserEventTracker).trackClipTrimmed(videonaProject);
+        verify(mockedUserEventTracker).trackClipTrimmed(currentProject);
     }
 
     @Test
@@ -175,7 +172,7 @@ public class TrimPreviewPresenterTest {
 
     @Test
     public void setupActivityViewsCallsUpdateViewToThemeDarkIfThemeIsDark() {
-        trimPreviewPresenter = getTrimPreviewPresenter();
+        TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
         when(mockedSharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE)).thenReturn(true);
 
@@ -187,15 +184,15 @@ public class TrimPreviewPresenterTest {
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
         return new TrimPreviewPresenter(mockedTrimView, mockedSharedPreferences,
-            mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedUserEventTracker, mockedProjectRepository, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase);
     }
 
-    public Project getAProject() {
+    public void getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

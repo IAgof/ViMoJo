@@ -37,75 +37,68 @@ public class ModifyTrackUseCaseTest {
   @InjectMocks ModifyTrackUseCase injectedUseCase;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock TrackRepository mockedTrackRepository;
+  private Project currentProject;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void clearProject() {
-    Project.INSTANCE.clear();
+    getAProject();
   }
 
   @Test
   public void setTrackVolumeUpdateProjectRepository(){
-    Project project = getAProject();
-    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     float volumeTrack = 0.85f;
 
-    injectedUseCase.setTrackVolume(track, volumeTrack);
+    injectedUseCase.setTrackVolume(currentProject, track, volumeTrack);
 
-    verify(mockedProjectRepository).update(project);
+    verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void setTrackVolumeUpdateTrackVolume(){
-    Project project = getAProject();
-    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     float volumeTrack = 0.85f;
 
-    injectedUseCase.setTrackVolume(track, volumeTrack);
+    injectedUseCase.setTrackVolume(currentProject, track, volumeTrack);
 
     assertThat("setTrackVolume update volume track", track.getVolume(), is(volumeTrack));
   }
 
   @Test
   public void setTrackVolumeUpdateVolumeInTrackItems() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     Video video1 = new Video("media/path", 1f);
     Video video2 = new Video("media/path", 0.5f);
     mediaTrack.insertItem(video1);
     mediaTrack.insertItem(video2);
     float mediaTrackVolume = 0.7f;
 
-    injectedUseCase.setTrackVolume(mediaTrack, mediaTrackVolume);
+    injectedUseCase.setTrackVolume(currentProject, mediaTrack, mediaTrackVolume);
 
-    assertThat("setTrackVolume update volume video 1", project.getMediaTrack().getItems().get(0)
+    assertThat("setTrackVolume update volume video 1", currentProject.getMediaTrack().getItems().get(0)
         .getVolume(), is(mediaTrackVolume));
 
-    assertThat("setTrackVolume update volume video 2", project.getMediaTrack().getItems().get(1)
+    assertThat("setTrackVolume update volume video 2", currentProject.getMediaTrack().getItems().get(1)
         .getVolume(), is(mediaTrackVolume));
 
   }
 
   @Test
   public void setTrackMuteUpdateTrack(){
-    Project project = getAProject();
-    AudioTrack track = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     assertThat("Default mute track is false", track.isMuted(), is(false));
 
-    injectedUseCase.setTrackMute(track, true);
+    injectedUseCase.setTrackMute(currentProject, track, true);
 
     assertThat("UseCase update track mute", track.isMuted(), is(true));
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "root/path", "private/path", profile);
+    currentProject = new Project(projectInfo, "root/path", "private/path", profile);
   }
 }

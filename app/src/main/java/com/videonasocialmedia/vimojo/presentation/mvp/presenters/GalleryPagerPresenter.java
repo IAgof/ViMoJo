@@ -77,16 +77,11 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
-        this.currentProject = loadCurrentProject();
         this.projectRepository = projectRepository;
         this.videoRepository = videoRepository;
         this.preferences = preferences;
+        this.currentProject = projectRepository.getCurrentProject();
         metadataRetriever = new MediaMetadataRetriever();
-    }
-
-    private Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
     }
 
     public void loadVideoListToProject(List<Video> videoList) {
@@ -112,7 +107,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     }
 
     private void addVideoToProject(List<Video> checkedVideoList) {
-        addVideoToProjectUseCase.addVideoListToTrack(checkedVideoList, this);
+        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, this);
     }
 
     private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(

@@ -47,6 +47,7 @@ public class ProjectRealmRepositoryTest {
   private Realm mockedRealm;
   private File mockedStorageDir;
   @Mock private Context mockedContext;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
@@ -57,6 +58,7 @@ public class ProjectRealmRepositoryTest {
     when(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)).
         thenReturn(mockedStorageDir);
     when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
+    getAProject();
   }
 
 //  @Before
@@ -117,55 +119,50 @@ public class ProjectRealmRepositoryTest {
   public void testUpdateResolutionUpdateProject() {
     ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
     VideoResolution.Resolution videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION;
-    Project project = getAProject();
     Mockito.doNothing().when(repo).update(any(Project.class));
 
-    repo.updateResolution(project, videoResolution);
+    repo.updateResolution(currentProject, videoResolution);
 
-    assertThat(project.getProfile().getResolution(), is(videoResolution));
+    assertThat(currentProject.getProfile().getResolution(), is(videoResolution));
   }
 
   @Test
   public void testUpdateFrameRateUpdateProject() {
     ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
     VideoFrameRate.FrameRate videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE;
-    Project project = getAProject();
     Mockito.doNothing().when(repo).update(any(Project.class));
 
-    repo.updateFrameRate(project, videoFrameRate);
+    repo.updateFrameRate(currentProject, videoFrameRate);
 
-    assertThat(project.getProfile().getFrameRate(), is(videoFrameRate));
+    assertThat(currentProject.getProfile().getFrameRate(), is(videoFrameRate));
   }
 
   @Test
   public void testUpdateQualityUpdateProject() {
     ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
     VideoQuality.Quality videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY;
-    Project project = getAProject();
     Mockito.doNothing().when(repo).update(any(Project.class));
 
-    repo.updateQuality(project, videoQuality);
+    repo.updateQuality(currentProject, videoQuality);
 
-    assertThat(project.getProfile().getQuality(), is(videoQuality));
+    assertThat(currentProject.getProfile().getQuality(), is(videoQuality));
   }
 
   @Test
   public void testSetWatermarkActivatedUpdateProject() {
     ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
-    Project project = getAProject();
     Mockito.doNothing().when(repo).update(any(Project.class));
     boolean watermarkActivated = true;
-    assert(!project.hasWatermark());
+    assert(!currentProject.hasWatermark());
 
-    project.setWatermarkActivated(watermarkActivated);
+    currentProject.setWatermarkActivated(watermarkActivated);
 
-    assertThat(project.hasWatermark(), is(watermarkActivated));
+    assertThat(currentProject.hasWatermark(), is(watermarkActivated));
   }
 
   @Test
   public void testSetProjectInfoUpdateProject() {
     ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
-    Project project = getAProject();
     Mockito.doNothing().when(repo).update(any(Project.class));
     String title = "title";
     String description = "description";
@@ -174,21 +171,21 @@ public class ProjectRealmRepositoryTest {
     productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
     productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
 
-    repo.setProjectInfo(project, title, description, productTypeList);
+    repo.setProjectInfo(currentProject, title, description, productTypeList);
 
-    assertThat(project.getProjectInfo().getTitle(), is(title));
-    assertThat(project.getProjectInfo().getDescription(), is(description));
-    assertThat(project.getProjectInfo().getProductTypeList(), is(productTypeList));
+    assertThat(currentProject.getProjectInfo().getTitle(), is(title));
+    assertThat(currentProject.getProjectInfo().getDescription(), is(description));
+    assertThat(currentProject.getProjectInfo().getProductTypeList(), is(productTypeList));
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
         VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",
         "Project description", new ArrayList<>());
-    return Project.getInstance(projectInfo, "/path",
-        "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path","private/path",
+        compositionProfile);
   }
 
 }

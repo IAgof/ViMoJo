@@ -15,10 +15,8 @@ import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -28,6 +26,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 1/06/17.
@@ -35,44 +34,40 @@ import static org.mockito.Mockito.verify;
 
 public class RemoveAudioUseCaseTest {
 
-  @InjectMocks RemoveAudioUseCase injectedUseCase;
-
   @Mock OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock TrackRepository mockedTrackRepository;
   @Mock MusicRepository mockedMusicRepository;
+  private Project currentProject;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void clearProject() {
-    Project.INSTANCE.clear();
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
   public void removeMusicUpdatePositionVoiceOverTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
-    assertThat("Project has music ", project.hasMusic(), is(true));
+    assertThat("Project has music ", currentProject.hasMusic(), is(true));
     assertThat("MusicTrack position is 1 ", musicTrack.getPosition(), is(1));
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     voiceOverTrack.setPosition(2);
-    assertThat("Project has voice over ", project.hasVoiceOver(), is(true));
+    assertThat("Project has voice over ", currentProject.hasVoiceOver(), is(true));
     assertThat("VoiceOverTrack position is 2 ", voiceOverTrack.getPosition(), is(2));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has updated voice over track position to 1 ",
@@ -81,17 +76,17 @@ public class RemoveAudioUseCaseTest {
 
   @Test
   public void removeMusicResetPositionMusicTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
-    assertThat("Project has music ", project.hasMusic(), is(true));
+    assertThat("Project has music ", currentProject.hasMusic(), is(true));
     assertThat("MusicTrack position is 1 ", musicTrack.getPosition(), is(1));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has reStart music track position to 0",
@@ -100,17 +95,17 @@ public class RemoveAudioUseCaseTest {
 
   @Test
   public void removeMusicDeleteItemOnTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
-    assertThat("Project has music ", project.hasMusic(), is(true));
+    assertThat("Project has music ", currentProject.hasMusic(), is(true));
     assertThat("MusicTrack has one item ", musicTrack.getItems().size(), is(1));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has delete item on music track",
@@ -119,26 +114,26 @@ public class RemoveAudioUseCaseTest {
 
   @Test
   public void removeMusicDeleteResetValuesOnTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     float trackVolume = 0.8f;
     boolean trackMute = true;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
     musicTrack.setVolume(trackVolume);
     musicTrack.setMute(trackMute);
-    assertThat("Project has music ", project.hasMusic(), is(true));
+    assertThat("Project has music ", currentProject.hasMusic(), is(true));
     assertThat("MusicTrack has one item ", musicTrack.getItems().size(), is(1));
     assertThat("Music track volume is trackVolume", musicTrack.getVolume(), is(trackVolume));
     assertThat("Music track mute is trackMute", musicTrack.isMuted(), is(trackMute));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
-    AudioTrack updatedMusicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack updatedMusicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     assertThat("UseCase has update track volume to default", updatedMusicTrack.getVolume(),
         is(Music.DEFAULT_VOLUME));
     assertThat("UseCase has update track mute to default", updatedMusicTrack.isMuted(), is(false));
@@ -146,78 +141,82 @@ public class RemoveAudioUseCaseTest {
 
   @Test
   public void removeMusicUpdateRepositories() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
-    assertThat("Project has music ", project.hasMusic(), is(true));
+    assertThat("Project has music ", currentProject.hasMusic(), is(true));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
-    verify(mockedProjectRepository).update(project);
+    verify(mockedProjectRepository).update(currentProject);
     verify(mockedTrackRepository).update(musicTrack);
     verify(mockedMusicRepository).remove(music);
   }
 
   @Test
   public void removeVoiceOverWithOneItemDeleteVoiceOverTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     voiceOverTrack.setPosition(2);
-    assertThat("AudioTrack list size is 2", project.getAudioTracks().size(), is(2));
-    assertThat("VoiceOver track has only one item", project.getAudioTracks()
+    assertThat("AudioTrack list size is 2", currentProject.getAudioTracks().size(), is(2));
+    assertThat("VoiceOver track has only one item", currentProject.getAudioTracks()
         .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(1));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    removeAudioUseCase.removeMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnRemoveMediaFinishedListener);
 
-    assertThat("UseCase has removed voice over track", project.getAudioTracks().size(), is(1));
+    assertThat("UseCase has removed voice over track", currentProject.getAudioTracks().size(), is(1));
   }
 
   @Test
   public void removeVoiceOverWithOneItemDontDeleteMusicTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     musicTrack.setPosition(1);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     voiceOverTrack.setPosition(2);
-    assertThat("AudioTrack list size is 2", project.getAudioTracks().size(), is(2));
-    assertThat("Music track has only one item", project.getAudioTracks()
+    assertThat("AudioTrack list size is 2", currentProject.getAudioTracks().size(), is(2));
+    assertThat("Music track has only one item", currentProject.getAudioTracks()
         .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems().size(), is(1));
+    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    injectedUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
-    assertThat("UseCase has removed voice over track", project.getAudioTracks().size(), is(2));
+    assertThat("UseCase has removed voice over track", currentProject.getAudioTracks().size(), is(2));
   }
 
-  private Project getAProject() {
+  private RemoveAudioUseCase getRemoveAudioUseCase() {
+    return new RemoveAudioUseCase(mockedProjectRepository, mockedTrackRepository, mockedMusicRepository);
+  }
+
+  private void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "root/path", "private/path", profile);
+    currentProject = new Project(projectInfo, "root/path", "private/path", profile);
   }
 }

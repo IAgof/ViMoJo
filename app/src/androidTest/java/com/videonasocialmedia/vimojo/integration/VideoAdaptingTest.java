@@ -61,6 +61,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by jliarte on 6/09/17.
@@ -71,10 +72,12 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   private VideoToAdaptMemoryRepository videoToAdaptRepo;
 
   @Mock VideoRepository videoRepo;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedListener;
   @Mock private OnExportFinishedListener mockedExportListener;
   private String testPath;
   @Mock Context mockedContext;
+  private Project currentProject;
 
   @Before
   public void setUp() {
@@ -82,13 +85,8 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     videoToAdaptRepo = new VideoToAdaptMemoryRepository();
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
-  }
-
-  @After
-  public void tearDown(){
-    // FIXME: tests are not independent as Project keeps state between tests
-    Project singletonProject = Project.getInstance(null, null, null, null);
-    singletonProject.clear();
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -103,7 +101,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     assertThat(transcodingTask, notNullValue());
@@ -135,7 +133,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     assertThat(transcodingTask, notNullValue());
@@ -165,9 +163,10 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     VideonaFormat videoFormat = new VideonaFormat(5000000, 1280, 720);
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
-    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
+    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
+        videoToAdaptRepo);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
     exportProjectUseCase.export(Constants.PATH_WATERMARK, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
@@ -201,10 +200,11 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     String destPath2 = testPath + "/res2.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
-    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
+    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
+        videoToAdaptRepo);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedListener);
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt2, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);
     exportProjectUseCase.export(Constants.PATH_WATERMARK, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
@@ -250,12 +250,13 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     String destPath2 = testPath + "/res2.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
-    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
+    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
+        videoToAdaptRepo);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
             new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedListener);
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt2, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
+    adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     video2.setTempPath(testPath);
     video.setTempPath(testPath);
@@ -288,8 +289,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   @Test
   public void createVideoToAdaptRespectVideoReferences() throws IllegalItemOnTrack {
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
-    Project project = getCurrentProject();
-    project.getVMComposition().getMediaTrack().insertItem(video);
+    currentProject.getVMComposition().getMediaTrack().insertItem(video);
     String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
     int videoPosition = 0;
     int cameraRotation = 0;
@@ -299,7 +299,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
             cameraRotation, retries);
 
     assertThat(video, is(videoToAdapt.getVideo()));
-    assertThat(project.getMediaTrack().getItems().get(0),
+    assertThat(currentProject.getMediaTrack().getItems().get(0),
         CoreMatchers.<Media>is(videoToAdapt.getVideo()));
   }
 
@@ -314,11 +314,10 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     Realm realm = Realm.getInstance(config);
     //Prepare project and videoToAdapt
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
-    Project project = getAProject();
-    project.setProjectPath(testPath);
-    project.getVMComposition().getMediaTrack().insertItem(video);
+    currentProject.setProjectPath(testPath);
+    currentProject.getVMComposition().getMediaTrack().insertItem(video);
     ProjectRepository projectRepo = Mockito.spy(new ProjectRealmRepository());
-    projectRepo.update(project);
+    projectRepo.update(currentProject);
     String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
     int videoPosition = 0;
     int cameraRotation = 0;
@@ -335,27 +334,21 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     assertThat( projectRetriever.getMediaTrack().getItems().get(0),
         CoreMatchers.<Media>not(videoToAdaptRetrieve.getVideo()));
 
-    project.clear();
     realm.close(); // Important
   }
 
   @NonNull
   private Project setupProjectPath() {
-    Project project = getCurrentProject();
-    project.setProjectPath(testPath);
-    return project;
+    currentProject.setProjectPath(testPath);
+    return currentProject;
   }
 
-  private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
-  }
-
-  public Project getAProject() {
+  public void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 
   private String getVideoDuration(String videoPath) {

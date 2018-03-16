@@ -14,6 +14,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
@@ -38,6 +39,7 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 10/06/16.
@@ -57,45 +59,41 @@ public class SplitPreviewPresenterTest {
 
     @Mock Context mockedContext;
     @Mock private VideoRepository mockedVideoRepository;
+    @Mock private ProjectRepository mockedProjectRepository;
+    private Project currentProject;
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @After
-    public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        getAProject();
+        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
     }
 
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
-            userEventTracker, mockedContext, mockedVideoRepository, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase);
+            userEventTracker, mockedContext, mockedProjectRepository, mockedVideoRepository,
+            mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
     public void constructorSetsCurrentProject() {
-        Project videonaProject = getAProject();
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
 
-        assertThat(presenter.currentProject, is(videonaProject));
+        assertThat(presenter.currentProject, is(currentProject));
     }
 
     @Test
     @Config(shadows = {MediaMetadataRetrieverShadow.class})
     public void splitVideoCallsUserTracking() {
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
-        Project videonaProject = getAProject();
 
-       // presenter.splitVideo(injectedVideo, 0, 10);
         presenter.trackSplitVideo();
 
-        verify(mockedUserEventTracker).trackClipSplitted(videonaProject);
+        verify(mockedUserEventTracker).trackClipSplitted(currentProject);
     }
 
     @Test
@@ -123,15 +121,15 @@ public class SplitPreviewPresenterTest {
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         return new SplitPreviewPresenter(mockedSplitView,
-            mockedUserEventTracker, mockedContext, mockedVideoRepository, mockedSplitVideoUseCase,
-            mockedGetMediaListFromProjectUseCase);
+            mockedUserEventTracker, mockedContext, mockedProjectRepository, mockedVideoRepository,
+            mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase);
     }
 
-    public Project getAProject() {
+    public void getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
                 VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 }
