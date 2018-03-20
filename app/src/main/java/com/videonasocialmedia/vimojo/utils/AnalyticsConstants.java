@@ -18,6 +18,7 @@ public class AnalyticsConstants {
     public final static String BETA_LEAVED = "Beta Leaved";
     public final static String APP_SHARED = "App Shared";
     public final static String LINK_CLICK = "Link Click";
+    public final static String PROJECT_EDITED = "Project Edited";
 
     /**
      * User Traits
@@ -145,4 +146,14 @@ public class AnalyticsConstants {
     public static final String ACTION_FRAME_RATE_SELECTED = "frameRateSelected";
     public static final String ACTION_INTERFACE_CAMERA_CHANGED = "interfaceCameraChanged";
     public static final String ACTION_INTERFACE_CAMERA_SELECTED = "interfaceCameraSelected";
+
+    /**
+     * Project Events properties and values
+     */
+    public static final String PROJECT_ACTION = "projectAction";
+    public static final String PROJECT_ACTION_INFO = "Info";
+    public static final String PROJECT_ACTION_TITLE = "Project title";
+    public static final String PROJECT_ACTION_DESCRIPTION = "Project description";
+    public static final String PROJECT_ACTION_PRODUCT_TYPE = "Project product type";
+
 }

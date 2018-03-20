@@ -5,6 +5,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.MusicToRealmMusicMapper;
 import com.videonasocialmedia.vimojo.repository.track.TrackToRealmTrackMapper;
@@ -24,13 +25,15 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     if (project.getProfile() == null) {
       return null;
     }
-    RealmProject realmProject = new RealmProject(project.getUuid(), project.getTitle(),
-            project.getLastModification(), project.getProjectPath(),
-            project.getProfile().getQuality().name(), project.getProfile().getResolution().name(),
-            project.getProfile().getFrameRate().name(), project.getDuration(),
-            project.getVMComposition().isAudioFadeTransitionActivated(),
-            project.getVMComposition().isVideoFadeTransitionActivated(),
-            project.hasWatermark());
+    ProjectInfo projectInfo = project.getProjectInfo();
+
+    RealmProject realmProject = new RealmProject(project.getUuid(), projectInfo.getTitle(),
+        projectInfo.getDescription(), project.getLastModification(), project.getProjectPath(),
+        project.getProfile().getQuality().name(), project.getProfile().getResolution().name(),
+        project.getProfile().getFrameRate().name(), project.getDuration(),
+        project.getVMComposition().isAudioFadeTransitionActivated(),
+        project.getVMComposition().isVideoFadeTransitionActivated(),
+        project.hasWatermark());
 
     if (project.hasVideoExported()) {
       realmProject.pathLastVideoExported = project.getPathLastVideoExported();
@@ -61,6 +64,12 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
     if(project.hasVoiceOver()) {
       realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
+    }
+
+    if(projectInfo.getProductTypeList().size() > 0) {
+      for(String productType: projectInfo.getProductTypeList()) {
+        realmProject.productTypeList.add(productType);
+      }
     }
 
     return realmProject;

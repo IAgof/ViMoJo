@@ -4,6 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
+import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
@@ -478,6 +480,170 @@ public class VimojoMigration implements RealmMigration {
               }
             });
       }
+
+      oldVersion++;
+    }
+
+    // Migrate from version 9 to 10, 20180208. Added new Project fields, Project info, description, product types.
+    if(oldVersion == 10) {
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if(!realmProject.hasField("description")) {
+        realmProject.addField("description", String.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setString("description", "");
+              }
+            });
+      }
+      if (!realmProject.hasField("directFalseTypeSelected")) {
+        realmProject.addField("directFalseTypeSelected", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("directFalseTypeSelected", false);
+              }
+            });
+      }
+      if (!realmProject.hasField("rawVideoTypeSelected")) {
+        realmProject.addField("rawVideoTypeSelected", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("rawVideoTypeSelected", false);
+              }
+            });
+      }
+      if (!realmProject.hasField("spoolTypeSelected")) {
+        realmProject.addField("spoolTypeSelected", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("spoolTypeSelected", false);
+              }
+            });
+      }
+      if (!realmProject.hasField("totalTypeSelected")) {
+        realmProject.addField("totalTypeSelected", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("totalTypeSelected", false);
+              }
+            });
+      }
+      if (!realmProject.hasField("graphicTypeSelected")) {
+        realmProject.addField("graphicTypeSelected", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("graphicTypeSelected", false);
+              }
+            });
+      }
+
+      if (!realmProject.hasField("pieceTypeSelected")) {
+        realmProject.addField("pieceTypeSelected", boolean.class)
+            .transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                obj.setBoolean("pieceTypeSelected", false);
+              }
+            });
+      }
+
+      oldVersion++;
+    }
+
+    // Migrate from version 10 to 11, 20180308. Added product types as RealmList<String>, remove boolean product types supported
+    if(oldVersion == 11) {
+      final boolean[] directFalseTypeSelected = {false};
+      final boolean[] rawVideoTypeSelected = {false};
+      final boolean[] spoolTypeSelected = {false};
+      final boolean[] totalTypeSelected = {false};
+      final boolean[] graphicTypeSelected = {false};
+      final boolean[] pieceTypeSelected = {false};
+      RealmObjectSchema realmProject = schema.get("RealmProject");
+      if (realmProject.hasField("directFalseTypeSelected")) {
+        realmProject.transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            directFalseTypeSelected[0] = obj.getBoolean("directFalseTypeSelected");
+          }
+        });
+        realmProject.removeField("directFalseTypeSelected");
+      }
+      if (realmProject.hasField("rawVideoTypeSelected")) {
+        realmProject.transform(new RealmObjectSchema.Function() {
+          @Override
+          public void apply(DynamicRealmObject obj) {
+            rawVideoTypeSelected[0] = obj.getBoolean("rawVideoTypeSelected");
+          }
+        });
+        realmProject.removeField("rawVideoTypeSelected");
+      }
+      if (realmProject.hasField("spoolTypeSelected")) {
+        realmProject.transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                spoolTypeSelected[0] = obj.getBoolean("spoolTypeSelected");
+              }
+            });
+        realmProject.removeField("spoolTypeSelected");
+      }
+      if (realmProject.hasField("totalTypeSelected")) {
+        realmProject.transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                totalTypeSelected[0] = obj.getBoolean("totalTypeSelected");
+              }
+            });
+        realmProject.removeField("totalTypeSelected");
+      }
+      if (realmProject.hasField("graphicTypeSelected")) {
+        realmProject.transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                graphicTypeSelected[0] = obj.getBoolean("graphicTypeSelected");
+              }
+            });
+        realmProject.removeField("graphicTypeSelected");
+      }
+      if (realmProject.hasField("pieceTypeSelected")) {
+        realmProject.transform(new RealmObjectSchema.Function() {
+              @Override
+              public void apply(DynamicRealmObject obj) {
+                pieceTypeSelected[0] = obj.getBoolean("pieceTypeSelected");
+              }
+            });
+        realmProject.removeField("pieceTypeSelected");
+      }
+
+      realmProject.addRealmListField("productTypeList", String.class).transform(new RealmObjectSchema.Function() {
+        @Override
+        public void apply(DynamicRealmObject obj) {
+          RealmList<String> productTypeList = new RealmList<>();
+          if (directFalseTypeSelected[0]) {
+            productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+          }
+          if (rawVideoTypeSelected[0]) {
+            productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+          }
+          if (spoolTypeSelected[0]) {
+            productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
+          }
+          if (totalTypeSelected[0]) {
+            productTypeList.add(ProductTypeProvider.Types.INTERVIEW.name());
+          }
+          if (graphicTypeSelected[0]) {
+            productTypeList.add(ProductTypeProvider.Types.GRAPHICS.name());
+          }
+          if (pieceTypeSelected[0]) {
+            productTypeList.add(ProductTypeProvider.Types.PIECE.name());
+          }
+          obj.setList("productTypeList", productTypeList);
+        }
+      });
 
       oldVersion++;
     }

@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -23,15 +22,14 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
-import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
@@ -62,7 +60,9 @@ import butterknife.Optional;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
-  public static final int NOTIFICATION_UPLOAD_COMPLETE_ID = 001;
+  private static final int REQUEST_FILL_PROJECT_DETAILS = 54831;
+  private static final int REQUEST_USER_AUTH = 54832;
+
   @Inject ShareVideoPresenter presenter;
     @Inject SharedPreferences sharedPreferences;
 
@@ -84,9 +84,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     private int currentPosition;
 
   private ProgressDialog exportProgressDialog;
-  private boolean acceptUploadVideoMobileNetwork;
+  private ProgressDialog checkingUserProgressDialog;
+  private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
-  private boolean isMobileNetworConnected = false;
+  private boolean isMobileNetworkConnected = false;
 //  private BroadcastReceiver exportReceiver;
 
     @Override
@@ -105,13 +106,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         hideFab();
         initBarProgressDialog();
         checkNetworksAvailable();
-        presenter.checkUserLoggedWithPlatform();
     }
 
     // if user updates theme from drawer
     private void checkIntentExtras() {
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
+        if (bundle != null) {
             videoPath = bundle.getString("videoPath");
         }
     }
@@ -136,11 +136,25 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     videonaPlayer.onPause();
 //    unregisterReceiver(exportReceiver);
     exportProgressDialog.dismiss();
+    checkingUserProgressDialog.dismiss();
   }
 
   @Override
   protected void onDestroy(){
     super.onDestroy();
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if(resultCode == RESULT_OK) {
+      switch (requestCode) {
+        case REQUEST_FILL_PROJECT_DETAILS:
+        case REQUEST_USER_AUTH: // (jliarte): 27/02/18 by now the action is the same
+          onVimojoPlatformClicked();
+          break;
+      }
+    }
   }
 
   // TODO(jliarte): 29/04/17 maybe we'll recover the receiver to allow user go to other app
@@ -173,20 +187,27 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     exportProgressDialog.setProgressPercentFormat(null);
     exportProgressDialog.setCanceledOnTouchOutside(false);
     exportProgressDialog.setCancelable(false);
+
+    checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
+    checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
+    checkingUserProgressDialog.setMessage(getString(R.string.progress_dialog_message_checking_user_auth));
+    checkingUserProgressDialog.setProgressStyle(exportProgressDialog.STYLE_HORIZONTAL);
+    checkingUserProgressDialog.setIndeterminate(true);
+    checkingUserProgressDialog.setProgressNumberFormat(null);
+    checkingUserProgressDialog.setProgressPercentFormat(null);
+    checkingUserProgressDialog.setCanceledOnTouchOutside(false);
+    checkingUserProgressDialog.setCancelable(false);
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
-    bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-      @Override
-      public void onTabSelected(@IdRes int tabId) {
-        switch (tabId){
-          case(R.id.tab_editactivity):
-            showDialogNewProject(R.id.button_edit_navigator);
-            break;
-          case (R.id.tab_sound):
-            showDialogNewProject(R.id.button_music_navigator);
-            break;
-        }
+    bottomBar.setOnTabSelectListener(tabId -> {
+      switch (tabId) {
+        case(R.id.tab_editactivity):
+          showDialogNewProject(R.id.button_edit_navigator);
+          break;
+        case (R.id.tab_sound):
+          showDialogNewProject(R.id.button_music_navigator);
+          break;
       }
     });
   }
@@ -261,9 +282,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void showOptionsShareList(List<OptionsToShareList> optionsToShareLists) {
-
-        SocialNetwork saveToGallery = new SocialNetwork("SaveToGallery",getString(R.string.save_to_gallery), "", "",
-                this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery), "");
+        SocialNetwork saveToGallery = new SocialNetwork("SaveToGallery",
+                getString(R.string.save_to_gallery), "", "",
+                this.getResources().getDrawable(R.drawable.activity_share_save_to_gallery),
+                "");
         optionsToShareLists.add(saveToGallery);
         optionsShareAdapter.setOptionShareLists(optionsToShareLists);
     }
@@ -293,47 +315,96 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void onVimojoPlatformClicked() {
-    presenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
-        isMobileNetworConnected, videoPath);
+    checkNetworksAvailable();
+    presenter.clickUploadToPlatform(isWifiConnected, isAcceptedUploadWithMobileNetwork,
+            isMobileNetworkConnected, videoPath);
   }
 
   private void checkNetworksAvailable() {
     ConnectivityManager connManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-    if (wifi.isConnected()) {
-      isWifiConnected = true;
-    } else {
-      NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-      if(mobileNetwork.isConnected()) {
-        isMobileNetworConnected = true;
-      }
-    }
+    NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+    isWifiConnected = wifi.isConnected();
+    isMobileNetworkConnected = mobileNetwork.isConnected();
   }
 
   @Override
   public void showDialogUploadVideoWithMobileNetwork() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     builder.setMessage(getResources().getString(R.string.upload_video_with_mobile_network));
-    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-          case DialogInterface.BUTTON_POSITIVE:
-            acceptUploadVideoMobileNetwork = true;
-            onVimojoPlatformClicked();
-            break;
-          case DialogInterface.BUTTON_NEGATIVE:
-            acceptUploadVideoMobileNetwork = false;
-            break;
-        }
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_POSITIVE:
+          isAcceptedUploadWithMobileNetwork = true;
+          onVimojoPlatformClicked();
+          break;
+        case DialogInterface.BUTTON_NEGATIVE:
+          isAcceptedUploadWithMobileNetwork = false;
+          break;
       }
     };
-    AlertDialog alertDialog = builder.setCancelable(true).
-        setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
-        .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+    builder.setCancelable(true)
+            .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+            .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
 
+  @Override
+  public void showDialogNeedToRegisterLoginToUploadVideo() {
+    // TODO: 9/2/18 Make Videona alertdialog info component
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_register_login));
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_NEUTRAL:
+          navigateToUserAuth();
+          break;
+      }
+    };
+    builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+  }
+
+  @Override
+  public void showDialogNeedToCompleteDetailProjectFields() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_NEUTRAL:
+          navigateToProjectDetails();
+          break;
+      }
+    };
+    builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+  }
+
+  @Override
+  public void showProgressDialogCheckingUserAuth() {
+    checkingUserProgressDialog.show();
+  }
+
+  @Override
+  public void hideProgressDialogCheckingUserAuth() {
+    checkingUserProgressDialog.dismiss();
+  }
+
+  @Override
+  public void showDialogNotNetworkUploadVideoOnConnection() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.upload_video_with_network_connected));
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_NEUTRAL:
+          break;
+      }
+    };
+    builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+  }
+
+  private void navigateToProjectDetails() {
+    Intent intent = new Intent(this, DetailProjectActivity.class);
+    startActivityForResult(intent, REQUEST_FILL_PROJECT_DETAILS);
+  }
 
   @Override
     public void onFtpClicked(FtpNetwork ftp) {
@@ -345,24 +416,20 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
         editTextDialog.requestFocus();
         editTextDialog.setHint(R.string.text_hint_dialog_shareActivity);
-        final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        String videoFtpName= editTextDialog.getText().toString();
-                        renameFile(videoFtpName);
-                        shareVideoWithFTP(ftpSelected);
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        break;
-                }
+        final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    String videoFtpName= editTextDialog.getText().toString();
+                    renameFile(videoFtpName);
+                    shareVideoWithFTP(ftpSelected);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
             }
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaDialog);
-        AlertDialog alertDialog = builder.setCancelable(false)
-                .setTitle(R.string.title_dialog_sharedActivity)
+        builder.setCancelable(false).setTitle(R.string.title_dialog_sharedActivity)
                 .setView(dialogView)
                 .setPositiveButton(R.string.positiveButtonDialogShareActivity, dialogClickListener)
                 .setNegativeButton(R.string.negativeButtonDialogShareActivity, dialogClickListener).show();
@@ -384,38 +451,31 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void showMessage(final int string) {
-      runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-              Snackbar snackbar = Snackbar.make(coordinatorLayout, string, Snackbar.LENGTH_LONG);
-              snackbar.show();
-          }
+    public void showMessage(final int stringId) {
+      runOnUiThread(() -> {
+          Snackbar snackbar = Snackbar.make(coordinatorLayout, stringId, Snackbar.LENGTH_LONG);
+          snackbar.show();
       });
     }
 
     private void showDialogNewProject(final int resourceButtonId) {
-        final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        presenter.newDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
-                        navigateTo(GoToRecordOrGalleryActivity.class);
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        if(resourceButtonId == R.id.button_music_navigator)
-                            navigateTo(SoundActivity.class);
-                        if(resourceButtonId == R.id.button_edit_navigator)
-                            navigateTo(EditActivity.class);
-                        break;
-                }
+        final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    presenter.newDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+                    navigateTo(GoToRecordOrGalleryActivity.class);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    if (resourceButtonId == R.id.button_music_navigator)
+                        navigateTo(SoundActivity.class);
+                    if (resourceButtonId == R.id.button_edit_navigator)
+                        navigateTo(EditActivity.class);
+                    break;
             }
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        AlertDialog alertDialogClearProject = builder.setCancelable(false)
-                .setMessage(R.string.dialog_message_clean_project)
+        builder.setCancelable(false).setMessage(R.string.dialog_message_clean_project)
                 .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
                 .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
     }
@@ -432,27 +492,23 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       }
     }
 
-  @Override
   public void navigateToUserAuth() {
     Intent intent = new Intent(this, UserAuthActivity.class);
-    startActivity(intent);
+    startActivityForResult(intent, REQUEST_USER_AUTH);
   }
 
   @Override
     public void loadExportedVideoPreview(final String mediaPath) {
       final String destPath = getDestPath(mediaPath);
       final ShareActivity activity = this;
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          if (destPath != null) {
-            videoPath = destPath;
-            presenter.addVideoExportedToProject(videoPath);
-            videonaPlayer.onShown(activity);
-            showPreview();
-          }
-          exportProgressDialog.dismiss();
+      runOnUiThread(() -> {
+        if (destPath != null) {
+          videoPath = destPath;
+          presenter.addVideoExportedToProject(videoPath);
+          videonaPlayer.onShown(activity);
+          showPreview();
         }
+        exportProgressDialog.dismiss();
       });
     }
 
@@ -475,52 +531,32 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showExportProgress(final String progressMsg) {
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        if (exportProgressDialog != null) {
-          exportProgressDialog.setMessage(progressMsg);
-        }
+    runOnUiThread(() -> {
+      if (exportProgressDialog != null) {
+        exportProgressDialog.setMessage(progressMsg);
       }
     });
   }
 
   private void showVideoExportErrorDialog(final int cause) {
     final ShareActivity activity = this;
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        final DialogInterface.OnClickListener dialogClickListener = new
-                DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                      case DialogInterface.BUTTON_NEUTRAL:
-                        navigateTo(EditActivity.class);
-                        break;
-                    }
-                  }
-                };
-        int dialog_message_export_error = R.string.dialog_message_export_error_unknown;
-        switch (cause) {
-          case Constants.EXPORT_ERROR_NO_SPACE_LEFT:
-            dialog_message_export_error = R.string.dialog_message_export_error_no_space_left;
+    runOnUiThread(() -> {
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateTo(EditActivity.class);
+            break;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
-        AlertDialog alertDialogClearProject = builder.setCancelable(false)
-                .setTitle(R.string.dialog_title_export_error)
-                .setMessage(dialog_message_export_error)
-                .setNeutralButton(R.string.ok, dialogClickListener).show();
+      };
+      int dialog_message_export_error = R.string.dialog_message_export_error_unknown;
+      switch (cause) {
+        case Constants.EXPORT_ERROR_NO_SPACE_LEFT:
+          dialog_message_export_error = R.string.dialog_message_export_error_no_space_left;
       }
-    });
-  }
-
-  // TODO(jliarte): 29/04/17 unused methods, delete them?
-  private void onClickFabButton(final com.getbase.floatingactionbutton.FloatingActionButton fab) {
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-      }
+      AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
+      builder.setCancelable(false).setTitle(R.string.dialog_title_export_error)
+              .setMessage(dialog_message_export_error)
+              .setNeutralButton(R.string.ok, dialogClickListener).show();
     });
   }
 

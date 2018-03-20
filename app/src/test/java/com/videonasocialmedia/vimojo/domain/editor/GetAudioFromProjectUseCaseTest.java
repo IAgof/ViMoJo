@@ -11,6 +11,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -29,6 +30,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jliarte on 31/05/16.
@@ -102,11 +104,12 @@ public class GetAudioFromProjectUseCaseTest {
     }
 
     private Project getAProject() {
-        String title = "project title";
         String rootPath = "project/root/path";
         String privatePath = "private/path";
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance(title, rootPath, privatePath, compositionProfile);
+        List<String> productType = new ArrayList<>();
+        ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+        return Project.getInstance(projectInfo, rootPath, privatePath, compositionProfile);
     }
 }

@@ -41,11 +41,24 @@
     <string name="fileError">Error al enviar al servidor FTP. Archivo no encontrado</string>
     <string name="credentialFTPNull">Conexión a FTP no establecida. Por favor, configure los datos FTP en ajustes.</string>
     <string name="upload_to_server">Subir a plataforma</string>
+    <string name="upload_bundle_summary_title">Vídeos subidos</string>
     <string name="uploading_video">Subiendo video</string>
-    <string name="upload_video_completed">Video subido con éxito</string>
-    <string name="upload_video_error">Error subiendo viendo</string>
+    <string name="error_uploading_video">Error subiendo video</string>
+    <string name="upload_video_completed">En plataforma</string>
+    <string name="upload_video_error">Error</string>
+    <string name="upload_video_success">Video subido</string>
+    <string name="upload_video_network_error">Error, conecte su móvil a la red</string>
+    <string name="upload_video_with_network_connected">Móvil no conectado a red, el vídeo se subirá una vez se conecte a internet.</string>
+    <string name="upload_video_unauthorization_upload_error">Problema de autenticación subiendo vídeos</string>
+    <string name="upload_video_file_not_found">no se encuentra en el dispositivo</string>
+    <string name="upload_video_finish_singular">video subido</string>
+    <string name="upload_video_finish_plural">vídeos subidos</string>
     <string name="upload_video_with_mobile_network">¿Quieres subir vídeo usando los datos de tu tarifa móvil?</string>
     <string name="connect_to_network">Por favor, conecte su móvil a la red móvil o wifi</string>
+    <string name="upload_video_register_login">Para subir vídeos, primero tiene que registrarse o inicar sesión</string>
+    <string name="upload_video_complete_project_info">Para subir vídeos necesita completar toda la información de proyecto</string>
+    <string name="progress_dialog_title_checking_info_user">Comprobando información</string>
+    <string name="progress_dialog_message_checking_user_auth">Comprobando autenticación</string>
 
     <!-- Editor Activity -->
     <string name="new_project">Nuevo proyecto</string>
@@ -112,6 +125,10 @@
     <string name="dialog_project_remove_cancel">No</string>
 
     <!-- Detail project activity -->
+    <string name="detail_project_title">Título</string>
+    <string name="detail_project_description">Descripción</string>
+    <string name="detail_project_product_type">Tipo de proyecto</string>
+    <string name="detail_project_details">Detalles</string>
     <string name="projectTitleSizeMb">Tamaño:</string>
     <string name="projectTitleDurationMinSec">Duración:</string>
     <string name="detail_project_hint_title">Introduzca nombre</string>
@@ -125,6 +142,13 @@
     <string name="dialog_project_edit_title_message"> Título de proyecto</string>
     <string name="dialog_project_edit_title_accept">Sí</string>
     <string name="dialog_project_edit_title_cancel">No</string>
+
+    <string name="detail_project_product_type_live_on_tape">Falso directo</string>
+    <string name="detail_project_product_type_b_roll">Vídeo en bruto</string>
+    <string name="detail_project_product_type_nat_vo">Colas</string>
+    <string name="detail_project_product_type_interview">Total</string>
+    <string name="detail_project_product_type_graphic">Gráfico</string>
+    <string name="detail_project_product_type_piece">Pieza</string>
 
     <!--VoiceOverRecordRecordActivity-->
 
@@ -286,6 +310,10 @@
     <string name="drawer_go_to_store">Ir a tienda</string>
     <string name="drawer_go_to_vimojo_kit_web">Kit-Mojo</string>
     <string name="choose_browser">Selecciona navegador</string>
+    <string name="drawerProjectName">Nombre de proyecto</string>
+    <string name="drawerProjectLocation">Localización</string>
+    <string name="drawerProjectDate">Fecha</string>
+    <string name="drawerProjectCurrent">Proyecto actual</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>
@@ -344,7 +372,7 @@
     <string name="versionTitle"><u>Versión</u></string>
     <string name="videona">Videona</string>
     <string name="versionContent">beta </string>
-    <string name="madeIn">Hecho con amor Madrid - España</string>
+    <string name="madeIn">Hecho con amor en Madrid - España</string>
     <string name="licenseTitle"><u>Licencias de Software libre</u></string>
     <string name="licenseMusicTitle"><u>Atribución de música</u></string>
     <string name="legacyAdviceContent">
@@ -607,7 +635,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="text_hint_dialog_shareActivity">Nombre del proyecto</string>
     <string name="positiveButtonDialogShareActivity">Compartir</string>
     <string name="negativeButtonDialogShareActivity">Cancelar</string>
-    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto?</string>
+    <string name="dialog_message_clean_project">¿Quiere empezar un nuevo proyecto? Su proyecto actual, se guardará en su galería</string>
     <string name="dialog_accept_clean_project">Sí</string>
     <string name="dialog_cancel_clean_project">No</string>
 

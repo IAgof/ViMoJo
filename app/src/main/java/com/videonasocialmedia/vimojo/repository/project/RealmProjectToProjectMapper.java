@@ -11,6 +11,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusicToMusicMapper;
@@ -19,6 +20,9 @@ import com.videonasocialmedia.vimojo.repository.track.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideoToVideoMapper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 
@@ -49,7 +53,6 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
     }
   }
 
-
   @NonNull
   private Profile mapProfile(RealmProject realmProject) {
     VideoResolution.Resolution resolution =
@@ -62,7 +65,9 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
 
   @NonNull
   private Project mapProject(RealmProject realmProject){
-    Project currentProject = new Project(realmProject.title, Constants.PATH_APP,
+    ProjectInfo projectInfo = new ProjectInfo(realmProject.title, realmProject.description,
+        realmProject.productTypeList);
+    Project currentProject = new Project(projectInfo, Constants.PATH_APP,
         Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);

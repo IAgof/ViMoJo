@@ -13,25 +13,41 @@ package com.videonasocialmedia.vimojo.sync.model;
  * NumTries, to manage a politic of maximum number of tries to upload a video.
  */
 public class VideoUpload {
-  private String authToken;
+
+  private final int id;
   private String mediaPath;
+  private String title;
+  private String productTypeList;
   private String description;
   private int numTries;
+  private boolean isAcceptedUploadMobileNetwork;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
 
-  public VideoUpload(String authToken, String mediaPath, String description) {
-    this.authToken = authToken;
+  public VideoUpload(int id, String mediaPath, String title, String description,
+                     String productTypeList, boolean isAcceptedUploadMobileNetwork) {
+    this.id = id;
     this.mediaPath = mediaPath;
+    this.title = title;
     this.description = description;
+    this.productTypeList = productTypeList;
     this.numTries = 0;
+    this.isAcceptedUploadMobileNetwork = isAcceptedUploadMobileNetwork;
   }
 
-  public String getAuthToken() {
-    return authToken;
+  public int getId() {
+    return id;
   }
 
   public String getMediaPath() {
     return mediaPath;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getProductTypeList() {
+    return productTypeList;
   }
 
   public String getDescription() {
@@ -44,5 +60,9 @@ public class VideoUpload {
 
   public void incrementNumTries() {
     numTries++;
+  }
+
+  public boolean isAcceptedUploadMobileNetwork() {
+    return isAcceptedUploadMobileNetwork;
   }
 }

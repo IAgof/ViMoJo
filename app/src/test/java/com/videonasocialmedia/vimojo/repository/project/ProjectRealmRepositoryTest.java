@@ -8,6 +8,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -21,6 +23,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -158,10 +162,33 @@ public class ProjectRealmRepositoryTest {
     assertThat(project.hasWatermark(), is(watermarkActivated));
   }
 
+  @Test
+  public void testSetProjectInfoUpdateProject() {
+    ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
+    Project project = getAProject();
+    Mockito.doNothing().when(repo).update(any(Project.class));
+    String title = "title";
+    String description = "description";
+    List<String> productTypeList = new ArrayList<>();
+    productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+    productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+    productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
+
+    repo.setProjectInfo(project, title, description, productTypeList);
+
+    assertThat(project.getProjectInfo().getTitle(), is(title));
+    assertThat(project.getProjectInfo().getDescription(), is(description));
+    assertThat(project.getProjectInfo().getProductTypeList(), is(productTypeList));
+  }
+
   public Project getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.HIGH,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
+        VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
-    return Project.getInstance("title", "/path", "private/path", compositionProfile);
+    ProjectInfo projectInfo = new ProjectInfo("Project title",
+        "Project description", new ArrayList<>());
+    return Project.getInstance(projectInfo, "/path",
+        "private/path", compositionProfile);
   }
 
 }

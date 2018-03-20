@@ -29,6 +29,7 @@ import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
+import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformQueueModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 
 import io.fabric.sdk.android.Fabric;
@@ -79,6 +80,7 @@ public class VimojoApplication extends Application {
                 .applicationModule(getApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
+                .uploadToPlatformQueueModule(getUploadToPlatformModule())
 //                .activityPresentersModule(getActivityPresentersModule())
                 .build();
     }
@@ -93,6 +95,10 @@ public class VimojoApplication extends Application {
 
     private TrackerModule getTrackerModule() {
         return new TrackerModule(this);
+    }
+
+    private UploadToPlatformQueueModule getUploadToPlatformModule() {
+        return new UploadToPlatformQueueModule(this);
     }
 
     private ActivityPresentersModule getActivityPresentersModule() {
@@ -139,7 +145,7 @@ public class VimojoApplication extends Application {
         // create your Realm configuration
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .name("vimojoDB")
-                .schemaVersion(10) //v0.7.7 13-12-2017 //  v0.7.3 15-11-2017
+                .schemaVersion(12) //v0.14.4 8-3-2018 - v0.8.2 8-2-2018
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

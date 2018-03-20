@@ -1,3 +1,3 @@
-v0.11.1
-- Added feature toggle store available to Vimojo to true.
-
+v0.14.6
+- Update compilation rules to protect releases, add security for application. Checked send video
+to platform feature is working in release versions.

@@ -5,7 +5,7 @@ import android.util.Log;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -405,6 +405,25 @@ public class UserEventTracker {
         mixpanel.getPeople().set(MIXPANEL_ACCOUNT_EMAIL_ID, email);
         mixpanel.getPeople().setOnce(MIXPANEL_EMAIL_ID, email);
 
+    }
+
+    public void trackProjectInfo(Project project) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.PROJECT_ACTION,
+                AnalyticsConstants.PROJECT_ACTION_INFO);
+            ProjectInfo projectInfo = project.getProjectInfo();
+            eventProperties.put(AnalyticsConstants.PROJECT_ACTION_TITLE, projectInfo.getTitle());
+            eventProperties.put(AnalyticsConstants.PROJECT_ACTION_DESCRIPTION, projectInfo.getDescription());
+            for(String productType: projectInfo.getProductTypeList()) {
+                eventProperties.put(AnalyticsConstants.PROJECT_ACTION_PRODUCT_TYPE, productType);
+            }
+            Event trackingEvent = new Event(AnalyticsConstants.PROJECT_EDITED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(TAG, "trackProjectInfo: error sending mixpanel PROJECT_EDITED project info event");
+            e.printStackTrace();
+        }
     }
 
   public static class Event {

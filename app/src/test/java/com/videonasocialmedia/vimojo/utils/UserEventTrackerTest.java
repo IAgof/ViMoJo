@@ -8,6 +8,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +23,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -352,9 +357,34 @@ public class UserEventTrackerTest {
                 is(videonaProject.getDuration()));
     }
 
+    @Test
+    public void trackProjectInfoCallsTrackWithEventNameAndProperties() throws JSONException {
+        UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
+            .getInstance(mockedMixpanelAPI));
+        Project project = getAProject();
+        String title = "title";
+        String description = "description";
+        List<String> productTypes = new ArrayList<>();
+        productTypes.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+        ProjectInfo projectInfo = new ProjectInfo(title, description, productTypes);
+        project.setProjectInfo(projectInfo);
+
+        userEventTracker.trackProjectInfo(project);
+        Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
+        UserEventTracker.Event trackedEvent = eventCaptor.getValue();
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.PROJECT_ACTION_TITLE),
+            is(title));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.PROJECT_ACTION_DESCRIPTION),
+            is(description));
+        assertThat(trackedEvent.getProperties().getString(AnalyticsConstants.PROJECT_ACTION_PRODUCT_TYPE),
+            is(productTypes.get(0)));
+    }
+
     public Project getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-        return Project.getInstance("title", "/path", "private/path", compositionProfile);
+        List<String> productType = new ArrayList<>();
+        ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

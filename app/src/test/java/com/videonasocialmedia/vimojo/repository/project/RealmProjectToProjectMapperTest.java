@@ -14,6 +14,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
@@ -30,6 +32,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.RealmList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -85,7 +91,7 @@ public class RealmProjectToProjectMapperTest {
 
     Project project = mapper.map(realmProject);
 
-    assertThat(project.getTitle(), is(title));
+    assertThat(project.getProjectInfo().getTitle(), is(title));
     assertThat(project.getProjectPath(), is("project/path"));
   }
 
@@ -168,6 +174,27 @@ public class RealmProjectToProjectMapperTest {
     assertThat(project, is(nullValue()));
   }
 
+  @Test
+  public void testMapsSetsProjectInfo() {
+    RealmProject realmProject = getARealmProject();
+    realmProject.title = "title";
+    realmProject.description = "description";
+    realmProject.productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+    realmProject.productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+    realmProject.productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
+    RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
+
+
+    Project project = mapper.map(realmProject);
+
+    assertThat(project.getProjectInfo().getTitle(), is("title"));
+    assertThat(project.getProjectInfo().getDescription(), is("description"));
+    List<String> productTypeList = new ArrayList<>();
+    productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
+    productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
+    productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
+    assertThat(project.getProjectInfo().getProductTypeList(), is(productTypeList));
+  }
 
   @Test
   public void testMapSetsProjectVideos() {

@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -19,6 +17,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProject
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -30,6 +29,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishe
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -41,11 +41,11 @@ import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -55,7 +55,6 @@ import static android.content.Context.*;
  * Created by jca on 11/12/15.
  */
 public class ShareVideoPresenter extends VimojoPresenter {
-
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
 
     private Context context;
@@ -77,22 +76,19 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private final GetAuthToken getAuthToken;
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
-    private String authToken;
-    private String description;
+    private final RunSyncAdapterHelper runSyncAdapterHelper;
 
     @Inject
-    public ShareVideoPresenter(Context context, ShareVideoView shareVideoView,
-                               UserEventTracker userEventTracker,
-                               SharedPreferences sharedPreferences,
-                               CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                               AddLastVideoExportedToProjectUseCase
-                                       addLastVideoExportedProjectUseCase,
-                               ExportProjectUseCase exportProjectUseCase,
-                               ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-                               GetFtpListUseCase getFtpListUseCase,
-                               GetAuthToken getAuthToken,
-                               UploadToPlatformQueue uploadToPlatformQueue,
-                               LoggedValidator loggedValidator) {
+    public ShareVideoPresenter(
+            Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+            SharedPreferences sharedPreferences,
+            CreateDefaultProjectUseCase createDefaultProjectUseCase,
+            AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+            ExportProjectUseCase exportProjectUseCase,
+            ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+            GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
+            UploadToPlatformQueue uploadToPlatformQueue, LoggedValidator loggedValidator,
+            RunSyncAdapterHelper runSyncAdapterHelper) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -105,9 +101,11 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.getAuthToken = getAuthToken;
         this.uploadToPlatformQueue = uploadToPlatformQueue;
         this.loggedValidator = loggedValidator;
+        this.runSyncAdapterHelper = runSyncAdapterHelper;
         currentProject = loadCurrentProject();
     }
 
+    // TODO(jliarte): 27/02/18 why is the project get from instance?!?!?!
     private Project loadCurrentProject() {
         return Project.getInstance(null, null, null, null);
     }
@@ -140,7 +138,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private void obtainListOptionsToShare(VimojoNetwork vimojoNetwork, List<FtpNetwork> ftpList,
                                           List<SocialNetwork> socialNetworkList) {
         optionToShareList = new ArrayList();
-        if (BuildConfig.FEATURE_UPLOAD_VIDEOS) {
+        if (BuildConfig.FEATURE_VIMOJO_PLATFORM) {
             optionToShareList.add(vimojoNetwork);
         }
         if (BuildConfig.FEATURE_FTP) {
@@ -267,67 +265,52 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     public void clickUploadToPlatform(boolean isWifiConnected,
-                                      boolean acceptUploadVideoMobileNetwork,
+                                      boolean isAcceptedUploadWithMobileNetwork,
                                       boolean isMobileNetworkConnected,
                                       String videoPath) {
-        if(!isWifiOrMobileNetworkConnected(isWifiConnected, isMobileNetworkConnected)) {
-            // TODO: 8/2/18 Should I saved this upload until user would be connected to network
-            shareVideoViewReference.get().showError(context.getString(R.string.connect_to_network));
-            return;
-        }
-        if(isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
-            acceptUploadVideoMobileNetwork)) {
+
+        if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
+            isAcceptedUploadWithMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
         }
-        if(!isUserLogged(authToken)) {
+        if (!isUserLogged()) {
             // TODO: 8/2/18 Should I ask confirmation from user that he is going to navigate to User Authentication screen.
-            shareVideoViewReference.get().navigateToUserAuth();
+            shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
             return;
         }
-        if(!isThereFreeStorageOnPlatform(videoPath)) {
+        if (!isThereFreeStorageOnPlatform(videoPath)) {
             // TODO:(alvaro.martinez) 26/01/18 Get user free storage from platform
             //shareVideoViewReference.get().showError("Don´t have enough storage to upload video");
             return;
         }
-        /*
-        if(!areThereProjectFieldsCompleted()){
-            // TODO:(alvaro.martinez) 26/01/18 Check project fields, title, description, product types. Next story to merged.
-            //shareVideoViewReference.get().showMessage("You need to complete project fields information.");
+
+        if (!areThereProjectFieldsCompleted(currentProject)) {
+            shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
             return;
-        }*/
-        // TODO: 2/2/18 Define description Send flavor name for testing field
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String description = BuildConfig.FLAVOR + "_" + timeStamp;
-        Log.d(LOG_TAG, "description " + description);
-        uploadVideo(authToken, videoPath, description);
-    }
-
-    public void checkUserLoggedWithPlatform() {
-        // TODO: 8/2/18 If user want to upload videos, should wait to this Future and Storage service
-        ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return getAuthToken.getAuthToken(context).getToken();
-            }
-        });
-        Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
-            @Override
-            public void onSuccess(String authorizationToken) {
-               authToken = authorizationToken;
-            }
-            @Override
-            public void onFailure(Throwable errorGettingToken) {
-            }
-        });
-    }
-
-    private boolean isWifiOrMobileNetworkConnected(boolean isWifiConnected,
-                                                   boolean isMobileNetworConnected) {
-        if(isWifiConnected || isMobileNetworConnected) {
-            return true;
         }
-        return false;
+
+        ProjectInfo projectInfo = currentProject.getProjectInfo();
+        if (!isDeviceConnectedToUpload(isWifiConnected, isMobileNetworkConnected,
+            isAcceptedUploadWithMobileNetwork)) {
+            shareVideoViewReference.get().showDialogNotNetworkUploadVideoOnConnection();
+        } else {
+            shareVideoViewReference.get().showMessage(R.string.uploading_video);
+        }
+        uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+            projectInfo.getProductTypeList(), isAcceptedUploadWithMobileNetwork);
+    }
+
+    private boolean areThereProjectFieldsCompleted(Project currentProject) {
+        ProjectInfo projectInfo = currentProject.getProjectInfo();
+        return (!projectInfo.getTitle().isEmpty()) && (!projectInfo.getDescription().isEmpty()) &&
+            (projectInfo.getProductTypeList().size() > 0);
+    }
+
+    private boolean isDeviceConnectedToUpload(boolean isWifiConnected,
+                                              boolean isMobileNetworkConnected,
+                                              boolean isAcceptedUploadMobileNetwork) {
+        return isWifiConnected || (isMobileNetworkConnected &&  isAcceptedUploadMobileNetwork);
     }
 
     private boolean isNeededAskPermissionForMobileUpload(boolean isWifiConnected,
@@ -336,26 +319,48 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return !isWifiConnected && isMobileNetworConnected && !acceptUploadVideoMobileNetwork;
     }
 
-    protected boolean isUserLogged(String authToken) {
+    protected boolean isUserLogged() {
+        shareVideoViewReference.get().showProgressDialogCheckingUserAuth();
+        String authToken = "";
+        try {
+            authToken = executeUseCaseCall(() -> getAuthToken.getAuthToken(context).getToken())
+                    .get();
+        } catch (InterruptedException | ExecutionException errorGettingToken) {
+            if (BuildConfig.DEBUG) {
+                errorGettingToken.printStackTrace();
+            }
+            Crashlytics.log("Error getting info from user e");
+            Crashlytics.logException(errorGettingToken);
+        }
+        shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
         return loggedValidator.loggedValidate(authToken);
     }
 
-    private void uploadVideo(String authToken, String mediaPath, String description) {
-        VideoUpload videoUpload = new VideoUpload(authToken, mediaPath, description);
-        try {
-            uploadToPlatformQueue.addVideoToUpload(videoUpload);
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-            Crashlytics.log("Error adding video to upload");
-            Crashlytics.logException(ioException);
-        }
-        try {
-            uploadToPlatformQueue.launchQueueVideoUploads();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-            Crashlytics.log("Error launching queue video to upload");
-            Crashlytics.logException(ioException);
-        }
+//    protected ListenableFuture<String> getAuthTokenFuture() {
+//        ListenableFuture<String> authTokenFuture =
+//                executeUseCaseCall(() -> getAuthToken.getAuthToken(context).getToken());
+//        return authTokenFuture;
+//    }
+
+    protected void uploadVideo(String mediaPath, String title, String description,
+                               List<String> productTypeList, boolean isAcceptedUploadMobileNetwork) {
+        // Convert productTypeList to string. VideoApiClient not support RequestBody with List<String>
+        String productTypeListToString = TextUtils.join(", ", productTypeList);
+        int id = (int) (new Date().getTime()/1000);
+        VideoUpload videoUpload = new VideoUpload(id, mediaPath, title, description,
+            productTypeListToString, isAcceptedUploadMobileNetwork);
+        executeUseCaseCall((Callable<Void>) () -> {
+            try {
+                uploadToPlatformQueue.addVideoToUpload(videoUpload);
+                runSyncAdapterHelper.runNowSyncAdapter();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+                Log.d(LOG_TAG, ioException.getMessage());
+                Crashlytics.log("Error adding video to upload");
+                Crashlytics.logException(ioException);
+            }
+            return null;
+        });
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

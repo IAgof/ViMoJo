@@ -27,5 +27,6 @@ public interface ProjectRepository extends Repository<Project> {
 
   void setWatermarkActivated(Project project, boolean isChecked);
 
-  void setTitle(Project project, String textTitle);
+  void setProjectInfo(Project project, String projectTitle, String projectDescription,
+                      List<String> productTypesListSelected);
 }

@@ -31,10 +31,17 @@ public interface ShareVideoView {
 
   void startVideoExport();
 
-  void navigateToUserAuth();
-
-  void showMessage(int uploadComplete);
+  void showMessage(int stringId);
 
   void showDialogUploadVideoWithMobileNetwork();
 
+  void showDialogNeedToRegisterLoginToUploadVideo();
+
+  void showDialogNeedToCompleteDetailProjectFields();
+
+  void showProgressDialogCheckingUserAuth();
+
+  void hideProgressDialogCheckingUserAuth();
+
+  void showDialogNotNetworkUploadVideoOnConnection();
 }

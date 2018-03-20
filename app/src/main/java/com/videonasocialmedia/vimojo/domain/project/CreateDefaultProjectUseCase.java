@@ -5,10 +5,13 @@ import android.graphics.drawable.Drawable;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -35,8 +38,8 @@ public class CreateDefaultProjectUseCase {
 
   public void loadOrCreateProject(String rootPath, String privatePath,
                                   boolean isWatermarkFeatured) {
-    // Default project title
-    String projectTitle = DateUtils.getDateRightNow();
+    // Default project info
+    ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "", new ArrayList<>());
     // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.
     //                This is done for convenience only as we should get rid of all
     //                Project.getInstance calls
@@ -45,7 +48,7 @@ public class CreateDefaultProjectUseCase {
       Project.INSTANCE = projectRepository.getCurrentProject();
       isProjectCreated = true;
     }
-    Project currentProject = Project.getInstance(projectTitle, rootPath, privatePath,
+    Project currentProject = Project.getInstance(projectInfo, rootPath, privatePath,
             profileRepository.getCurrentProfile());
     currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
     if ((isProjectCreated && isWatermarkFeatured)) {
@@ -55,8 +58,8 @@ public class CreateDefaultProjectUseCase {
   }
 
   public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
-    String projectTitle = DateUtils.getDateRightNow();
-    Project currentProject = new Project(projectTitle, rootPath, privatePath,
+    ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "", new ArrayList<>());
+    Project currentProject = new Project(projectInfo, rootPath, privatePath,
             profileRepository.getCurrentProfile());
     if (isWatermarkFeatured) {
       currentProject.setWatermarkActivated(true);

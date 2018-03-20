@@ -1,13 +1,37 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views;
 
+import java.util.List;
+
 /**
  * Created by alvaro on 19/12/16.
  */
 
 public interface DetailProjectView {
 
-  void showDetailProjectThumb(String path);
-  void showTitleProject(String title);
-  void showDetailProjectInfo(int duration, double projectSizeMbVideoToExport, int width,
-                             double videoBitRate, int frameRate);
+    void showTitleProject(String title);
+
+    void showDetailProjectInfo(int duration, double projectSizeMbVideoToExport, int width,
+                               double videoBitRate, int frameRate);
+
+    void showAcceptTitleButton();
+
+    void hideAcceptTitleButton();
+
+    void showAcceptDescriptionButton();
+
+    void hideAcceptDescriptionButton();
+
+    void expandDetailsInfo();
+
+    void shrinkDetailsInfo();
+
+    void showDescriptionProject(String description);
+
+    void showProductTypeMultipleDialog(boolean[] checkedProductTypes, List<String> productTypesTitles);
+
+    void showProductTypeSelected(List<String> productTypeList);
+
+    void addSelectedProductType(String productTypeName);
+
+    void removeSelectedProductType(String productTypeName);
 }

@@ -15,12 +15,16 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
+import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 
 import java.lang.ref.WeakReference;
+
+import static com.videonasocialmedia.vimojo.auth.AccountConstants.VIMOJO_ACCOUNT_TYPE;
 
 /**
  * Class for Account Manager Auth Service. This class uses Android Account Manager to cache
@@ -29,10 +33,12 @@ import java.lang.ref.WeakReference;
  */
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
   private WeakReference<Context> contextWeakReference;
+  private Context context;
 
   public AccountAuthenticator(Context context) {
     super(context);
     contextWeakReference = new WeakReference<>(context);
+    this.context = context;
   }
 
   @Override
