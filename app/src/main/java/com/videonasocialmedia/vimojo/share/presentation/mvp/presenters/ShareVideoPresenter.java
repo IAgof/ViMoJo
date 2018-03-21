@@ -204,22 +204,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
         shareVideoViewReference.get().startVideoExport();
         exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
-            public void onExportError(String error) {
+            public void onExportError(int error) {
                 Crashlytics.log("Error exporting: " + error);
-                // TODO(jliarte): 28/04/17 pass the string?
-                // known strings
-                switch (error) {
-                    case "No space left on device":
-                        if (shareVideoViewReference.get() != null) {
-                            shareVideoViewReference.get()
-                                    .showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
-                        }
-                        break;
-                    default:
-                        if (shareVideoViewReference.get() != null) {
-                            shareVideoViewReference.get()
-                                    .showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
-                        }
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().showVideoExportError(error);
                 }
             }
 
@@ -233,9 +221,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
             }
 
             @Override
-            public void onExportProgress(String progressMsg, int exportStage) {
+            public void onExportProgress(int exportStage) {
                 if (shareVideoViewReference.get() != null) {
-                    shareVideoViewReference.get().showExportProgress(progressMsg);
+                    shareVideoViewReference.get().showExportProgress(exportStage);
                 }
             }
 

@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
+import static com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR;
+import static com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR;
+
 public class ExportProjectUseCase implements ExportListener {
   private static final String TAG = ExportProjectUseCase.class.getCanonicalName();
   private OnExportFinishedListener onExportFinishedListener;
@@ -74,11 +77,14 @@ public class ExportProjectUseCase implements ExportListener {
         }
       });
     } catch (NoSuchElementException exception) {
-      onExportError(String.valueOf(exception));
+      Log.e(TAG, "Catched " +  exception.getClass().getName()
+          + "Error waiting for adapting jobs to finish before exporting" + exception.getMessage());
+      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR);
     } catch (InterruptedException | ExecutionException e) {
-      Log.e(TAG, "Error waiting for adapting jobs to finish before exporting");
       e.printStackTrace();
-      onExportError(String.valueOf(e));
+      Log.e(TAG, "Catched " +  e.getClass().getName()
+          + "Error waiting for adapting jobs to finish before exporting" + e.getMessage());
+      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR);
     }
   }
 
@@ -86,7 +92,8 @@ public class ExportProjectUseCase implements ExportListener {
     File watermarkResource = new File(pathWatermark);
     if (!watermarkResource.exists()) {
       if (!Utils.copyWatermarkResourceToDevice()) {
-        onExportError(VimojoApplication.getAppContext().getString(R.string.export_error_watermark));
+        Log.e(TAG, "Error applying watermark, resource not found");
+        onExportError(EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR);
       }
     }
   }
@@ -116,17 +123,16 @@ public class ExportProjectUseCase implements ExportListener {
   }
 
   @Override
-  public void onExportProgress(String progressMsg, int exportStage) {
-    Log.d(TAG, progressMsg);
+  public void onExportProgress(int exportStage) {
     if (!isExportCanceled) {
-      onExportFinishedListener.onExportProgress(progressMsg, exportStage);
+      onExportFinishedListener.onExportProgress(exportStage);
     }
   }
 
   @Override
-  public void onExportError(String error) {
+  public void onExportError(int exportErrorStage) {
     if (!isExportCanceled) {
-      onExportFinishedListener.onExportError(error);
+      onExportFinishedListener.onExportError(exportErrorStage);
     }
   }
 
@@ -136,23 +142,6 @@ public class ExportProjectUseCase implements ExportListener {
   }
 
   public void cancelExport() {
-    /*try {
-      ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
-      boolean interrupt = adaptVideoTasks.cancel(true);
-      Log.d(TAG, "cancel adaptingTasks " + interrupt);
-      adaptVideoTasks.get();
-      boolean isCancelled = adaptVideoTasks.isCancelled();
-      Log.d(TAG, "cancel isCancelled " + isCancelled);
-      if (!isCancelled) {
-        Log.d(TAG, "cancel vmCompositionExportSession");
-        vmCompositionExportSession.cancel();
-      }
-
-    } catch (ExecutionException e) {
-      e.printStackTrace();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }*/
     isExportCanceled = true;
   }
 }

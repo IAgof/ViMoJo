@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
@@ -53,6 +54,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
+
 
 /**
  * Activity for sharing video final render to different networks and save locally.
@@ -478,10 +480,34 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showExportProgress(final String progressMsg) {
+  public void showExportProgress(final int progressMsg) {
     runOnUiThread(() -> {
       if (exportProgressDialog != null) {
-        exportProgressDialog.setMessage(progressMsg);
+        String progressMessage = "";
+        switch (progressMsg){
+          case VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING:
+            progressMessage = getString(R.string.export_wait_for_transcoding);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_WRITE_VIDEO_TO_DISK:
+            progressMessage = getString(R.string.export_write_video_to_disk);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_JOIN_VIDEOS:
+            progressMessage = getString(R.string.export_join_videos);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_ADD_AUDIO_TRACKS:
+            progressMessage = getString(R.string.export_add_audio_tracks);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_MIX_AUDIO:
+            progressMessage = getString(R.string.export_mix_audio);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_APPLY_AUDIO_MIXED:
+            progressMessage = getString(R.string.export_apply_audio_mixed);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK:
+            progressMessage = getString(R.string.export_apply_watermark);
+            break;
+        }
+        exportProgressDialog.setMessage(progressMessage);
       }
     });
   }
@@ -497,8 +523,21 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       };
       int dialog_message_export_error = R.string.dialog_message_export_error_unknown;
       switch (cause) {
-        case Constants.EXPORT_ERROR_NO_SPACE_LEFT:
-          dialog_message_export_error = R.string.dialog_message_export_error_no_space_left;
+        case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_ERROR:
+          dialog_message_export_error = R.string.export_apply_watermark_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_MIX_AUDIO_ERROR:
+          dialog_message_export_error = R.string.export_mix_audio_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR:
+          dialog_message_export_error = R.string.export_apply_watermark_resource_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_JOIN_VIDEOS_ERROR:
+          dialog_message_export_error = R.string.export_join_videos_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR:
+          dialog_message_export_error = R.string.export_wait_for_transcoding_error;
+          break;
       }
       AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
       builder.setCancelable(false).setTitle(R.string.dialog_title_export_error)

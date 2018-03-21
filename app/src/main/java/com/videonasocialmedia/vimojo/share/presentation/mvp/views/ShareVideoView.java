@@ -19,7 +19,7 @@ public interface ShareVideoView {
 
   void showVideoExportError(int cause);
 
-  void showExportProgress(String progressMsg);
+  void showExportProgress(int progressMsg);
 
   void startVideoExport();
 

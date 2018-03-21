@@ -191,12 +191,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   protected void onStart() {
     super.onStart();
     videonaPlayer.setListener(this);
-    videonaPlayer.onShown(this);
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    videonaPlayer.onShown(this);
     if (navigationView != null) {
       setupDrawerContent(navigationView);
       setUpAndCheckHeaderViewCurrentProject();
@@ -386,16 +386,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void restartShareActivity(String videoPath) {
-    Intent intent = getIntent();
-    intent.putExtra("videoExportedPath", videoPath);
-    startActivity(intent);
-    finish();
-  }
-
-  @Override
-  public void restartActivity() {
-    Intent intent = getIntent();
+  public void restartActivity(Class clas) {
+    Intent intent = new Intent(this, clas);
     startActivity(intent);
     finish();
   }
