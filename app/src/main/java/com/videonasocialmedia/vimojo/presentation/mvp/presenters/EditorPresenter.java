@@ -316,6 +316,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
       projectRepository.setWatermarkActivated(currentProject, isChecked);
+      sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, isChecked).apply();
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
       }
