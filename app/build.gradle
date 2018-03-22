@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 103 // 20180309
-            versionName "0.14.5" // 20180309
+            versionCode 105 // 20180320
+            versionName "0.15.0" // 20180320
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "api_base_url", "https://"
@@ -157,8 +157,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 54 // 20180309
-            versionName "0.14.5.fThomsonFoundation" // 20180309
+            versionCode 56 // 20180320
+            versionName "0.15.0.fThomsonFoundation" // 20180320
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "api_base_url", "https://"
@@ -202,8 +202,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 21 // 20180309
-            versionName "0.14.5.fMarketForNews" // 20180309
+            versionCode 23 // 20180320
+            versionName "0.15.0.fMarketForNews" // 20180320
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "api_base_url", "https://"
@@ -225,8 +225,8 @@ android {
 
         nbc {
             applicationId "com.videonasocialmedia.vimojo.nbc"
-            versionCode 4 // 20180309
-            versionName "0.14.5.fComcastNbc" // 20180309
+            versionCode 6 // 20180320
+            versionName "0.15.0.fComcastNbc" // 20180320
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo NBC"
             resValue "string", "api_base_url", "https://"
@@ -278,9 +278,9 @@ android {
             buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1\""
-            buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1MDY2NTQ5NTgwNzkxODA4IiwibmFtZSI6InZpbW9qbyIsInJvbGUiOiJndWVzdCIsImlhdCI6MTUxMTc5MjUxNiwiZXhwIjoxNTQzMzUwMTE2fQ.yB6-VOksgY3TyXIkJVIaT5Iwq6PrYyf64q13s2KFgIc\""
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
+
         }
         debug {
             minifyEnabled false
@@ -293,7 +293,6 @@ android {
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appNameSuffix:".Debug", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
             buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
-            buildConfigField "String", "VIDAY_TOKEN", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ2aW1vam8iLCJzdWIiOiI1NjQ5MzkxNjc1MjQ0NTQ0IiwibmFtZSI6ImRldmVsb3AiLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE1MTE3OTMzNzAsImV4cCI6MTU0MzM1MDk3MH0.vEypnGQRdgXQI9eQwHBwNOj0yIL5ArXNapoCqHmu3Zc\""
         }
     }
     compileOptions {

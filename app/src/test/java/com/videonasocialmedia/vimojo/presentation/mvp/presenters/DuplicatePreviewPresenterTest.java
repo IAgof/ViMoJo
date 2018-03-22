@@ -14,6 +14,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -46,23 +47,19 @@ public class DuplicatePreviewPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private DuplicateView mockedDuplicateView;
     @Mock private UserEventTracker mockedUserEventTracker;
-    @Mock private AddVideoToProjectUseCase
-            mockedAddVideoToProjectUseCase;
-
-    @InjectMocks DuplicatePreviewPresenter injectedPresenter;
+    @Mock private AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
+    @Mock private ProjectRepository mockedProjectRepository;
 
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
     @Mock private Video mockedVideo;
+    private Project currentProject;
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @After
-    public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        getAProject();
+        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
     }
 
     @Test
@@ -70,31 +67,29 @@ public class DuplicatePreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         DuplicatePreviewPresenter duplicatePreviewPresenter =
                 new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker,
-                        mockedAddVideoToProjectUseCase);
+                    mockedProjectRepository, mockedAddVideoToProjectUseCase);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
     public void constructorSetsCurrentProject() {
-        Project videonaProject = getAProject();
 
         DuplicatePreviewPresenter duplicatePreviewPresenter =
                 new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
-                        mockedAddVideoToProjectUseCase);
+                    mockedProjectRepository, mockedAddVideoToProjectUseCase);
 
-        assertThat(duplicatePreviewPresenter.currentProject, is(videonaProject));
+        assertThat(duplicatePreviewPresenter.currentProject, is(currentProject));
     }
 
     @Test
     //@Config(manifest="../app/AndroidManifest.xml", shadows = {MediaMetadataRetrieverShadow.class})
     public void duplicateVideoCallsTracking() throws IllegalItemOnTrack {
-        Project videonaProject = getAProject();
         Video video = new Video("/media/path", Video.DEFAULT_VOLUME);
         int numCopies = 3;
         DuplicatePreviewPresenter duplicatePreviewPresenter =
             new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
-                mockedAddVideoToProjectUseCase);
+                mockedProjectRepository, mockedAddVideoToProjectUseCase);
         duplicatePreviewPresenter = Mockito.spy(duplicatePreviewPresenter);
         doReturn(video).when(duplicatePreviewPresenter).getVideoCopy();
 
@@ -104,14 +99,14 @@ public class DuplicatePreviewPresenterTest {
          */
         duplicatePreviewPresenter.duplicateVideo(0, numCopies);
 
-        Mockito.verify(mockedUserEventTracker).trackClipDuplicated(numCopies, videonaProject);
+        Mockito.verify(mockedUserEventTracker).trackClipDuplicated(numCopies, currentProject);
     }
 
-    public Project getAProject() {
+    public void getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

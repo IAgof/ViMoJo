@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -35,11 +36,10 @@ public class AdaptVideoToFormatUseCase {
     this.videoRepository = videoRepository;
   }
 
-  public void adaptVideo(final VideoToAdapt videoToAdapt, final VideonaFormat videoFormat,
+  public void adaptVideo(Project currentProject, final VideoToAdapt videoToAdapt, final VideonaFormat videoFormat,
                          AdaptListener listener) throws IOException {
     this.adaptListener = new WeakReference<>(listener);
     videoToAdaptRepository.update(videoToAdapt);
-    Project currentProject = getCurrentProject();
     videoToAdapt.getVideo().setTempPath(currentProject.getProjectPathIntermediateFiles());
     transcoderHelper.adaptVideoWithRotationToDefaultFormatAsync(videoToAdapt.getVideo(),
             videoFormat, videoToAdapt.getDestVideoPath(), videoToAdapt.getRotation(),
@@ -48,9 +48,6 @@ public class AdaptVideoToFormatUseCase {
             currentProject.getProjectPathIntermediateAudioMixedFiles());
   }
 
-  private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
-  }
 
   class AdaptVideoListener implements TranscoderHelperListener {
     private final VideonaFormat videonaFormat;

@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -46,10 +47,11 @@ public class ExportProjectUseCase implements ExportListener {
   /**
    * Project VMCompositionExportSession use case.
    */
-  public ExportProjectUseCase(VideoToAdaptRepository videoToAdaptRepository) {
-    project = Project.getInstance(null, null, null, null);
+  public ExportProjectUseCase(ProjectRepository projectRepository,
+                              VideoToAdaptRepository videoToAdaptRepository) {
 
     // TODO(jliarte): 28/04/17 move to export method?
+    this.project = projectRepository.getCurrentProject();
     String tempPathIntermediateAudioFilesDirectory =
             project.getProjectPathIntermediateAudioMixedFiles();
     String outputFilesDirectory = Constants.PATH_APP;

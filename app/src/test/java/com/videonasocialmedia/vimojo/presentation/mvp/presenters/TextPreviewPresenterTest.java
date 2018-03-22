@@ -22,21 +22,20 @@ public class TextPreviewPresenterTest {
     @Mock
     private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
+    private Project currentProject;
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
+        getAProject();
     }
 
-    @After
-    public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
-    }
+    // TODO: 19/3/18 Add testing in this presenter
 
-    public Project getAProject() {
+    public void getAProject() {
         Profile compositionProfile = new Profile(null, null, null);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

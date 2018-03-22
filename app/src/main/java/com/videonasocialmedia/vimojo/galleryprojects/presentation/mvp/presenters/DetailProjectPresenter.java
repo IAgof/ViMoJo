@@ -50,11 +50,7 @@ public class DetailProjectPresenter {
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;
     this.projectRepository = projectRepository;
-    this.currentProject = loadCurrentProject();
-  }
-
-  public Project loadCurrentProject() {
-    return Project.getInstance(null, null, null, null);
+    this.currentProject = projectRepository.getCurrentProject();
   }
 
   public void init() {

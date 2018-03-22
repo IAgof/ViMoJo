@@ -11,6 +11,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 
@@ -33,6 +34,7 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
 
     @Inject
     public MusicListPresenter(MusicListView musicListView, Context context,
+                              ProjectRepository projectRepository,
                               GetMusicListUseCase getMusicListUseCase,
                               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                               GetAudioFromProjectUseCase getAudioFromProjectUseCase,
@@ -44,25 +46,20 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
         this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.musicListView = musicListView;
-        this.currentProject = loadCurrentProject();
+        this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
-    }
-
-    private Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
     }
 
     public void init() {
         obtainMusicsAndVideos();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)){
             musicListView.setVideoFadeTransitionAmongVideos();
         }
     }
 
     private void obtainMusicsAndVideos() {
-        getAudioFromProjectUseCase.getMusicFromProject(this);
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        getAudioFromProjectUseCase.getMusicFromProject(currentProject, this);
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, this);
     }
 
     public void onStart() {
@@ -86,7 +83,7 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
 
     @Override
     public void onMusicRetrieved(Music music) {
-        if(getAudioFromProjectUseCase.hasBeenMusicSelected()){
+        if(getAudioFromProjectUseCase.hasBeenMusicSelected(currentProject)){
             musicListView.goToDetailActivity(music.getMediaPath());
         }
     }

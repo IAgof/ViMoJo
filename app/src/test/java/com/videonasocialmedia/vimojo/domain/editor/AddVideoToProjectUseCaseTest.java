@@ -45,100 +45,89 @@ public class AddVideoToProjectUseCaseTest {
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @Mock ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
   @InjectMocks AddVideoToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void tearDown() {
-    Project.getInstance(null, null, null, null).clear();
+    getAProject();
   }
 
   @Test
   public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    getAProject().clear();
-    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
 
-    injectedUseCase.addVideoToProjectAtPosition(video, 0, mockedOnAddMediaFinishedListener);
+    injectedUseCase.addVideoToProjectAtPosition(currentProject, video, 0,
+        mockedOnAddMediaFinishedListener);
 
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void testAddVideoListToTrackCallsUpdateProject() {
-    getAProject().clear();
-    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
         getOnLaunchAVTransitionTempFileListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener);
+    injectedUseCase.addVideoListToTrack(currentProject, videoList, listener);
 
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void ifAudioTransitionActivatedAddVideoToProjectCallsApplyAVTransitions() {
-    Project project = getAProject();
-    project.getVMComposition().setAudioFadeTransitionActivated(true);
+    currentProject.getVMComposition().setAudioFadeTransitionActivated(true);
     assertThat("Audio transition is activated ",
-            project.getVMComposition().isAudioFadeTransitionActivated(), is(true));
+        currentProject.getVMComposition().isAudioFadeTransitionActivated(), is(true));
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener);
+    injectedUseCase.addVideoListToTrack(currentProject, videoList, listener);
 
     verify(mockedApplyAVTransitionsUseCase).applyAVTransitions(
-            eq(project.getVMComposition().getDrawableFadeTransitionVideo()), eq(video),
+            eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()), eq(video),
             // FIXME: 1/09/17 videonaFormat class is a new object each time is retrieved
             any(VideonaFormat.class),
-            eq(project.getProjectPathIntermediateFileAudioFade()),
+            eq(currentProject.getProjectPathIntermediateFileAudioFade()),
             any(ApplyAVTransitionsUseCase.AVTransitionsApplierListener.class));
   }
 
   @Test
   public void ifVideoTransitionActivatedAddVideoToProjectCallsApplyAVTransitions() {
-    getAProject().clear();
-    Project project = getAProject();
-    project.getVMComposition().setVideoFadeTransitionActivated(true);
+    currentProject.getVMComposition().setVideoFadeTransitionActivated(true);
     assertThat("Video transition is activated ",
-            project.getVMComposition().isVideoFadeTransitionActivated(), is(true));
+        currentProject.getVMComposition().isVideoFadeTransitionActivated(), is(true));
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener);
+    injectedUseCase.addVideoListToTrack(currentProject, videoList, listener);
 
     verify(mockedApplyAVTransitionsUseCase).applyAVTransitions(
-            eq(project.getVMComposition().getDrawableFadeTransitionVideo()), eq(video),
+            eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()), eq(video),
             // FIXME: 1/09/17 videonaFormat class is a new object each time is retrieved
             any(VideonaFormat.class),
-            eq(project.getProjectPathIntermediateFileAudioFade()),
+            eq(currentProject.getProjectPathIntermediateFileAudioFade()),
             any(ApplyAVTransitionsUseCase.AVTransitionsApplierListener.class));
   }
 
   @Test
   public void ifAVTransitionNotActivatedAddVideoToProjectNotCallVideoToLaunchAVTransitionTempFile() {
-    getAProject().clear();
-    Project project = getAProject();
     assertThat("Audio transition is not activated ",
-            project.getVMComposition().isAudioFadeTransitionActivated(), is(false));
+        currentProject.getVMComposition().isAudioFadeTransitionActivated(), is(false));
     assertThat("Video transition is not activated ",
-            project.getVMComposition().isVideoFadeTransitionActivated(), is(false));
+        currentProject.getVMComposition().isVideoFadeTransitionActivated(), is(false));
     Video video = new Video("media/path", 1f);
     List<Video> videoList = Collections.singletonList(video);
     OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
 
-    injectedUseCase.addVideoListToTrack(videoList, listener);
+    injectedUseCase.addVideoListToTrack(currentProject, videoList, listener);
 
     verify(mockedLaunchAVTransitionTempFileListener, never())
             .videoToLaunchAVTransitionTempFile(video,
-                    project.getProjectPathIntermediateFileAudioFade());
+                currentProject.getProjectPathIntermediateFileAudioFade());
   }
 
   @NonNull
@@ -167,10 +156,10 @@ public class AddVideoToProjectUseCaseTest {
     };
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
+    currentProject = new Project(projectInfo, "/path", "private/path",
         new Profile(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }

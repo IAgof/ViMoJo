@@ -32,23 +32,19 @@ public class AddLastVideoExportedToProjectUseCaseTest {
   ProjectRealmRepository mockedProjectRepository;
   @InjectMocks
   AddLastVideoExportedToProjectUseCase injectedUseCase;
-
-  Project actualProject;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
-    actualProject = getAProject();
+    getAProject();
   }
-
 
   @Test
   public void ifAddLastVideoExportedToProjectLastModificationAndVideoExportedDateAreEqual() {
-
     String date = DateUtils.getDateRightNow();
-    injectedUseCase.addLastVideoExportedToProject("newVideoExported", date);
 
-    Project currentProject = Project.getInstance(null, null, null, null);
+    injectedUseCase.addLastVideoExportedToProject(currentProject, "newVideoExported", date);
 
     assertThat("Date of last modification and videoExportedNavigateToShareActivity are equal ",
         currentProject.getLastModification(), is(currentProject.getDateLastVideoExported()));
@@ -56,19 +52,18 @@ public class AddLastVideoExportedToProjectUseCaseTest {
 
   @Test
   public void testAddLastVideoExportedToProjectUpdateProjectRepository() {
-
-    Project currentProject = Project.getInstance(null, null, null, null);
     String date = DateUtils.getDateRightNow();
-    injectedUseCase.addLastVideoExportedToProject("somePath", date);
-    verify(mockedProjectRepository).updateWithDate(currentProject, date);
 
+    injectedUseCase.addLastVideoExportedToProject(currentProject, "somePath", date);
+
+    verify(mockedProjectRepository).updateWithDate(currentProject, date);
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

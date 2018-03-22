@@ -35,6 +35,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -104,25 +105,21 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
       UserEventTracker userEventTracker,
       SharedPreferences sharedPreferences,
       AddVideoToProjectUseCase addVideoToProjectUseCase, NewClipImporter newClipImporter,
-      Camera2Wrapper camera, CameraSettingsRepository cameraSettingsRepository) {
+      Camera2Wrapper camera, ProjectRepository projectRepository,
+      CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
     this.sharedPreferences = sharedPreferences;
     this.addVideoToProjectUseCase = addVideoToProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
-
-    this.currentProject = loadProject();
+    this.currentProject = projectRepository.getCurrentProject();
     // TODO:(alvaro.martinez) 25/01/17 Support camera1, api <21 or combine both. Make Camera1Wrapper
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
 //        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
     this.camera = camera;
     this.camera.setCameraListener(this);
     this.newClipImporter = newClipImporter;
-  }
-
-  private Project loadProject() {
-    return Project.getInstance(null, null, null, null);
   }
 
   public void initViews() {
@@ -309,7 +306,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private void showThumbAndNumber() {
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
         new GetMediaListFromProjectUseCase();
-    final List mediaInProject = getMediaListFromProjectUseCase.getMediaListFromProject();
+    final List mediaInProject = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
     if (mediaInProject != null && mediaInProject.size() > 0) {
       int lastItemIndex = mediaInProject.size() - 1;
       final Video lastItem = (Video) mediaInProject.get(lastItemIndex);
@@ -420,7 +417,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   private void addVideoToProject(Video recordedVideo) {
-    addVideoToProjectUseCase.addVideoToProjectAtPosition(recordedVideo,
+    addVideoToProjectUseCase.addVideoToProjectAtPosition(currentProject, recordedVideo,
         currentProject.numberOfClips(), new OnAddMediaFinishedListener() {
               @Override
               public void onAddMediaItemToTrackError() {

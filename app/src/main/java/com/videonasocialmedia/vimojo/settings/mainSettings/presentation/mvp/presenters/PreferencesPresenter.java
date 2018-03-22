@@ -25,16 +25,14 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
@@ -81,11 +79,12 @@ public class PreferencesPresenter extends VimojoPresenter
         updateVideoTransitionPreferenceToProjectUseCase;
     private UpdateIntermediateTemporalFilesTransitionsUseCase
         updateIntermediateTemporalFilesTransitionsUseCase;
-    private GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase;
     private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
     private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
     private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
     private GetAccount getAccount;
+    private ProjectRepository projectRepository;
+    private Project currentProject;
 
     /**
      * Constructor
@@ -99,6 +98,7 @@ public class PreferencesPresenter extends VimojoPresenter
             Context context, SharedPreferences sharedPreferences,
             Preference transitionVideoPref, Preference themeApp,
             Preference transitionAudioPref, Preference watermarkPref,
+            ProjectRepository projectRepository,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             UpdateAudioTransitionPreferenceToProjectUseCase
@@ -107,7 +107,6 @@ public class PreferencesPresenter extends VimojoPresenter
                                         updateVideoTransitionPreferenceToProjectUseCase,
                                 UpdateIntermediateTemporalFilesTransitionsUseCase
                                         updateIntermediateTemporalFilesTransitionsUseCase,
-                                GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
                                 UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
                                 RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
                                 GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
@@ -119,6 +118,7 @@ public class PreferencesPresenter extends VimojoPresenter
         this.transitionAudioPref = transitionAudioPref;
         this.watermarkPref = watermarkPref;
         this.themeApp = themeApp;
+        this.projectRepository = projectRepository;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase =
             getPreferencesTransitionFromProjectUseCase;
@@ -128,7 +128,6 @@ public class PreferencesPresenter extends VimojoPresenter
             updateVideoTransitionPreferenceToProjectUseCase;
         this.updateIntermediateTemporalFilesTransitionsUseCase =
             updateIntermediateTemporalFilesTransitionsUseCase;
-        this.getWatermarkPreferenceFromProjectUseCase = getWatermarkPreferenceFromProjectUseCase;
         this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
         this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
         this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
@@ -138,6 +137,7 @@ public class PreferencesPresenter extends VimojoPresenter
         this.getAuthToken = getAuthToken;
         this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
         this.getAccount = getAccount;
+        this.currentProject = projectRepository.getCurrentProject();
     }
 
     public void onPause() {
@@ -176,11 +176,11 @@ public class PreferencesPresenter extends VimojoPresenter
     private void checkTransitionPreference(String key) {
         boolean data = false;
         if (key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
-            data = getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated();
+            data = getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated(currentProject);
             preferencesView.setTransitionsPref(key, data);
         } else {
             if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0) {
-                data = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated();
+                data = getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject);
                 preferencesView.setTransitionsPref(key, data);
             }
         }
@@ -188,7 +188,7 @@ public class PreferencesPresenter extends VimojoPresenter
 
     private void checkWatermark() {
         if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
-            boolean data = getWatermarkPreferenceFromProjectUseCase.isWatermarkActivated();
+            boolean data = currentProject.hasWatermark();
             preferencesView.setWatermarkSwitchPref(data);
         } else {
             preferencesView.hideWatermarkView();
@@ -238,14 +238,14 @@ public class PreferencesPresenter extends VimojoPresenter
             case ConfigPreferences.TRANSITION_AUDIO:
                 boolean dataTransitionAudio = sharedPreferences.getBoolean(key,false);
                 updateAudioTransitionPreferenceToProjectUseCase
-                        .setAudioFadeTransitionActivated(dataTransitionAudio);
-                updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
+                        .setAudioFadeTransitionActivated(currentProject, dataTransitionAudio);
+                updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
                 break;
             case ConfigPreferences.TRANSITION_VIDEO:
                 boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
                 updateVideoTransitionPreferenceToProjectUseCase
-                        .setVideoFadeTransitionActivated(dataTransitionVideo);
-                updateIntermediateTemporalFilesTransitionsUseCase.execute(this);
+                        .setVideoFadeTransitionActivated(currentProject, dataTransitionVideo);
+                updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
                 break;
             case ConfigPreferences.WATERMARK:
                 boolean data = sharedPreferences.getBoolean(key, false);
@@ -261,18 +261,13 @@ public class PreferencesPresenter extends VimojoPresenter
     @Override
     public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
         final Video video = getVideo(videoUuid);
-        Project currentProject = loadCurrentProject();
         relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
-    }
-
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
     }
 
     private Video getVideo(String videoId) {
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
                 new GetMediaListFromProjectUseCase();
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
         if (videoList != null) {
             for (Media video : videoList) {
                 if (((Video) video).getUuid().compareTo(videoId) == 0) {

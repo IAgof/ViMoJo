@@ -30,47 +30,27 @@ import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectTest {
+    private Project currentProject;
+
     @Before
     public void setup() {
-        Project.getInstance(null, null, null, null).clear();
-    }
-
-    @Test
-    public void getInstanceCallsProjectRepositoryGetCurrentProjectIfInstanceIsNull() {
-        assert Project.INSTANCE == null;
-
-        Project.getInstance(null, null, null, null);
-    }
-
-    @Test
-    public void clearShouldCreateANewNullProject() throws Exception {
-        Project videonaProject = getAProject();
-
-        videonaProject.clear();
-        Project projectInstance = Project.getInstance(null, null, null, null);
-
-        assertThat(videonaProject, not(projectInstance));
-        assertThat(projectInstance.getProjectInfo(), nullValue());
-        assertThat(projectInstance.getProjectPath(), not(nullValue()));
-        assertThat(projectInstance.getProfile(), nullValue());
+        getAProject();
     }
 
     @Test
     public void projectClipsIs0OnAnEmtyProject() {
-        Project videonaProject = getAProject();
 
-        assertThat(videonaProject.numberOfClips(), is(0));
+        assertThat(currentProject.numberOfClips(), is(0));
     }
 
     @Test
     public void projectNumberOfClipsIsMediaTrackItemsLength() {
-        Project videonaProject = getAProject();
-        MediaTrack mediaTrack = videonaProject.getMediaTrack();
+        MediaTrack mediaTrack = currentProject.getMediaTrack();
         try {
             mediaTrack.insertItemAt(0, new Video("/path1", 1f));
             mediaTrack.insertItemAt(1, new Video("/path2", 1f));
 
-            assertThat(videonaProject.numberOfClips(), is(2));
+            assertThat(currentProject.numberOfClips(), is(2));
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
         }
@@ -78,27 +58,23 @@ public class ProjectTest {
 
     @Test
     public void getMusicReturnsMusicWhenMusicHasOneSet() throws IllegalItemOnTrack {
-        Project videonaProject = getAProject();
         Music music = new Music(1, "Music title", 2, 3, "Music Author","", 0);
 
-        videonaProject.getAudioTracks().get(0).insertItem(music);
+        currentProject.getAudioTracks().get(0).insertItem(music);
 
-        assertThat(videonaProject.getMusic(), is(music));
+        assertThat(currentProject.getMusic(), is(music));
     }
 
     @Test
     public void getMusicReturnsNullIfNoMusicHasSet() {
-        Project videonaProject = getAProject();
-
-        assertThat(videonaProject.getMusic(), is(nullValue()));
+        assertThat(currentProject.getMusic(), is(nullValue()));
     }
 
     @Test
     public void getVideoParamsFromProjectProfile(){
-        Project videonaProject = getAProject();
-        VideoResolution resolution = videonaProject.getProfile().getVideoResolution();
-        VideoQuality quality = videonaProject.getProfile().getVideoQuality();
-        VideoFrameRate frameRate = videonaProject.getProfile().getVideoFrameRate();
+        VideoResolution resolution = currentProject.getProfile().getVideoResolution();
+        VideoQuality quality = currentProject.getProfile().getVideoQuality();
+        VideoFrameRate frameRate = currentProject.getProfile().getVideoFrameRate();
 
         assertThat("videoBitRate", 50*1000*1000, CoreMatchers.is(quality.getVideoBitRate()));
         assertThat("videoWidth", 1280, CoreMatchers.is(resolution.getWidth()));
@@ -109,54 +85,51 @@ public class ProjectTest {
     @Test
     public void shouldSaveProfileVMCompositionDurationLastModificationIfProjectIsDuplicate()
             throws IllegalItemOnTrack {
-        Project project = getAProject();
-        Project duplicateProject = new Project(project);
+        Project duplicateProject = new Project(currentProject);
 
         Assert.assertThat("copy project save duration ", duplicateProject.getDuration(),
-            CoreMatchers.is(project.getDuration()));
+            CoreMatchers.is(currentProject.getDuration()));
         Assert.assertThat("copy project save last modification ",
                 duplicateProject.getLastModification(),
-                CoreMatchers.is(project.getLastModification()));
+                CoreMatchers.is(currentProject.getLastModification()));
     }
 
     @Test
     public void shouldUpdateUuidProjectPathIfProjectIsDuplicate() throws IllegalItemOnTrack {
-        Project project = getAProject();
-        Project duplicateProject = new Project(project);
+        Project duplicateProject = new Project(currentProject);
 
         Assert.assertThat("copy project change profile ", duplicateProject.getProfile(),
-            CoreMatchers.not(project.getProfile()));
+            CoreMatchers.not(currentProject.getProfile()));
         Assert.assertThat("copy project change VMComposition ", duplicateProject.getVMComposition(),
-            CoreMatchers.not(project.getVMComposition()));
+            CoreMatchers.not(currentProject.getVMComposition()));
         Assert.assertThat("copy project change uuid ", duplicateProject.getUuid(),
-            CoreMatchers.not(project.getUuid()));
+            CoreMatchers.not(currentProject.getUuid()));
         Assert.assertThat("copy project change project path ", duplicateProject.getProjectPath(),
-            CoreMatchers.not(project.getProjectPath()));
+            CoreMatchers.not(currentProject.getProjectPath()));
     }
 
     @Test
     public void shouldCopyTitleDescriptionProductTypeListIfProjectIsDuplicate()
         throws IllegalItemOnTrack {
-        Project project = getAProject();
-        Project duplicateProject = new Project(project);
+        Project duplicateProject = new Project(currentProject);
 
         Assert.assertThat("copy project keep title",
-            duplicateProject.getProjectInfo().getTitle(), is(project.getProjectInfo().getTitle()));
+            duplicateProject.getProjectInfo().getTitle(), is(currentProject.getProjectInfo().getTitle()));
 
         Assert.assertThat("copy project keep description",
             duplicateProject.getProjectInfo().getDescription(),
-            is(project.getProjectInfo().getDescription()));
+            is(currentProject.getProjectInfo().getDescription()));
 
         Assert.assertThat("copy project keep product type list",
             duplicateProject.getProjectInfo().getProductTypeList(),
-            is(project.getProjectInfo().getProductTypeList()));
+            is(currentProject.getProjectInfo().getProductTypeList()));
     }
 
-    public Project getAProject() {
+    public void getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

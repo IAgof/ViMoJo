@@ -8,15 +8,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
  */
 
 public class ReorderProjectVideoListUseCase {
-  public void reorderVideoList() {
-    Project project = getCurrentProject();
-
+  public void reorderVideoList(Project project) {
     for (Media media : project.getMediaTrack().getItems()) {
       media.setPosition(project.getMediaTrack().getItems().indexOf(media));
     }
-  }
-
-  private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
   }
 }

@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -79,15 +80,11 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
         this.projectRepository = projectRepository;
+        this.currentProject = projectRepository.getCurrentProject();
     }
 
     public void addElementChangedListener(){
-        this.currentProject = loadCurrentProject();
         currentProject.addListener(this);
-    }
-
-    public Project loadCurrentProject() {
-        return projectRepository.getCurrentProject();
     }
 
     public String getResolution() {
@@ -104,13 +101,12 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         if( fromPosition == toPosition ) {
             return;
         }
-        reorderMediaItemUseCase.moveMediaItem(fromPosition, toPosition,
-                new OnReorderMediaListener() {
+        reorderMediaItemUseCase.moveMediaItem(currentProject, fromPosition, toPosition, new OnReorderMediaListener() {
             @Override
             public void onSuccessMediaReordered() {
                 // If everything was right the UI is already updated since the user did the
                 // reordering over the "model view"
-                userEventTracker.trackClipsReordered(projectRepository.getCurrentProject());
+                userEventTracker.trackClipsReordered(currentProject);
                 editActivityView.updatePlayerVideoListChanged();
             }
 
@@ -157,7 +153,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
                 removeVideoFromProjectUseCase.removeMediaItemsFromProject(
-                        mediaToDeleteFromProject, this);
+                        currentProject, mediaToDeleteFromProject, this);
                 Log.e(TAG, video.getMediaPath() + " not found!! deleting from project");
             } else {
                 checkedVideoList.add(video);
@@ -169,12 +165,13 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void removeVideoFromProject(int selectedVideoRemove) {
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(videoList.get(selectedVideoRemove));
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(mediaToDeleteFromProject, this);
+        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
+            mediaToDeleteFromProject, this);
     }
 
     public void init() {
         // TODO: 21/2/18 Study if is necessary repeat use case, running also in father, EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and after this method get result of get medialist, problems with UI thread.
-        getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
             @Override
             public void onVideosRetrieved(List<Video> videosRetrieved) {
                 int sizeOriginalVideoList = videosRetrieved.size();

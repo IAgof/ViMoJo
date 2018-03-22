@@ -33,7 +33,7 @@ public class RemoveAudioUseCase {
     this.projectRepository = projectRepository;
     this.trackRepository = trackRepository;
     this.musicRepository = musicRepository;
-    currentProject = Project.getInstance(null,null,null,null);
+    currentProject = projectRepository.getCurrentProject();
   }
 
   // Remove audio only delete track if it is not music track.

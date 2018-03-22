@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
@@ -31,6 +32,7 @@ import javax.inject.Inject;
 
 public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
+    private final ProjectRepository projectRepository;
 
     private TextToDrawable drawableGenerator;
 
@@ -50,6 +52,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     @Inject
     public EditTextPreviewPresenter(
             EditTextView editTextView, Context context, UserEventTracker userEventTracker,
+            ProjectRepository projectRepository,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
         this.editTextView = editTextView;
@@ -57,17 +60,13 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
-        this.currentProject = loadCurrentProject();
+        this.projectRepository = projectRepository;
+        this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
     }
 
-    private Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
-    }
-
     public void init(int videoToEditTextIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoToEditTextIndex);
@@ -96,8 +95,8 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
 
-        modifyVideoTextAndPositionUseCase.addTextToVideo(videoToEdit, text,
-                textPositionSelected.name(), currentProject);
+        modifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, videoToEdit, text,
+                textPositionSelected.name());
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

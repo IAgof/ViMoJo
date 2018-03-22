@@ -46,6 +46,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
   private String testPath;
   @Mock private VideoRepository videoRepo;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
+  private Project currentProject;
 
   @Before
   public void setUp() {
@@ -53,6 +54,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
     MockitoAnnotations.initMocks(this);
+    getCurrentProject();
   }
 
   @Test
@@ -97,7 +99,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
             new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedAdaptListener);
+    adaptVideoToFormatUseCase.adaptVideo(project, videoToAdapt, videoFormat, mockedAdaptListener);
     ListenableFuture<Video> adaptTask = video.getTranscodingTask();
     modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
 
@@ -121,17 +123,16 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
 
   @NonNull
   private Project setupProjectPath() {
-    Project project = getCurrentProject();
-    project.setProjectPath(testPath);
-    return project;
+    currentProject.setProjectPath(testPath);
+    return currentProject;
   }
 
-  private Project getCurrentProject() {
+  private void getCurrentProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, testPath, testPath, compositionProfile);
+    currentProject = new Project(projectInfo, testPath, testPath, compositionProfile);
   }
 
 

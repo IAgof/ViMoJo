@@ -49,25 +49,25 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   @Mock VideoToAdaptRepository mockedVideoToAdaptRepository;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @InjectMocks ModifyVideoTextAndPositionUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() throws Exception {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Ignore
   @Test
   public void testAddTextToVideoCallsTranscodeTrimAndOverlayImageToVideoIfVideoIsTrimmed()
           throws IOException {
-    Project currentProject = getAProject();
     Video video = getVideoTrimmedWithText();
     // TODO(jliarte): 19/10/16 should not use a boolean here
     assert video.isTrimmedVideo();
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.addTextToVideo(video, video.getClipText(), video.getClipTextPosition(),
-            currentProject);
+    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition());
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -79,7 +79,6 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   @Test
   public void testAddTextToVideoCallsUpdateIntermediateFileIfVideoIsTrimmed()
           throws IOException {
-    Project currentProject = getAProject();
     Video video = getVideoTrimmedWithText();
     assert video.isTrimmedVideo();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -90,8 +89,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(video, video.getClipText(), video.getClipTextPosition(),
-            currentProject);
+    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
+        video.getClipTextPosition());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -104,15 +103,14 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   @Test
   public void testAddTextToVideoCallsTranscodeAndOverlayImageToVideoIfVideoIsNotTrimmed()
           throws IOException {
-    Project currentProject = getAProject();
     Video video = getVideoUntrimmedWithText();
     assert video.hasText();
     assert ! video.isTrimmedVideo();
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.addTextToVideo(video,
-            video.getClipText(),video.getClipTextPosition(), currentProject);
+    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
+        video.getClipTextPosition());
 
     verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -124,7 +122,6 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   @Test
   public void testAddTextToVideoCallsUpdateIntermediateFileIfVideoIsNotTrimmed()
           throws IOException {
-    Project currentProject = getAProject();
     Video video = getVideoUntrimmedWithText();
     assert video.hasText();
     assert ! video.isTrimmedVideo();
@@ -136,8 +133,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(video, video.getClipText(), video.getClipTextPosition(),
-            currentProject);
+    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
+        video.getClipTextPosition());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -149,7 +146,6 @@ public class ModifyVideoTextAndPositionUseCaseTest {
 
   @Test
   public void addTextToVideoCallsVideoRepositoryUpdate() throws IOException {
-    Project currentProject = getAProject();
     Video video = new Video("media/path", 1f);
     String textPosition = TextEffect.TextPosition.BOTTOM.name();
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
@@ -160,7 +156,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(video, "text", textPosition, currentProject);
+    injectedUseCase.addTextToVideo(currentProject, video, "text", textPosition);
 
     verify(mockedVideoRepository, atLeastOnce()).update(video);
     assertThat(video.getClipText(), is("text"));
@@ -184,16 +180,9 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     return video;
   }
 
-  private Project getAProject() {
-    clearProject();
-    return Project.getInstance(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+  private void getAProject() {
+    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
-  }
-
-  private void clearProject() {
-    if (Project.INSTANCE != null) {
-      Project.INSTANCE.clear();
-    }
   }
 
 }

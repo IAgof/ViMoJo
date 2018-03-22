@@ -142,35 +142,40 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   VoiceOverVolumePresenter provideVoiceOverVolumePresenter(
+          ProjectRepository projectRepository,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
                   modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase) {
     return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
-            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase);
+            projectRepository, getMediaListFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase, getAudioFromProjectUseCase,
+            modifyTrackUseCase, removeAudioUseCase);
   }
 
   @Provides @PerActivity
   VoiceOverRecordPresenter provideVoiceOverRecordPresenter(
+      ProjectRepository projectRepository,
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
       UserEventTracker userEventTracker) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
-            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            addAudioUseCase, removeAudioUseCase, userEventTracker);
+            projectRepository, getMediaListFromProjectUseCase,
+            getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
+            userEventTracker);
   }
 
   @Provides @PerActivity
   MusicDetailPresenter provideMusicDetailPresenter(
           UserEventTracker userEventTracker,
+          ProjectRepository projectRepository,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase) {
-    return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker,
+    return new MusicDetailPresenter((MusicDetailView) activity, userEventTracker, projectRepository,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
             modifyTrackUseCase, activity);
@@ -198,12 +203,13 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   MusicListPresenter provideMusicListPresenter(
+          ProjectRepository projectRepository,
           GetMusicListUseCase getMusicListUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase) {
-    return new MusicListPresenter((MusicListView) activity, activity, getMusicListUseCase,
-        getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
+    return new MusicListPresenter((MusicListView) activity, activity, projectRepository,
+        getMusicListUseCase, getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase);
   }
 
@@ -238,9 +244,10 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   DuplicatePreviewPresenter provideDuplicatePresenter
-          (UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase) {
+          (UserEventTracker userEventTracker, ProjectRepository projectRepository,
+           AddVideoToProjectUseCase addVideoToProjectUseCase) {
     return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
-            addVideoToProjectUseCase);
+            projectRepository, addVideoToProjectUseCase);
   }
 
   @Provides @PerActivity
@@ -271,28 +278,31 @@ public class ActivityPresentersModule {
   RecordCamera2Presenter provideRecordCamera2Presenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
-          NewClipImporter newClipImporter, CameraSettingsRepository cameraSettingsRepository) {
+          NewClipImporter newClipImporter, ProjectRepository projectRepository,
+          CameraSettingsRepository cameraSettingsRepository) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
             sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
-            cameraSettingsRepository);
+            projectRepository, cameraSettingsRepository);
   }
 
   @Provides @PerActivity
   SplitPreviewPresenter provideSplitPresenter(
-          UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          VideoRepository videoRepository) {
+          UserEventTracker userEventTracker, ProjectRepository projectRepository,
+          VideoRepository videoRepository, SplitVideoUseCase splitVideoUseCase,
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker, activity,
-            videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase);
+            projectRepository, videoRepository, splitVideoUseCase, getMediaListFromProjectUseCase);
   }
 
   @Provides @PerActivity
   TrimPreviewPresenter provideTrimPresenter(SharedPreferences sharedPreferences,
                                             UserEventTracker userEventTracker,
+                                    ProjectRepository projectRepository,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
     return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
-        userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase);
+        userEventTracker, projectRepository, getMediaListFromProjectUseCase,
+        modifyVideoDurationUseCase);
   }
 
   @Provides @PerActivity
@@ -318,10 +328,11 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(SharedPreferences sharedPreferences,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase, CameraSettingsRepository
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          ProjectRepository projectRepository,CameraSettingsRepository
           cameraSettingsRepository, RunSyncAdapterHelper runSyncAdapterHelper) {
     return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
-        cameraSettingsRepository, runSyncAdapterHelper);
+        projectRepository, cameraSettingsRepository, runSyncAdapterHelper);
   }
 
   @Provides @PerActivity
@@ -365,11 +376,12 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   EditTextPreviewPresenter provideEditTextPreviewPresenter(
-              UserEventTracker userEventTracker,
+              UserEventTracker userEventTracker, ProjectRepository projectRepository,
               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
               ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
-        userEventTracker, getMediaListFromProjectUseCase, modifyVideoTextAndPositionUseCase);
+        userEventTracker, projectRepository, getMediaListFromProjectUseCase,
+        modifyVideoTextAndPositionUseCase);
   }
 
   @Provides @PerActivity
@@ -429,9 +441,11 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  GetCameraSettingsMapperSupportedListUseCase provideCameraSettingsListUseCase(CameraSettingsRepository
-                                                                   cameraSettingsRepository) {
-    return new GetCameraSettingsMapperSupportedListUseCase(activity, cameraSettingsRepository);
+  GetCameraSettingsMapperSupportedListUseCase provideCameraSettingsListUseCase(
+      ProjectRepository projectRepository,
+      CameraSettingsRepository cameraSettingsRepository) {
+    return new GetCameraSettingsMapperSupportedListUseCase(activity, projectRepository,
+        cameraSettingsRepository);
   }
 
   @Provides
@@ -485,12 +499,13 @@ public class ActivityPresentersModule {
 
   @Provides
   ApplyAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
-      VideoRepository videoRepository){
-   return  new ApplyAVTransitionsUseCase(videoRepository);
+      ProjectRepository projectRepository, VideoRepository videoRepository){
+   return  new ApplyAVTransitionsUseCase(projectRepository, videoRepository);
   }
 
-  @Provides GetVideoFormatFromCurrentProjectUseCase provideVideoFormatFromCurrentProjectUseCase() {
-    return new GetVideoFormatFromCurrentProjectUseCase();
+  @Provides GetVideoFormatFromCurrentProjectUseCase
+      provideVideoFormatFromCurrentProjectUseCase(ProjectRepository projectRepository) {
+    return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
 
   @Provides
@@ -500,13 +515,13 @@ public class ActivityPresentersModule {
   }
 
   @Provides RelaunchTranscoderTempBackgroundUseCase provideRelaunchTranscoderTempBackgroundUseCase(
-          VideoRepository videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(videoRepository);
+          ProjectRepository projectRepository, VideoRepository videoRepository) {
+    return new RelaunchTranscoderTempBackgroundUseCase(projectRepository, videoRepository);
   }
 
-  @Provides ExportProjectUseCase provideProjectExporter(
+  @Provides ExportProjectUseCase provideProjectExporter( ProjectRepository projectRepository,
           VideoToAdaptRepository videoToAdaptRepository) {
-    return new ExportProjectUseCase(videoToAdaptRepository);
+    return new ExportProjectUseCase(projectRepository, videoToAdaptRepository);
   }
 
   @Provides ModifyTrackUseCase providesModifyTrackUseCase(ProjectRepository projectRepository) {
@@ -547,11 +562,13 @@ public class ActivityPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          ProjectRepository projectRepository,
           VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
             adaptVideoToFormatUseCase, launchTranscoderAddAVTransitionUseCase,
-            relaunchTranscoderTempBackgroundUseCase, videoRepository, videoToAdaptRepository);
+            relaunchTranscoderTempBackgroundUseCase, projectRepository, videoRepository,
+            videoToAdaptRepository);
   }
 
   @Provides BillingManager provideBillingManager() {

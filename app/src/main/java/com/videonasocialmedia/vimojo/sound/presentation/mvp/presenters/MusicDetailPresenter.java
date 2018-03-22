@@ -5,6 +5,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementCha
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
 
@@ -50,6 +51,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     @Inject
     public MusicDetailPresenter(MusicDetailView musicDetailView,
                                 UserEventTracker userEventTracker,
+                                ProjectRepository projectRepository,
                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                 GetAudioFromProjectUseCase getAudioFromProjectUseCase,
                                 GetPreferencesTransitionFromProjectUseCase
@@ -68,31 +70,26 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.removeAudioUseCase = removeAudioUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
         // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
-        this.currentProject = loadCurrentProject();
-        currentProject.addListener(this);
+        this.currentProject = projectRepository.getCurrentProject();
         musicSelected = new Music("", 0);
     }
 
-    private Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
-    }
-
     public void init(String musicPath) {
+        currentProject.addListener(this);
         musicSelected = retrieveLocalMusic(musicPath);
         // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more
         // than one music, at this moment, music track same as music volume
         musicSelected.setVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
         obtainMusicsAndVideos();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
             musicDetailView.setVideoFadeTransitionAmongVideos();
         }
     }
 
     private void obtainMusicsAndVideos() {
-        getAudioFromProjectUseCase.getMusicFromProject(this);
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        getAudioFromProjectUseCase.getMusicFromProject(currentProject, this);
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, this);
     }
 
     public void removeMusic(final Music music) {
@@ -170,7 +167,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     }
 
     private void retrieveVoiceOver() {
-        getAudioFromProjectUseCase.getVoiceOverFromProject(new GetMusicFromProjectCallback() {
+        getAudioFromProjectUseCase.getVoiceOverFromProject(currentProject, new GetMusicFromProjectCallback() {
             @Override
             public void onMusicRetrieved(Music voiceOver) {
                 musicDetailView.setVoiceOver(voiceOver);
@@ -180,7 +177,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void setVolume(float volume) {
         // Now setVolume update MusicTrackVolume until Vimojo support setVolume by clip.
-        modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
+        modifyTrackUseCase.setTrackVolume(currentProject, currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
     }
 

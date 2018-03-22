@@ -13,6 +13,8 @@ import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
@@ -43,6 +45,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 public class InitAppPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
+  private final Project currentProject;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
@@ -53,6 +56,7 @@ public class InitAppPresenter {
   @Inject
   public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
+                          ProjectRepository projectRepository,
                           CameraSettingsRepository cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper) {
     this.context = context;
@@ -60,10 +64,12 @@ public class InitAppPresenter {
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
+    this.currentProject = projectRepository.getCurrentProject();
   }
 
   public void startLoadingProject(String rootPath, String privatePath) {
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath, isWatermarkActivated());
+    createDefaultProjectUseCase.loadOrCreateProject(currentProject, rootPath, privatePath,
+        isWatermarkActivated());
   }
 
   public boolean isWatermarkActivated() {

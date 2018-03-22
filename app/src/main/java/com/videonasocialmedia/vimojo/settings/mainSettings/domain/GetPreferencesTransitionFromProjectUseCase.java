@@ -14,8 +14,6 @@ import javax.inject.Inject;
 @Deprecated
 public class GetPreferencesTransitionFromProjectUseCase {
 
-  private Project currentProject;
-
   @Inject
   public GetPreferencesTransitionFromProjectUseCase() {
   }
@@ -24,8 +22,7 @@ public class GetPreferencesTransitionFromProjectUseCase {
    * Should query composition
     */
   @Deprecated
-  public boolean isAudioFadeTransitionActivated() {
-    currentProject = Project.getInstance(null, null, null, null);
+  public boolean isAudioFadeTransitionActivated(Project currentProject) {
     return currentProject.getVMComposition().isAudioFadeTransitionActivated();
   }
 
@@ -33,8 +30,7 @@ public class GetPreferencesTransitionFromProjectUseCase {
    * Should query composition
    */
   @Deprecated
-  public boolean isVideoFadeTransitionActivated() {
-    currentProject = Project.getInstance(null, null, null, null);
+  public boolean isVideoFadeTransitionActivated(Project currentProject) {
     return currentProject.getVMComposition().isVideoFadeTransitionActivated();
   }
 }

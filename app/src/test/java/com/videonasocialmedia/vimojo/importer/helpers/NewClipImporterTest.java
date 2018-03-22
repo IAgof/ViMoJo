@@ -19,10 +19,12 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -59,68 +61,68 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Log.class, Environment.class})
 public class NewClipImporterTest {
 
-    @InjectMocks NewClipImporter injectedNewClipImporter;
 
     @Mock AdaptVideoToFormatUseCase mockedAdaptVideoToFormatUseCase;
-    @Mock
-    VideoToAdapt mockedVideoToAdapt;
-    @Mock
-    VideonaFormat mockedVideonaFormat;
-    @Mock
-    AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
+    @Mock VideoToAdapt mockedVideoToAdapt;
+    @Mock VideonaFormat mockedVideonaFormat;
+    @Mock AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
     private File mockedStorageDir;
-    @Mock NewClipImporter mockedNewClipImporter;
     @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
     @Mock VideoToAdaptRepository mockedVideoToAdaptRepository;
-    private NewClipImporter newClipImporter;
     @Mock ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
     @Mock RelaunchTranscoderTempBackgroundUseCase mockedRelaunchTranscoderTempBackgroundUseCase;
     @Mock VideoRepository mockedVideoRepository;
+    @Mock ProjectRepository mockedProjectRepository;
+    private Project currentProject;
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(Log.class);
-
         PowerMockito.mockStatic(Environment.class);
         mockedStorageDir = PowerMockito.mock(File.class);
         when(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)).
                 thenReturn(mockedStorageDir);
         when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
-    }
-
-    @Before
-    public void setUpNewClipImporter() {
-        newClipImporter = new NewClipImporter(mockedGetVideoFormatFromCurrentProjectUseCase,
-                mockedAdaptVideoToFormatUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
-                mockedRelaunchTranscoderTempBackgroundUseCase, mockedVideoRepository,
-                mockedVideoToAdaptRepository);
+        getAProject();
+        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
     }
 
     @Test
     public void adaptVideoToVideonaFormatCallsAdaptVideoToFormatUseCase() throws IOException {
-        Project project = getAProject();
         Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
         int position = 0;
         int cameraRotation =0;
         int retries = 0;
-        VideonaFormat videonaFormat = project.getVMComposition().getVideoFormat();
+        VideonaFormat videonaFormat = currentProject.getVMComposition().getVideoFormat();
         when(mockedGetVideoFormatFromCurrentProjectUseCase
-                .getVideonaFormatToAdaptVideoRecordedAudioAndVideo()).thenReturn(videonaFormat);
+                .getVideonaFormatToAdaptVideoRecordedAudioAndVideo(currentProject)).thenReturn(videonaFormat);
+        int videoPosition = 0;
+        String destVideoPath = "DCIM/ViMoJo/Masters";
+        VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoPath, position, cameraRotation,
+            retries);
+        mockedVideoToAdaptRepository.add(videoToAdapt);
+        List<VideoToAdapt> videosToAdapt = mockedVideoToAdaptRepository.getAllVideos();
+        videosToAdapt.add(videoToAdapt);
+        NewClipImporter spyNewClipImporter = Mockito.spy(getInjectedNewClipImporter());
+        spyNewClipImporter.videoToAdaptRepository = mockedVideoToAdaptRepository;
+        when(mockedVideoToAdaptRepository.getAllVideos()).thenReturn(videosToAdapt);
+        when(spyNewClipImporter.getVideoToAdapt(video, videoPosition, cameraRotation, retries,
+            "destVideoRecoded")).thenReturn(videoToAdapt);
+        //spyNewClipImporter.videoToAdapt = videoToAdapt;
 
-        injectedNewClipImporter.adaptVideoToVideonaFormat(project, video, position,
+        spyNewClipImporter.adaptVideoToVideonaFormat(currentProject, video, position,
                 cameraRotation, retries);
 
-        Mockito.verify(mockedAdaptVideoToFormatUseCase).adaptVideo(any(VideoToAdapt.class),
-                eq(videonaFormat), any(AdaptVideoToFormatUseCase.AdaptListener.class));
+        Mockito.verify(mockedAdaptVideoToFormatUseCase).adaptVideo(eq(currentProject),
+            any(VideoToAdapt.class), eq(videonaFormat), any(AdaptVideoToFormatUseCase.AdaptListener.class));
     }
 
     @Test
     public void relaunchUnfinishedAdaptTasksCallsNewClipImporterAdaptVideoToVideonaFormat()
             throws IllegalItemOnTrack, IOException {
-        Project project = getAProject();
         Video video = new Video(".temp/path", Video.DEFAULT_VOLUME);
-        project.getVMComposition().getMediaTrack().insertItem(video);
+        currentProject.getVMComposition().getMediaTrack().insertItem(video);
         String destVideoPath = "DCIM/ViMoJo/Masters";
         int position = 0;
         int cameraRotation = 0;
@@ -130,23 +132,30 @@ public class NewClipImporterTest {
         mockedVideoToAdaptRepository.add(videoToAdapt);
         List<VideoToAdapt> videosToAdapt = mockedVideoToAdaptRepository.getAllVideos();
         videosToAdapt.add(videoToAdapt);
-        NewClipImporter newClipImporterSpy = Mockito.spy(newClipImporter);
+        NewClipImporter newClipImporterSpy = Mockito.spy(getInjectedNewClipImporter());
         newClipImporterSpy.videoToAdaptRepository = mockedVideoToAdaptRepository;
         when(mockedVideoToAdaptRepository.getAllVideos()).thenReturn(videosToAdapt);
 
-        newClipImporterSpy.relaunchUnfinishedAdaptTasks(project);
+        newClipImporterSpy.relaunchUnfinishedAdaptTasks(currentProject);
 
-        Mockito.verify(newClipImporterSpy).adaptVideoToVideonaFormat(project, video, position,
+        Mockito.verify(newClipImporterSpy).adaptVideoToVideonaFormat(currentProject, video, position,
                 cameraRotation,
                 ++retries);
         assertThat(videosToAdapt.get(0).getVideo().getIdentifier(), is(video.getIdentifier()));
     }
 
-    private Project getAProject() {
+    private NewClipImporter getInjectedNewClipImporter() {
+        return new NewClipImporter(mockedGetVideoFormatFromCurrentProjectUseCase,
+            mockedAdaptVideoToFormatUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
+            mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
+            mockedVideoRepository, mockedVideoToAdaptRepository);
+    }
+
+    private void getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 }

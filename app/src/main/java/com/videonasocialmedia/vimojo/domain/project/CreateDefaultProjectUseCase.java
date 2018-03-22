@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.domain.project;
 
 import android.graphics.drawable.Drawable;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -36,20 +37,16 @@ public class CreateDefaultProjectUseCase {
             .getDrawable(R.drawable.alpha_transition_white);
   }
 
-  public void loadOrCreateProject(String rootPath, String privatePath,
+  public void loadOrCreateProject(Project currentProject, String rootPath, String privatePath,
                                   boolean isWatermarkFeatured) {
     // Default project info
     ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "", new ArrayList<>());
-    // TODO(jliarte): 22/10/16 we should store current project in other place than Project instance.
-    //                This is done for convenience only as we should get rid of all
-    //                Project.getInstance calls
     boolean isProjectCreated = false;
-    if (Project.INSTANCE == null) {
-      Project.INSTANCE = projectRepository.getCurrentProject();
+    if (currentProject == null) {
       isProjectCreated = true;
+      currentProject = new Project(projectInfo, rootPath, privatePath,
+          profileRepository.getCurrentProfile());
     }
-    Project currentProject = Project.getInstance(projectInfo, rootPath, privatePath,
-            profileRepository.getCurrentProfile());
     currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
     if ((isProjectCreated && isWatermarkFeatured)) {
       currentProject.setWatermarkActivated(true);
@@ -64,7 +61,6 @@ public class CreateDefaultProjectUseCase {
     if (isWatermarkFeatured) {
       currentProject.setWatermarkActivated(true);
     }
-    Project.INSTANCE = currentProject;
     projectRepository.update(currentProject);
   }
 }

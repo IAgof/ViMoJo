@@ -100,7 +100,6 @@ public class VideoTimeLineTouchHelperCallbackTest {
 
   @Test
   public void clearViewCallsAdapterFinishMovement() {
-    getAProject();
     EditActivity editActivity = Robolectric.buildActivity(EditActivity.class).create().get();
     VideoTimeLineAdapter videoTimeLineAdapter = spy(new VideoTimeLineAdapter(mockedListener));
     View viewRoot = editActivity.findViewById(android.R.id.content);
@@ -114,14 +113,5 @@ public class VideoTimeLineTouchHelperCallbackTest {
     callback.clearView(mockedRecyclerView, viewHolder);
 
     verify(videoTimeLineAdapter).finishMovement();
-  }
-
-  private Project getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    List<String> productType = new ArrayList<>();
-    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
-        compositionProfile);
   }
 }

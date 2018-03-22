@@ -32,39 +32,38 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
   ProjectRepository mockedProjectRepository;
   @InjectMocks
   UpdateVideoTransitionPreferenceToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void setup(){
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Test
   public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null, null);
-    injectedUseCase.setVideoFadeTransitionActivated(false);
+    injectedUseCase.setVideoFadeTransitionActivated(currentProject, false);
+
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void shouldUpdateVideoTransitionPreferenceProjectAfterUseCase(){
-    Project project = getAProject();
     boolean videoTransitionActivated = true;
     assertThat("project videoTransitionPreference false by default ",
-        project.getVMComposition().isVideoFadeTransitionActivated(), is(false));
+        currentProject.getVMComposition().isVideoFadeTransitionActivated(), is(false));
 
-    injectedUseCase.setVideoFadeTransitionActivated(videoTransitionActivated);
-
-    project = Project.getInstance(null,null,null,null);
+    injectedUseCase.setVideoFadeTransitionActivated(currentProject, videoTransitionActivated);
 
     assertThat("project videoTransitionPreference is value injected",
-        project.getVMComposition().isVideoFadeTransitionActivated(), is(videoTransitionActivated));
+        currentProject.getVMComposition().isVideoFadeTransitionActivated(), is(videoTransitionActivated));
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",
         "Project description", new ArrayList<>());
-    return new Project(projectInfo, "/path","private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path","private/path", compositionProfile);
   }
 }

@@ -22,11 +22,5 @@ public class UpdateCurrentProjectUseCase {
   public void updateLastModificationAndProjectInstance(Project project) {
     project.updateDateOfModification(DateUtils.getDateRightNow());
     projectRepository.update(project);
-    Project.INSTANCE = project;
-  }
-
-  public void updateProject() {
-    Project project = Project.getInstance(null,null,null,null);
-    projectRepository.update(project);
   }
 }

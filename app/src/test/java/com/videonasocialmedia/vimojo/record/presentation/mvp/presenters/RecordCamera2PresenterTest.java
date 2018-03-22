@@ -30,6 +30,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -99,21 +100,19 @@ public class RecordCamera2PresenterTest {
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
   @Mock private VideoRepository mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
+  private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
     getAProject();
-  }
-
-  @After
-  public void tearDown() {
-    Project.getInstance(null, null, null, null).clear();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -151,8 +150,7 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void navigateEditOrGalleryButtonCallsGalleryIfThereIsNotVideos() {
-    getAProject().clear();
-    int numVideosInProject = getAProject().getVMComposition().getMediaTrack()
+    int numVideosInProject = currentProject.getVMComposition().getMediaTrack()
             .getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
     presenter = getRecordCamera2Presenter();
@@ -166,11 +164,10 @@ public class RecordCamera2PresenterTest {
   public void navigateEditOrGalleryCallsEditActivityIfThereAreVideosInProject()
       throws IllegalItemOnTrack {
     Video video = new Video("dcim/fakeVideo", Video.DEFAULT_VOLUME);
-    Project project = getAProject();
-    MediaTrack track = project.getMediaTrack();
+    MediaTrack track = currentProject.getMediaTrack();
     track.insertItem(video);
     track.insertItem(video);
-    int numVideosInProject = getAProject().getVMComposition().getMediaTrack()
+    int numVideosInProject = currentProject.getVMComposition().getMediaTrack()
             .getNumVideosInProject();
     assertThat("There are videos in project", numVideosInProject, is(2));
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
@@ -317,7 +314,7 @@ public class RecordCamera2PresenterTest {
 
     presenter.stopRecord();
 
-    verify(mockedUserEventTracker).trackVideoRecorded(eq(getAProject()), anyInt());
+    verify(mockedUserEventTracker).trackVideoRecorded(eq(currentProject), anyInt());
   }
 
   @Test
@@ -356,16 +353,15 @@ public class RecordCamera2PresenterTest {
     verify(mockedUserEventTracker).trackChangeFlashMode(anyBoolean());
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    Project project = Project.getInstance(projectInfo, "/path", "private/path", profile);
-    if(project.getVMComposition().getProfile() == null){
-      project.setProfile(profile);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
+    if(currentProject.getVMComposition().getProfile() == null){
+      currentProject.setProfile(profile);
     }
-    return project;
   }
 
   @NonNull
@@ -373,7 +369,7 @@ public class RecordCamera2PresenterTest {
     return new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedCameraSettingsRepository);
+            mockedProjectRepository, mockedCameraSettingsRepository);
   }
 
   private CameraSettings getCameraSettings() {

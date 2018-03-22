@@ -16,6 +16,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
+    private final ProjectRepository projectRepository;
 
     private Video videoToEdit;
 
@@ -48,22 +50,18 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
      */
     @Inject public DuplicatePreviewPresenter(DuplicateView duplicateView,
                                              UserEventTracker userEventTracker,
+                                             ProjectRepository projectRepository,
                                              AddVideoToProjectUseCase addVideoToProjectUseCase) {
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-
-        this.currentProject = loadCurrentProject();
+        this.projectRepository = projectRepository;
+        this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
     }
 
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
-    }
-
-
     public void loadProjectVideo(int videoIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoIndex);
@@ -86,7 +84,8 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
     public void duplicateVideo(int positionInAdapter, int numDuplicates) {
         for (int duplicates = 1; duplicates < numDuplicates; duplicates++) {
             //Video copyVideo = new Video(getVideoCopy());
-            addVideoToProjectUseCase.addVideoToProjectAtPosition(getVideoCopy(), positionInAdapter,
+            addVideoToProjectUseCase.addVideoToProjectAtPosition(currentProject, getVideoCopy(),
+                positionInAdapter,
                 new OnAddMediaFinishedListener() {
                     @Override
                     public void onAddMediaItemToTrackError() {

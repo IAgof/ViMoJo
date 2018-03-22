@@ -88,6 +88,7 @@ public class ShareVideoPresenterTest {
     private File mockedStorageDir;
     @Mock SocialNetwork mockedSocialNetwork;
     @Mock private RunSyncAdapterHelper mockedRunSyncAdapterHelper;
+    private Project currentProject;
 
     @Before
     public void injectMocks() {
@@ -98,21 +99,15 @@ public class ShareVideoPresenterTest {
             thenReturn(mockedStorageDir);
         when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
         PowerMockito.mockStatic(TextUtils.class);
-        when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
-    }
-
-    @After
-    public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        getAProject();
+        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
     }
 
     @Test
     public void constructorSetsCurrentProject() {
-        Project videonaProject = getAProject();
-
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
 
-        assertThat(shareVideoPresenter.currentProject, is(videonaProject));
+        assertThat(shareVideoPresenter.currentProject, is(currentProject));
     }
 
     @Test
@@ -130,13 +125,12 @@ public class ShareVideoPresenterTest {
     @Test
     public void shareVideoPresenterCallsTracking(){
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
-        Project videonaProject = getAProject();
         String socialNetwokId = "SocialNetwork";
         int totalVideosShared = 0;
 
         shareVideoPresenter.trackVideoShared(socialNetwokId);
 
-        verify(mockedUserEventTracker).trackVideoShared(socialNetwokId,videonaProject,
+        verify(mockedUserEventTracker).trackVideoShared(socialNetwokId, currentProject,
                 totalVideosShared);
     }
 
@@ -172,19 +166,18 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformNavigateToProjectDetailsIfAnyProjectInfoFieldsIsEmpty() {
-        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
-        assertThat(project, is(spyShareVideoPresenter.currentProject));
+        assertThat(currentProject.getProjectInfo().getProductTypeList().size(), is(0));
+        assertThat(currentProject, is(spyShareVideoPresenter.currentProject));
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         assertThat("Project info product type is empty",
-            project.getProjectInfo().getProductTypeList().size(), is(0));
+            currentProject.getProjectInfo().getProductTypeList().size(), is(0));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
@@ -194,23 +187,22 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformShowMessageUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
-        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         // Device is connected to network
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
-        assertThat(project, is(spyShareVideoPresenter.currentProject));
+        assertThat(currentProject.getProjectInfo().getProductTypeList().size(), is(0));
+        assertThat(currentProject, is(spyShareVideoPresenter.currentProject));
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productTypeList = new ArrayList<>();
         productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
-        project.getProjectInfo().setProductTypeList(productTypeList);
+        currentProject.getProjectInfo().setProductTypeList(productTypeList);
         assertThat("Project info product type is not empty",
-            project.getProjectInfo().getProductTypeList().size(), is(1));
+            currentProject.getProjectInfo().getProductTypeList().size(), is(1));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
@@ -220,23 +212,22 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void clickUpdateToPlatformShowDialogNotNetworkUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
-        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
         // Device is NOT connected to network
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
         boolean isMobileNetworkConnected = false;
         String videoPath = "";
-        assertThat(project.getProjectInfo().getProductTypeList().size(), is(0));
-        assertThat(project, is(spyShareVideoPresenter.currentProject));
+        assertThat(currentProject.getProjectInfo().getProductTypeList().size(), is(0));
+        assertThat(currentProject, is(spyShareVideoPresenter.currentProject));
         doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
         when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productTypeList = new ArrayList<>();
         productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
-        project.getProjectInfo().setProductTypeList(productTypeList);
+        currentProject.getProjectInfo().setProductTypeList(productTypeList);
         assertThat("Project info product type is not empty",
-            project.getProjectInfo().getProductTypeList().size(), is(1));
+            currentProject.getProjectInfo().getProductTypeList().size(), is(1));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
@@ -248,10 +239,8 @@ public class ShareVideoPresenterTest {
     public void uploadVideoRunSyncAdapter() {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         String videoPath = "";
-        getAProject().clear();
-        Project project = getAProject();
         boolean isAcceptedUploadMobileNetwork = true;
-        ProjectInfo projectInfo = project.getProjectInfo();
+        ProjectInfo projectInfo = currentProject.getProjectInfo();
 
         shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList(), isAcceptedUploadMobileNetwork);
@@ -300,7 +289,6 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void exportOrProcessVimojoNetworkIfProjectHasBeenExportedUploadToPlatform() {
-        Project project = getAProject();
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         boolean hasBeenProjectExported = true;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
@@ -313,9 +301,9 @@ public class ShareVideoPresenterTest {
         assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productType = new ArrayList<>();
         productType.add(ProductTypeProvider.Types.NAT_VO.name());
-        project.getProjectInfo().setProductTypeList(productType);
+        currentProject.getProjectInfo().setProductTypeList(productType);
         assertThat("Project info product type is not empty",
-            project.getProjectInfo().getProductTypeList().size(), is(1));
+            currentProject.getProjectInfo().getProductTypeList().size(), is(1));
 
         spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork);
 
@@ -365,12 +353,12 @@ public class ShareVideoPresenterTest {
         verify(mockedShareVideoView).showIntentOtherNetwork(videoExportedPath);
     }
 
-    public Project getAProject() {
+    public void getAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
     }
 
     @NonNull

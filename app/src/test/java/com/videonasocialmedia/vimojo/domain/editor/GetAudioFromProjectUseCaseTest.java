@@ -39,37 +39,23 @@ import java.util.List;
 public class GetAudioFromProjectUseCaseTest {
     @Mock private GetMusicFromProjectCallback mockedListener;
     @Captor private ArgumentCaptor<Music> retrievedMusicCaptor;
+    private Project currentProject;
 
     @Before
     public void injectDoubles() throws Exception {
         MockitoAnnotations.initMocks(this);
+        getAProject();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        // FIXME: tests are not independent as Project keeps state between tests
-        Project singletonProject = Project.getInstance(null, null, null, null);
-        singletonProject.clear();
-    }
-
-    @Test
-    public void constructorSetsProjectInstance() {
-        Project videonaProject = getAProject();
-
-        GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
-
-        assertThat("Project field set after construction", getAudioFromProjectUseCase.project,
-            is(videonaProject));
-    }
 
     @Test
     public void getMusicFromProjectReturnsProjectMusic() {
-        Project videonaProject = getAProject();
-        Music project_music = new Music(1, "resourceName", 2, 3, "music author","2", 0);
+        Music project_music = new Music(1, "resourceName", 2,
+            3, "music author","2", 0);
         ArrayList<AudioTrack> audioTracks = getAudioTracks(project_music);
-        videonaProject.setAudioTracks(audioTracks);
+        currentProject.setAudioTracks(audioTracks);
 
-        new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
+        new GetAudioFromProjectUseCase().getMusicFromProject(currentProject, mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         Music retrievedMusic = retrievedMusicCaptor.getValue();
@@ -79,16 +65,12 @@ public class GetAudioFromProjectUseCaseTest {
 
     @Test
     public void getMusicFromProjectNotifiesWithNullIfNoMusic() {
-        Project project = getAProject();
-
-        new GetAudioFromProjectUseCase().getMusicFromProject(mockedListener);
+        new GetAudioFromProjectUseCase().getMusicFromProject(currentProject, mockedListener);
 
         Mockito.verify(mockedListener).onMusicRetrieved(retrievedMusicCaptor.capture());
         assertThat("Music retrieved when no audio tracks", retrievedMusicCaptor.getValue(),
                 CoreMatchers.<Music>nullValue());
     }
-
-
 
     @NonNull
     public ArrayList<AudioTrack> getAudioTracks(Music music) {
@@ -103,13 +85,13 @@ public class GetAudioFromProjectUseCaseTest {
         return audioTracks;
     }
 
-    private Project getAProject() {
+    private void getAProject() {
         String rootPath = "project/root/path";
         String privatePath = "private/path";
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, rootPath, privatePath, compositionProfile);
+        currentProject = new Project(projectInfo, rootPath, privatePath, compositionProfile);
     }
 }

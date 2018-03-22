@@ -188,7 +188,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void obtainVideos() {
-    getMediaListFromProjectUseCase.getMediaListFromProject(new OnVideosRetrieved() {
+    getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
         checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
@@ -225,7 +225,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
         // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(video);
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(
+        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
             mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
               @Override
               public void onRemoveMediaItemFromTrackSuccess() {
@@ -248,13 +248,13 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   private void retrieveMusic() {
     if (currentProject.getVMComposition().hasMusic()) {
-      getAudioFromProjectUseCase.getMusicFromProject(music -> {
+      getAudioFromProjectUseCase.getMusicFromProject(currentProject, music -> {
         Music copyMusic = new Music(music);
         videonaPlayerView.bindMusic(copyMusic);
       });
     }
     if (currentProject.getVMComposition().hasVoiceOver()) {
-      getAudioFromProjectUseCase.getVoiceOverFromProject(voiceOver -> {
+      getAudioFromProjectUseCase.getVoiceOverFromProject(currentProject, voiceOver -> {
         Music copyVoiceOver = new Music(voiceOver);
         videonaPlayerView.bindVoiceOver(copyVoiceOver);
       });
@@ -262,10 +262,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void retrieveTransitions() {
-    if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
+    if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
       videonaPlayerView.setVideoFadeTransitionAmongVideos();
     }
-    if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+    if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated(currentProject) &&
         !currentProject.getVMComposition().hasMusic()) {
       videonaPlayerView.setAudioFadeTransitionAmongVideos();
     }

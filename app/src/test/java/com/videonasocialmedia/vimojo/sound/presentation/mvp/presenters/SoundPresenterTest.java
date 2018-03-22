@@ -43,74 +43,66 @@ public class SoundPresenterTest {
   @Mock ProjectRepository mockedProjectRepository;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
+  private Project currentProject;
 
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
-  }
-
-  @After
-  public void clearProjectInstance() {
-    Project.INSTANCE.clear();
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
   public void ifProjectHasVideosCallsBindTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
     videoList.add(video);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video);
-    assertThat("Project has video", project.getVMComposition().hasVideos(), is(true));
+    assertThat("Project has video", currentProject.getVMComposition().hasVideos(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
     soundPresenter.init();
 
-    verify(mockedSoundView).bindTrack(project.getMediaTrack());
+    verify(mockedSoundView).bindTrack(currentProject.getMediaTrack());
   }
 
   @Test
   public void ifProjectHasMusicCallsBindMusicListAndTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks()
+    currentProject.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
         .insertItem(music);
-    Project currentProject = Project.getInstance(null, null, null, null);
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
     soundPresenter.init();
 
-    verify(mockedSoundView).bindTrack(project.getAudioTracks()
+    verify(mockedSoundView).bindTrack(currentProject.getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC));
   }
 
   @Test
   public void ifProjectHasVoiceOverCallsBindVoiceOverTrack() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
     Music voiceOver = new Music(musicPath, musicVolume, 0);
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);
-    project.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
+    currentProject.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
-    Project currentProject = Project.getInstance(null, null, null, null);
     assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
     soundPresenter.init();
 
-    verify(mockedSoundView).bindTrack(project.getAudioTracks()
+    verify(mockedSoundView).bindTrack(currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER));
   }
 
@@ -139,14 +131,13 @@ public class SoundPresenterTest {
   @Test
   public void initPresenterInProjectWithVideoMusicAndVoiceOverShowTracks()
       throws IllegalItemOnTrack {
-    Project project = getAProject();
-    project.getMediaTrack().insertItem(new Video("somePath", Video.DEFAULT_VOLUME));
-    project.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
-    Track musicTrack = project.getAudioTracks()
+    currentProject.getMediaTrack().insertItem(new Video("somePath", Video.DEFAULT_VOLUME));
+    currentProject.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
+    Track musicTrack = currentProject.getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(new Music("somePath", 1f, 50));
     musicTrack.setPosition(1);
-    Track voiceOverTrack = project.getAudioTracks()
+    Track voiceOverTrack = currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(new Music("somePath", 1f, 50));
     voiceOverTrack.setPosition(2);
@@ -165,12 +156,12 @@ public class SoundPresenterTest {
         mockedVideoListErrorCheckerDelegate);
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path","private/path", profile);
+    currentProject = new Project(projectInfo, "/path","private/path", profile);
   }
 
 }

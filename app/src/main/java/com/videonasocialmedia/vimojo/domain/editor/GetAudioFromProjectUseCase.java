@@ -12,22 +12,21 @@ import javax.inject.Inject;
  * Created by jliarte on 31/05/16.
  */
 public class GetAudioFromProjectUseCase {
-    public Project project;
 
     @Inject
     public GetAudioFromProjectUseCase() {
-        project = Project.getInstance(null, null, null, null);
     }
 
-    public void getMusicFromProject(GetMusicFromProjectCallback listener) {
-        getItemsOnAudioTrack(listener, Constants.INDEX_AUDIO_TRACK_MUSIC);
+    public void getMusicFromProject(Project project, GetMusicFromProjectCallback listener) {
+        getItemsOnAudioTrack(project, listener, Constants.INDEX_AUDIO_TRACK_MUSIC);
     }
 
-    public void getVoiceOverFromProject(GetMusicFromProjectCallback listener) {
-        getItemsOnAudioTrack(listener, Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    public void getVoiceOverFromProject(Project project, GetMusicFromProjectCallback listener) {
+        getItemsOnAudioTrack(project, listener, Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     }
 
-    private void getItemsOnAudioTrack(GetMusicFromProjectCallback listener, int indexAudioTrack) {
+    private void getItemsOnAudioTrack(Project project, GetMusicFromProjectCallback listener,
+                                      int indexAudioTrack) {
         Music music = null;
         try {
             music = (Music) project.getAudioTracks()
@@ -38,7 +37,7 @@ public class GetAudioFromProjectUseCase {
         listener.onMusicRetrieved(music);
     }
 
-    public boolean hasBeenMusicSelected(){
+    public boolean hasBeenMusicSelected(Project project){
       return (project.getVMComposition().hasMusic());
     }
 }

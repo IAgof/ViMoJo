@@ -52,28 +52,29 @@ public class SplitVideoUseCaseTest {
   @Mock private OnSplitVideoListener mockedSpliListener;
   @Mock private VideoRepository videoRepository;
   @InjectMocks SplitVideoUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Test
   public void splitVideoCallsAddVideoToProjectAtPosition() {
     Video video = new Video("media/path", 1f);
 
-    injectedUseCase.splitVideo(video, 0, 10, mockedSpliListener);
+    injectedUseCase.splitVideo(currentProject, video, 0, 10, mockedSpliListener);
 
     ArgumentCaptor<Video> videoCaptor = ArgumentCaptor.forClass(Video.class);
-    verify(mockedAddVideoToProjectUseCase).addVideoToProjectAtPosition(videoCaptor.capture(),
-        eq(1), any(OnAddMediaFinishedListener.class));
+    verify(mockedAddVideoToProjectUseCase).addVideoToProjectAtPosition(eq(currentProject),
+        videoCaptor.capture(), eq(1), any(OnAddMediaFinishedListener.class));
     assertThat(videoCaptor.getValue().getMediaPath(), is(video.getMediaPath()));
   }
 
   @Test
   public void handleTaskErrorModifiesVideoTrimmingTimes() throws IOException {
     PowerMockito.mockStatic(Log.class);
-    Project currentProject = getAProject();
     String message = "Error message";
     Video video = spy(new Video("media/path", Video.DEFAULT_VOLUME));
     int splitTime = 1250;
@@ -102,16 +103,8 @@ public class SplitVideoUseCaseTest {
 //    assertThat(video.getStopTime(), is(not(endVideo.getStartTime())));
   }
 
-  private Project getAProject() {
-    clearProject();
-    return Project.getInstance(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+  private void getAProject() {
+    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
   }
-
-  private void clearProject() {
-    if (Project.INSTANCE != null) {
-      Project.INSTANCE.clear();
-    }
-  }
-
 }

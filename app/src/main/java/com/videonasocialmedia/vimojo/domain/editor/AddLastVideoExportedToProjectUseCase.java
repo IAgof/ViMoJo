@@ -19,9 +19,8 @@ public class AddLastVideoExportedToProjectUseCase {
     this.projectRepository = projectRepository;
   }
 
-  public void addLastVideoExportedToProject(String pathVideoExported, String date) {
-    //// TODO:(alvaro.martinez) 19/12/16 Move this functionality to VMComposition
-    Project currentProject = Project.getInstance(null,null,null,null);
+  public void addLastVideoExportedToProject(Project currentProject, String pathVideoExported,
+                                            String date) {
     LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported, date);
     currentProject.setLastVideoExported(lastVideoExported);
     currentProject.updateDateOfModification(date);

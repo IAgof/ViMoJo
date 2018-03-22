@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.content.Context;
+
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -8,9 +10,14 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 
 import org.junit.Before;
@@ -25,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 
 /**
@@ -33,57 +41,71 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 public class VoiceOverVolumePresenterTest {
 
-  @InjectMocks  VoiceOverVolumePresenter injectedPresenter;
-
   @Mock VoiceOverVolumeView mockedVoiceOverVolumeView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock Context mockedContext;
+  @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
+  @Mock GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromPRojectUseCase;
+  @Mock GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
+  @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
+
+  private Project currentProject;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
   public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack {
     float volume = 0.7f;
-    Project project = getAProject();
     int defaultDuration = 100;
     String mediaPath = "somePath";
     Music voiceOver = new Music(mediaPath, volume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
+    VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
 
-    injectedPresenter.setVoiceOverVolume(volume);
+    voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
-    verify(mockedModifyTrackUseCase).setTrackVolume(project.getAudioTracks()
+    verify(mockedModifyTrackUseCase).setTrackVolume(currentProject, currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
   }
 
   @Test
   public void setVolumeNavigateToSoundActivity() throws IllegalItemOnTrack {
     float volume = 0.7f;
-    Project project = getAProject();
     int defaultDuration = 100;
     String mediaPath = "somePath";
     Music voiceOver = new Music(mediaPath, volume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
+    VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
 
-    injectedPresenter.setVoiceOverVolume(volume);
+    voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
     verify(mockedVoiceOverVolumeView).goToSoundActivity();
   }
 
-  public Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
+  }
+
+  private VoiceOverVolumePresenter getVoiceOverVolumePresenter() {
+    return new VoiceOverVolumePresenter(mockedContext, mockedVoiceOverVolumeView, mockedProjectRepository,
+        mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
+        mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase);
   }
 
 }

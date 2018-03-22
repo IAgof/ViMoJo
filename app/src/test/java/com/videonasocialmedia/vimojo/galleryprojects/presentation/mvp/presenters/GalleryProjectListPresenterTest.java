@@ -38,16 +38,18 @@ public class GalleryProjectListPresenterTest {
   @InjectMocks GalleryProjectListPresenter injectedPresenter;
   @Mock GalleryProjectListView mockedGalleryProjectListView;
   @Mock private SharedPreferences mockedSharePreferences;
+  private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Test
   public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow() {
     List<Project> projectList = new ArrayList<>();
-    projectList.add(getAProject());
+    projectList.add(currentProject);
     doReturn(projectList).when(mockedProjectRepository)
             .getListProjectsByLastModificationDescending();
     injectedPresenter.updateProjectList();
@@ -65,39 +67,36 @@ public class GalleryProjectListPresenterTest {
 
   @Test
   public void goToEditUpdateRepositoryAndNavigate() {
-    Project project = getAProject();
 
-    injectedPresenter.goToEdit(project);
+    injectedPresenter.goToEdit(currentProject);
 
-    verify(mockedProjectRepository).update(project);
+    verify(mockedProjectRepository).update(currentProject);
     verify(mockedGalleryProjectListView).navigateTo(EditActivity.class);
   }
 
   @Test
   public void goToShareUpdateRepositoryAndNavigate() {
-    Project project = getAProject();
 
-    injectedPresenter.goToShare(project);
+    injectedPresenter.goToShare(currentProject);
 
-    verify(mockedProjectRepository).update(project);
+    verify(mockedProjectRepository).update(currentProject);
     verify(mockedGalleryProjectListView).navigateTo(ShareActivity.class);
   }
 
   @Test
   public void goToDetailsProjectUpdateRepositoryAndNavigate() {
-    Project project = getAProject();
 
-    injectedPresenter.goToDetailProject(project);
+    injectedPresenter.goToDetailProject(currentProject);
 
-    verify(mockedProjectRepository).update(project);
+    verify(mockedProjectRepository).update(currentProject);
     verify(mockedGalleryProjectListView).navigateTo(DetailProjectActivity.class);
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

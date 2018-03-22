@@ -2,11 +2,16 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.support.annotation.NonNull;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
@@ -19,9 +24,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -36,16 +45,8 @@ public class ReorderMediaItemUseCaseTest {
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @Before
-  public void setProject() {
-    currentProject = Project.getInstance(null, null, null, null);
-  }
-
-  @After
-  public void clearProject() {
-    currentProject.clear();
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -56,7 +57,7 @@ public class ReorderMediaItemUseCaseTest {
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(1, 0, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(currentProject, 1, 0, onReorderMediaListener);
 
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -71,7 +72,7 @@ public class ReorderMediaItemUseCaseTest {
     currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(1, 0, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(currentProject,1, 0, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(1));
     assertThat(video0.getPosition(), is(1));
@@ -91,7 +92,7 @@ public class ReorderMediaItemUseCaseTest {
     currentProject.getVMComposition().getMediaTrack().insertItemAt(3, video3);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(3, 1, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(currentProject,3, 1, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(0));
     assertThat(video0.getPosition(), is(0));
@@ -102,7 +103,7 @@ public class ReorderMediaItemUseCaseTest {
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video2), is(3));
     assertThat(video2.getPosition(), is(3));
 
-    injectedUseCase.moveMediaItem(1, 0, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(currentProject,1, 0, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video3), is(0));
     assertThat(video3.getPosition(), is(0));
@@ -126,7 +127,7 @@ public class ReorderMediaItemUseCaseTest {
     currentProject.getVMComposition().getMediaTrack().insertItemAt(3, video3);
     OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
 
-    injectedUseCase.moveMediaItem(2, 1, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(currentProject,2, 1, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(0));
     assertThat(video0.getPosition(), is(0));
@@ -137,7 +138,7 @@ public class ReorderMediaItemUseCaseTest {
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video3), is(3));
     assertThat(video3.getPosition(), is(3));
 
-    injectedUseCase.moveMediaItem(2, 1, onReorderMediaListener);
+    injectedUseCase.moveMediaItem(currentProject,2, 1, onReorderMediaListener);
 
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video0), is(0));
     assertThat(video0.getPosition(), is(0));
@@ -147,6 +148,14 @@ public class ReorderMediaItemUseCaseTest {
     assertThat(video2.getPosition(), is(2));
     assertThat(currentProject.getMediaTrack().getItems().indexOf(video3), is(3));
     assertThat(video3.getPosition(), is(3));
+  }
+
+  public void getAProject() {
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
   }
 
   @NonNull

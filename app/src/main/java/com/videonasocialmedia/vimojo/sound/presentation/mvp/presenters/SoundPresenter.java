@@ -92,7 +92,7 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
   public void setTrackVolume(int id, int seekBarProgress){
     Track track = getTrackById(id);
     float volume = (float) (seekBarProgress * 0.01);
-    modifyTrackUseCase.setTrackVolume(track, volume);
+    modifyTrackUseCase.setTrackVolume(currentProject, track, volume);
     updatePlayerVolume(id, volume);
   }
 
@@ -125,7 +125,7 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
 
   public void setTrackMute(int id, boolean isMute){
     Track track = getTrackById(id);
-    modifyTrackUseCase.setTrackMute(track, isMute);
+    modifyTrackUseCase.setTrackMute(currentProject, track, isMute);
     updatePlayerMute(id, isMute);
   }
 

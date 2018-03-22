@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -42,6 +43,7 @@ public class VoiceOverVolumePresenter implements OnVideosRetrieved {
 
     @Inject
     public VoiceOverVolumePresenter(Context context, VoiceOverVolumeView voiceOverVolumeView,
+                                    ProjectRepository projectRepository,
                                     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                     GetPreferencesTransitionFromProjectUseCase
                                     getPreferencesTransitionFromProjectUseCase,
@@ -56,40 +58,33 @@ public class VoiceOverVolumePresenter implements OnVideosRetrieved {
         this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
-        this.currentProject = loadCurrentProject();
-    }
-
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
+        this.currentProject = projectRepository.getCurrentProject();
     }
 
     public void init() {
         obtainVideos();
         retrieveMusic();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()){
+        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)){
             voiceOverVolumeView.setVideoFadeTransitionAmongVideos();
         }
-        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
+        if(getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated(currentProject) &&
             !currentProject.getVMComposition().hasMusic()){
             voiceOverVolumeView.setAudioFadeTransitionAmongVideos();
         }
     }
 
     private void obtainVideos() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, this);
     }
 
     private void retrieveMusic() {
         if (currentProject.getVMComposition().hasMusic()) {
-            getAudioFromProjectUseCase.getMusicFromProject(new GetMusicFromProjectCallback() {
-                @Override
-                public void onMusicRetrieved(Music music) {
-                    voiceOverVolumeView.setMusic(music);
-                    Track trackMusic = currentProject.getAudioTracks()
-                            .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-                    if(trackMusic.isMuted()){
-                        voiceOverVolumeView.muteMusic();
-                    }
+            getAudioFromProjectUseCase.getMusicFromProject(currentProject, music -> {
+                voiceOverVolumeView.setMusic(music);
+                Track trackMusic = currentProject.getAudioTracks()
+                        .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+                if(trackMusic.isMuted()){
+                    voiceOverVolumeView.muteMusic();
                 }
             });
         }
@@ -110,7 +105,7 @@ public class VoiceOverVolumePresenter implements OnVideosRetrieved {
     }
 
     public void setVoiceOverVolume(float volume) {
-        modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
+        modifyTrackUseCase.setTrackVolume(currentProject, currentProject.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
         voiceOverVolumeView.goToSoundActivity();
     }

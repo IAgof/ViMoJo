@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.Preference;
 import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
@@ -19,7 +18,6 @@ import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetWatermarkPreferenceFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
@@ -73,6 +71,7 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   public PreferencesPresenter providePreferencePresenter(
+          ProjectRepository projectRepository,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           UpdateAudioTransitionPreferenceToProjectUseCase
@@ -81,20 +80,18 @@ public class FragmentPresentersModule {
                   updateVideoTransitionPreferenceToProjectUseCase,
           UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          GetWatermarkPreferenceFromProjectUseCase getWatermarkPreferenceFromProjectUseCase,
           UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount) {
 
     return new PreferencesPresenter(settingsFragment, context, sharedPreferences,
-        transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
+        transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref, projectRepository,
         getMediaListFromProjectUseCase,
         getPreferencesTransitionFromProjectUseCase,
         updateAudioTransitionPreferenceToProjectUseCase,
         updateVideoTransitionPreferenceToProjectUseCase,
         updateIntermediateTemporalFilesTransitionsUseCase,
-        getWatermarkPreferenceFromProjectUseCase,
         updateWatermarkPreferenceToProjectUseCase,
         relaunchTranscoderTempBackgroundUseCase,
         getVideonaFormatFromCurrentProjectUseCase,
@@ -124,9 +121,8 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions(
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
-    return new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase);
+  UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions() {
+    return new UpdateIntermediateTemporalFilesTransitionsUseCase();
   }
 
   @Provides
@@ -136,19 +132,15 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  GetWatermarkPreferenceFromProjectUseCase provideGetWatermarkPreference() { 
-    return new GetWatermarkPreferenceFromProjectUseCase();
-  }
-
-  @Provides
   RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(
-          VideoRepository videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(videoRepository);
+          ProjectRepository projectRepository, VideoRepository videoRepository) {
+    return new RelaunchTranscoderTempBackgroundUseCase(projectRepository, videoRepository);
   }
 
   @Provides
-  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat() {
-    return new GetVideoFormatFromCurrentProjectUseCase();
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectRepository
+                                                                       projectRepository) {
+    return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
 
   @Provides
@@ -156,11 +148,12 @@ public class FragmentPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideosUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
+          ProjectRepository projectRepository,
           VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
-            launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase, videoRepository,
-            videoToAdaptRepository);
+            launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase,
+            projectRepository, videoRepository, videoToAdaptRepository);
   }
 
   @Provides

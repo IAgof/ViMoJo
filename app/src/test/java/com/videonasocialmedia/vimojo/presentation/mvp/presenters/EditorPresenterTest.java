@@ -83,17 +83,14 @@ public class EditorPresenterTest {
   @Mock NewClipImporter mockedNewClipImporter;
   @Mock BillingManager mockedBillingManager;
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
+  private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(getAProject());
-  }
-
-  @After
-  public void tearDown() {
-    Project.getInstance(null, null, null, null).clear();
+    getAProject();
+    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -113,14 +110,13 @@ public class EditorPresenterTest {
   @Test
   public void switchPreferenceWatermarkUpdateProjectAndRepository() {
     EditorPresenter editorPresenter = getEditorPresenter();
-    Project project = getAProject();
     boolean watermarkActivated = true;
     when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
-    assert(!project.hasWatermark());
+    assert(!currentProject.hasWatermark());
 
     editorPresenter.switchPreference(watermarkActivated, ConfigPreferences.WATERMARK);
 
-    verify(mockedProjectRepository).setWatermarkActivated(project, watermarkActivated);
+    verify(mockedProjectRepository).setWatermarkActivated(currentProject, watermarkActivated);
   }
 
   @Test
@@ -147,73 +143,71 @@ public class EditorPresenterTest {
 
   @Test
   public void initPreviewFromProjectCallsGetMediaListFromProjectUseCase() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video = new Video("somePath", Video.DEFAULT_VOLUME);
-    project.getMediaTrack().insertItem(video);
-    Assert.assertThat("Project has video", project.getVMComposition().hasVideos(), Matchers.is(true));
+    currentProject.getMediaTrack().insertItem(video);
+    Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
     editorPresenter.initPreviewFromProject();
 
     verify(mockedGetMediaListFromProjectUseCase)
-        .getMediaListFromProject(any(OnVideosRetrieved.class));
+        .getMediaListFromProject(any(Project.class), any(OnVideosRetrieved.class));
   }
 
   @Test
   public void ifProjectHasMusicGetMediaListCallsGetMusicListFromProject()
       throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
+    currentProject.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
         .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
     editorPresenter.initPreviewFromProject();
 
-    verify(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(GetMusicFromProjectCallback.class));
+    verify(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(Project.class),
+        any(GetMusicFromProjectCallback.class));
   }
 
   @Test
   public void ifProjectHasVideosCallsBindVideoList() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
     videoList.add(video);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video);
-    Assert.assertThat("Project has video", project.getVMComposition().hasVideos(), Matchers.is(true));
+    Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(),
+        Matchers.is(true));
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((OnVideosRetrieved)invocation.getArguments()[0]).onVideosRetrieved(videoList);
+        ((OnVideosRetrieved)invocation.getArguments()[1]).onVideosRetrieved(videoList);
         return null;
       }
-    }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(OnVideosRetrieved.class));
+    }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(Project.class),
+        any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
     editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindVideoList(any());
-    verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(project);
+    verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(currentProject);
   }
 
   @Test
   public void ifProjectHasVideosAndVideoIsMuteCallsSetVideoMute() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
     videoList.add(video);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video);
     mediaTrack.setMute(true);
-    Assert.assertThat("Project has video", project.getVMComposition().hasVideos(), Matchers.is(true));
-    Assert.assertThat("Project has video on mute", project.getVMComposition()
+    Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
+    Assert.assertThat("Project has video on mute", currentProject.getVMComposition()
         .getMediaTrack().isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
@@ -224,18 +218,17 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasVideosAndVideoIsNotMutedCallsSetVideoVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video = new Video("video/path", 1f);
     List<Video> videoList = new ArrayList<>();
     videoList.add(video);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video);
     float volumeVideo = 0.7f;
     mediaTrack.setVolume(volumeVideo);
-    Assert.assertThat("Project has video", project.getVMComposition().hasVideos(), Matchers.is(true));
-    Assert.assertThat("Project has video and volume", project.getVMComposition()
+    Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
+    Assert.assertThat("Project has video and volume", currentProject.getVMComposition()
         .getMediaTrack().getVolume(), Matchers.is(volumeVideo));
-    Assert.assertThat("Project has video and it is not on mute", project.getVMComposition()
+    Assert.assertThat("Project has video and it is not on mute", currentProject.getVMComposition()
         .getMediaTrack().isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
 
@@ -246,24 +239,23 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasMusicCallsBindMusic() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks()
+    currentProject.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
         .insertItem(music);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((GetMusicFromProjectCallback)invocation.getArguments()[0]).onMusicRetrieved(music);
+        ((GetMusicFromProjectCallback)invocation.getArguments()[1]).onMusicRetrieved(music);
         return null;
       }
-    }).when(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(GetMusicFromProjectCallback.class));
+    }).when(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(Project.class),
+        any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
     editorPresenter.initPreviewFromProject();
@@ -273,18 +265,16 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasMusicAndIsMutedCallsSetMusicVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks()
+    currentProject.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
         .insertItem(music);
-    Track musicTrack = project.getAudioTracks().get(0);
+    Track musicTrack = currentProject.getAudioTracks().get(0);
     musicTrack.setMute(true);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     assertThat("Music track is muted", currentProject.getAudioTracks().get(0).isMuted(),
         is(true));
@@ -297,19 +287,17 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasMusicAndIsNotMutedCallsSetMusicVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "music/path";
     float musicVolume = 0.6f;
     Music music = new Music(musicPath, musicVolume, 0);
     List<Music> musicList = new ArrayList<>();
     musicList.add(music);
-    project.getVMComposition().getAudioTracks()
+    currentProject.getVMComposition().getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC)
         .insertItem(music);
-    Track musicTrack = project.getAudioTracks().get(0);
+    Track musicTrack = currentProject.getAudioTracks().get(0);
     float musicTrackVolume = 0.7f;
     musicTrack.setVolume(musicTrackVolume);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     assertThat("Music track is not muted", currentProject.getAudioTracks().get(0).isMuted(),
         is(false));
@@ -322,25 +310,24 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasVoiceOverCallsBindVoiceOver() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "voice/over/path";
     float musicVolume = 0.6f;
     Music voiceOver = new Music(musicPath, musicVolume, 0);
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);
-    project.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
+    currentProject.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), Matchers.is(true));
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((GetMusicFromProjectCallback)invocation.getArguments()[0]).onMusicRetrieved(voiceOver);
+        ((GetMusicFromProjectCallback)invocation.getArguments()[1]).onMusicRetrieved(voiceOver);
         return null;
       }
-    }).when(mockedGetAudioFromProjectUseCase).getVoiceOverFromProject(any(GetMusicFromProjectCallback.class));
+    }).when(mockedGetAudioFromProjectUseCase).getVoiceOverFromProject(any(Project.class),
+        any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
     editorPresenter.initPreviewFromProject();
@@ -350,20 +337,18 @@ public class EditorPresenterTest {
 
   @Test
   public void ifProjectHasVoiceOverAndIsNotMutedCallsSetVoiceOverVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "voice/over/path";
     float voiceOverVolume = 0.6f;
     Music voiceOver = new Music(musicPath, voiceOverVolume, 0);
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);
-    project.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
+    currentProject.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
-    Track voiceOverTrack = project.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER);
+    Track voiceOverTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER);
     float voiceOverTrackVolume = 0.7f;
     voiceOverTrack.setVolume(voiceOverTrackVolume);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), Matchers.is(true));
     Assert.assertThat("VoiceOver is not muted", currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(false));
@@ -375,19 +360,17 @@ public class EditorPresenterTest {
   }
   @Test
   public void ifProjectHasVoiceOverAndIsMutedCallsSetVoiceOverVolume() throws IllegalItemOnTrack {
-    Project project = getAProject();
     String musicPath = "voice/over/path";
     float voiceOverVolume = 0.6f;
     Music voiceOver = new Music(musicPath, voiceOverVolume, 0);
     voiceOver.setMusicTitle(Constants.MUSIC_AUDIO_VOICEOVER_TITLE);
     List<Music> voiceOverList = new ArrayList<>();
     voiceOverList.add(voiceOver);
-    project.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
+    currentProject.getAudioTracks().add(new AudioTrack(INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getVMComposition().getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER)
         .insertItem(voiceOver);
-    Track voiceOverTrack = project.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER);
+    Track voiceOverTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.setMute(true);
-    Project currentProject = Project.getInstance(null, null, null, null);
     Assert.assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), Matchers.is(true));
     Assert.assertThat("VoiceOver is muted", currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(true));
@@ -408,11 +391,11 @@ public class EditorPresenterTest {
         mockedNewClipImporter, mockedBillingManager);
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

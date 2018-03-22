@@ -18,6 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
@@ -41,6 +42,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     private final String LOG_TAG = getClass().getSimpleName();
     private final Context context;
     private final VideoRepository videoRepository;
+    private final ProjectRepository projectRepository;
     private SplitVideoUseCase splitVideoUseCase;
 
     private Video videoToEdit;
@@ -55,7 +57,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     @Inject
     public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
-                                 Context context, VideoRepository videoRepository,
+                                 Context context, ProjectRepository projectRepository,
+                                 VideoRepository videoRepository,
                                  SplitVideoUseCase splitVideoUseCase,
                                  GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
         this.splitView = splitView;
@@ -64,16 +67,13 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
         this.videoRepository = videoRepository;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.currentProject = loadCurrentProject();
+        this.projectRepository = projectRepository;
+        this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
     }
 
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
-    }
-
     public void loadProjectVideo(int videoToTrimIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoToTrimIndex);
@@ -99,7 +99,7 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
 
     public void splitVideo(int positionInAdapter, int timeMs) {
-        splitVideoUseCase.splitVideo(videoToEdit, positionInAdapter,timeMs, this);
+        splitVideoUseCase.splitVideo(currentProject, videoToEdit, positionInAdapter,timeMs, this);
         trackSplitVideo();
     }
 
