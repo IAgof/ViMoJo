@@ -62,7 +62,7 @@
     <string name="cancel_exportation">Cancelar</string>
     <string name="export_wait_for_transcoding">Esperando transcodificación de vídeos temporales</string>
     <string name="export_join_videos">Juntando vídeos</string>
-    <string name="export_write_video_to_disk">Almacenando video en dispositivo</string>
+    <string name="export_write_video_to_disk">Generando video en dispositivo</string>
     <string name="export_add_audio_tracks">Añadiendo pistas de audio</string>
     <string name="export_mix_audio">Mezclando audio</string>
     <string name="export_mix_audio_error">Error mezclando audio</string>

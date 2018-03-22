@@ -77,12 +77,12 @@ public class ExportProjectUseCase implements ExportListener {
         }
       });
     } catch (NoSuchElementException exception) {
-      Log.e(TAG, "Catched " +  exception.getClass().getName()
+      Log.e(TAG, "Caught " +  exception.getClass().getName()
           + "Error waiting for adapting jobs to finish before exporting" + exception.getMessage());
       onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR);
     } catch (InterruptedException | ExecutionException e) {
       e.printStackTrace();
-      Log.e(TAG, "Catched " +  e.getClass().getName()
+      Log.e(TAG, "Caught " +  e.getClass().getName()
           + "Error waiting for adapting jobs to finish before exporting" + e.getMessage());
       onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR);
     }
@@ -143,5 +143,6 @@ public class ExportProjectUseCase implements ExportListener {
 
   public void cancelExport() {
     isExportCanceled = true;
+    vmCompositionExportSession.cancel();
   }
 }
