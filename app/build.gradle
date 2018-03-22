@@ -76,6 +76,7 @@ android {
             resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -164,6 +165,7 @@ android {
             resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -209,6 +211,7 @@ android {
             resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.market4news.com/api/v1/\""
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -232,6 +235,7 @@ android {
             resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -279,8 +283,6 @@ android {
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
-
         }
         debug {
             minifyEnabled false
@@ -292,7 +294,6 @@ android {
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appNameSuffix:".Debug", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
-            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
         }
     }
     compileOptions {
