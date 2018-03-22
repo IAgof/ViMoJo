@@ -278,16 +278,18 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showDialogNeedToCompleteDetailProjectFields() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
-    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-      switch (which) {
-        case DialogInterface.BUTTON_NEUTRAL:
-          navigateToProjectDetails();
-          break;
-      }
-    };
-    builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    runOnUiThread(() -> {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateToProjectDetails();
+            break;
+        }
+      };
+      builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    });
   }
 
   @Override

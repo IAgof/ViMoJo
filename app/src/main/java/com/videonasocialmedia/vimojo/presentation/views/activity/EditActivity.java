@@ -477,6 +477,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   private void updatePlayer() {
+    updateCurrentProject();
     obtainVideos();
     updatePreviewTimeLists();
     seekToClip(currentVideoIndex);

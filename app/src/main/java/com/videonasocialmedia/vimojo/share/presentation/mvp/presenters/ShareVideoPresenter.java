@@ -60,6 +60,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
 
     private Context context;
+    private ProjectRepository projectRepository;
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private CreateDefaultProjectUseCase createDefaultProjectUseCase;
@@ -101,6 +102,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
         this.sharedPreferences = sharedPreferences;
+        this.projectRepository = projectRepository;
         this.createDefaultProjectUseCase = createDefaultProjectUseCase;
         this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
         this.exportUseCase = exportProjectUseCase;
@@ -240,6 +242,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                boolean isAcceptedUploadWithMobileNetwork,
                                boolean isMobileNetworkConnected,
                                String videoPath) {
+        updateCurrentProject();
         if (isNeededAskPermissionForMobileUpload(isWifiConnected, isMobileNetworkConnected,
             isAcceptedUploadWithMobileNetwork)) {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
@@ -269,6 +272,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
         }
         uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList(), isAcceptedUploadWithMobileNetwork);
+    }
+
+    private void updateCurrentProject() {
+        currentProject = projectRepository.getCurrentProject();
     }
 
     private boolean areThereProjectFieldsCompleted(Project currentProject) {

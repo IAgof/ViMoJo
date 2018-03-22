@@ -316,6 +316,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
       projectRepository.setWatermarkActivated(currentProject, isChecked);
+      sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, isChecked).apply();
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
       }
@@ -354,6 +355,10 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     return currentProject.hasWatermark();
   }
 
+  private void activateWatermarkPreference() {
+    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).apply();
+  }
+
   @Override
   public void itemDarkThemePurchased(boolean purchased) {
     if (purchased) {
@@ -369,6 +374,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if (purchased) {
       editorActivityView.itemWatermarkPurchased();
     } else {
+      activateWatermarkPreference();
       editorActivityView.activateWatermark();
     }
   }
@@ -390,5 +396,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     projectInfo.setTitle(title);
     projectRepository.setProjectInfo(project, projectInfo.getTitle(), projectInfo.getDescription(),
         projectInfo.getProductTypeList());
+  }
+
+  public void updateCurrentProject() {
+    currentProject = projectRepository.getCurrentProject();
   }
 }

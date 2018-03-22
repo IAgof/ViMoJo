@@ -615,4 +615,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void obtainVideos() {
     editorPresenter.obtainVideos();
   }
+
+  public void updateCurrentProject() {
+    editorPresenter.updateCurrentProject();
+  }
 }

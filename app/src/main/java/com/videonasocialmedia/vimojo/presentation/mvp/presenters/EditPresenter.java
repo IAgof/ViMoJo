@@ -137,7 +137,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
-        if (projectRepository.getCurrentProject().getVMComposition().hasVideos()) {
+        if (currentProject.getVMComposition().hasVideos()) {
             editActivityView.updatePlayerAndTimeLineVideoListChanged();
         } else {
             editActivityView.goToRecordOrGallery();
