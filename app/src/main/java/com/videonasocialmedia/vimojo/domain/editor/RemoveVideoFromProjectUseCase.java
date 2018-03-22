@@ -66,6 +66,24 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
         }
     }
 
+    @Override
+    public void removeMediaItemFromProject(Project currentProject, int positionVideoToRemove,
+                                            OnRemoveMediaFinishedListener listener) {
+
+        Track mediaTrack = currentProject.getMediaTrack();
+        Media media = mediaTrack.getItems().get(positionVideoToRemove);
+        boolean correct = removeVideoItemFromTrack(currentProject, media, mediaTrack);
+        if (!correct) return;
+        //video repository remove media, remove videos from other projects also.
+        videoRepository.remove((Video) media);
+        if (correct) {
+            projectRepository.update(currentProject);
+            listener.onRemoveMediaItemFromTrackSuccess();
+        } else {
+            listener.onRemoveMediaItemFromTrackError();
+        }
+    }
+
     /**
      * Gets the path of the new video and insert it in the media track.
      *

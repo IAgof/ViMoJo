@@ -80,6 +80,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
+  private AlertDialog exportErrorDialog;
   private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
@@ -115,6 +116,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     super.onPause();
     exportProgressDialog.dismiss();
     checkingUserProgressDialog.dismiss();
+    if(exportErrorDialog != null) {
+      exportErrorDialog.dismiss();
+    }
   }
 
   @Override
@@ -165,6 +169,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   private void cancelExportation() {
+    isAppExportingProject = false;
     presenter.cancelExportation();
   }
 
@@ -478,6 +483,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void showVideoExportError(int cause) {
     exportProgressDialog.dismiss();
+    isAppExportingProject = false;
     showVideoExportErrorDialog(cause);
   }
 
@@ -544,7 +550,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
       builder.setCancelable(false).setTitle(R.string.dialog_title_export_error)
               .setMessage(dialog_message_export_error)
-              .setNeutralButton(R.string.ok, dialogClickListener).show();
+              .setNeutralButton(R.string.ok, dialogClickListener);
+      exportErrorDialog = builder.create();
+      exportErrorDialog.show();
     });
   }
 }

@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -31,6 +32,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -55,7 +57,7 @@ public class RemoveVideoFromProjectUseCaseTest {
   public void setupTestEventBus() {
     PowerMockito.mockStatic(EventBus.class);
     EventBus mockedEventBus = PowerMockito.mock(EventBus.class);
-    PowerMockito.when(EventBus.getDefault()).thenReturn(mockedEventBus);
+    when(EventBus.getDefault()).thenReturn(mockedEventBus);
     this.mockedEventBus = mockedEventBus;
   }
 
@@ -68,6 +70,18 @@ public class RemoveVideoFromProjectUseCaseTest {
     OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
 
     injectedUseCase.removeMediaItemsFromProject(currentProject, videos, listener);
+
+    verify(mockedProjectRepository).update(currentProject);
+  }
+
+  @Test
+  public void testRemoveMediaItemFromProjectCallsUpdateProject() throws IllegalItemOnTrack {
+    Video video = new Video("media/path", 1f);
+    int positionVideoToRemove = 0;
+    currentProject.getMediaTrack().insertItem(video);
+    OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
+
+    injectedUseCase.removeMediaItemFromProject(currentProject, positionVideoToRemove, listener);
 
     verify(mockedProjectRepository).update(currentProject);
   }

@@ -28,4 +28,7 @@ public interface RemoveMediaFromProjectListener {
      */
     void removeMediaItemsFromProject(Project currentProject, ArrayList<Media> list,
                                      OnRemoveMediaFinishedListener listener);
+
+    void removeMediaItemFromProject(Project currentProject, int positionVideoToRemove,
+                               OnRemoveMediaFinishedListener listener);
 }
