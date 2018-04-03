@@ -73,12 +73,9 @@ android {
             versionName "0.14.7" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-//            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-//            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
-            ext.api_base_url = [debug: "\"http://beta.viday.co/api/v1/\"", release: "\"http://beta.viday.co/api/v1/\""]
+            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -98,8 +95,6 @@ android {
             versionName "0.7.6.1.fHispanopost" // 20171130
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "HispanoPost"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -121,8 +116,6 @@ android {
             versionName "0.8.2.fRtve" // 20180131
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -144,8 +137,6 @@ android {
             versionName "0.7.6.1.fVimojoWatermark" // 20171130
             resValue "string", "app_out_of_date", "2018-06-30" //20170731
             resValue "string", "app_name", "Vimojo Videona"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -167,12 +158,9 @@ android {
             versionName "0.14.7.fThomsonFoundation" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-//            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-//            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
-            ext.api_base_url = [debug: "\"http://beta.viday.co/api/v1/\"", release: "\"http://beta.viday.co/api/v1/\""]
+            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -193,8 +181,6 @@ android {
             versionName "0.7.6.1.fNemSummit" // 20171130
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Nem Summit"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-            resValue "string", "api_base_url", "https://nemsummit.viday.co/"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -216,11 +202,8 @@ android {
             versionName "0.14.7.fMarketForNews" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
-            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
-//            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-//            buildConfigField "String", "API_BASE_URL", "\"http://beta.market4news.com/api/v1/\""
             ext.api_base_url = [debug: "http://beta.market4news.com/api/v1/", release: "http://beta.market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -247,7 +230,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
 //            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
-            ext.api_base_url = [debug: "\"http://beta.viday.co/api/v1/\"", release: "\"http://beta.viday.co/api/v1/\""]
+            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
