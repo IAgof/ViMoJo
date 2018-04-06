@@ -69,13 +69,13 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 105 // 20180320
-            versionName "0.15.0" // 20180320
+            versionCode 105 // 20180322
+            versionName "0.14.7" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -95,7 +95,6 @@ android {
             versionName "0.7.6.1.fHispanopost" // 20171130
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "HispanoPost"
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -117,7 +116,6 @@ android {
             versionName "0.8.2.fRtve" // 20180131
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo Rtve"
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -139,7 +137,6 @@ android {
             versionName "0.7.6.1.fVimojoWatermark" // 20171130
             resValue "string", "app_out_of_date", "2018-06-30" //20170731
             resValue "string", "app_name", "Vimojo Videona"
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -157,13 +154,13 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 56 // 20180320
-            versionName "0.15.0.fThomsonFoundation" // 20180320
+            versionCode 56 // 20180322
+            versionName "0.14.7.fThomsonFoundation" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -184,7 +181,6 @@ android {
             versionName "0.7.6.1.fNemSummit" // 20171130
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Nem Summit"
-            resValue "string", "api_base_url", "https://nemsummit.viday.co/"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
@@ -202,13 +198,13 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 23 // 20180320
-            versionName "0.15.0.fMarketForNews" // 20180320
+            versionCode 23 // 20180322
+            versionName "0.14.7.fMarketForNews" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
-            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+            ext.api_base_url = [debug: "http://beta.market4news.com/api/v1/", release: "http://beta.market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -225,13 +221,16 @@ android {
 
         nbc {
             applicationId "com.videonasocialmedia.vimojo.nbc"
-            versionCode 6 // 20180320
-            versionName "0.15.0.fComcastNbc" // 20180320
+            versionCode 6 // 20180322
+            versionName "0.14.7.fComcastNbc" // 20180322
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo NBC"
-            resValue "string", "api_base_url", "https://"
+            // FIXME: we've defined api_base_url three times, as resValue, as buildConfigField and later on debug and release variants!!
+//            resValue "string", "api_base_url", "https://"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
+//            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
+            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -271,6 +270,7 @@ android {
 //            }
             def crashlyticsUploadDistributionTask = project.tasks.getByName("crashlyticsUploadDistribution${variantSuffix}")
             crashlyticsUploadDistributionTask.dependsOn generatePropertiesTask
+            variant.buildConfigField "String", "API_BASE_URL", "\"${flavor.ext.api_base_url[variant.buildType.name]}\""
         }
     }
     buildTypes {
@@ -279,8 +279,6 @@ android {
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
-
         }
         debug {
             minifyEnabled false
@@ -292,7 +290,6 @@ android {
             ext.fabricApiKey = FABRIC_VIDEONA_ORG_APIKEY
             ext.fabricApiSecret = FABRIC_VIDEONA_ORG_APISECRET
             manifestPlaceholders = [appNameSuffix:".Debug", fabricApiKey: FABRIC_VIDEONA_ORG_APIKEY]
-            buildConfigField "String", "API_BASE_URL", "\"http://beta.viday.co/api/v1/\""
         }
     }
     compileOptions {
