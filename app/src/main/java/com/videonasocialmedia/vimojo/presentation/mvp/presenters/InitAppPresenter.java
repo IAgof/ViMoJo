@@ -45,7 +45,6 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 public class InitAppPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
-  private final Project currentProject;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
@@ -64,11 +63,10 @@ public class InitAppPresenter {
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
-    this.currentProject = projectRepository.getCurrentProject();
   }
 
   public void startLoadingProject(String rootPath, String privatePath) {
-    createDefaultProjectUseCase.loadOrCreateProject(currentProject, rootPath, privatePath,
+    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath,
         isWatermarkActivated());
   }
 

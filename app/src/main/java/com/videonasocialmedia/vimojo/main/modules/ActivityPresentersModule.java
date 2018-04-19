@@ -444,8 +444,8 @@ public class ActivityPresentersModule {
   GetCameraSettingsMapperSupportedListUseCase provideCameraSettingsListUseCase(
       ProjectRepository projectRepository,
       CameraSettingsRepository cameraSettingsRepository) {
-    return new GetCameraSettingsMapperSupportedListUseCase(activity, projectRepository,
-        cameraSettingsRepository);
+    return new GetCameraSettingsMapperSupportedListUseCase(activity,
+        projectRepository.getCurrentProject(), cameraSettingsRepository);
   }
 
   @Provides
@@ -516,7 +516,8 @@ public class ActivityPresentersModule {
 
   @Provides RelaunchTranscoderTempBackgroundUseCase provideRelaunchTranscoderTempBackgroundUseCase(
           ProjectRepository projectRepository, VideoRepository videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(projectRepository, videoRepository);
+    return new RelaunchTranscoderTempBackgroundUseCase(projectRepository.getCurrentProject(),
+        videoRepository);
   }
 
   @Provides ExportProjectUseCase provideProjectExporter( ProjectRepository projectRepository,
@@ -546,11 +547,12 @@ public class ActivityPresentersModule {
   @Provides
   Camera2Wrapper provideCamera2wrapper(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          GetCameraSettingsUseCase getCameraSettingsUseCase) {
+          GetCameraSettingsUseCase getCameraSettingsUseCase, ProjectRepository projectRepository) {
     return new Camera2Wrapper(activity, getCameraSettingsUseCase.getCameraIdSelected(), textureView,
             directorySaveVideos,
             getVideoFormatFromCurrentProjectUseCase
-                    .getVideoRecordedFormatFromCurrentProjectUseCase(), freeStorage);
+                .getVideoRecordedFormatFromCurrentProjectUseCase(projectRepository
+                    .getCurrentProject()), freeStorage);
   }
 
   @Provides VimojoLicensesProvider provideLicenseProvider() {

@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.importer.helpers;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.common.base.Function;
@@ -9,7 +8,6 @@ import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -38,8 +36,6 @@ public class NewClipImporter {
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
   private Project currentProject;
-  protected VideoToAdapt videoToAdapt;
-  protected AdaptVideoToFormatUseCase.AdaptListener adaptListener;
 
   public NewClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
@@ -63,8 +59,9 @@ public class NewClipImporter {
     Log.d(TAG, "Adapt video at position " + videoPosition);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator
             + new File(video.getMediaPath()).getName();
-    VideonaFormat videoFormat = getVideoFormat(cameraRotation);
-    adaptListener = new AdaptVideoToFormatUseCase.AdaptListener() {
+    VideonaFormat videoFormat = getVideoFormat(currentProject, cameraRotation);
+    AdaptVideoToFormatUseCase.AdaptListener adaptListener =
+            new AdaptVideoToFormatUseCase.AdaptListener() {
       @Override
       public void onSuccessAdapting(Video video) {
         // TODO(jliarte): 31/08/17 implement this method
@@ -77,7 +74,8 @@ public class NewClipImporter {
     };
     // TODO(jliarte): 11/09/17 check if video is retrieved on error
 //    saveVideoToAdapt(video, destVideoRecorded, videoPosition, cameraRotation, retries);
-    videoToAdapt = getVideoToAdapt(video, videoPosition, cameraRotation, retries, destVideoRecorded);
+    VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
+            cameraRotation, retries);
     try {
       adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, adaptListener);
       applyAVTransitions(video, currentProject);
@@ -85,12 +83,6 @@ public class NewClipImporter {
       e.printStackTrace();
       adaptListener.onErrorAdapting(video, "adaptVideoToFormatUseCase");
     }
-  }
-
-  @NonNull
-  public VideoToAdapt getVideoToAdapt(Video video, int videoPosition, int cameraRotation, int retries, String destVideoRecorded) {
-    return new VideoToAdapt(video, destVideoRecorded, videoPosition,
-            cameraRotation, retries);
   }
 
   private void applyAVTransitions(Video video, Project currentProject) {
@@ -132,7 +124,7 @@ public class NewClipImporter {
     };
   }
 
-  protected VideonaFormat getVideoFormat(int rotation) {
+  protected VideonaFormat getVideoFormat(Project currentProject, int rotation) {
     // FIXME: 23/05/17 if rotation == 0, should be use getVideonaFormatToAdaptVideoRecordedAudio, more efficient.
     // Fix problems with profile MotoG, LG_pablo, ...
     return getVideoFormatFromCurrentProjectUseCase

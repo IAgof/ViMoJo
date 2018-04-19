@@ -236,7 +236,7 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
     }
 
     protected void addVoiceOver(final Music voiceOver) {
-        addAudioUseCase.addMusic(voiceOver,
+        addAudioUseCase.addMusic(currentProject, voiceOver,
                 INDEX_AUDIO_TRACK_VOICE_OVER,
                 new OnAddMediaFinishedListener() {
                     @Override

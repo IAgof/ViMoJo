@@ -1,9 +1,11 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Repository;
 
 import java.util.List;
@@ -29,4 +31,7 @@ public interface ProjectRepository extends Repository<Project> {
 
   void setProjectInfo(Project project, String projectTitle, String projectDescription,
                       List<String> productTypesListSelected);
+
+  Project createFirstAppProject(ProjectInfo projectInfo, String rootPath, String privatePath,
+                             Profile currentProfile);
 }

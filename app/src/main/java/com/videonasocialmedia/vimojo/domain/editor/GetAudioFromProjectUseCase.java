@@ -13,10 +13,6 @@ import javax.inject.Inject;
  */
 public class GetAudioFromProjectUseCase {
 
-    @Inject
-    public GetAudioFromProjectUseCase() {
-    }
-
     public void getMusicFromProject(Project project, GetMusicFromProjectCallback listener) {
         getItemsOnAudioTrack(project, listener, Constants.INDEX_AUDIO_TRACK_MUSIC);
     }

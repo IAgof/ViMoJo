@@ -22,10 +22,6 @@ public class MergeVoiceOverAudiosUseCase {
 
     private static final String TAG = "MergeVoiceOverAudiosUC";
 
-    @Inject
-    public MergeVoiceOverAudiosUseCase() {
-    }
-
     public void mergeAudio(Project project, String pathAudioMerge,
                            final OnMergeVoiceOverAudiosListener listener) {
         // TODO(jliarte): 30/11/16 make this in just one step and build AVComposition?

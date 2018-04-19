@@ -25,7 +25,6 @@ import java.io.IOException;
 public class RelaunchTranscoderTempBackgroundUseCase {
   private static final String LOG_TAG = RelaunchTranscoderTempBackgroundUseCase.class
           .getSimpleName();
-  private final ProjectRepository projectRepository;
   private final VideoRepository videoRepository;
   private final TextToDrawable drawableGenerator =
           new TextToDrawable(VimojoApplication.getAppContext());
@@ -35,11 +34,10 @@ public class RelaunchTranscoderTempBackgroundUseCase {
 
   private final Project currentProject;
 
-  public RelaunchTranscoderTempBackgroundUseCase(ProjectRepository projectRepository,
+  public RelaunchTranscoderTempBackgroundUseCase(Project project,
                                                  VideoRepository videoRepository) {
-    this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;
-    this.currentProject = projectRepository.getCurrentProject();
+    this.currentProject = project;
   }
 
   /**

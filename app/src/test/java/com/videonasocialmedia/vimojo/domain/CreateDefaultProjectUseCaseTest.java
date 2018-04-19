@@ -121,7 +121,8 @@ public class CreateDefaultProjectUseCaseTest {
   public void loadOrCreateUpdatesProjectRepository() {
     CreateDefaultProjectUseCase createDefaultProjectUseCase = getInjectedUseCase();
 
-    createDefaultProjectUseCase.loadOrCreateProject(currentProject, "root/path", "private/path", false);
+    createDefaultProjectUseCase.loadOrCreateProject("root/path", "private/path",
+        false);
 
     verify(mockedProjectRepository).update(currentProject);
   }
@@ -154,7 +155,7 @@ public class CreateDefaultProjectUseCaseTest {
     assertThat(currentProject.hasWatermark(), is(false));
     CreateDefaultProjectUseCase createDefaultProjectUseCase = getInjectedUseCase();
 
-    createDefaultProjectUseCase.loadOrCreateProject(currentProject,"root/path",
+    createDefaultProjectUseCase.loadOrCreateProject("root/path",
         "private/path", isWatermarkFeatured);
 
     verify(mockedProject).setWatermarkActivated(isWatermarkFeatured);

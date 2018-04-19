@@ -33,7 +33,6 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
-    private final ProjectRepository projectRepository;
 
     private Video videoToEdit;
 
@@ -55,7 +54,6 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.projectRepository = projectRepository;
         this.currentProject = projectRepository.getCurrentProject();
         currentProject.addListener(this);
     }

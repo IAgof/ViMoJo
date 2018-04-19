@@ -122,7 +122,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void addMusic(Music music, float volume) {
         music.setVolume(volume);
-        addAudioUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+        addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
             new OnAddMediaFinishedListener() {
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {

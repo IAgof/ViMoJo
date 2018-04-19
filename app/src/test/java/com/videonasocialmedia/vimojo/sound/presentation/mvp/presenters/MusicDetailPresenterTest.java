@@ -106,11 +106,11 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnAddMediaFinishedListener listener = invocation.getArgument(2);
+                OnAddMediaFinishedListener listener = invocation.getArgument(3);
                 listener.onAddMediaItemToTrackSuccess(music);
                 return null;
             }
-        }).when(mockedAddAudioUseCase).addMusic(eq(music),
+        }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(music),
             eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
             Matchers.any(OnAddMediaFinishedListener.class));
 
@@ -129,11 +129,11 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnAddMediaFinishedListener listener = invocation.getArgument(2);
+                OnAddMediaFinishedListener listener = invocation.getArgument(3);
                 listener.onAddMediaItemToTrackError();
                 return null;
             }
-        }).when(mockedAddAudioUseCase).addMusic(eq(music),
+        }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(music),
             eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
             Matchers.any(OnAddMediaFinishedListener.class));
 

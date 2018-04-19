@@ -104,7 +104,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.projectRepository = projectRepository;
-    this.currentProject = getCurrentProject();
+    this.currentProject = projectRepository.getCurrentProject();
     this.newClipImporter = newClipImporter;
     this.billingManager = billingManager;
     playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
@@ -112,7 +112,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   public void init(boolean hasBeenProjectExported, String videoPath) {
     if (!hasBeenProjectExported) {
-      initPreviewFromProject();
+      initPreviewFromProject(currentProject);
     } else {
       initPreviewFromVideoExported(videoPath);
     }
@@ -123,11 +123,11 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     videonaPlayerView.initPreviewFromVideo(videoList);
   }
 
-  protected void initPreviewFromProject() {
-    obtainVideos();
-    retrieveMusic();
-    retrieveTransitions();
-    retrieveVolumeOnTracks();
+  protected void initPreviewFromProject(Project currentProject) {
+    obtainVideos(currentProject);
+    retrieveMusic(currentProject);
+    retrieveTransitions(currentProject);
+    retrieveVolumeOnTracks(currentProject);
   }
 
   public void onPause() {
@@ -159,10 +159,6 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  public Project getCurrentProject() {
-    return projectRepository.getCurrentProject();
-  }
-
   public boolean getPreferenceThemeApp() {
     // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
     boolean isActivateDarkTheme = sharedPreferences
@@ -187,11 +183,21 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor.apply();
   }
 
+  public void obtainVideos(Project currentProject) {
+    obtainVideoFromProject(currentProject);
+  }
+
+  // if videos has changed in edit we need to get currentProject with last changes from repository.
   public void obtainVideos() {
+    Project currentProject = projectRepository.getCurrentProject();
+    obtainVideoFromProject(currentProject);
+  }
+
+  public void obtainVideoFromProject(Project currentProject) {
     getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
-        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
+        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(currentProject, videosRetrieved);
         List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
         List<Video> videoCopy = new ArrayList<>(checkedVideoList);
         videonaPlayerView.bindVideoList(videoCopy);
@@ -205,12 +211,13 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     });
   }
 
-  public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
+  public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(Project currentProject,
+                                                                   List<Video> videoList) {
     for (Video video : videoList) {
       ListenableFuture transcodingJob = video.getTranscodingTask();
       // Condition to relaunch transcoding job.
       if (transcodingJob == null && !video.isTranscodingTempFileFinished()) {
-        relaunchTranscoderTempFileJob(video);
+        relaunchTranscoderTempFileJob(currentProject, video);
         Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
                 + " - " + video.getMediaPath());
       }
@@ -246,7 +253,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     return checkedVideoList;
   }
 
-  private void retrieveMusic() {
+  private void retrieveMusic(Project currentProject) {
     if (currentProject.getVMComposition().hasMusic()) {
       getAudioFromProjectUseCase.getMusicFromProject(currentProject, music -> {
         Music copyMusic = new Music(music);
@@ -261,7 +268,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void retrieveTransitions() {
+  private void retrieveTransitions(Project currentProject) {
     if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
       videonaPlayerView.setVideoFadeTransitionAmongVideos();
     }
@@ -271,7 +278,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  protected void retrieveVolumeOnTracks() {
+  protected void retrieveVolumeOnTracks(Project currentProject) {
     if (currentProject.getVMComposition().hasMusic()) {
       Track musicTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC);
       if (musicTrack.isMuted()) {
@@ -300,8 +307,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void relaunchTranscoderTempFileJob(Video video) {
-    Project currentProject = getCurrentProject();
+  private void relaunchTranscoderTempFileJob(Project currentProject, Video video) {
     relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
 
@@ -312,15 +318,14 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if (preference.equals(ConfigPreferences.THEME_APP_DARK)) {
       userEventTracker.trackThemeAppDrawerChanged(isChecked);
       if (isShareActivity()) {
-        editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
+        editorActivityView.restartShareActivity(currentProject.getPathLastVideoExported());
       } else {
         editorActivityView.restartActivity();
       }
     }
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
-      Project project = getCurrentProject();
-      projectRepository.setWatermarkActivated(project, isChecked);
+      projectRepository.setWatermarkActivated(currentProject, isChecked);
     }
   }
 
@@ -331,7 +336,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
             || !isDarkThemeActivated && currentTheme.equals(THEME_DARK)) {
       if (isShareActivity()) {
         // TODO: 20/2/18 Update restartShareActivity, getPathLastVideoExported bad approximation
-        editorActivityView.restartShareActivity(getCurrentProject().getPathLastVideoExported());
+        editorActivityView.restartShareActivity(currentProject.getPathLastVideoExported());
       } else {
         editorActivityView.restartActivity();
       }
@@ -397,10 +402,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void updateTitleCurrentProject(String title) {
-    Project project = getCurrentProject();
-    ProjectInfo projectInfo = project.getProjectInfo();
+    ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
-    projectRepository.setProjectInfo(project, projectInfo.getTitle(), projectInfo.getDescription(),
+    projectRepository.setProjectInfo(currentProject, projectInfo.getTitle(), projectInfo.getDescription(),
         projectInfo.getProductTypeList());
   }
 }

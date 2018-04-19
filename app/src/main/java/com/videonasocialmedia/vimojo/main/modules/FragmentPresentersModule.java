@@ -134,7 +134,8 @@ public class FragmentPresentersModule {
   @Provides
   RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(
           ProjectRepository projectRepository, VideoRepository videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(projectRepository, videoRepository);
+    return new RelaunchTranscoderTempBackgroundUseCase(projectRepository.getCurrentProject(),
+        videoRepository);
   }
 
   @Provides

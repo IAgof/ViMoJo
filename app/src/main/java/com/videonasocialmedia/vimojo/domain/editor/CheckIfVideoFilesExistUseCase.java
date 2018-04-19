@@ -29,13 +29,12 @@ public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved,
 
     @Inject
     public CheckIfVideoFilesExistUseCase(
-        ProjectRepository projectRepository,
+        Project currentProject,
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
         RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase) {
-        this.projectRepository = projectRepository;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
-        this.currentProject = projectRepository.getCurrentProject();
+        this.currentProject = currentProject;
     }
 
     public void check() {

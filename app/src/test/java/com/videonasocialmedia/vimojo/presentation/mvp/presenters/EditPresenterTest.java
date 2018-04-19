@@ -70,7 +70,6 @@ public class EditPresenterTest {
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
   private Project currentProject;
 
-  @InjectMocks EditPresenter injectedEditPresenter;
 
   @Before
   public void injectTestDoubles() {

@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -157,6 +158,15 @@ public class ProjectRealmRepository implements ProjectRepository {
     projectInfo.setDescription(projectDescription);
     projectInfo.setProductTypeList(productTypesListSelected);
     update(project);
+  }
+
+  @Override
+  public Project createFirstAppProject(ProjectInfo projectInfo, String rootPath, String privatePath,
+                                    Profile currentProfile) {
+    Project project = new Project(projectInfo, rootPath, privatePath,
+        currentProfile);
+    update(project);
+    return project;
   }
 
 }

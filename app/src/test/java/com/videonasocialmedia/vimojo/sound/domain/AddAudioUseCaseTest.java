@@ -58,7 +58,7 @@ public class AddAudioUseCaseTest {
     assertThat("Initial position in track is 0", musicTrack.getPosition(), is(0));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated music track position to 1, ",
@@ -81,7 +81,7 @@ public class AddAudioUseCaseTest {
     assertThat("Initial position in track is 0", musicTrack.getPosition(), is(0));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated music track position to 2, ", currentProject.getAudioTracks()
@@ -101,7 +101,7 @@ public class AddAudioUseCaseTest {
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated voice over track position to 2, ",
@@ -124,7 +124,7 @@ public class AddAudioUseCaseTest {
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated voice over track position to 2, ",
@@ -141,7 +141,7 @@ public class AddAudioUseCaseTest {
         currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.5f));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated volume track to 0.7f ",
@@ -156,7 +156,7 @@ public class AddAudioUseCaseTest {
     currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     verify(mockedProjectRepository).update(currentProject);
@@ -173,7 +173,7 @@ public class AddAudioUseCaseTest {
             is(0));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated audio track items ",
@@ -189,7 +189,7 @@ public class AddAudioUseCaseTest {
     assertThat("Default audioTrack list size is one",currentProject.getAudioTracks().size(), is(1));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has added one track to audioTrack list", currentProject.getAudioTracks().size(),
@@ -204,7 +204,7 @@ public class AddAudioUseCaseTest {
     assertThat("Default audioTrack list size is one",currentProject.getAudioTracks().size(), is(1));
     AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    addAudioUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has added one track to audioTrack list", currentProject.getAudioTracks().size(),

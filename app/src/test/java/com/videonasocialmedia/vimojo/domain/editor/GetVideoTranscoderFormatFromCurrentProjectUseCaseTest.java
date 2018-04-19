@@ -51,7 +51,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
     VideonaFormat defaultVideoTranscoderFormat = new VideonaFormat();
 
     VideoCameraFormat videoTranscoderFormat =
-            useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
+            useCase.getVideoRecordedFormatFromCurrentProjectUseCase(currentProject);
 
     assertThat(videoTranscoderFormat.getVideoBitrate(),
             is(defaultVideoTranscoderFormat.getVideoBitrate()));

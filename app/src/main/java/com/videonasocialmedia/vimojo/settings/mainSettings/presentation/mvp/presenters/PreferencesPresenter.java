@@ -252,7 +252,8 @@ public class PreferencesPresenter extends VimojoPresenter
                 if (data && !(new File(Constants.PATH_WATERMARK).exists())) {
                     Utils.copyWatermarkResourceToDevice();
                 }
-                updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
+                updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(currentProject,
+                    data);
                 preferencesView.setWatermarkSwitchPref(data);
             default:
         }

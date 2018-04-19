@@ -20,8 +20,7 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         this.projectRepository = projectRepository;
     }
 
-    public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase() {
-        Project project = projectRepository.getCurrentProject();
+    public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase(Project project) {
         VideoCameraFormat videoCameraFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();

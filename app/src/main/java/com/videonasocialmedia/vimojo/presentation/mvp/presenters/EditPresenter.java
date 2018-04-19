@@ -44,7 +44,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         ElementChangedListener {
     private final String TAG = getClass().getSimpleName();
     private Project currentProject;
-    private final ProjectRepository projectRepository;
     private Context context;
     // TODO(jliarte): 2/05/17 inject delegate?
     final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
@@ -79,7 +78,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
-        this.projectRepository = projectRepository;
         this.currentProject = projectRepository.getCurrentProject();
     }
 
@@ -137,7 +135,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
 
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
-        if (projectRepository.getCurrentProject().getVMComposition().hasVideos()) {
+        if (currentProject.getVMComposition().hasVideos()) {
             editActivityView.updatePlayerAndTimeLineVideoListChanged();
         } else {
             editActivityView.goToRecordOrGallery();

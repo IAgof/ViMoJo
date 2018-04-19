@@ -110,11 +110,11 @@ public class VoiceOverRecordPresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener = invocation.getArgument(2);
+        OnAddMediaFinishedListener listener = invocation.getArgument(3);
         listener.onAddMediaItemToTrackSuccess(voiceOver);
         return null;
       }
-    }).when(mockedAddAudioUseCase).addMusic(eq(voiceOver),
+    }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(voiceOver),
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             any(OnAddMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
@@ -133,11 +133,11 @@ public class VoiceOverRecordPresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener = invocation.getArgument(2);
+        OnAddMediaFinishedListener listener = invocation.getArgument(3);
         listener.onAddMediaItemToTrackError();
         return null;
       }
-    }).when(mockedAddAudioUseCase).addMusic(eq(voiceOver),
+    }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(voiceOver),
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             any(OnAddMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
