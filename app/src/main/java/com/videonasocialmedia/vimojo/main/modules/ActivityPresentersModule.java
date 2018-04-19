@@ -500,7 +500,7 @@ public class ActivityPresentersModule {
   @Provides
   ApplyAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
       ProjectRepository projectRepository, VideoRepository videoRepository){
-   return  new ApplyAVTransitionsUseCase(projectRepository, videoRepository);
+   return  new ApplyAVTransitionsUseCase(projectRepository.getCurrentProject(), videoRepository);
   }
 
   @Provides GetVideoFormatFromCurrentProjectUseCase

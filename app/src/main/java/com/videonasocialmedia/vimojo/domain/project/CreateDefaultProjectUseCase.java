@@ -32,6 +32,7 @@ public class CreateDefaultProjectUseCase {
           ProjectRepository projectRepository, ProfileRepository profileRepository) {
     this.projectRepository = projectRepository;
     this.profileRepository = profileRepository;
+    // TODO: 19/4/18 Delete Vimojo.Application.getAppContext in use case
     drawableFadeTransitionVideo = VimojoApplication.getAppContext()
             .getDrawable(R.drawable.alpha_transition_white);
   }
@@ -40,15 +41,13 @@ public class CreateDefaultProjectUseCase {
                                   boolean isWatermarkFeatured) {
     ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "",
         new ArrayList<>());
-    Project currentProject;
+    Project currentProject = projectRepository.getCurrentProject();
     if(isProjectRepositoryEmpty()) {
       currentProject = projectRepository.createFirstAppProject(projectInfo, rootPath, privatePath,
           profileRepository.getCurrentProfile());
       if (isWatermarkFeatured) {
         currentProject.setWatermarkActivated(true);
       }
-    } else {
-      currentProject = projectRepository.getCurrentProject();
     }
     currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
     projectRepository.update(currentProject);
@@ -64,7 +63,7 @@ public class CreateDefaultProjectUseCase {
     projectRepository.update(currentProject);
   }
 
-  private boolean isProjectRepositoryEmpty() {
-    return projectRepository.getCurrentProject() == null;
+  public boolean isProjectRepositoryEmpty() {
+    return (projectRepository.getCurrentProject() == null);
   }
 }

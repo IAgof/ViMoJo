@@ -112,7 +112,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
 
   public void init(boolean hasBeenProjectExported, String videoPath) {
     if (!hasBeenProjectExported) {
-      initPreviewFromProject(currentProject);
+      initPreviewFromProject();
     } else {
       initPreviewFromVideoExported(videoPath);
     }
@@ -123,11 +123,11 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     videonaPlayerView.initPreviewFromVideo(videoList);
   }
 
-  protected void initPreviewFromProject(Project currentProject) {
+  protected void initPreviewFromProject() {
     obtainVideos(currentProject);
-    retrieveMusic(currentProject);
-    retrieveTransitions(currentProject);
-    retrieveVolumeOnTracks(currentProject);
+    retrieveMusic();
+    retrieveTransitions();
+    retrieveVolumeOnTracks();
   }
 
   public void onPause() {
@@ -197,7 +197,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
-        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(currentProject, videosRetrieved);
+        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
         List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
         List<Video> videoCopy = new ArrayList<>(checkedVideoList);
         videonaPlayerView.bindVideoList(videoCopy);
@@ -211,13 +211,12 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     });
   }
 
-  public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(Project currentProject,
-                                                                   List<Video> videoList) {
+  public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
     for (Video video : videoList) {
       ListenableFuture transcodingJob = video.getTranscodingTask();
       // Condition to relaunch transcoding job.
       if (transcodingJob == null && !video.isTranscodingTempFileFinished()) {
-        relaunchTranscoderTempFileJob(currentProject, video);
+        relaunchTranscoderTempFileJob(video);
         Log.d(LOG_TAG, "Need to relaunch video " + videoList.indexOf(video)
                 + " - " + video.getMediaPath());
       }
@@ -253,7 +252,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     return checkedVideoList;
   }
 
-  private void retrieveMusic(Project currentProject) {
+  private void retrieveMusic() {
     if (currentProject.getVMComposition().hasMusic()) {
       getAudioFromProjectUseCase.getMusicFromProject(currentProject, music -> {
         Music copyMusic = new Music(music);
@@ -268,7 +267,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void retrieveTransitions(Project currentProject) {
+  private void retrieveTransitions() {
     if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
       videonaPlayerView.setVideoFadeTransitionAmongVideos();
     }
@@ -278,7 +277,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  protected void retrieveVolumeOnTracks(Project currentProject) {
+  protected void retrieveVolumeOnTracks() {
     if (currentProject.getVMComposition().hasMusic()) {
       Track musicTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC);
       if (musicTrack.isMuted()) {
@@ -307,7 +306,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void relaunchTranscoderTempFileJob(Project currentProject, Video video) {
+  private void relaunchTranscoderTempFileJob(Video video) {
     relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
   }
 

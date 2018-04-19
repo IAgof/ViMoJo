@@ -127,7 +127,7 @@ public class EditorPresenterTest {
 
     spyEditorPresenter.init(hasBeenProjectExported, videoPath);
 
-    verify(spyEditorPresenter).initPreviewFromProject(currentProject);
+    verify(spyEditorPresenter).initPreviewFromProject();
   }
 
   @Test
@@ -148,7 +148,7 @@ public class EditorPresenterTest {
     Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedGetMediaListFromProjectUseCase)
         .getMediaListFromProject(any(Project.class), any(OnVideosRetrieved.class));
@@ -167,7 +167,7 @@ public class EditorPresenterTest {
     Assert.assertThat("Current project has music", currentProject.hasMusic(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedGetAudioFromProjectUseCase).getMusicFromProject(any(Project.class),
         any(GetMusicFromProjectCallback.class));
@@ -192,7 +192,7 @@ public class EditorPresenterTest {
         any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindVideoList(any());
     verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(currentProject);
@@ -211,7 +211,7 @@ public class EditorPresenterTest {
         .getMediaTrack().isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVideoMute();
   }
@@ -232,7 +232,7 @@ public class EditorPresenterTest {
         .getMediaTrack().isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVideoVolume(volumeVideo);
   }
@@ -258,7 +258,7 @@ public class EditorPresenterTest {
         any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindMusic(any());
   }
@@ -280,7 +280,7 @@ public class EditorPresenterTest {
         is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setMusicVolume(0.f);
   }
@@ -303,7 +303,7 @@ public class EditorPresenterTest {
         is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setMusicVolume(musicTrackVolume);
   }
@@ -330,7 +330,7 @@ public class EditorPresenterTest {
         any(GetMusicFromProjectCallback.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).bindVoiceOver(any());
   }
@@ -354,7 +354,7 @@ public class EditorPresenterTest {
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(false));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(voiceOverTrackVolume);
   }
@@ -376,7 +376,7 @@ public class EditorPresenterTest {
         .get(INDEX_AUDIO_TRACK_VOICE_OVER).isMuted(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject(currentProject);
+    editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(0.0f);
   }

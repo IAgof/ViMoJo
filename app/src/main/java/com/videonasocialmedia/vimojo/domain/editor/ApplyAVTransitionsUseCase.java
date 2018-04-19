@@ -31,9 +31,9 @@ public class ApplyAVTransitionsUseCase {
   private Project currentProject;
   private WeakReference<AVTransitionsApplierListener> applierListener;
 
-  public ApplyAVTransitionsUseCase(ProjectRepository projectRepository,
+  public ApplyAVTransitionsUseCase(Project project,
                                    VideoRepository videoRepository) {
-    this.currentProject = projectRepository.getCurrentProject();
+    this.currentProject = project;
     this.videoRepository = videoRepository;
   }
 
