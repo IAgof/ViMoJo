@@ -202,6 +202,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     }
     bottomBar.selectTabWithId(R.id.tab_editactivity);
     editPresenter.updatePresenter();
+    seekToClip(currentVideoIndex);
   }
 
     @Override

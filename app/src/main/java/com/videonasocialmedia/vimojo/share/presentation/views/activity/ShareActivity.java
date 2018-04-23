@@ -446,6 +446,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
         switch (which) {
           case DialogInterface.BUTTON_NEUTRAL:
+            dialog.dismiss();
             break;
         }
       };

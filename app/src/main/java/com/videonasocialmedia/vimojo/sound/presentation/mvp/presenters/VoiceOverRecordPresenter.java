@@ -87,13 +87,13 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
         this.removeAudioUseCase = removeAudioUseCase;
         this.userEventTracker = userEventTracker;
         this.projectInstanceCache = projectInstanceCache;
-        directoryVoiceOverRecorded = this.currentProject
-                .getProjectPathIntermediateAudioFilesVoiceOverRecord();
     }
 
     public void updatePresenter() {
       this.currentProject = projectInstanceCache.getCurrentProject();
       // TODO(jliarte): 23/04/18 add project changes listener
+      directoryVoiceOverRecorded = currentProject
+          .getProjectPathIntermediateAudioFilesVoiceOverRecord();
       obtainVideos();
       if (getPreferencesTransitionFromProjectUseCase
               .isVideoFadeTransitionActivated(currentProject)) {
