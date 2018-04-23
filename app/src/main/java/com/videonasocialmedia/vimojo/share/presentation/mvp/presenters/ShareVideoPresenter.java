@@ -16,11 +16,11 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -56,10 +56,9 @@ import static android.content.Context.*;
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
  */
 public class ShareVideoPresenter extends VimojoPresenter {
-
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
-
     private Context context;
+
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
     private GetFtpListUseCase getFtpListUseCase;
     private CreateDefaultProjectUseCase createDefaultProjectUseCase;
@@ -78,6 +77,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private UploadToPlatformQueue uploadToPlatformQueue;
     private final LoggedValidator loggedValidator;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
+    private final ProjectInstanceCache projectInstanceCache;
     private String videoPath = "";
     private SocialNetwork socialNetworkSelected;
     private boolean isWifiConnected;
@@ -89,14 +89,14 @@ public class ShareVideoPresenter extends VimojoPresenter {
     @Inject
     public ShareVideoPresenter(
             Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-            SharedPreferences sharedPreferences, ProjectRepository projectRepository,
+            SharedPreferences sharedPreferences,
             CreateDefaultProjectUseCase createDefaultProjectUseCase,
             AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
             ExportProjectUseCase exportProjectUseCase,
             ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
             GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
             UploadToPlatformQueue uploadToPlatformQueue, LoggedValidator loggedValidator,
-            RunSyncAdapterHelper runSyncAdapterHelper) {
+            RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -110,11 +110,12 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.uploadToPlatformQueue = uploadToPlatformQueue;
         this.loggedValidator = loggedValidator;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
-        this.currentProject = projectRepository.getCurrentProject();
+        this.projectInstanceCache = projectInstanceCache;
     }
 
-    public void init(boolean hasBeenProjectExported, String videoExportedPath,
-                     boolean isAppExportingProject) {
+    public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath,
+                                boolean isAppExportingProject) {
+        this.currentProject = projectInstanceCache.getCurrentProject();
         obtainNetworksToShare();
         obtainListFtp();
         setupVimojoNetwork();
@@ -172,29 +173,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
         userEventTracker.trackVideoSharedUserTraits();
     }
 
-    public void newDefaultProject(String rootPath, String privatePath) {
-        clearProjectDataFromSharedPreferences();
-        createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkActivated());
-    }
-
-    private boolean isWatermarkActivated() {
-        return BuildConfig.FEATURE_FORCE_WATERMARK ||
-            sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
-    }
-
-    // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
-    // TODO:(alvaro.martinez) 4/01/17 these data will no be saved in SharedPreferences,
-    // rewrite mixpanel tracking and delete.
-    private void clearProjectDataFromSharedPreferences() {
-        sharedPreferences = VimojoApplication.getAppContext().getSharedPreferences(
-                ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME,
-                MODE_PRIVATE);
-        preferencesEditor = sharedPreferences.edit();
-        preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
-        preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
-        preferencesEditor.apply();
-    }
-
     public void addVideoExportedToProject(String videoPath) {
         addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(currentProject, videoPath,
                 DateUtils.getDateRightNow());
@@ -202,7 +180,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
     protected void startExport(int typeNetworkSelected) {
         shareVideoViewReference.get().startVideoExport();
-        exportUseCase.export(Constants.PATH_WATERMARK, new OnExportFinishedListener() {
+        exportUseCase.export(currentProject, Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
             public void onExportError(String error) {
                 Crashlytics.log("Error exporting: " + error);

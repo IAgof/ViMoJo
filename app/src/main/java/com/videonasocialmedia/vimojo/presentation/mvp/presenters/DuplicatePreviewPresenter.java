@@ -11,12 +11,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementCha
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -28,34 +28,43 @@ import javax.inject.Inject;
  * Created by vlf on 7/7/15.
  */
 public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
-
     /**
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
-
-    private Video videoToEdit;
-
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
-            new GetMediaListFromProjectUseCase();
-    private AddVideoToProjectUseCase addVideoToProjectUseCase;
-
     private DuplicateView duplicateView;
     protected UserEventTracker userEventTracker;
+    private AddVideoToProjectUseCase addVideoToProjectUseCase;
+    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
+    private final ProjectInstanceCache projectInstanceCache;
+
+    private Video videoToEdit;
     protected Project currentProject;
+    private int videoIndexOnTrack;
 
     /**
      * Get media list from project use case
      */
-    @Inject public DuplicatePreviewPresenter(DuplicateView duplicateView,
-                                             UserEventTracker userEventTracker,
-                                             ProjectRepository projectRepository,
-                                             AddVideoToProjectUseCase addVideoToProjectUseCase) {
+    @Inject public DuplicatePreviewPresenter(
+            DuplicateView duplicateView, UserEventTracker userEventTracker,
+            AddVideoToProjectUseCase addVideoToProjectUseCase,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.currentProject = projectRepository.getCurrentProject();
+        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+        this.projectInstanceCache = projectInstanceCache;
+    }
+
+    public void init(int videoIndexOnTrack) {
+        this.videoIndexOnTrack = videoIndexOnTrack;
+    }
+
+    public void updatePresenter() {
+        this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
+        loadProjectVideo(videoIndexOnTrack);
     }
 
     public void loadProjectVideo(int videoIndex) {
@@ -99,14 +108,15 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
         }
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
     }
-
     @Override
     public void onObjectUpdated() {
         duplicateView.updateProject();
     }
+
     public Video getVideoCopy() {
         return new Video(videoToEdit);
     }
+
 }
 
 

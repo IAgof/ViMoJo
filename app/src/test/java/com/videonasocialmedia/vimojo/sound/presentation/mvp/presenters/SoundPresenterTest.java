@@ -20,10 +20,8 @@ import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -62,7 +60,7 @@ public class SoundPresenterTest {
     assertThat("Project has video", currentProject.getVMComposition().hasVideos(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).bindTrack(currentProject.getMediaTrack());
   }
@@ -80,7 +78,7 @@ public class SoundPresenterTest {
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).bindTrack(currentProject.getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC));
@@ -100,7 +98,7 @@ public class SoundPresenterTest {
     assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).bindTrack(currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER));
@@ -143,7 +141,7 @@ public class SoundPresenterTest {
     voiceOverTrack.setPosition(2);
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).showTrackVideo();
     verify(mockedSoundView).showTrackAudioFirst();
@@ -152,8 +150,8 @@ public class SoundPresenterTest {
 
   @NonNull
   private SoundPresenter getSoundPresenter() {
-    return new SoundPresenter(mockedSoundView, mockedProjectRepository, mockedModifyTrackUseCase,
-        mockedVideoListErrorCheckerDelegate);
+    return new SoundPresenter(mockedSoundView, mockedProjectRepository,
+            mockedVideoListErrorCheckerDelegate);
   }
 
   public void getAProject() {

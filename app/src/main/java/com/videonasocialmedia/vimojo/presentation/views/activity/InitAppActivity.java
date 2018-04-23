@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -396,7 +397,9 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     @Override
     public void onCheckPathsAppSuccess() throws CameraAccessException {
-        presenter.startLoadingProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+        // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
+        Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+        presenter.onAppPathsCheckSuccess(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
         setupStartApp();
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 public interface ProjectRepository extends Repository<Project> {
   void updateWithDate(Project item, String date);
 
-  Project getCurrentProject();
+  Project getLastModifiedProject();
 
   List<Project> getListProjectsByLastModificationDescending();
 
@@ -31,7 +31,4 @@ public interface ProjectRepository extends Repository<Project> {
 
   void setProjectInfo(Project project, String projectTitle, String projectDescription,
                       List<String> productTypesListSelected);
-
-  Project createFirstAppProject(ProjectInfo projectInfo, String rootPath, String privatePath,
-                             Profile currentProfile);
 }

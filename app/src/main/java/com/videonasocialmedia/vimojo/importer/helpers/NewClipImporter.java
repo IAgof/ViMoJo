@@ -35,7 +35,6 @@ public class NewClipImporter {
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
-  private Project currentProject;
 
   public NewClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
@@ -51,7 +50,6 @@ public class NewClipImporter {
     this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;
     this.videoToAdaptRepository = videoToAdaptRepository;
-    this.currentProject = projectRepository.getCurrentProject();
   }
 
   public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
@@ -95,32 +93,29 @@ public class NewClipImporter {
 
   private Function<Video, Video> getAVTransitionApplierFunction(
           final Video video, final Project currentProject) {
-    return new Function<Video, Video>() {
-      @Override
-      public Video apply(Video input) {
-        video.setTempPath(currentProject.getProjectPathIntermediateFiles());
-        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-        Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
-                .getDrawableFadeTransitionVideo();
-        launchTranscoderAddAVTransitionUseCase.applyAVTransitions(drawableFadeTransitionVideo,
-                video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
-                new ApplyAVTransitionsUseCase.AVTransitionsApplierListener() {
-                  @Override
-                  public void onSuccessApplyAVTransitions(Video video) {
-                    video.setTranscodingTask(null);
-                    VideoToAdapt adaptedVideo = videoToAdaptRepository
-                            .getByMediaPath(video.getMediaPath());
-                    videoToAdaptRepository.remove(adaptedVideo);
-                  }
+    return input -> {
+      video.setTempPath(currentProject.getProjectPathIntermediateFiles());
+      VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
+      Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
+              .getDrawableFadeTransitionVideo();
+      launchTranscoderAddAVTransitionUseCase.applyAVTransitions(drawableFadeTransitionVideo,
+              video, videoFormat, currentProject.getProjectPathIntermediateFileAudioFade(),
+              new ApplyAVTransitionsUseCase.AVTransitionsApplierListener() {
+                @Override
+                public void onSuccessApplyAVTransitions(Video video1) {
+                  video1.setTranscodingTask(null);
+                  VideoToAdapt adaptedVideo = videoToAdaptRepository
+                          .getByMediaPath(video1.getMediaPath());
+                  videoToAdaptRepository.remove(adaptedVideo);
+                }
 
-                  @Override
-                  public void onErrorApplyAVTransitions(Video video, String message) {
-                    // TODO(jliarte): 31/08/17 implement this method
-                  }
-                });
-        // TODO(jliarte): 29/08/17 wait for finish
-        return null;
-      }
+                @Override
+                public void onErrorApplyAVTransitions(Video video1, String message) {
+                  // TODO(jliarte): 31/08/17 implement this method
+                }
+              });
+      // TODO(jliarte): 29/08/17 wait for finish
+      return null;
     };
   }
 

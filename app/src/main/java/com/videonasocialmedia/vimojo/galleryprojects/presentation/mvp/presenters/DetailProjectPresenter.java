@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProductType;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
@@ -25,12 +26,12 @@ import javax.inject.Inject;
  */
 
 public class DetailProjectPresenter {
-
   private final Context context;
   private DetailProjectView detailProjectView;
   private UserEventTracker userEventTracker;
-  private Project currentProject;
   private ProjectRepository projectRepository;
+  private final ProjectInstanceCache projectInstanceCache;
+  private Project currentProject;
   private HashMap<Integer, Boolean> productTypeCheckedIdsMap;
   private boolean[] checkedProductTypes;
   private List<String> productTypesTitles = new ArrayList<>();;
@@ -43,17 +44,18 @@ public class DetailProjectPresenter {
   private final int PIECE_ID = 5;
 
   @Inject
-  public DetailProjectPresenter(Context context, DetailProjectView detailProjectView,
-                                UserEventTracker userEventTracker,
-                                ProjectRepository projectRepository) {
+  public DetailProjectPresenter(
+          Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
+          ProjectRepository projectRepository, ProjectInstanceCache projectInstanceCache) {
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;
     this.projectRepository = projectRepository;
-    this.currentProject = projectRepository.getCurrentProject();
+    this.projectInstanceCache = projectInstanceCache;
   }
 
   public void init() {
+    this.currentProject = projectInstanceCache.getCurrentProject();
     initProductTypeIdsMap(currentProject.getProjectInfo());
     initMultipleChoiceProductTypes();
     detailProjectView.showTitleProject(currentProject.getProjectInfo().getTitle());
@@ -69,6 +71,10 @@ public class DetailProjectPresenter {
         currentProject.getProfile().getVideoResolution().getWidth(),
         bitRateMbps,
         currentProject.getProfile().getVideoFrameRate().getFrameRate());
+  }
+
+  public void updatePresenter() {
+    this.currentProject = projectInstanceCache.getCurrentProject();
   }
 
   private void initProductTypeIdsMap(ProjectInfo projectInfo) {
@@ -189,4 +195,5 @@ public class DetailProjectPresenter {
     }
     return productTypeConverted;
   }
+
 }

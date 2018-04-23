@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activit
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -65,7 +66,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   }
 
   @Override
-  public void onResume(){
+  public void onResume() {
     super.onResume();
     presenter.updateProjectList();
   }
@@ -92,7 +93,10 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void createDefaultProject() {
-    presenter.createNewDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+    // TODO(jliarte): 20/04/18 review this workflow
+    // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
+    Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+    presenter.setNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
     //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }

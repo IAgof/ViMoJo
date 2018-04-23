@@ -53,7 +53,7 @@ public class InitAppPresenterTest {
   public void startLoadingProjectCallsLoadOrCreateProject() {
     InitAppPresenter initAppPresenter = getInitAppPresenter();
 
-    initAppPresenter.startLoadingProject("root/path", "private/path");
+    initAppPresenter.onAppPathsCheckSuccess("root/path", "private/path", drawableFadeTransitionVideo);
 
     // TODO:(alvaro.martinez) 28/11/17 Learn how to mock BuildConfig values and check values in verify method, not anyString, anyString, anyBoolean
     verify(mockedUseCase).loadOrCreateProject(anyString(),anyString(), anyBoolean());

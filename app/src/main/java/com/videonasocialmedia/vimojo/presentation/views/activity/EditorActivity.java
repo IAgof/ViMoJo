@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -38,6 +39,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
@@ -126,7 +128,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private boolean isVideoMute;
   protected String videoExportedPath;
-  protected boolean hasBeenProjectExported = false;
+  protected boolean projectHasBeenExported = false;
   private int currentPlayerPosition = 0;
 
   @Override
@@ -138,10 +140,31 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
+  protected void onStart() {
+    super.onStart();
+    videonaPlayer.setListener(this);
+    videonaPlayer.onShown(this);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    setupDrawer();
+    editorPresenter.updatePresenter(projectHasBeenExported, videoExportedPath);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    videonaPlayer.onPause();
+    editorPresenter.onPause();
+  }
+
+  @Override
   protected void onSaveInstanceState(Bundle outState) {
     currentPlayerPosition = videonaPlayer.getCurrentPosition();
     outState.putInt(EDITOR_ACTIVITY_PROJECT_POSITION, currentPlayerPosition);
-    outState.putBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, hasBeenProjectExported);
+    outState.putBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, projectHasBeenExported);
     outState.putString(EDITOR_ACTIVITY_VIDEO_EXPORTED, videoExportedPath);
     super.onSaveInstanceState(outState);
   }
@@ -152,14 +175,21 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     if(state != null) {
       currentPlayerPosition = state.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
           0);
-      hasBeenProjectExported = state.getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED,
+      projectHasBeenExported = state.getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED,
           false);
       videoExportedPath = state.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
     }
   }
 
+  private void setupDrawer() {
+    if (navigationView != null) {
+      setUpDrawerHeader();
+      setupDrawerContent(navigationView);
+    }
+    setupSwitchThemeAppIntoDrawer();
+  }
 
-  private void setUpAndCheckHeaderViewCurrentProject() {
+  private void setUpDrawerHeader() {
     imageProjectThumb = navigationView.getHeaderView(0)
             .findViewById(R.id.image_drawer_thumb_project);
     projectName = navigationView.getHeaderView(0).findViewById(R.id.project_title);
@@ -167,7 +197,41 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     projectDate = navigationView.getHeaderView(0).findViewById(R.id.project_date);
     projectEdit = navigationView.getHeaderView(0).findViewById(R.id.project_edit_button);
     projectEdit.setOnClickListener(v -> navigateTo(DetailProjectActivity.class));
-    editorPresenter.updateHeaderViewCurrentProject();
+  }
+
+  private void setupDrawerContent(NavigationView navigationView) {
+    navigationView.setNavigationItemSelectedListener(
+            menuItem -> {
+              switch (menuItem.getItemId()) {
+                case R.id.menu_navview_gallery_projects:
+                  drawerLayout.closeDrawers();
+                  navigateTo(GalleryProjectListActivity.class);
+                  return false;
+                case R.id.menu_navview_new_project:
+                  showNewProjectCreationDialog(R.id.menu_navview_new_project);
+                  return false;
+                case R.id.menu_navview_user_profile:
+                  navigateTo(UserProfileActivity.class);
+                  return false;
+                case R.id.menu_navview_settings:
+                  navigateTo(SettingsActivity.class);
+                  return false;
+                case R.id.menu_navview_tutorial_edition:
+                  navigateTo(TutorialEditorActivity.class);
+                  return false;
+                case R.id.menu_navview_tutorial_record:
+                  navigateTo(TutorialRecordActivity.class);
+                  return false;
+                case R.id.menu_navview_vimojo_store_section:
+                  navigateTo(VimojoStoreActivity.class);
+                  return false;
+                case R.id.menu_navview_vimojo_kit_web_section:
+                  navigateToVimojoKitWeb();
+                  return false;
+                default:
+                  return false;
+              }
+            });
   }
 
   @Override
@@ -185,33 +249,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       ab.setHomeAsUpIndicator(R.drawable.ic_nav_menu);
       ab.setDisplayHomeAsUpEnabled(true);
     }
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-    videonaPlayer.setListener(this);
-    videonaPlayer.onShown(this);
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    if (navigationView != null) {
-      setupDrawerContent(navigationView);
-      setUpAndCheckHeaderViewCurrentProject();
-    }
-    setupSwitchThemeAppIntoDrawer();
-    editorPresenter.updateTheme();
-    editorPresenter.checkFeaturesAvailable();
-    initVideonaPlayer();
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    videonaPlayer.onPause();
-    editorPresenter.onPause();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
@@ -259,65 +296,36 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     getLayoutInflater().inflate(layoutToAdd, contentLayoutEditActivity);
   }
 
-  private void setupDrawerContent(NavigationView navigationView) {
-    navigationView.setNavigationItemSelectedListener(
-            menuItem -> {
-              switch (menuItem.getItemId()) {
-                case R.id.menu_navview_gallery_projects:
-                  drawerLayout.closeDrawers();
-                  navigateTo(GalleryProjectListActivity.class);
-                  return false;
-                case R.id.menu_navview_delete_clip:
-                  createDialog(R.id.menu_navview_delete_clip);
-                  return false;
-                case R.id.menu_navview_user_profile:
-                  navigateTo(UserProfileActivity.class);
-                  return false;
-                case R.id.menu_navview_settings:
-                  navigateTo(SettingsActivity.class);
-                  return false;
-                case R.id.menu_navview_tutorial_edition:
-                  navigateTo(TutorialEditorActivity.class);
-                  return false;
-                case R.id.menu_navview_tutorial_record:
-                  navigateTo(TutorialRecordActivity.class);
-                  return false;
-                case R.id.menu_navview_vimojo_store_section:
-                  navigateTo(VimojoStoreActivity.class);
-                  return false;
-                case R.id.menu_navview_vimojo_kit_web_section:
-                  navigateToVimojoKitWeb();
-                  return false;
-                default:
-                  return false;
-              }
-            });
-  }
-
   private void navigateToVimojoKitWeb() {
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vimojo_kit_web)));
     startActivity(Intent.createChooser(intent, getString(R.string.choose_browser)));
   }
 
-  private void createDialog(final int resourceItemMenuId) {
+  protected void showNewProjectCreationDialog(final int resourceId) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    if (resourceItemMenuId == R.id.menu_navview_delete_clip)
-      builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
+    builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
 
     final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
       switch (which) {
         case DialogInterface.BUTTON_POSITIVE:
-          if (resourceItemMenuId == R.id.menu_navview_delete_clip)
-            editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+          // TODO(jliarte): 20/04/18 review resetting exported video path and date
+          resetVideoExported();
+          // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
+          Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+          editorPresenter.resetCurrentProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+                  drawableFadeTransitionVideo);
           break;
 
         case DialogInterface.BUTTON_NEGATIVE:
           drawerLayout.closeDrawers();
+          if (resourceId == R.id.button_music_navigator)
+            navigateTo(SoundActivity.class);
+          if (resourceId == R.id.button_edit_navigator)
+            navigateTo(EditActivity.class);
           break;
       }
     };
-
-    AlertDialog alertDialog = builder.setCancelable(true).
+    builder.setCancelable(true).
             setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
             .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
@@ -527,8 +535,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void updatePreviewTimeLists() {
-    videonaPlayer.updatePreviewTimeLists();
+  public void updatePlayerVideos() {
+    editorPresenter.obtainVideoFromProject();
   }
 
   @Override
@@ -608,19 +616,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   public void initVideoPlayerFromFilePath(String videoPath) {
     this.videoExportedPath = videoPath;
-    initVideonaPlayer();
-  }
-
-  public void initVideonaPlayer() {
-    editorPresenter.init(hasBeenProjectExported, videoExportedPath);
+    editorPresenter.setupPlayer(projectHasBeenExported, videoExportedPath);
   }
 
   public void resetVideoExported() {
-    hasBeenProjectExported = false;
+    projectHasBeenExported = false;
     videoExportedPath = null;
   }
 
-  public void obtainVideos() {
-    editorPresenter.obtainVideos();
-  }
 }

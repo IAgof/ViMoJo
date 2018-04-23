@@ -19,6 +19,7 @@ import android.util.TypedValue;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -29,6 +30,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -43,6 +45,7 @@ import javax.inject.Inject;
 public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
         ElementChangedListener {
     private final String TAG = getClass().getSimpleName();
+    private final ProjectInstanceCache projectInstanceCache;
     private Project currentProject;
     private Context context;
     // TODO(jliarte): 2/05/17 inject delegate?
@@ -67,22 +70,62 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          Context context,
                          VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
                          UserEventTracker userEventTracker,
-                         ProjectRepository projectRepository,
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-                         ReorderMediaItemUseCase reorderMediaItemUseCase) {
+                         ReorderMediaItemUseCase reorderMediaItemUseCase, ProjectInstanceCache projectInstanceCache) {
         this.editActivityView = editActivityView;
-        this.context =context;
+        this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
-        this.currentProject = projectRepository.getCurrentProject();
+        this.projectInstanceCache = projectInstanceCache;
     }
 
-    public void addElementChangedListener(){
+    public void addElementChangedListener() {
         currentProject.addListener(this);
+    }
+
+    public void updatePresenter() {
+        // TODO: 21/2/18 Study if is necessary repeat use case, running also in father,
+        // EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and
+        // after this method get result of get medialist, problems with UI thread.
+        setCurrentProject();
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject,
+                new OnVideosRetrieved() {
+            @Override
+            public void onVideosRetrieved(List<Video> videosRetrieved) {
+                int sizeOriginalVideoList = videosRetrieved.size();
+                List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+                videoList = checkedVideoList;
+
+                List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+
+                if (sizeOriginalVideoList > checkedVideoList.size()) {
+                    editActivityView.showDialogMediasNotFound();
+                }
+                editActivityView.enableEditActions();
+                editActivityView.enableBottomBar();
+                editActivityView.enableFabText(true);
+                editActivityView.updateVideoList(videoCopy);
+                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
+                        videoList, videoTranscodingErrorNotifier);
+            }
+
+            @Override
+            public void onNoVideosRetrieved() {
+                editActivityView.disableEditActions();
+                editActivityView.disableBottomBar();
+                editActivityView.enableFabText(false);
+                editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
+            }
+        });
+    }
+
+    private void setCurrentProject() {
+        currentProject = projectInstanceCache.getCurrentProject();
+        addElementChangedListener();
     }
 
     public String getResolution() {
@@ -127,12 +170,14 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     public void onAddMediaItemToTrackSuccess(Media media) {
     }
 
+    // TODO(jliarte): 23/04/18 move/remove?
     @Override
     public void onRemoveMediaItemFromTrackError() {
         //TODO modify error message
         editActivityView.showError(R.string.addMediaItemToTrackError);
     }
 
+    // TODO(jliarte): 23/04/18 move/remove
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
         if (currentProject.getVMComposition().hasVideos()) {
@@ -164,39 +209,22 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(videoList.get(selectedVideoRemove));
         removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
-            mediaToDeleteFromProject, this);
-    }
+                mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+                    @Override
+                    public void onRemoveMediaItemFromTrackSuccess() {
+                        if (currentProject.getVMComposition().hasVideos()) {
+                            editActivityView.updatePlayerAndTimeLineVideoListChanged();
+                        } else {
+                            editActivityView.goToRecordOrGallery();
+                        }
+                    }
 
-    public void init() {
-        // TODO: 21/2/18 Study if is necessary repeat use case, running also in father, EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and after this method get result of get medialist, problems with UI thread.
-        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
-            @Override
-            public void onVideosRetrieved(List<Video> videosRetrieved) {
-                int sizeOriginalVideoList = videosRetrieved.size();
-                List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-                videoList = checkedVideoList;
-
-                List<Video> videoCopy = new ArrayList<>(checkedVideoList);
-
-                if (sizeOriginalVideoList > checkedVideoList.size()) {
-                    editActivityView.showDialogMediasNotFound();
-                }
-                editActivityView.enableEditActions();
-                editActivityView.enableBottomBar();
-                editActivityView.enableFabText(true);
-                editActivityView.updateVideoList(videoCopy);
-                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
-                    videoList, videoTranscodingErrorNotifier);
-            }
-
-            @Override
-            public void onNoVideosRetrieved() {
-                editActivityView.disableEditActions();
-                editActivityView.disableBottomBar();
-                editActivityView.enableFabText(false);
-                editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-            }
-        });
+                    @Override
+                    public void onRemoveMediaItemFromTrackError() {
+                        //TODO modify error message
+                        editActivityView.showError(R.string.addMediaItemToTrackError);
+                    }
+                });
     }
 
     @Override
@@ -211,4 +239,5 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
         return (String) outValue.string;
     }
+
 }

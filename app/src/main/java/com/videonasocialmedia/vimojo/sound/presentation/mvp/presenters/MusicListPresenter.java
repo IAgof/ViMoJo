@@ -8,10 +8,10 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 
@@ -25,7 +25,8 @@ import javax.inject.Inject;
 public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
         ElementChangedListener {
     private final Context context;
-    private final Project currentProject;
+    private Project currentProject;
+    private final ProjectInstanceCache projectInstanceCache;
     private List<Music> availableMusic;
     private MusicListView musicListView;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
@@ -33,26 +34,27 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
 
     @Inject
-    public MusicListPresenter(MusicListView musicListView, Context context,
-                              ProjectRepository projectRepository,
-                              GetMusicListUseCase getMusicListUseCase,
-                              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                              GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-                              GetPreferencesTransitionFromProjectUseCase
-                                  getPreferencesTransitionFromProjectUseCase) {
+    public MusicListPresenter(
+            MusicListView musicListView, Context context, GetMusicListUseCase getMusicListUseCase,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.context = context;
         availableMusic = getMusicListUseCase.getAppMusic();
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.musicListView = musicListView;
-        this.currentProject = projectRepository.getCurrentProject();
-        currentProject.addListener(this);
+        this.projectInstanceCache = projectInstanceCache;
     }
 
-    public void init() {
+    public void updatePresenter() {
+        this.currentProject = projectInstanceCache.getCurrentProject();
+        currentProject.addListener(this);
         obtainMusicsAndVideos();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)){
+        if (getPreferencesTransitionFromProjectUseCase
+                .isVideoFadeTransitionActivated(currentProject)) {
             musicListView.setVideoFadeTransitionAmongVideos();
         }
     }

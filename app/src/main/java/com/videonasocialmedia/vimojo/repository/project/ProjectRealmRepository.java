@@ -96,7 +96,7 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
-  public Project getCurrentProject() {
+  public Project getLastModifiedProject() {
     // TODO(jliarte): 6/07/17 fix No space left on device
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
@@ -158,15 +158,6 @@ public class ProjectRealmRepository implements ProjectRepository {
     projectInfo.setDescription(projectDescription);
     projectInfo.setProductTypeList(productTypesListSelected);
     update(project);
-  }
-
-  @Override
-  public Project createFirstAppProject(ProjectInfo projectInfo, String rootPath, String privatePath,
-                                    Profile currentProfile) {
-    Project project = new Project(projectInfo, rootPath, privatePath,
-        currentProfile);
-    update(project);
-    return project;
   }
 
 }

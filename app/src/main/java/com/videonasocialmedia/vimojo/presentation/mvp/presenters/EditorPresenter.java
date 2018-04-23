@@ -7,6 +7,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -23,6 +24,7 @@ import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
@@ -79,6 +81,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
   private final BillingManager billingManager;
+  private ProjectInstanceCache projectInstanceCache;
 
   @Inject
   public EditorPresenter(
@@ -90,8 +93,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository,
-          NewClipImporter newClipImporter, BillingManager billingManager) {
+          ProjectRepository projectRepository, NewClipImporter newClipImporter,
+          BillingManager billingManager, ProjectInstanceCache projectInstanceCache) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -104,13 +107,21 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.projectRepository = projectRepository;
-    this.currentProject = projectRepository.getCurrentProject();
     this.newClipImporter = newClipImporter;
     this.billingManager = billingManager;
-    playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+    this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
+    this.projectInstanceCache = projectInstanceCache;
   }
 
-  public void init(boolean hasBeenProjectExported, String videoPath) {
+  public void updatePresenter(boolean hasBeenProjectExported, String videoPath) {
+    currentProject = projectInstanceCache.getCurrentProject();
+    updateTheme();
+    checkFeaturesAvailable();
+    updateDrawerHeaderWithCurrentProject();
+    setupPlayer(hasBeenProjectExported, videoPath);
+  }
+
+  public void setupPlayer(boolean hasBeenProjectExported, String videoPath) {
     if (!hasBeenProjectExported) {
       initPreviewFromProject();
     } else {
@@ -124,7 +135,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   protected void initPreviewFromProject() {
-    obtainVideos(currentProject);
+    obtainVideoFromProject();
     retrieveMusic();
     retrieveTransitions();
     retrieveVolumeOnTracks();
@@ -136,7 +147,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  public void checkFeaturesAvailable() {
+  private void checkFeaturesAvailable() {
     checkWatermark();
     checkVimojoStore();
   }
@@ -170,12 +181,24 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).apply();
   }
 
-  public void createNewProject(String rootPath, String privatePath) {
-    createDefaultProjectUseCase.createProject(rootPath, privatePath, getPreferenceWaterMark());
+  public void resetCurrentProject(String rootPath, String privatePath,
+                                  Drawable drawableFadeTransitionVideo) {
     clearProjectDataFromSharedPreferences();
+    setNewProject(rootPath, privatePath, drawableFadeTransitionVideo);
     editorActivityView.goToRecordOrGalleryScreen();
   }
 
+  private void setNewProject(String rootPath, String privatePath,
+                             Drawable drawableFadeTransitionVideo) {
+    Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
+            getPreferenceWaterMark(), drawableFadeTransitionVideo);
+    projectRepository.add(project);
+    projectInstanceCache.setCurrentProject(project);
+  }
+
+  // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
+  // TODO:(alvaro.martinez) 4/01/17 these data will no be saved in SharedPreferences,
+  // rewrite mixpanel tracking and delete.
   private void clearProjectDataFromSharedPreferences() {
     preferencesEditor = sharedPreferences.edit();
     preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
@@ -183,17 +206,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor.apply();
   }
 
-  public void obtainVideos(Project currentProject) {
-    obtainVideoFromProject(currentProject);
-  }
-
-  // if videos has changed in edit we need to get currentProject with last changes from repository.
-  public void obtainVideos() {
-    Project currentProject = projectRepository.getCurrentProject();
-    obtainVideoFromProject(currentProject);
-  }
-
-  public void obtainVideoFromProject(Project currentProject) {
+  public void obtainVideoFromProject() {
     getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
       @Override
       public void onVideosRetrieved(List<Video> videosRetrieved) {
@@ -328,7 +341,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  public void updateTheme() {
+  private void updateTheme() {
     boolean isDarkThemeActivated = getPreferenceThemeApp();
     String currentTheme = getCurrentAppliedTheme();
     if (isDarkThemeActivated && currentTheme.equals(THEME_LIGHT)
@@ -389,7 +402,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  public void updateHeaderViewCurrentProject() {
+  private void updateDrawerHeaderWithCurrentProject() {
     // Thumb from first video in current project
     String pathThumbProject = null;
     if (currentProject.getVMComposition().hasVideos()) {

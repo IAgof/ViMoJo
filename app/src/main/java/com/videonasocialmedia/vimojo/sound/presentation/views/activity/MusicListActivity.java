@@ -59,6 +59,19 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         initVideoListRecycler();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videonaPlayer.onPause();
+    }
+
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentProjectPosition = savedInstanceState.getInt(MUSIC_LIST_PROJECT_POSITION, 0);
@@ -87,19 +100,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(MUSIC_LIST_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.init();
     }
 
     public void navigateTo(Class cls) {
@@ -136,7 +136,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
 
     @Override
     public void updateProject() {
-        presenter.init();
+        presenter.updatePresenter();
     }
 
     @Override

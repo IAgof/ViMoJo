@@ -1,69 +1,57 @@
 package com.videonasocialmedia.vimojo.domain.project;
 
+/**
+ * Created by jliarte on 23/10/16.
+ */
+
+// TODO(jliarte): 20/04/18 delete Drawable dependency
 import android.graphics.drawable.Drawable;
 
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
-
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
 /**
- * Created by jliarte on 23/10/16.
+ * Use Case for create project with default settings
  */
 public class CreateDefaultProjectUseCase {
-  protected ProjectRepository projectRepository;
   private final ProfileRepository profileRepository;
-  private final Drawable drawableFadeTransitionVideo;
 
   /**
    * Default constructor with project repository argument.
    *
-   * @param projectRepository the project repository.
+   * @param profileRepository the default profile constructor.
    */
-  @Inject public CreateDefaultProjectUseCase(
-          ProjectRepository projectRepository, ProfileRepository profileRepository) {
-    this.projectRepository = projectRepository;
+  @Inject public CreateDefaultProjectUseCase(ProfileRepository profileRepository) {
     this.profileRepository = profileRepository;
-    // TODO: 19/4/18 Delete Vimojo.Application.getAppContext in use case
-    drawableFadeTransitionVideo = VimojoApplication.getAppContext()
-            .getDrawable(R.drawable.alpha_transition_white);
   }
 
-  public void loadOrCreateProject(String rootPath, String privatePath,
-                                  boolean isWatermarkFeatured) {
+  /**
+   * Create a project with default settings. Sets empty {@link ProjectInfo} and default
+   * {@link com.videonasocialmedia.videonamediaframework.model.media.Profile}
+   *
+   * @param rootPath
+   * @param privatePath
+   * @param isWatermarkFeatured
+   * @param drawableFadeTransitionVideo
+   * @return created project instance
+   */
+  public Project createProject(String rootPath, String privatePath, boolean isWatermarkFeatured,
+                               Drawable drawableFadeTransitionVideo) {
     ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "",
-        new ArrayList<>());
-    Project currentProject = projectRepository.getCurrentProject();
-    if(isProjectRepositoryEmpty()) {
-      currentProject = projectRepository.createFirstAppProject(projectInfo, rootPath, privatePath,
-          profileRepository.getCurrentProfile());
-      if (isWatermarkFeatured) {
-        currentProject.setWatermarkActivated(true);
-      }
-    }
-    currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
-    projectRepository.update(currentProject);
-  }
-
-  public void createProject(String rootPath, String privatePath, boolean isWatermarkFeatured) {
-    ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "", new ArrayList<>());
+            new ArrayList<>());
     Project currentProject = new Project(projectInfo, rootPath, privatePath,
             profileRepository.getCurrentProfile());
     if (isWatermarkFeatured) {
       currentProject.setWatermarkActivated(true);
     }
-    projectRepository.update(currentProject);
+    currentProject.getVMComposition().setDrawableFadeTransitionVideo(drawableFadeTransitionVideo);
+    return currentProject;
   }
 
-  public boolean isProjectRepositoryEmpty() {
-    return (projectRepository.getCurrentProject() == null);
-  }
 }

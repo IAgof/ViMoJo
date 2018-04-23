@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
 import android.util.Range;
@@ -13,6 +14,7 @@ import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
@@ -45,6 +47,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 public class InitAppPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
+  private final ProjectInstanceCache projectInstanceCache;
+  private final ProjectRepository projectRepository;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
@@ -55,19 +59,28 @@ public class InitAppPresenter {
   @Inject
   public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                          ProjectRepository projectRepository,
                           CameraSettingsRepository cameraSettingsRepository,
-                          RunSyncAdapterHelper runSyncAdapterHelper) {
+                          RunSyncAdapterHelper runSyncAdapterHelper,
+                          ProjectRepository projectRepository,
+                          ProjectInstanceCache projectInstanceCache) {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
+    this.projectRepository = projectRepository;
+    this.projectInstanceCache = projectInstanceCache;
   }
 
-  public void startLoadingProject(String rootPath, String privatePath) {
-    createDefaultProjectUseCase.loadOrCreateProject(rootPath, privatePath,
-        isWatermarkActivated());
+  public void onAppPathsCheckSuccess(String rootPath, String privatePath,
+                                     Drawable drawableFadeTransitionVideo) {
+    if (projectInstanceCache.getCurrentProject() == null) {
+      // TODO(jliarte): 23/04/18 in fact, there will be always a project instance, consider removing
+      Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
+              isWatermarkActivated(), drawableFadeTransitionVideo);
+      projectRepository.add(project);
+      projectInstanceCache.setCurrentProject(project);
+    }
   }
 
   public boolean isWatermarkActivated() {

@@ -184,26 +184,25 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     });
   }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initVideoListRecycler();
-        editPresenter.addElementChangedListener();
-        editPresenter.init();
-    }
+  @Override
+  protected void onStart() {
+      super.onStart();
+      initVideoListRecycler();
+  }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
-                this.currentVideoIndex = getIntent().getIntExtra(
-                        Constants.CURRENT_VIDEO_INDEX, 0);
-            }
-        }
-        bottomBar.selectTabWithId(R.id.tab_editactivity);
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Bundle bundle = getIntent().getExtras();
+    if (bundle != null) {
+      if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
+        this.currentVideoIndex = getIntent()
+                .getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
+      }
     }
+    bottomBar.selectTabWithId(R.id.tab_editactivity);
+    editPresenter.updatePresenter();
+  }
 
     @Override
     protected void onPause() {
@@ -222,7 +221,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     videoListState = videoListRecyclerView.getLayoutManager().onSaveInstanceState();
     outState.putParcelable(SAVED_LAYOUT_MANAGER, videoListState);
     // Reset touchHelper. Created new one onRestore, key line to restore activity without problems.
-    touchHelper.attachToRecyclerView(null);
+    if (touchHelper != null) {
+      touchHelper.attachToRecyclerView(null);
+    }
     super.onSaveInstanceState(outState);
   }
 
@@ -233,7 +234,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     super.onRestoreInstanceState(state);
     if(state != null) {
       layoutManager.onRestoreInstanceState(videoListState);
-      editPresenter.init();
+      editPresenter.updatePresenter();
     }
   }
 
@@ -470,15 +471,14 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   public void updatePlayerAndTimeLineVideoListChanged() {
     runOnUiThread(() -> {
       // Update adapter, timeline.
-      editPresenter.init();
+      editPresenter.updatePresenter();
       // Update player
       updatePlayer();
     });
   }
 
   private void updatePlayer() {
-    obtainVideos();
-    updatePreviewTimeLists();
+    updatePlayerVideos();
     seekToClip(currentVideoIndex);
   }
 

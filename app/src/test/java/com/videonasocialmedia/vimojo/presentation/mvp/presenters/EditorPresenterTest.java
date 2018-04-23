@@ -33,7 +33,6 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,7 +124,7 @@ public class EditorPresenterTest {
     boolean hasBeenProjectExported = false;
     String videoPath = "";
 
-    spyEditorPresenter.init(hasBeenProjectExported, videoPath);
+    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoPath);
 
     verify(spyEditorPresenter).initPreviewFromProject();
   }
@@ -136,7 +135,7 @@ public class EditorPresenterTest {
     boolean hasBeenProjectExported = true;
     String videoPath = "";
 
-    spyEditorPresenter.init(hasBeenProjectExported, videoPath);
+    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoPath);
 
     verify(spyEditorPresenter).initPreviewFromVideoExported(videoPath);
   }

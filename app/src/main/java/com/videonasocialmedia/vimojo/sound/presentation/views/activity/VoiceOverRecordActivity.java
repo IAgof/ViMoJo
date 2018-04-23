@@ -63,7 +63,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @BindView (R.id.button_record_voice_over)
     ImageButton buttonRecordVoiceOver;
 
-    int videoIndexOnTrack;
     private int currentVoiceOverPosition = 0;
     private int startTime = 0;
 
@@ -88,6 +87,38 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         buttonRecordVoiceOver.setOnTouchListener(this);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(presenter.isRecording()){
+            presenter.pauseRecording();
+        }
+        videonaPlayer.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        videonaPlayer.onDestroy();
+    }
+
     private void createProgressDialog() {
         progressDialog = new ProgressDialog(VoiceOverRecordActivity.this, R.style.VideonaDialog);
         progressDialog.setTitle(R.string.alert_dialog_title_voice_over);
@@ -105,38 +136,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
             currentVoiceOverPosition = savedInstanceState.getInt(VOICE_OVER_POSITION, 0);
             buttonRecordIsInStop=savedInstanceState.getBoolean(STATE_BUTTON_RECORD,false);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(presenter.isRecording()){
-            presenter.pauseRecording();
-        }
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.init();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     public void navigateTo(Class cls) {
@@ -256,7 +255,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
 
     @Override
     public void updateProject() {
-        presenter.init();
+        presenter.updatePresenter();
     }
 
     @Override

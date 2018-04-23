@@ -40,7 +40,6 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -256,7 +255,7 @@ public class ShareVideoPresenterTest {
         String videoExportedPath = "somePath";
         boolean isAppExportingProject = true;
 
-        shareVideoPresenter.init(hasBeenProjectExported, videoExportedPath, isAppExportingProject);
+        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath, isAppExportingProject);
 
         verify(mockedShareVideoView).startVideoExport();
     }

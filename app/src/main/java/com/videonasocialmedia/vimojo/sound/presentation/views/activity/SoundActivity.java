@@ -64,7 +64,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @BindView(R.id.fab_edit_room)
   FloatingActionsMenu fabMenu;
-  private int currentProjectPosition = 0;
+  private int currentVideoIndex = 0;
 
   private boolean voiceOverActivated;
   private FloatingActionButton fabVoiceOver;
@@ -82,18 +82,34 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       setupFab();
   }
 
+  @Override
+  protected void onStart() {
+    super.onStart();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    presenter.updatePresenter();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    if (voiceOverActivated) {
+      removeFabVoiceOver();
+    }
+  }
+
   private void setupBottomBar(BottomBar bottomBar) {
-    bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-      @Override
-      public void onTabSelected(@IdRes int tabId) {
-        switch (tabId){
-          case(R.id.tab_editactivity):
-            navigateTo(EditActivity.class);
-            break;
-          case (R.id.tab_share):
-            navigateTo(ShareActivity.class);
-            break;
-        }
+    bottomBar.setOnTabSelectListener(tabId -> {
+      switch (tabId){
+        case(R.id.tab_editactivity):
+          navigateTo(EditActivity.class);
+          break;
+        case (R.id.tab_share):
+          navigateTo(ShareActivity.class);
+          break;
       }
     });
   }
@@ -102,6 +118,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,
         R.color.colorWhite);
   }
+
   protected void addAndConfigurateFabButton(int id, int icon, int color) {
     FloatingActionButton newFabMini = FabUtils.createNewFabMini(id, icon, color);
     onClickFabButton(newFabMini);
@@ -109,45 +126,22 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   protected void onClickFabButton(final FloatingActionButton fab) {
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-          switch (fab.getId()){
-            case ID_BUTTON_FAB_TOP:
-              fabMenu.collapse();
-              navigateTo(MusicListActivity.class);
-              break;
-            case ID_BUTTON_FAB_BOTTOM:
-              fabMenu.collapse();
-              navigateTo(VoiceOverRecordActivity.class);
-              break;
-          }
-      }
+    fab.setOnClickListener(v -> {
+        switch (fab.getId()){
+          case ID_BUTTON_FAB_TOP:
+            fabMenu.collapse();
+            navigateTo(MusicListActivity.class);
+            break;
+          case ID_BUTTON_FAB_BOTTOM:
+            fabMenu.collapse();
+            navigateTo(VoiceOverRecordActivity.class);
+            break;
+        }
     });
-
-  }
-
-  @Override
-  protected void onPause() {
-      super.onPause();
-      if(voiceOverActivated){
-        removeFabVoiceOver();
-      }
   }
 
   private void removeFabVoiceOver() {
     fabMenu.removeButton(fabVoiceOver);
-  }
-
-  @Override
-  protected void onResume() {
-      super.onResume();
-      presenter.init();
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
   }
 
   @Override
@@ -190,19 +184,19 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
         trackClipsVideo.setTrack(track);
         break;
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
-          if(track.getPosition() == 1) {
+          if (track.getPosition() == 1) {
             trackClipsAudioTrackFirst.setListener(this);
             trackClipsAudioTrackFirst.setTrack(track);
-          }else {
+          } else {
             trackClipsAudioTrackSecond.setListener(this);
             trackClipsAudioTrackSecond.setTrack(track);
           }
         break;
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        if(track.getPosition() == 1) {
+        if (track.getPosition() == 1) {
           trackClipsAudioTrackFirst.setListener(this);
           trackClipsAudioTrackFirst.setTrack(track);
-        }else {
+        } else {
           trackClipsAudioTrackSecond.setListener(this);
           trackClipsAudioTrackSecond.setTrack(track);
         }
@@ -236,12 +230,14 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
-  public void updateProject() {
-    presenter.init();
+  public void updatePlayer() {
+    updatePlayerVideos();
+    seekToClip(currentVideoIndex);
   }
 
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
+    this.currentVideoIndex = currentClipIndex;
     trackClipsVideo.updateClipSelection(currentClipIndex);
     presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
         .INDEX_MEDIA_TRACK);
@@ -291,12 +287,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   private final void focusOnView(final View view) {
-    scrollViewTimeLineAudioBlocks.post(new Runnable() {
-      @Override
-      public void run() {
-        scrollViewTimeLineAudioBlocks.scrollTo(0, view.getTop());
-      }
-    });
+    scrollViewTimeLineAudioBlocks.post(() -> scrollViewTimeLineAudioBlocks.scrollTo(0, view.getTop()));
   }
 
 

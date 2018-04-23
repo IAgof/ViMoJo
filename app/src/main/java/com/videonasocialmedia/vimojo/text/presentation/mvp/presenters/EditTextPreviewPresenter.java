@@ -11,11 +11,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffe
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
@@ -32,7 +32,7 @@ import javax.inject.Inject;
 
 public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
-    private final ProjectRepository projectRepository;
+    private final ProjectInstanceCache projectInstanceCache;
 
     private TextToDrawable drawableGenerator;
 
@@ -47,25 +47,30 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private final String THEME_DARK = "dark";
+    private int videoToEditTextIndex;
 
 
     @Inject
     public EditTextPreviewPresenter(
             EditTextView editTextView, Context context, UserEventTracker userEventTracker,
-            ProjectRepository projectRepository,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
+            ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.editTextView = editTextView;
         this.context = context;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
-        this.projectRepository = projectRepository;
-        this.currentProject = projectRepository.getCurrentProject();
-        currentProject.addListener(this);
+        this.projectInstanceCache = projectInstanceCache;
     }
 
     public void init(int videoToEditTextIndex) {
+        this.videoToEditTextIndex = videoToEditTextIndex;
+    }
+
+    public void updatePresenter() {
+        this.currentProject = projectInstanceCache.getCurrentProject();
+        currentProject.addListener(this);
         List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
