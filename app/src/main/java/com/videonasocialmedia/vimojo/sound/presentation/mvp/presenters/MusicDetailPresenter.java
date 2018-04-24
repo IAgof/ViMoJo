@@ -48,6 +48,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     private AddAudioUseCase addAudioUseCase;
     private RemoveAudioUseCase removeAudioUseCase;
     private ModifyTrackUseCase modifyTrackUseCase;
+    private GetMusicListUseCase getMusicListUseCase;
 
     @Inject
     public MusicDetailPresenter(
@@ -56,7 +57,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
             GetAudioFromProjectUseCase getAudioFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ModifyTrackUseCase modifyTrackUseCase, ProjectInstanceCache projectInstanceCache) {
+            ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -67,6 +69,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.addAudioUseCase = addAudioUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
+        this.getMusicListUseCase = getMusicListUseCase;
         this.projectInstanceCache = projectInstanceCache;
         musicSelected = new Music("", 0);
     }
@@ -109,7 +112,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Music retrieveLocalMusic(String musicPath) {
         Music result = null;
-        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase(context);
         List<Music> musicList = getMusicListUseCase.getAppMusic();
         for (Music music : musicList) {
             if (musicPath.compareTo(music.getMediaPath()) == 0) {

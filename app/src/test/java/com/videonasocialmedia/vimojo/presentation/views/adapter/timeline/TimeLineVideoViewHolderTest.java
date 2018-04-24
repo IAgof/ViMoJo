@@ -59,7 +59,7 @@ public class TimeLineVideoViewHolderTest {
   @Mock VimojoActivity mockedVimojoActivity;
 
   public void setUpEditActivity() {
-    editActivity = Robolectric.buildActivity(EditActivity.class).create().get();
+    editActivity = Robolectric.buildActivity(EditActivity.class).create().start().resume().get();
   }
 
   @Before

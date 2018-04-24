@@ -12,6 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
@@ -38,16 +39,15 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 public class SoundPresenterTest {
   @Mock SoundView mockedSoundView;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
-  @Mock VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
+  @Mock ProjectInstanceCache mockedProjectInstantCache;
   private Project currentProject;
 
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectInstantCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -150,8 +150,7 @@ public class SoundPresenterTest {
 
   @NonNull
   private SoundPresenter getSoundPresenter() {
-    return new SoundPresenter(mockedSoundView, mockedProjectRepository,
-            mockedVideoListErrorCheckerDelegate);
+    return new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase, mockedProjectInstantCache);
   }
 
   public void getAProject() {

@@ -176,11 +176,11 @@ public class ActivityPresentersModule {
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-          ModifyTrackUseCase modifyTrackUseCase) {
+          ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase) {
     return new MusicDetailPresenter((MusicDetailView) activity, activity, userEventTracker,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
-            modifyTrackUseCase, projectInstanceCache);
+            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache);
   }
 
   @Provides @PerActivity

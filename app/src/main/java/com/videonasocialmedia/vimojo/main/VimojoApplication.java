@@ -201,7 +201,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         return currentProject;
     }
 
-    private Project getDefaultProjectInstance() {
+    public Project getDefaultProjectInstance() {
         if (projectRepositoryIsEmpty()) {
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,

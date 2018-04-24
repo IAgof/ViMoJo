@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -39,6 +40,7 @@ public class InitAppPresenterTest {
   @Mock ProjectRepository mockedProjectRepository;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
 
 
@@ -46,17 +48,7 @@ public class InitAppPresenterTest {
   public void initDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
-  }
-
-  @Test
-  public void startLoadingProjectCallsLoadOrCreateProject() {
-    InitAppPresenter initAppPresenter = getInitAppPresenter();
-
-    initAppPresenter.onAppPathsCheckSuccess("root/path", "private/path", drawableFadeTransitionVideo);
-
-    // TODO:(alvaro.martinez) 28/11/17 Learn how to mock BuildConfig values and check values in verify method, not anyString, anyString, anyBoolean
-    verify(mockedUseCase).loadOrCreateProject(anyString(),anyString(), anyBoolean());
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -70,7 +62,8 @@ public class InitAppPresenterTest {
 
   private InitAppPresenter getInitAppPresenter() {
     return new InitAppPresenter(mockedContext, mockedSharedPreferences, mockedUseCase,
-        mockedProjectRepository, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper);
+        mockedCameraSettingsRepository, mockedRunSyncAdapterHelper, mockedProjectRepository,
+        mockedProjectInstanceCache);
   }
 
   public void getAProject() {

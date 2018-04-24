@@ -72,7 +72,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          UserEventTracker userEventTracker,
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-                         ReorderMediaItemUseCase reorderMediaItemUseCase, ProjectInstanceCache projectInstanceCache) {
+                         ReorderMediaItemUseCase reorderMediaItemUseCase,
+                         ProjectInstanceCache projectInstanceCache) {
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;

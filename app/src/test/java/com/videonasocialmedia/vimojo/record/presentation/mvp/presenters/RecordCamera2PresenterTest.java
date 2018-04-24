@@ -25,6 +25,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRep
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -99,9 +100,9 @@ public class RecordCamera2PresenterTest {
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
   @Mock private VideoRepository mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
   private Project currentProject;
@@ -111,7 +112,7 @@ public class RecordCamera2PresenterTest {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -153,6 +154,7 @@ public class RecordCamera2PresenterTest {
             .getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
     presenter = getRecordCamera2Presenter();
+    presenter.updatePresenter();
 
     presenter.navigateToEdit();
 
@@ -171,6 +173,7 @@ public class RecordCamera2PresenterTest {
     assertThat("There are videos in project", numVideosInProject, is(2));
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
     presenter = getRecordCamera2Presenter();
+    presenter.updatePresenter();
 
     presenter.navigateToEdit();
 
@@ -307,6 +310,7 @@ public class RecordCamera2PresenterTest {
   @Test
   public void stopRecordCallsTrackVideoRecorded() {
     presenter = getRecordCamera2Presenter();
+    presenter.updatePresenter();
     when(mockedSharedPreferences.getInt(anyString(), anyInt())).thenReturn(0);
     when(mockedEditor.commit()).thenReturn(true);
     when(mockedSharedPreferences.edit()).thenReturn(mockedEditor);
@@ -368,7 +372,7 @@ public class RecordCamera2PresenterTest {
     return new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedCameraSettingsRepository);
+            mockedCameraSettingsRepository, mockedProjectInstanceCache);
   }
 
   private CameraSettings getCameraSettings() {

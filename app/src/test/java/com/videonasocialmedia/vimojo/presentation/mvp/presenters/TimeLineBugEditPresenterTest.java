@@ -14,6 +14,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
@@ -50,19 +51,20 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class TimeLineBugEditPresenterTest {
   @Mock private EditActivityView mockedEditorView;
   @Mock private Context mockedContext;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock private UserEventTracker mockedUserEventTracker;
   @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
   @Mock ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
+
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   private void getAProject() {
@@ -76,10 +78,9 @@ public class TimeLineBugEditPresenterTest {
 
   @NonNull
   public EditPresenter getEditPresenter() {
-    return new EditPresenter(mockedEditorView, mockedContext,
-        mockedVideoTranscodingErrorNotifier, mockedUserEventTracker, mockedProjectRepository,
-        mockedGetMediaListFromProjectUseCase,
-        mockedVideoRemover, mockedMediaItemReorderer);
+    return new EditPresenter(mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
+        mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
+        mockedMediaItemReorderer, mockedProjectInstanceCache);
   }
 
 
@@ -101,6 +102,7 @@ public class TimeLineBugEditPresenterTest {
     int fromPosition = 0;
     int toPosition = 1;
     EditPresenter editPresenter = getEditPresenter();
+    editPresenter.updatePresenter();
     editPresenter.videoList = videoList;
 
     editPresenter.finishedMoveItem(fromPosition, toPosition);

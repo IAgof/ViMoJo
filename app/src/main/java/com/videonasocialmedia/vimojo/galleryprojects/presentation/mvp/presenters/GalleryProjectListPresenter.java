@@ -116,7 +116,6 @@ public class GalleryProjectListPresenter {
 
   public void goToDetailProject(Project project) {
     projectInstanceCache.setCurrentProject(project);
-//    projectRepository.update(project);
     // TODO(jliarte): 20/04/18 don't change current project instance, but pass projectId to load
     // project from @DetailProjectActivity
     galleryProjectListView.navigateTo(DetailProjectActivity.class);

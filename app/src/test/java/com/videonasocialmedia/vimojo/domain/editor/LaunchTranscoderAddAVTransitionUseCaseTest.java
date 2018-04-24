@@ -65,7 +65,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   public void injectDoubles() throws Exception {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test

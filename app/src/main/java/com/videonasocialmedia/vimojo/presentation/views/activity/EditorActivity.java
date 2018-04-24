@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -150,7 +151,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   protected void onResume() {
     super.onResume();
     setupDrawer();
-    editorPresenter.updatePresenter(projectHasBeenExported, videoExportedPath);
+    editorPresenter.updatePresenter(projectHasBeenExported, videoExportedPath, getCurrentAppliedTheme());
   }
 
   @Override
@@ -622,6 +623,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void resetVideoExported() {
     projectHasBeenExported = false;
     videoExportedPath = null;
+  }
+
+  private String getCurrentAppliedTheme() {
+    TypedValue outValue = new TypedValue();
+    this.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+    return (String) outValue.string;
   }
 
 }

@@ -77,7 +77,7 @@ public class NewClipImporterTest {
                 thenReturn(mockedStorageDir);
         when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
         getAProject();
-        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+        when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
     }
 
     @Before

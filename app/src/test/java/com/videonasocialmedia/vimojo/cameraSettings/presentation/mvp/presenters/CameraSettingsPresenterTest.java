@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -56,7 +57,7 @@ public class CameraSettingsPresenterTest {
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectRepository mockedProjectRepository;
-
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private MixpanelAPI mockedMixpanelAPI;
   private Project currentProject;
 
@@ -64,7 +65,7 @@ public class CameraSettingsPresenterTest {
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
 
@@ -73,7 +74,7 @@ public class CameraSettingsPresenterTest {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
-            mockedCameraSettingsRepository, mockedProjectRepository);
+            mockedCameraSettingsRepository, mockedProjectRepository, mockedProjectInstanceCache);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -139,7 +140,7 @@ public class CameraSettingsPresenterTest {
   private CameraSettingsPresenter getCameraSettingsPresenter() {
     return new CameraSettingsPresenter(mockedCameraSettingsListView,
         mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
-        mockedProjectRepository);
+        mockedProjectRepository, mockedProjectInstanceCache);
   }
 
 

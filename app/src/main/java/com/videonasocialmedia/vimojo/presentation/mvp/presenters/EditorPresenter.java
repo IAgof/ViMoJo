@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.util.TypedValue;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -113,9 +112,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.projectInstanceCache = projectInstanceCache;
   }
 
-  public void updatePresenter(boolean hasBeenProjectExported, String videoPath) {
+  public void updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
     currentProject = projectInstanceCache.getCurrentProject();
-    updateTheme();
+    updateTheme(currentAppliedTheme);
     checkFeaturesAvailable();
     updateDrawerHeaderWithCurrentProject();
     setupPlayer(hasBeenProjectExported, videoPath);
@@ -341,9 +340,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
   }
 
-  private void updateTheme() {
+  private void updateTheme(String currentAppliedTheme) {
     boolean isDarkThemeActivated = getPreferenceThemeApp();
-    String currentTheme = getCurrentAppliedTheme();
+    String currentTheme = getCurrentAppliedTheme(currentAppliedTheme);
     if (isDarkThemeActivated && currentTheme.equals(THEME_LIGHT)
             || !isDarkThemeActivated && currentTheme.equals(THEME_DARK)) {
       if (isShareActivity()) {
@@ -359,11 +358,9 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     return context.getClass().getName().equals(ShareActivity.class.getName());
   }
 
-  private String getCurrentAppliedTheme() {
+  private String getCurrentAppliedTheme(String currentAppliedTheme) {
     String currentTheme;
-    TypedValue outValue = new TypedValue();
-    context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
-    if (THEME_DARK.equals(outValue.string)) {
+    if (THEME_DARK.equals(currentAppliedTheme)) {
       currentTheme = THEME_DARK;
     } else {
       currentTheme = THEME_LIGHT;

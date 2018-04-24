@@ -5,10 +5,13 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
@@ -48,32 +51,37 @@ public class TrimPreviewPresenterTest {
     @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
-    @Mock private ProjectRepository mockedProjectRepository;
-
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
+    @Mock ProjectInstanceCache mockedProjectInstanceCache;
     private Project currentProject;
+    List<Media> videoList = new ArrayList<>();
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
         getAProject();
-        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+        when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+        getAVideoList();
+        when(mockedGetMediaListFromProjectUseCase.getMediaListFromProject(currentProject))
+            .thenReturn(videoList);
     }
 
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
-            mockedSharedPreferences, userEventTracker, mockedProjectRepository,
-            mockedGetMediaListFromProjectUseCase,mockedModifyVideoDurationUseCase);
+            mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
-    public void constructorSetsCurrentProject() {
+    public void updatePresenterSetsCurrentProject() {
         TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
+
+        trimPreviewPresenter.updatePresenter();
 
         assertThat(trimPreviewPresenter.currentProject, is(currentProject));
     }
@@ -82,6 +90,7 @@ public class TrimPreviewPresenterTest {
     @Test
     public void setTrimCallsTracking() {
         TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
+        trimPreviewPresenter.updatePresenter();
 
         trimPreviewPresenter.trackVideoTrimmed();
 
@@ -184,8 +193,8 @@ public class TrimPreviewPresenterTest {
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
         return new TrimPreviewPresenter(mockedTrimView, mockedSharedPreferences,
-            mockedUserEventTracker, mockedProjectRepository, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase);
+            mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
     }
 
     public void getAProject() {
@@ -194,5 +203,10 @@ public class TrimPreviewPresenterTest {
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
         currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
+    }
+
+    public void getAVideoList(){
+        Video video = new Video("media/path", Video.DEFAULT_VOLUME);
+        videoList.add(video);
     }
 }

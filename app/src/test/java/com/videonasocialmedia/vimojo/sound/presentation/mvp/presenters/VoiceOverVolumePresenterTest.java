@@ -12,6 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -43,12 +44,12 @@ public class VoiceOverVolumePresenterTest {
 
   @Mock VoiceOverVolumeView mockedVoiceOverVolumeView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock Context mockedContext;
   @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromPRojectUseCase;
   @Mock GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
   private Project currentProject;
 
@@ -56,7 +57,7 @@ public class VoiceOverVolumePresenterTest {
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -70,6 +71,7 @@ public class VoiceOverVolumePresenterTest {
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
+    voiceOverVolumePresenter.updatePresenter();
 
     voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
@@ -88,6 +90,7 @@ public class VoiceOverVolumePresenterTest {
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
+    voiceOverVolumePresenter.updatePresenter();
 
     voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
@@ -103,9 +106,10 @@ public class VoiceOverVolumePresenterTest {
   }
 
   private VoiceOverVolumePresenter getVoiceOverVolumePresenter() {
-    return new VoiceOverVolumePresenter(mockedContext, mockedVoiceOverVolumeView, mockedProjectRepository,
+    return new VoiceOverVolumePresenter(mockedContext, mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
-        mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase);
+        mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
+        mockedProjectInstanceCache);
   }
 
 }

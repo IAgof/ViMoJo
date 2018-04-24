@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -68,6 +69,7 @@ public class GalleryPagerPresenterTest {
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
   @Mock private VideoRepository mockedVideoRepository;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
 
   @Before
@@ -197,7 +199,7 @@ public class GalleryPagerPresenterTest {
     return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
             mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
             mockedApplyAVTransitionsUseCase, mockedProjectRepository,
-            mockedVideoRepository, mockedSharedPreferences);
+            mockedVideoRepository, mockedSharedPreferences, mockedProjectInstanceCache);
   }
 
   public void getAProject() {
