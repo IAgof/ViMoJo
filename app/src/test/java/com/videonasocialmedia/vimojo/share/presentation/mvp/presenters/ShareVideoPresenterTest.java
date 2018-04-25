@@ -264,7 +264,7 @@ public class ShareVideoPresenterTest {
         shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
             isAppExportingProject);
 
-        verify(mockedShareVideoView).startVideoExport();
+        verify(mockedShareVideoView).showProgressDialogVideoExporting();
     }
 
 

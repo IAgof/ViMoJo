@@ -21,7 +21,7 @@ public interface ShareVideoView {
 
   void showExportProgress(int progressMsg);
 
-  void startVideoExport();
+  void showProgressDialogVideoExporting();
 
   void showMessage(int stringId);
 
@@ -45,5 +45,5 @@ public interface ShareVideoView {
 
   void pauseVideoPlayerPreview();
 
-  void showExportCanceled();
+  void hideExportProgressDialogCanceled();
 }

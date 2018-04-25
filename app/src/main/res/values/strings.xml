@@ -58,7 +58,7 @@
     <string name="progress_dialog_title_checking_info_user">Checking info</string>
     <string name="progress_dialog_message_checking_user_auth">Checking user auth</string>
     <string name="cancel_exportation">Cancel</string>
-    <string name="export_wait_for_transcoding">Waiting for video transcoding to finish</string>
+    <string name="export_wait_for_transcoding">Adapting your videos</string>
     <string name="export_join_videos">Joining the videos</string>
     <string name="export_write_video_to_disk">Writing video to disk</string>
     <string name="export_add_audio_tracks">Adding audio tracks</string>
@@ -70,7 +70,7 @@
     <string name="export">Starting export</string>
     <string name="export_apply_watermark_resource_error">Error applying watermark, resource not found</string>
     <string name="export_join_videos_error">Error joining the videos</string>
-    <string name="export_wait_for_transcoding_error">Error waiting for video transcoding to finish</string>
+    <string name="export_wait_for_transcoding_error">Error adapting yur videos</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>

@@ -82,7 +82,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
-  private boolean isAppExportingProject = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +105,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onResume() {
     super.onResume();
-    presenter.updatePresenter(projectHasBeenExported, videoExportedPath, isAppExportingProject);
+    presenter.updatePresenter(projectHasBeenExported, videoExportedPath);
   }
 
   @Override
@@ -148,12 +147,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     exportProgressDialog.setCanceledOnTouchOutside(false);
     exportProgressDialog.setCancelable(false);
     exportProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-        getString(R.string.cancel_exportation), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        cancelExportation();
-      }
-    });
+        getString(R.string.cancel_exportation), onClickCancelExportation());
 
     checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
     checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
@@ -166,9 +160,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     checkingUserProgressDialog.setCancelable(false);
   }
 
-  private void cancelExportation() {
-    isAppExportingProject = false;
-    presenter.cancelExportation();
+  @NonNull
+  private DialogInterface.OnClickListener onClickCancelExportation() {
+    return (dialog, which) -> presenter.cancelExportation();
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -326,7 +320,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showExportCanceled() {
+  public void hideExportProgressDialogCanceled() {
     runOnUiThread(() -> {
       if (exportProgressDialog != null) {
         exportProgressDialog.dismiss();
@@ -419,9 +413,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void startVideoExport() {
+    public void showProgressDialogVideoExporting() {
       exportProgressDialog.show();
-      isAppExportingProject = true;
     }
 
   public void navigateToUserAuth() {
@@ -440,7 +433,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             initVideoPlayerFromFilePath(mediaPath);
           }
           exportProgressDialog.dismiss();
-          isAppExportingProject = false;
       });
     }
 
@@ -458,7 +450,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void showVideoExportError(int cause, Exception exception) {
     exportProgressDialog.dismiss();
-    isAppExportingProject = false;
     showVideoExportErrorDialog(cause);
     Crashlytics.logException(exception);
   }
