@@ -94,7 +94,6 @@ public class TimeLineBugEditPresenterTest {
     int fromPosition = 0;
     int toPosition = 1;
     EditPresenter editPresenter = getEditPresenter();
-    editPresenter.videoList = videoList;
 
     editPresenter.finishedMoveItem(fromPosition, toPosition);
 

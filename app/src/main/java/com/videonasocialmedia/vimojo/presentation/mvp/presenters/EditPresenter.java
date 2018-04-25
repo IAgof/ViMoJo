@@ -62,7 +62,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
      */
     private EditActivityView editActivityView;
     private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
-    protected List<Video> videoList = new ArrayList<>();
     protected UserEventTracker userEventTracker;
 
     @Inject
@@ -99,7 +98,6 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
             public void onVideosRetrieved(List<Video> videosRetrieved) {
                 int sizeOriginalVideoList = videosRetrieved.size();
                 List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-                videoList = checkedVideoList;
 
                 List<Video> videoCopy = new ArrayList<>(checkedVideoList);
 
@@ -111,7 +109,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.enableFabText(true);
                 editActivityView.updateVideoList(videoCopy);
                 videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
-                        videoList, videoTranscodingErrorNotifier);
+                    checkedVideoList, videoTranscodingErrorNotifier);
             }
 
             @Override
