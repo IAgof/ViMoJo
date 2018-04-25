@@ -57,12 +57,7 @@ public class RemoveVideoFromProjectUseCase {
             //video repository remove media, remove videos from other projects also.
             videoRepository.remove((Video) media);
         }
-        if (correct) {
-            projectRepository.update(currentProject);
-            listener.onRemoveMediaItemFromTrackSuccess();
-        } else {
-            listener.onRemoveMediaItemFromTrackError();
-        }
+        notifyResultToListener(currentProject, listener, correct);
     }
 
     public void removeMediaItemFromProject(Project currentProject, int positionVideoToRemove,
@@ -74,12 +69,7 @@ public class RemoveVideoFromProjectUseCase {
         if (!correct) return;
         //video repository remove media, remove videos from other projects also.
         videoRepository.remove((Video) media);
-        if (correct) {
-            projectRepository.update(currentProject);
-            listener.onRemoveMediaItemFromTrackSuccess();
-        } else {
-            listener.onRemoveMediaItemFromTrackError();
-        }
+        notifyResultToListener(currentProject, listener, correct);
     }
 
     /**
@@ -107,5 +97,15 @@ public class RemoveVideoFromProjectUseCase {
             result = false;
         }
         return result;
+    }
+
+    private void notifyResultToListener(Project currentProject,
+                                        OnRemoveMediaFinishedListener listener, boolean correct) {
+        if (correct) {
+            projectRepository.update(currentProject);
+            listener.onRemoveMediaItemFromTrackSuccess();
+        } else {
+            listener.onRemoveMediaItemFromTrackError();
+        }
     }
 }
