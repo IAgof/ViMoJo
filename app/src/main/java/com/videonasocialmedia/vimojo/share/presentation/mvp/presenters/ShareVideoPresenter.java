@@ -17,7 +17,6 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
@@ -49,8 +48,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
-
-import static android.content.Context.*;
 
 /**
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
@@ -182,10 +179,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
         shareVideoViewReference.get().startVideoExport();
         exportUseCase.export(currentProject, Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
-            public void onExportError(int error) {
+            public void onExportError(int error, Exception exception) {
                 Crashlytics.log("Error exporting: " + error);
                 if (shareVideoViewReference.get() != null) {
-                    shareVideoViewReference.get().showVideoExportError(error);
+                    shareVideoViewReference.get().showVideoExportError(error, exception);
                 }
             }
 

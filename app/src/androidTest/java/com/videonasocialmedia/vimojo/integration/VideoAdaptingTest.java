@@ -30,7 +30,6 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -172,7 +171,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     assertThat(transcodingTask, notNullValue());
     verify(mockedExportListener, never()).onExportSuccess(any(Video.class));
-    verify(mockedExportListener, never()).onExportError(anyString());
+    verify(mockedExportListener, never()).onExportError(anyString(), any());
     transcodingTask.get();
     verify(mockedListener).onSuccessAdapting(video);
     ArgumentCaptor<Object> videoCaptor = ArgumentCaptor.forClass(Video.class);
@@ -212,7 +211,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     assertThat(transcodingTask, notNullValue());
     assertThat(transcodingTask2, notNullValue());
     verify(mockedExportListener, never()).onExportSuccess(any(Video.class));
-    verify(mockedExportListener, never()).onExportError(anyString());
+    verify(mockedExportListener, never()).onExportError(anyString(), exception);
     transcodingTask.get();
     transcodingTask2.get();
     verify(mockedListener).onSuccessAdapting(video);
@@ -269,7 +268,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     assertThat(transcodingTask, not(transcodingTask_b));
     assertThat(transcodingTask2, notNullValue());
     verify(mockedExportListener, never()).onExportSuccess(any(Video.class));
-    verify(mockedExportListener, never()).onExportError(anyString());
+    verify(mockedExportListener, never()).onExportError(anyString(), exception);
     transcodingTask_b.get();
     transcodingTask2.get();
     verify(mockedListener).onSuccessAdapting(video);

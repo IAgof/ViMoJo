@@ -15,10 +15,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
@@ -76,12 +74,12 @@ public class ExportProjectUseCase implements ExportListener {
     } catch (NoSuchElementException exception) {
       Log.e(TAG, "Caught " +  exception.getClass().getName()
           + "Error waiting for adapting jobs to finish before exporting" + exception.getMessage());
-      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR);
+      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR, exception);
     } catch (InterruptedException | ExecutionException e) {
       e.printStackTrace();
       Log.e(TAG, "Caught " +  e.getClass().getName()
           + "Error waiting for adapting jobs to finish before exporting" + e.getMessage());
-      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR);
+      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR, e);
     }
   }
 
@@ -90,7 +88,8 @@ public class ExportProjectUseCase implements ExportListener {
     if (!watermarkResource.exists()) {
       if (!Utils.copyWatermarkResourceToDevice()) {
         Log.e(TAG, "Error applying watermark, resource not found");
-        onExportError(EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR);
+        onExportError(EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR,
+            new Exception("Error applying watermark, resource not found"));
       }
     }
   }
@@ -127,9 +126,9 @@ public class ExportProjectUseCase implements ExportListener {
   }
 
   @Override
-  public void onExportError(int exportErrorStage) {
+  public void onExportError(int exportErrorStage, Exception exception) {
     if (!isExportCanceled) {
-      onExportFinishedListener.onExportError(exportErrorStage);
+      onExportFinishedListener.onExportError(exportErrorStage, exception);
     }
   }
 

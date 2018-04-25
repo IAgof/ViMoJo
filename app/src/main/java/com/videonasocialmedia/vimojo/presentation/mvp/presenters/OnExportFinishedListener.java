@@ -10,7 +10,7 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 public interface OnExportFinishedListener {
-  void onExportError(int error);
+  void onExportError(int error, Exception exception);
 
   void onExportSuccess(Video video);
 

@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
@@ -455,10 +456,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showVideoExportError(int cause) {
+  public void showVideoExportError(int cause, Exception exception) {
     exportProgressDialog.dismiss();
     isAppExportingProject = false;
     showVideoExportErrorDialog(cause);
+    Crashlytics.logException(exception);
   }
 
   @Override
