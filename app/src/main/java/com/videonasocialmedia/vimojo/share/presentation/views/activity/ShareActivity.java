@@ -314,30 +314,33 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       presenter.onFtpClicked(ftp);
   }
 
-    @Override
-    public void createDialogToInsertNameProject(final FtpNetwork ftpSelected, String videoPath) {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-        editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
-        editTextDialog.requestFocus();
-        editTextDialog.setHint(R.string.text_hint_dialog_shareActivity);
-        final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    String videoFtpName= editTextDialog.getText().toString();
-                    renameFile(videoFtpName, videoPath);
-                    shareVideoWithFTP(ftpSelected, videoPath);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    break;
-            }
-        };
+  @Override
+  public void createDialogToInsertNameProject(final FtpNetwork ftpSelected, String videoPath) {
+    runOnUiThread(() -> {
+      View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
+      editTextDialog = dialogView.findViewById(R.id.text_dialog);
+      editTextDialog.requestFocus();
+      editTextDialog.setHint(R.string.text_hint_dialog_shareActivity);
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_POSITIVE:
+            String videoFtpName= editTextDialog.getText().toString();
+            renameFile(videoFtpName, videoPath);
+            shareVideoWithFTP(ftpSelected, videoPath);
+            break;
+          case DialogInterface.BUTTON_NEGATIVE:
+            break;
+        }
+      };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.VideonaDialog);
-        builder.setCancelable(false).setTitle(R.string.title_dialog_sharedActivity)
-                .setView(dialogView)
-                .setPositiveButton(R.string.positiveButtonDialogShareActivity, dialogClickListener)
-                .setNegativeButton(R.string.negativeButtonDialogShareActivity, dialogClickListener).show();
-    }
+      new AlertDialog.Builder(this,R.style.VideonaDialog).setCancelable(false)
+              .setTitle(R.string.title_dialog_sharedActivity)
+              .setView(dialogView)
+              .setPositiveButton(R.string.positiveButtonDialogShareActivity, dialogClickListener)
+              .setNegativeButton(R.string.negativeButtonDialogShareActivity, dialogClickListener)
+              .show();
+    });
+  }
 
   @Override
   public void showIntentOtherNetwork(String videoPath) {
