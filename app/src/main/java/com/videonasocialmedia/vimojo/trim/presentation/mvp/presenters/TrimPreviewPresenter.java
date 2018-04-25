@@ -12,14 +12,12 @@ import android.widget.RadioButton;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -37,12 +35,11 @@ import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR
  * Created by vlf on 7/7/15.
  */
 public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
-
     /**
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
-    private final ProjectRepository projectRepository;
+    private final ProjectInstanceCache projectInstanceCache;
 
     private Video videoToEdit;
 
@@ -55,28 +52,34 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
     private SharedPreferences sharedPreferences;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
+    private int videoToTrimIndex;
 
     @Inject
-    public TrimPreviewPresenter(TrimView trimView, SharedPreferences sharedPreferences,
-                                UserEventTracker userEventTracker,
-                                ProjectRepository projectRepository,
-                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
-        //this.trimView = new WeakReference<>(trimView);
+    public TrimPreviewPresenter(
+            TrimView trimView, SharedPreferences sharedPreferences,
+            UserEventTracker userEventTracker,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
-        this.projectRepository = projectRepository;
-        this.currentProject = projectRepository.getCurrentProject();
-        currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
+        this.projectInstanceCache = projectInstanceCache;
     }
 
     public void init(int videoToTrimIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
+        this.videoToTrimIndex = videoToTrimIndex;
+    }
+
+    public void updatePresenter() {
+        this.currentProject = projectInstanceCache.getCurrentProject();
+        currentProject.addListener(this);
+        List<Media> videoList = getMediaListFromProjectUseCase
+                .getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoToTrimIndex);

@@ -5,10 +5,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 
@@ -23,22 +22,21 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
 
   private SoundView soundView;
   private ModifyTrackUseCase modifyTrackUseCase;
-  private final Project currentProject;
-  public VideoListErrorCheckerDelegate videoListErrorCheckerDelegate;
-  public static final float VOLUME_MUTE = 0f;
+  private final ProjectInstanceCache projectInstanceCache;
+  private static final float VOLUME_MUTE = 0f;
+  protected Project currentProject;
 
-   @Inject
-    public SoundPresenter(SoundView soundView, ProjectRepository projectRepository,
-        ModifyTrackUseCase modifyTrackUseCase, VideoListErrorCheckerDelegate
-                                 videoListErrorCheckerDelegate) {
+  @Inject
+    public SoundPresenter(SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
+                          ProjectInstanceCache projectInstanceCache) {
         this.soundView = soundView;
-        this.currentProject = projectRepository.getCurrentProject();
-        currentProject.addListener(this);
+        this.projectInstanceCache = projectInstanceCache;
         this.modifyTrackUseCase = modifyTrackUseCase;
-        this.videoListErrorCheckerDelegate = videoListErrorCheckerDelegate;
     }
 
-    public void init() {
+    public void updatePresenter() {
+      this.currentProject = projectInstanceCache.getCurrentProject();
+      this.currentProject.addListener(this);
       checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
       // VMComposition
@@ -46,29 +44,29 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
     }
 
   private void retrieveTracks() {
-    if(currentProject.getVMComposition().hasVideos()){
+    if (currentProject.getVMComposition().hasVideos()) {
       Track videoTrack = currentProject.getVMComposition().getMediaTrack();
       setupTrack(videoTrack);
       updateClipPlayed(Constants.INDEX_MEDIA_TRACK);
       soundView.showTrackVideo();
     }
-    if(currentProject.getVMComposition().hasMusic()){
+    if (currentProject.getVMComposition().hasMusic()) {
       Track musicTrack = currentProject.getVMComposition().getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
       setupTrack(musicTrack);
       updateClipPlayed(Constants.INDEX_AUDIO_TRACK_MUSIC);
-      if(musicTrack.getPosition()==1){
+      if (musicTrack.getPosition() == 1) {
         soundView.showTrackAudioFirst();
       } else {
         soundView.showTrackAudioSecond();
       }
     }
-    if(currentProject.getVMComposition().hasVoiceOver()){
+    if (currentProject.getVMComposition().hasVoiceOver()) {
       Track voiceOverTrack = currentProject.getVMComposition().getAudioTracks()
           .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
       setupTrack(voiceOverTrack);
       updateClipPlayed(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
-      if(voiceOverTrack.getPosition()==1){
+      if (voiceOverTrack.getPosition()==1) {
         soundView.showTrackAudioFirst();
       } else {
         soundView.showTrackAudioSecond();
@@ -196,6 +194,6 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
 
   @Override
   public void onObjectUpdated() {
-    soundView.updateProject();
+    soundView.updatePlayer();
   }
 }

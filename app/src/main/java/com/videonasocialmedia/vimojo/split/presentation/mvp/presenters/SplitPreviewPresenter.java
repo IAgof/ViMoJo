@@ -7,19 +7,15 @@
 
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
-import android.content.Context;
-
-
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -35,14 +31,11 @@ import javax.inject.Inject;
  */
 public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener,
         ElementChangedListener {
-
     /**
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
-    private final Context context;
-    private final VideoRepository videoRepository;
-    private final ProjectRepository projectRepository;
+    private final ProjectInstanceCache projectInstanceCache;
     private SplitVideoUseCase splitVideoUseCase;
 
     private Video videoToEdit;
@@ -50,26 +43,33 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
     private SplitView splitView;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
 
     private int maxSeekBarSplit;
+    private int videoIndexOnTrack;
 
     @Inject
-    public SplitPreviewPresenter(SplitView splitView, UserEventTracker userEventTracker,
-                                 Context context, ProjectRepository projectRepository,
-                                 VideoRepository videoRepository,
-                                 SplitVideoUseCase splitVideoUseCase,
-                                 GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
+    public SplitPreviewPresenter(
+            SplitView splitView, UserEventTracker userEventTracker,
+            SplitVideoUseCase splitVideoUseCase,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
-        this.context = context;
-        this.videoRepository = videoRepository;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-        this.projectRepository = projectRepository;
-        this.currentProject = projectRepository.getCurrentProject();
+        this.projectInstanceCache = projectInstanceCache;
+    }
+
+    public void init(int videoIndexOnTrack) {
+        this.videoIndexOnTrack = videoIndexOnTrack;
+    }
+
+    public void updatePresenter() {
+        currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
+        loadProjectVideo(this.videoIndexOnTrack);
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {
@@ -130,4 +130,5 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void onObjectUpdated() {
         splitView.updateProject();
     }
+
 }

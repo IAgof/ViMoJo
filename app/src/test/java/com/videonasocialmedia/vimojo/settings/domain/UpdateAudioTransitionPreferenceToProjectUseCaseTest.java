@@ -38,7 +38,7 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
   public void setup(){
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test

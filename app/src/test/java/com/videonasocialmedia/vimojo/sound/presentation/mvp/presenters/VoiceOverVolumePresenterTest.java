@@ -12,9 +12,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -23,7 +23,6 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolum
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -43,20 +42,19 @@ public class VoiceOverVolumePresenterTest {
 
   @Mock VoiceOverVolumeView mockedVoiceOverVolumeView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock Context mockedContext;
   @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromPRojectUseCase;
   @Mock GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
   private Project currentProject;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
   }
 
   @Test
@@ -94,7 +92,7 @@ public class VoiceOverVolumePresenterTest {
     verify(mockedVoiceOverVolumeView).goToSoundActivity();
   }
 
-  private void getAProject() {
+  private void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
@@ -103,9 +101,13 @@ public class VoiceOverVolumePresenterTest {
   }
 
   private VoiceOverVolumePresenter getVoiceOverVolumePresenter() {
-    return new VoiceOverVolumePresenter(mockedContext, mockedVoiceOverVolumeView, mockedProjectRepository,
+    VoiceOverVolumePresenter voiceOverVolumePresenter = new VoiceOverVolumePresenter(mockedContext,
+        mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
-        mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase);
+        mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
+        mockedProjectInstanceCache);
+    voiceOverVolumePresenter.currentProject = currentProject;
+    return voiceOverVolumePresenter;
   }
 
 }

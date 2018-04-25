@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -9,6 +10,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBee
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -34,23 +36,25 @@ public class GalleryProjectListPresenter {
   private DeleteProjectUseCase deleteProjectUseCase;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
+  private ProjectInstanceCache projectInstanceCache;
 
   @Inject
-  public GalleryProjectListPresenter(GalleryProjectListView galleryProjectListView,
-                                     SharedPreferences sharedPreferences,
-                                     ProjectRepository projectRepository,
-                                     CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                                     DuplicateProjectUseCase duplicateProjectUseCase,
-                                     DeleteProjectUseCase deleteProjectUseCase,
-                                     CheckIfProjectHasBeenExportedUseCase
-                                         checkIfProjectHasBeenExportedUseCase) {
+  public GalleryProjectListPresenter(
+          GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
+          ProjectRepository projectRepository,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          DuplicateProjectUseCase duplicateProjectUseCase,
+          DeleteProjectUseCase deleteProjectUseCase,
+          CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase,
+          ProjectInstanceCache projectInstanceCache) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.duplicateProjectUseCase = duplicateProjectUseCase;
     this.deleteProjectUseCase = deleteProjectUseCase;
-    checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
+    this.checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
+    this.projectInstanceCache = projectInstanceCache;
   }
 
   public void init() {
@@ -67,6 +71,14 @@ public class GalleryProjectListPresenter {
 
   public void deleteProject(Project project) {
     deleteProjectUseCase.delete(project);
+    updateCurrentProjectInstance();
+  }
+
+  private void updateCurrentProjectInstance() {
+    Project lastModifiedProject = projectRepository.getLastModifiedProject();
+    if (lastModifiedProject != null) {
+      projectInstanceCache.setCurrentProject(lastModifiedProject);
+    }
   }
 
   public void updateProjectList() {
@@ -78,38 +90,35 @@ public class GalleryProjectListPresenter {
     }
   }
 
-  public void createNewDefaultProject(String rootPath, String privatePath) {
-    createDefaultProjectUseCase.createProject(rootPath, privatePath, isWatermarkActivated());
+  public void setNewProject(String rootPath, String privatePath,
+                            Drawable drawableFadeTransitionVideo) {
+    Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
+            isWatermarkActivated(), drawableFadeTransitionVideo);
+    projectRepository.add(project);
+    projectInstanceCache.setCurrentProject(project);
   }
 
   private boolean isWatermarkActivated() {
-    if(BuildConfig.FEATURE_FORCE_WATERMARK) {
-      return true;
-    }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+    return BuildConfig.FEATURE_FORCE_WATERMARK || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   public void goToEdit(Project project) {
+    projectInstanceCache.setCurrentProject(project);
     projectRepository.update(project);
     galleryProjectListView.navigateTo(EditActivity.class);
   }
 
   public void goToShare(Project project) {
+    projectInstanceCache.setCurrentProject(project);
     projectRepository.update(project);
     galleryProjectListView.navigateTo(ShareActivity.class);
   }
 
-
   public void goToDetailProject(Project project) {
-    projectRepository.update(project);
+    projectInstanceCache.setCurrentProject(project);
+    // TODO(jliarte): 20/04/18 don't change current project instance, but pass projectId to load
+    // project from @DetailProjectActivity
     galleryProjectListView.navigateTo(DetailProjectActivity.class);
   }
 
-  public void updateTitleCurrentProject(Project project, String projectTitle) {
-    ProjectInfo projectInfo = project.getProjectInfo();
-    projectInfo.setTitle(projectTitle);
-    projectRepository.setProjectInfo(project, projectInfo.getTitle(), projectInfo.getDescription(),
-        projectInfo.getProductTypeList());
-    updateProjectList();
-  }
 }

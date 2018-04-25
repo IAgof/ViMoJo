@@ -25,17 +25,16 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRep
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -100,9 +99,9 @@ public class RecordCamera2PresenterTest {
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
   @Mock private VideoRepository mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
   private Project currentProject;
@@ -111,8 +110,8 @@ public class RecordCamera2PresenterTest {
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
-    getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
+    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -353,7 +352,7 @@ public class RecordCamera2PresenterTest {
     verify(mockedUserEventTracker).trackChangeFlashMode(anyBoolean());
   }
 
-  public void getAProject() {
+  private void setAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
@@ -366,10 +365,12 @@ public class RecordCamera2PresenterTest {
 
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
-    return new RecordCamera2Presenter(mockedActivity,
+    RecordCamera2Presenter recordCamera2Presenter = new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedProjectRepository, mockedCameraSettingsRepository);
+            mockedCameraSettingsRepository, mockedProjectInstanceCache);
+    recordCamera2Presenter.currentProject = currentProject;
+    return recordCamera2Presenter;
   }
 
   private CameraSettings getCameraSettings() {

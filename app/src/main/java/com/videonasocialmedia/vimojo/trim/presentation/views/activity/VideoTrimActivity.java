@@ -110,16 +110,19 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         restoreState(savedInstanceState);
         setupActivityViews();
-    }
-
-    private void setupActivityViews() {
-        presenter.setupActivityViews();
+        presenter.init(videoIndexOnTrack);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
     }
 
     @Override
@@ -129,15 +132,19 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.init(videoIndexOnTrack);
+    protected void onStop() {
+        super.onStop();
+        stateWasRestored = true;
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
+        videonaPlayer.onDestroy();
+    }
+
+    private void setupActivityViews() {
+        presenter.setupActivityViews();
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -147,12 +154,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
             finishTimeMs = savedInstanceState.getInt(STOP_TIME_TAG);
             stateWasRestored = true;
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        stateWasRestored = true;
     }
 
     @Override
@@ -352,7 +353,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
 
     @Override
     public void updateProject() {
-        presenter.init(videoIndexOnTrack);
+        presenter.updatePresenter();
     }
 
     private void updateTrimmingTextTags() {

@@ -12,6 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -39,6 +40,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 25/04/17.
@@ -52,10 +54,14 @@ public class VideoTimeLineTouchHelperCallbackTest {
   @Mock private RecyclerView.ViewHolder mockedViewHolder;
   @Mock private RecyclerView.ViewHolder mockedViewHolderTarget;
   @Mock private VideoTimeLineRecyclerViewClickListener mockedListener;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  private Project currentProject;
 
   @Before
   public void setUpTestDoubles() {
     MockitoAnnotations.initMocks(this);
+ //   getAProject();
+ //   when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -113,5 +119,16 @@ public class VideoTimeLineTouchHelperCallbackTest {
     callback.clearView(mockedRecyclerView, viewHolder);
 
     verify(videoTimeLineAdapter).finishMovement();
+  }
+
+  public void getAProject() {
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
+    List<String> productType = new ArrayList<>();
+    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
+    if(currentProject.getVMComposition().getProfile() == null){
+      currentProject.setProfile(profile);
+    }
   }
 }

@@ -78,6 +78,22 @@ public class SettingsFragment extends PreferenceFragment implements
         mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        preferencesPresenter.updatePresenter(getActivity());
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
+        preferencesPresenter.pausePresenter();
+    }
+
     private FragmentPresentersComponent initComponent() {
         return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
@@ -154,30 +170,12 @@ public class SettingsFragment extends PreferenceFragment implements
         return viewRoot;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        preferencesPresenter.checkAvailablePreferences();
-        preferencesPresenter.checkVimojoStore(getActivity());
-        preferencesPresenter.setupUserAuthPreference();
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(preferencesPresenter);
-    }
-
     private void updateIconLockItemsInAPP(SwitchPreference switchPreference, boolean isPurchased) {
         if (isPurchased) {
             switchPreference.setIcon(context.getDrawable(R.drawable.ic_unlocked));
         } else {
             switchPreference.setIcon(context.getDrawable(R.drawable.ic_locked));
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
-        preferencesPresenter.onPause();
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
@@ -19,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -38,13 +40,14 @@ public class DetailProjectPresenterTest {
   @Mock DetailProjectView mockedDetailProjectView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock Context mockedContext;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
 
   @Before
   public void initDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepo.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -68,12 +71,13 @@ public class DetailProjectPresenterTest {
   @Test
   public void setProjectInfoCallsProjectRepository() {
 
-    DetailProjectPresenter presenter = getDetailProjectPresenter();
+    DetailProjectPresenter spyPresenter = Mockito.spy(getDetailProjectPresenter());
     String titleProject = "titleProject";
     String descriptionProject = "descriptionProject";
     List<String> productTypeList = new ArrayList<>();
+    spyPresenter.init();
 
-    presenter.setProjectInfo(titleProject, descriptionProject, productTypeList);
+    spyPresenter.setProjectInfo(titleProject, descriptionProject, productTypeList);
 
     verify(mockedProjectRepo).setProjectInfo(currentProject, titleProject, descriptionProject,
         productTypeList);
@@ -83,7 +87,7 @@ public class DetailProjectPresenterTest {
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
     return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
-        mockedProjectRepo);
+        mockedProjectRepo, mockedProjectInstanceCache);
   }
 
   private void getAProject() {

@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -24,7 +25,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,12 +68,13 @@ public class GalleryPagerPresenterTest {
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
   @Mock private VideoRepository mockedVideoRepository;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
+    setAProject();
   }
 
 //  @Test
@@ -197,10 +198,10 @@ public class GalleryPagerPresenterTest {
     return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
             mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
             mockedApplyAVTransitionsUseCase, mockedProjectRepository,
-            mockedVideoRepository, mockedSharedPreferences);
+            mockedVideoRepository, mockedSharedPreferences, mockedProjectInstanceCache);
   }
 
-  public void getAProject() {
+  public void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

@@ -1,12 +1,20 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
-import android.content.Context;
+
 import android.media.MediaMetadataRetriever;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
@@ -14,15 +22,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
-import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,38 +54,40 @@ public class SplitPreviewPresenterTest {
     @Mock private SplitView mockedSplitView;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
-
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
     @InjectMocks Video injectedVideo;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
-
-    @Mock Context mockedContext;
-    @Mock private VideoRepository mockedVideoRepository;
-    @Mock private ProjectRepository mockedProjectRepository;
+    @Mock ProjectInstanceCache mockedProjectInstanceCache;
     private Project currentProject;
+    List<Media> videoList = new ArrayList<>();
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-        getAProject();
-        when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+        setAProject();
+        when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+        getAVideoList();
+        when(mockedGetMediaListFromProjectUseCase.getMediaListFromProject(currentProject))
+            .thenReturn(videoList);
     }
 
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
-            userEventTracker, mockedContext, mockedProjectRepository, mockedVideoRepository,
-            mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase);
+            userEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
+            mockedProjectInstanceCache);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
-    public void constructorSetsCurrentProject() {
+    public void updatePresenterSetsCurrentProject() {
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
+
+        presenter.updatePresenter();
 
         assertThat(presenter.currentProject, is(currentProject));
     }
@@ -99,6 +105,7 @@ public class SplitPreviewPresenterTest {
     @Test
     public void advanceForwardEndSplittingUpdateSplitSeekbar(){
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
+        presenter.updatePresenter();
         int advancePlayerPrecision = 1;
         int currentSplitPosition = 2;
 
@@ -110,6 +117,7 @@ public class SplitPreviewPresenterTest {
     @Test
     public void advanceBackwardStartSplittingUpdateSplitSeekbar(){
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
+        presenter.updatePresenter();
         int advancePlayerPrecision = 1;
         int currentSplitPosition = 2;
 
@@ -120,16 +128,23 @@ public class SplitPreviewPresenterTest {
 
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
-        return new SplitPreviewPresenter(mockedSplitView,
-            mockedUserEventTracker, mockedContext, mockedProjectRepository, mockedVideoRepository,
-            mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase);
+        SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedSplitView,
+            mockedUserEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
+            mockedProjectInstanceCache);
+        splitPreviewPresenter.currentProject = currentProject;
+        return splitPreviewPresenter;
     }
 
-    public void getAProject() {
+    public void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
                 VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
         currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
+    }
+
+    public void getAVideoList(){
+        Video video = new Video("media/path", Video.DEFAULT_VOLUME);
+        videoList.add(video);
     }
 }

@@ -32,15 +32,12 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.adapter.OptionsToShareAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -87,18 +84,18 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean isAppExportingProject = false;
 
   @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
-        ButterKnife.bind(this);
-        getActivityPresentersComponent().inject(this);
-        initOptionsShareList();
-        bottomBar.selectTabWithId(R.id.tab_share);
-        setupBottomBar(bottomBar);
-        hideFab();
-        initBarProgressDialog();
-        checkNetworksAvailable();
-    }
+  protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      inflateLinearLayout(R.id.container_layout, R.layout.activity_share);
+      ButterKnife.bind(this);
+      getActivityPresentersComponent().inject(this);
+      initOptionsShareList();
+      bottomBar.selectTabWithId(R.id.tab_share);
+      setupBottomBar(bottomBar);
+      hideFab();
+      initBarProgressDialog();
+      checkNetworksAvailable();
+  }
 
   @Override
   protected void onStart(){
@@ -108,7 +105,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onResume() {
     super.onResume();
-    presenter.init(hasBeenProjectExported, videoExportedPath, isAppExportingProject);
+    presenter.updatePresenter(projectHasBeenExported, videoExportedPath, isAppExportingProject);
   }
 
   @Override
@@ -177,10 +174,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     bottomBar.setOnTabSelectListener(tabId -> {
       switch (tabId) {
         case(R.id.tab_editactivity):
-          showDialogNewProject(R.id.button_edit_navigator);
+          showNewProjectCreationDialog(R.id.button_edit_navigator);
           break;
         case (R.id.tab_sound):
-          showDialogNewProject(R.id.button_music_navigator);
+          showNewProjectCreationDialog(R.id.button_music_navigator);
           break;
       }
     });
@@ -420,29 +417,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       });
     }
 
-    private void showDialogNewProject(final int resourceButtonId) {
-        resetVideoExported();
-        final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    presenter.newDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
-                    navigateTo(GoToRecordOrGalleryActivity.class);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    if (resourceButtonId == R.id.button_music_navigator)
-                        navigateTo(SoundActivity.class);
-                    if (resourceButtonId == R.id.button_edit_navigator)
-                        navigateTo(EditActivity.class);
-                    break;
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-        builder.setCancelable(false).setMessage(R.string.dialog_message_clean_project)
-                .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
-                .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
-    }
-
     @Override
     public void startVideoExport() {
       exportProgressDialog.show();
@@ -459,7 +433,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       final String destPath = getDestPath(mediaPath);
       runOnUiThread(() -> {
           if (destPath != null) {
-            hasBeenProjectExported = true;
+            projectHasBeenExported = true;
             presenter.updateHasBeenProjectExported(true);
             presenter.addVideoExportedToProject(mediaPath);
             initVideoPlayerFromFilePath(mediaPath);
@@ -526,6 +500,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
         switch (which) {
           case DialogInterface.BUTTON_NEUTRAL:
+            dialog.dismiss();
             break;
         }
       };

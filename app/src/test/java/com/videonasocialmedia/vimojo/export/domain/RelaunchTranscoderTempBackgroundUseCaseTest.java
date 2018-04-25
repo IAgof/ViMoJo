@@ -56,7 +56,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock Project mockedProject;
   @Mock VideoRepository mockedVideoRepository;
 
   @InjectMocks
@@ -76,7 +76,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assertThat(video.getClipText(), is(nullValue()));
 
-    new RelaunchTranscoderTempBackgroundUseCase(mockedProjectRepository, mockedVideoRepository)
+    new RelaunchTranscoderTempBackgroundUseCase(mockedProject, mockedVideoRepository)
             .relaunchExport(video, currentProject);
   }
 

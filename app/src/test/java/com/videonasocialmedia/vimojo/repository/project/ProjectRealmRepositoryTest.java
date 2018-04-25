@@ -86,7 +86,7 @@ public class ProjectRealmRepositoryTest {
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
-    Project project = repo.getCurrentProject();
+    Project project = repo.getLastModifiedProject();
 
     verify(mockedRealmQuery).findFirst();
   }

@@ -39,12 +39,12 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
   public void setup(){
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
   public void updateWatermarkPreferenceCallsUpdateRepository(){
-    injectedUseCase.setWatermarkActivated(true);
+    injectedUseCase.setWatermarkActivated(currentProject, true);
     verify(mockedProjectRepository).update(currentProject);
   }
 
@@ -54,7 +54,7 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
         CoreMatchers.is(false));
     boolean activateWatermark = true;
 
-    injectedUseCase.setWatermarkActivated(activateWatermark);
+    injectedUseCase.setWatermarkActivated(currentProject, activateWatermark);
 
     assertThat("UseCase update Watermark ", currentProject.hasWatermark(),
         CoreMatchers.is(activateWatermark));

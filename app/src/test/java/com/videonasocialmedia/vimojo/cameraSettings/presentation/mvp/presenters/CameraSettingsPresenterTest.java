@@ -11,13 +11,13 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -51,20 +51,18 @@ public class CameraSettingsPresenterTest {
 
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
-  @Mock
-  GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
+  @Mock GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectRepository mockedProjectRepository;
-
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private MixpanelAPI mockedMixpanelAPI;
   private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
   }
 
 
@@ -73,7 +71,7 @@ public class CameraSettingsPresenterTest {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
-            mockedCameraSettingsRepository, mockedProjectRepository);
+            mockedCameraSettingsRepository, mockedProjectRepository, mockedProjectInstanceCache);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -137,9 +135,11 @@ public class CameraSettingsPresenterTest {
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {
-    return new CameraSettingsPresenter(mockedCameraSettingsListView,
+    CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(mockedCameraSettingsListView,
         mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
-        mockedProjectRepository);
+        mockedProjectRepository, mockedProjectInstanceCache);
+    cameraSettingsPresenter.currentProject = currentProject;
+    return cameraSettingsPresenter;
   }
 
 
@@ -165,7 +165,7 @@ public class CameraSettingsPresenterTest {
         cameraIdSelected);
   }
 
-  public void getAProject() {
+  public void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

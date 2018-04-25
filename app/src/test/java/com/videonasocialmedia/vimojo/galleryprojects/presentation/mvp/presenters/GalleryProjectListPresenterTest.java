@@ -1,13 +1,12 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
-import android.content.SharedPreferences;
-
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -35,9 +34,10 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 public class GalleryProjectListPresenterTest {
 
   @Mock ProjectRepository mockedProjectRepository;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @InjectMocks GalleryProjectListPresenter injectedPresenter;
   @Mock GalleryProjectListView mockedGalleryProjectListView;
-  @Mock private SharedPreferences mockedSharePreferences;
+
   private Project currentProject;
 
   @Before
@@ -52,7 +52,9 @@ public class GalleryProjectListPresenterTest {
     projectList.add(currentProject);
     doReturn(projectList).when(mockedProjectRepository)
             .getListProjectsByLastModificationDescending();
+
     injectedPresenter.updateProjectList();
+
     verify(mockedGalleryProjectListView).showProjectList(projectList);
   }
 
@@ -61,12 +63,15 @@ public class GalleryProjectListPresenterTest {
     List<Project> projectList = new ArrayList<>();
     doReturn(projectList).when(mockedProjectRepository)
             .getListProjectsByLastModificationDescending();
+
     injectedPresenter.updateProjectList();
+
     verify(mockedGalleryProjectListView).createDefaultProject();
   }
 
   @Test
   public void goToEditUpdateRepositoryAndNavigate() {
+    injectedPresenter.updateProjectList();
 
     injectedPresenter.goToEdit(currentProject);
 
@@ -76,6 +81,7 @@ public class GalleryProjectListPresenterTest {
 
   @Test
   public void goToShareUpdateRepositoryAndNavigate() {
+    injectedPresenter.updateProjectList();
 
     injectedPresenter.goToShare(currentProject);
 
@@ -85,10 +91,10 @@ public class GalleryProjectListPresenterTest {
 
   @Test
   public void goToDetailsProjectUpdateRepositoryAndNavigate() {
+    injectedPresenter.updateProjectList();
 
     injectedPresenter.goToDetailProject(currentProject);
 
-    verify(mockedProjectRepository).update(currentProject);
     verify(mockedGalleryProjectListView).navigateTo(DetailProjectActivity.class);
   }
 

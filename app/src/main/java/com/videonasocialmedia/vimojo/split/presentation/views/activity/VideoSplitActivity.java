@@ -96,6 +96,36 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
 
         restoreState(savedInstanceState);
+        presenter.init(videoIndexOnTrack);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videonaPlayer.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        videonaPlayer.onDestroy();
     }
 
     public void setupActivityButtons() {
@@ -116,36 +146,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
             currentSplitPosition = savedInstanceState.getInt(SPLIT_POSITION, 0);
             currentVideoPosition = savedInstanceState.getInt(SPLIT_VIDEO_POSITION, 0);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.loadProjectVideo(videoIndexOnTrack);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -297,7 +297,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @Override
     public void updateProject() {
-        presenter.loadProjectVideo(videoIndexOnTrack);
+        presenter.updatePresenter();
     }
 
 }

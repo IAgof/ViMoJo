@@ -55,7 +55,6 @@ public class TimeLineVideoViewHolderTest {
   @InjectMocks private VideoTimeLineAdapter injectedAdapter;
   private VideoTimeLineAdapter adapterSpy;
   @Mock VimojoTestApplication mockedVimojoTestApplication;
-  private com.videonasocialmedia.vimojo.model.entities.editor.Project currentProject;
   @Mock VimojoActivity mockedVimojoActivity;
 
   public void setUpEditActivity() {
@@ -65,25 +64,8 @@ public class TimeLineVideoViewHolderTest {
   @Before
   public void setUpTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
     adapterSpy = spy(injectedAdapter);
     setUpEditActivity();
-  }
-
-  private ActivityPresentersComponent getActivityPresentersComponent() {
-    return DaggerActivityPresentersComponent.builder()
-        .activityPresentersModule(new ActivityPresentersModule(mockedVimojoActivity))
-        .systemComponent(mockedVimojoTestApplication.getSystemComponent())
-        .build();
-  }
-
-  private void getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    List<String> productType = new ArrayList<>();
-    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    currentProject = new Project(projectInfo, "/path", "private/path",
-        compositionProfile);
   }
 
   @Test

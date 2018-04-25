@@ -29,5 +29,5 @@ public interface SoundView {
 
     void setWarningMessageTempFile(String messageTempFile);
 
-    void updateProject();
+    void updatePlayer();
 }

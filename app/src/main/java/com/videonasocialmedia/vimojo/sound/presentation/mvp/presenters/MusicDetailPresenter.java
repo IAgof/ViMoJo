@@ -4,8 +4,8 @@ import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
 
@@ -36,29 +36,29 @@ import javax.inject.Inject;
 public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
         ElementChangedListener{
 
+    private final ProjectInstanceCache projectInstanceCache;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private MusicDetailView musicDetailView;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
     private Music musicSelected;
     private Context context;
     private AddAudioUseCase addAudioUseCase;
     private RemoveAudioUseCase removeAudioUseCase;
     private ModifyTrackUseCase modifyTrackUseCase;
+    private GetMusicListUseCase getMusicListUseCase;
 
     @Inject
-    public MusicDetailPresenter(MusicDetailView musicDetailView,
-                                UserEventTracker userEventTracker,
-                                ProjectRepository projectRepository,
-                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-                                GetPreferencesTransitionFromProjectUseCase
-                                    getPreferencesTransitionFromProjectUseCase,
-                                AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
-                                removeAudioUseCase, ModifyTrackUseCase modifyTrackUseCase,
-                                Context context) {
+    public MusicDetailPresenter(
+            MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+            AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+            ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -69,12 +69,13 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.addAudioUseCase = addAudioUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
-        // TODO(jliarte): 1/12/16 should it be a parameter of use case method?
-        this.currentProject = projectRepository.getCurrentProject();
+        this.getMusicListUseCase = getMusicListUseCase;
+        this.projectInstanceCache = projectInstanceCache;
         musicSelected = new Music("", 0);
     }
 
-    public void init(String musicPath) {
+    public void updatePresenter(String musicPath) {
+        this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
         musicSelected = retrieveLocalMusic(musicPath);
         // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more
@@ -82,7 +83,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         musicSelected.setVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
         obtainMusicsAndVideos();
-        if(getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
+        if (getPreferencesTransitionFromProjectUseCase
+                .isVideoFadeTransitionActivated(currentProject)) {
             musicDetailView.setVideoFadeTransitionAmongVideos();
         }
     }
@@ -93,7 +95,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     }
 
     public void removeMusic(final Music music) {
-        removeAudioUseCase.removeMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+        removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
             new OnRemoveMediaFinishedListener() {
             @Override
             public void onRemoveMediaItemFromTrackSuccess() {
@@ -110,7 +112,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     private Music retrieveLocalMusic(String musicPath) {
         Music result = null;
-        GetMusicListUseCase getMusicListUseCase = new GetMusicListUseCase(context);
         List<Music> musicList = getMusicListUseCase.getAppMusic();
         for (Music music : musicList) {
             if (musicPath.compareTo(music.getMediaPath()) == 0) {
@@ -122,7 +123,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
 
     public void addMusic(Music music, float volume) {
         music.setVolume(volume);
-        addAudioUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+        addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
             new OnAddMediaFinishedListener() {
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {

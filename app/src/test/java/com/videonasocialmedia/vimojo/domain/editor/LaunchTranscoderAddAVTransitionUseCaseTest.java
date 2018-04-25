@@ -65,7 +65,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   public void injectDoubles() throws Exception {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -136,7 +136,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   }
 
   private ApplyAVTransitionsUseCase getInjectedApplyAVTransitionsUseCase() {
-    return new ApplyAVTransitionsUseCase(mockedProjectRepository, mockedVideoRepository);
+    return new ApplyAVTransitionsUseCase(currentProject, mockedVideoRepository);
   }
 
   public void getAProject() {

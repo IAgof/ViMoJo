@@ -12,18 +12,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -40,16 +37,15 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 public class SoundPresenterTest {
   @Mock SoundView mockedSoundView;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
-  @Mock VideoListErrorCheckerDelegate mockedVideoListErrorCheckerDelegate;
+  @Mock ProjectInstanceCache mockedProjectInstantCache;
   private Project currentProject;
 
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
+    when(mockedProjectInstantCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -62,7 +58,7 @@ public class SoundPresenterTest {
     assertThat("Project has video", currentProject.getVMComposition().hasVideos(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).bindTrack(currentProject.getMediaTrack());
   }
@@ -80,7 +76,7 @@ public class SoundPresenterTest {
     assertThat("Current project has music", currentProject.hasMusic(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).bindTrack(currentProject.getAudioTracks()
         .get(com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC));
@@ -100,7 +96,7 @@ public class SoundPresenterTest {
     assertThat("Current project has voiceOver", currentProject.hasVoiceOver(), is(true));
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).bindTrack(currentProject.getAudioTracks()
         .get(INDEX_AUDIO_TRACK_VOICE_OVER));
@@ -143,7 +139,7 @@ public class SoundPresenterTest {
     voiceOverTrack.setPosition(2);
     SoundPresenter soundPresenter = getSoundPresenter();
 
-    soundPresenter.init();
+    soundPresenter.updatePresenter();
 
     verify(mockedSoundView).showTrackVideo();
     verify(mockedSoundView).showTrackAudioFirst();
@@ -152,11 +148,13 @@ public class SoundPresenterTest {
 
   @NonNull
   private SoundPresenter getSoundPresenter() {
-    return new SoundPresenter(mockedSoundView, mockedProjectRepository, mockedModifyTrackUseCase,
-        mockedVideoListErrorCheckerDelegate);
+    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
+        mockedProjectInstantCache);
+    soundPresenter.currentProject = currentProject;
+    return soundPresenter;
   }
 
-  public void getAProject() {
+  private void setAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

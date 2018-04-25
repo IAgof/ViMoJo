@@ -30,6 +30,7 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -61,6 +62,7 @@ public class PreferencesPresenter extends VimojoPresenter
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private final BillingManager billingManager;
     private final GetAuthToken getAuthToken;
+    private final ProjectInstanceCache projectInstanceCache;
     private PlayStoreBillingDelegate playStoreBillingDelegate;
     private Context context;
     private UserEventTracker userEventTracker;
@@ -94,23 +96,23 @@ public class PreferencesPresenter extends VimojoPresenter
      * @param getAuthToken
      * @param getAccount
      */
-    public PreferencesPresenter(PreferencesView preferencesView,
-            Context context, SharedPreferences sharedPreferences,
-            Preference transitionVideoPref, Preference themeApp,
-            Preference transitionAudioPref, Preference watermarkPref,
-            ProjectRepository projectRepository,
+    public PreferencesPresenter(
+            PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
+            Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
+            Preference watermarkPref, ProjectRepository projectRepository,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             UpdateAudioTransitionPreferenceToProjectUseCase
                                         updateAudioTransitionPreferenceToProjectUseCase,
-                                UpdateVideoTransitionPreferenceToProjectUseCase
-                                        updateVideoTransitionPreferenceToProjectUseCase,
-                                UpdateIntermediateTemporalFilesTransitionsUseCase
-                                        updateIntermediateTemporalFilesTransitionsUseCase,
-                                UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-                                RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-                                GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-                                BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount) {
+            UpdateVideoTransitionPreferenceToProjectUseCase
+                    updateVideoTransitionPreferenceToProjectUseCase,
+            UpdateIntermediateTemporalFilesTransitionsUseCase
+                    updateIntermediateTemporalFilesTransitionsUseCase,
+            UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+            RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+            GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+            BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount,
+            ProjectInstanceCache projectInstanceCache) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -137,10 +139,17 @@ public class PreferencesPresenter extends VimojoPresenter
         this.getAuthToken = getAuthToken;
         this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
         this.getAccount = getAccount;
-        this.currentProject = projectRepository.getCurrentProject();
+        this.projectInstanceCache = projectInstanceCache;
     }
 
-    public void onPause() {
+    public void updatePresenter(Activity activity) {
+        this.currentProject = projectInstanceCache.getCurrentProject();
+        checkAvailablePreferences();
+        checkVimojoStore(activity);
+        setupUserAuthPreference();
+    }
+
+    public void pausePresenter() {
         if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
             billingManager.destroy();
         }
@@ -252,7 +261,8 @@ public class PreferencesPresenter extends VimojoPresenter
                 if (data && !(new File(Constants.PATH_WATERMARK).exists())) {
                     Utils.copyWatermarkResourceToDevice();
                 }
-                updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(data);
+                updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(currentProject,
+                    data);
                 preferencesView.setWatermarkSwitchPref(data);
             default:
         }
@@ -374,4 +384,5 @@ public class PreferencesPresenter extends VimojoPresenter
             }
         });
     }
+
 }

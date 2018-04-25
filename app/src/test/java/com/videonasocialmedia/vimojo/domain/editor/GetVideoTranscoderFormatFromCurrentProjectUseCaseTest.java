@@ -37,7 +37,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
     // FIXME: tests are not independent as Project keeps state between tests
     MockitoAnnotations.initMocks(this);
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   // TODO:(alvaro.martinez) 24/10/16 Profile.setQuality(null), Profile.setResolution(null)
@@ -51,7 +51,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
     VideonaFormat defaultVideoTranscoderFormat = new VideonaFormat();
 
     VideoCameraFormat videoTranscoderFormat =
-            useCase.getVideoRecordedFormatFromCurrentProjectUseCase();
+            useCase.getVideoRecordedFormatFromCurrentProjectUseCase(currentProject);
 
     assertThat(videoTranscoderFormat.getVideoBitrate(),
             is(defaultVideoTranscoderFormat.getVideoBitrate()));

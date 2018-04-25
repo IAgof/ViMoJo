@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -28,40 +29,45 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 public class CameraSettingsPresenter {
-  private CameraSettings cameraSettings;
-  private CameraSettingsView cameraSettingsListView;
+  private final CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
   private CameraSettingsRepository cameraSettingsRepository;
   private ProjectRepository projectRepository;
+  private final ProjectInstanceCache projectInstanceCache;
+  private CameraSettings cameraSettings;
+
   private HashMap<Integer, String> resolutionNames;
   private HashMap<Integer, VideoResolution.Resolution> videoResolutionValues;
   private HashMap<Integer, String> frameRateNames;
   private HashMap<Integer, VideoFrameRate.FrameRate> frameRateValues;
   private HashMap<Integer, String> qualityNames;
-  private HashMap<Integer, VideoQuality.Quality> qualityValues;
 
+  private HashMap<Integer, VideoQuality.Quality> qualityValues;
   private HashMap<Integer, String> proInterfaceNames;
-  private Project currentProject;
+  protected Project currentProject;
 
   @Inject
-  public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
-                                 UserEventTracker userEventTracker,
-                                 GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
-                                 CameraSettingsRepository cameraSettingsRepository,
-                                 ProjectRepository
-                                           projectRepository) {
-    this.getSettingListUseCase = getSettingListUseCase;
+  public CameraSettingsPresenter(
+          CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
+          GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
+          CameraSettingsRepository cameraSettingsRepository, ProjectRepository projectRepository,
+          ProjectInstanceCache projectInstanceCache) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
+    this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
-    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.projectRepository = projectRepository;
-    this.currentProject = projectRepository.getCurrentProject();
+    this.projectInstanceCache = projectInstanceCache;
+    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
     setupProInterfaceMappers();
+  }
+
+  public void updatePresenter() {
+    this.currentProject = projectInstanceCache.getCurrentProject();
   }
 
   private void setupProInterfaceMappers() {

@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
@@ -33,7 +34,6 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,18 +79,22 @@ public class EditorPresenterTest {
   @Mock GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock GetPreferencesTransitionFromProjectUseCase mocekdGetPreferencesTransitionFromProjectUseCase;
   @Mock RelaunchTranscoderTempBackgroundUseCase mockedRelaunchTranscoderTempBackgroundUseCase;
-  @Mock ProjectRepository mockedProjectRepository;
   @Mock NewClipImporter mockedNewClipImporter;
   @Mock BillingManager mockedBillingManager;
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
+  private boolean hasBeenProjectExported = false;
+  private String videoExportedPath = "videoExportedPath";
+  private String currentAppliedTheme = "dark";
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
-    getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
+    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -102,7 +106,7 @@ public class EditorPresenterTest {
             mockedRemoveVideoFromProjectUseCase, mockedGetAudioFromProjectUseCase,
             mocekdGetPreferencesTransitionFromProjectUseCase,
             mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-            mockedNewClipImporter, mockedBillingManager);
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
@@ -123,9 +127,9 @@ public class EditorPresenterTest {
   public void initCallsInitPreviewFromProjectIfProjectHasNotBeenExported() {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = false;
-    String videoPath = "";
 
-    spyEditorPresenter.init(hasBeenProjectExported, videoPath);
+    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
+        currentAppliedTheme);
 
     verify(spyEditorPresenter).initPreviewFromProject();
   }
@@ -134,11 +138,11 @@ public class EditorPresenterTest {
   public void initCallsInitPreviewFromVideoExportedIfProjectHasBeenExported() {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = true;
-    String videoPath = "";
 
-    spyEditorPresenter.init(hasBeenProjectExported, videoPath);
+    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
+        currentAppliedTheme);
 
-    verify(spyEditorPresenter).initPreviewFromVideoExported(videoPath);
+    verify(spyEditorPresenter).initPreviewFromVideoExported(videoExportedPath);
   }
 
   @Test
@@ -382,16 +386,18 @@ public class EditorPresenterTest {
   }
 
   private EditorPresenter getEditorPresenter() {
-    return new EditorPresenter(mockedEditorActivityView, mockedVideonaPlayerView,
+    EditorPresenter editorPresenter = new EditorPresenter(mockedEditorActivityView, mockedVideonaPlayerView,
         mockedSharedPreferences, mockedContext,
         mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
         mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
         mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
         mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-        mockedNewClipImporter, mockedBillingManager);
+        mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache);
+    editorPresenter.currentProject = currentProject;
+    return editorPresenter;
   }
 
-  public void getAProject() {
+  public void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

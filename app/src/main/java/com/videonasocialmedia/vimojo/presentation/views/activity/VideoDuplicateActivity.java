@@ -92,15 +92,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         restoreState(savedInstanceState);
 
         textNumDuplicates.setText("x" + numDuplicateVideos);
-    }
-
-    private void setupActivityButtons() {
-        tintVideoDuplicateButtons(R.color.button_color_theme_light);
-    }
-
-    private void tintVideoDuplicateButtons(int tintList) {
-        tintButton(decrementVideoButton,tintList);
-        tintButton(incrementVideoButton,tintList);
+        presenter.init(videoIndexOnTrack);
     }
 
     @Override
@@ -109,8 +101,10 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
     }
 
     @Override
@@ -120,16 +114,23 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.loadProjectVideo(videoIndexOnTrack);
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         videonaPlayer.onDestroy();
+    }
+
+    private void setupActivityButtons() {
+        tintVideoDuplicateButtons(R.color.button_color_theme_light);
+    }
+
+    private void tintVideoDuplicateButtons(int tintList) {
+        tintButton(decrementVideoButton,tintList);
+        tintButton(incrementVideoButton,tintList);
     }
 
     private void restoreState(Bundle savedInstanceState) {

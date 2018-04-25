@@ -51,11 +51,11 @@ public class GetCameraSettingsMapperSupportedListUseCase {
 
   @Inject
   public GetCameraSettingsMapperSupportedListUseCase(Context context,
-                                                     ProjectRepository projectRepository,
+                                                     Project currentProject,
                                                      CameraSettingsRepository cameraSettingsRepository) {
     this.context = context;
     cameraSettings = cameraSettingsRepository.getCameraSettings();
-    this.currentProject = projectRepository.getCurrentProject();
+    this.currentProject = currentProject;
   }
 
   public List<CameraSettingViewModel> getCameraSettingsList(

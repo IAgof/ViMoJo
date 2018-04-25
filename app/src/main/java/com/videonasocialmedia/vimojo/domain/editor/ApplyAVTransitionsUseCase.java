@@ -27,15 +27,13 @@ public class ApplyAVTransitionsUseCase {
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
       mediaTranscoder);
-  protected ProjectRepository projectRepository;
   protected VideoRepository videoRepository;
   private Project currentProject;
   private WeakReference<AVTransitionsApplierListener> applierListener;
 
-  public ApplyAVTransitionsUseCase(ProjectRepository projectRepository,
+  public ApplyAVTransitionsUseCase(Project project,
                                    VideoRepository videoRepository) {
-    this.projectRepository = projectRepository;
-    this.currentProject = projectRepository.getCurrentProject();
+    this.currentProject = project;
     this.videoRepository = videoRepository;
   }
 

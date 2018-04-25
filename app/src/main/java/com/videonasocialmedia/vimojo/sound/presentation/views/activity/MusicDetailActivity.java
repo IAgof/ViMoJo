@@ -81,6 +81,25 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         seekBarVolume.setProgress(currentSoundVolumePosition);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        try {
+            Bundle extras = this.getIntent().getExtras();
+            musicPath = extras.getString(IntentConstants.MUSIC_DETAIL_SELECTED);
+        } catch (Exception e) {
+            //TODO show snackbar with error message
+        }
+        presenter.updatePresenter(musicPath);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videonaPlayer.onPause();
+    }
+
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentProjectPosition = savedInstanceState.getInt(MUSIC_DETAIL_PROJECT_POSITION, 0);
@@ -101,25 +120,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         outState.putInt(MUSIC_DETAIL_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(MUSIC_DETAIL_POSITION_VOLUME, seekBarVolume.getProgress());
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        try {
-            Bundle extras = this.getIntent().getExtras();
-            musicPath = extras.getString(IntentConstants.MUSIC_DETAIL_SELECTED);
-        } catch (Exception e) {
-            //TODO show snackbar with error message
-        }
-        presenter.init(musicPath);
     }
 
     public void navigateTo(Class cls) {
@@ -201,7 +201,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
 
     @Override
     public void updateProject() {
-        presenter.init(musicPath);
+        presenter.updatePresenter(musicPath);
     }
 
     @Optional @OnClick(R.id.select_music)

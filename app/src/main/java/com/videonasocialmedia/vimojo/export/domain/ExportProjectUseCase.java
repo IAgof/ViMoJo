@@ -7,7 +7,6 @@
 
 package com.videonasocialmedia.vimojo.export.domain;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Function;
@@ -23,7 +22,6 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
@@ -47,36 +45,33 @@ public class ExportProjectUseCase implements ExportListener {
   /**
    * Project VMCompositionExportSession use case.
    */
-  public ExportProjectUseCase(ProjectRepository projectRepository,
-                              VideoToAdaptRepository videoToAdaptRepository) {
-
-    // TODO(jliarte): 28/04/17 move to export method?
-    this.project = projectRepository.getCurrentProject();
-    String tempPathIntermediateAudioFilesDirectory =
-            project.getProjectPathIntermediateAudioMixedFiles();
-    String outputFilesDirectory = Constants.PATH_APP;
-    String tempAudioPath = project.getProjectPathIntermediateFileAudioFade();
-    vmCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
-        outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
+  public ExportProjectUseCase(
+          VideoToAdaptRepository videoToAdaptRepository) {
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
   /**
    * Main use case method.
    */
-  public void export(String pathWatermark, OnExportFinishedListener onExportFinishedListener) {
+  public void export(Project currentProject, String pathWatermark,
+                     OnExportFinishedListener onExportFinishedListener) {
+    this.project = currentProject;
+    String tempPathIntermediateAudioFilesDirectory =
+            project.getProjectPathIntermediateAudioMixedFiles();
+    String tempAudioPath = project.getProjectPathIntermediateFileAudioFade();
+    // TODO(jliarte): 23/04/18 remove this android dependency!!
+    String outputFilesDirectory = Constants.PATH_APP;
+    vmCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
+            outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
+
     this.onExportFinishedListener = onExportFinishedListener;
     isExportCanceled = false;
     checkWatermarkResource(pathWatermark);
     try {
       ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
-      Futures.transform(adaptVideoTasks, new Function<List<Video>, Object>() {
-        @Nullable
-        @Override
-        public Object apply(List<Video> input) {
-          vmCompositionExportSession.exportAsyncronously();
-          return null;
-        }
+      Futures.transform(adaptVideoTasks, (Function<List<Video>, Object>) input -> {
+        vmCompositionExportSession.exportAsyncronously();
+        return null;
       });
     } catch (NoSuchElementException exception) {
       Log.e(TAG, "Caught " +  exception.getClass().getName()
