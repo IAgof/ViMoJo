@@ -43,8 +43,8 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
 
     private SplitView splitView;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
 
     private int maxSeekBarSplit;
     private int videoIndexOnTrack;

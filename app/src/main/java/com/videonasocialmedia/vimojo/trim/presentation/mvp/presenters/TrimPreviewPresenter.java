@@ -52,8 +52,8 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
     private SharedPreferences sharedPreferences;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
     private int videoToTrimIndex;
 
     @Inject

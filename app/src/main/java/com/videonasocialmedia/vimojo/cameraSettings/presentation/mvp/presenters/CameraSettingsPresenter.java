@@ -45,7 +45,7 @@ public class CameraSettingsPresenter {
 
   private HashMap<Integer, VideoQuality.Quality> qualityValues;
   private HashMap<Integer, String> proInterfaceNames;
-  private Project currentProject;
+  protected Project currentProject;
 
   @Inject
   public CameraSettingsPresenter(

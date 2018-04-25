@@ -80,7 +80,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private RecordCamera2View recordView;
   private AddVideoToProjectUseCase addVideoToProjectUseCase;
   private int videosRecorded = 0;
-  private Project currentProject;
+  protected Project currentProject;
   private Camera2Wrapper camera;
 
   private VideonaFormat videoFormat;

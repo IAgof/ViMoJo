@@ -3,8 +3,6 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -19,28 +17,21 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -63,11 +54,10 @@ public class TimeLineBugEditPresenterTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
   }
 
-  private void getAProject() {
+  private void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
@@ -78,9 +68,11 @@ public class TimeLineBugEditPresenterTest {
 
   @NonNull
   public EditPresenter getEditPresenter() {
-    return new EditPresenter(mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
+    EditPresenter editPresenter = new EditPresenter(mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
         mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
         mockedMediaItemReorderer, mockedProjectInstanceCache);
+    editPresenter.currentProject = currentProject;
+    return editPresenter;
   }
 
 
@@ -102,7 +94,6 @@ public class TimeLineBugEditPresenterTest {
     int fromPosition = 0;
     int toPosition = 1;
     EditPresenter editPresenter = getEditPresenter();
-    editPresenter.updatePresenter();
     editPresenter.videoList = videoList;
 
     editPresenter.finishedMoveItem(fromPosition, toPosition);

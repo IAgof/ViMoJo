@@ -41,7 +41,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 10/06/16.
  */
 @RunWith(RobolectricTestRunner.class)
-//@RunWith(MockitoJUnitRunner.class)
 public class DuplicatePreviewPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private DuplicateView mockedDuplicateView;
@@ -59,7 +58,7 @@ public class DuplicatePreviewPresenterTest {
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-        getAProject();
+        setAProject();
         when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
         getAVideoList();
         when(mockedGetMediaListFromProjectUseCase.getMediaListFromProject(currentProject))
@@ -79,7 +78,6 @@ public class DuplicatePreviewPresenterTest {
 
     @Test
     public void updatePresenterSetsCurrentProject() {
-
         DuplicatePreviewPresenter duplicatePreviewPresenter =
             getDuplicatePreviewPresenter();
         duplicatePreviewPresenter.updatePresenter();
@@ -95,7 +93,6 @@ public class DuplicatePreviewPresenterTest {
         DuplicatePreviewPresenter duplicatePreviewPresenter =
             getDuplicatePreviewPresenter();
         duplicatePreviewPresenter = Mockito.spy(duplicatePreviewPresenter);
-        duplicatePreviewPresenter.updatePresenter();
         doReturn(video).when(duplicatePreviewPresenter).getVideoCopy();
 
         /**
@@ -110,12 +107,14 @@ public class DuplicatePreviewPresenterTest {
 
     @NonNull
     public DuplicatePreviewPresenter getDuplicatePreviewPresenter() {
-        return new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
+        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
             mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,
             mockedProjectInstanceCache);
+        duplicatePreviewPresenter.currentProject = currentProject;
+        return  duplicatePreviewPresenter;
     }
 
-    public void getAProject() {
+    public void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();

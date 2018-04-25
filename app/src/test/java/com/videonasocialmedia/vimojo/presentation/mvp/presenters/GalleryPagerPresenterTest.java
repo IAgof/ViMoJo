@@ -25,7 +25,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,7 +74,7 @@ public class GalleryPagerPresenterTest {
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
+    setAProject();
   }
 
 //  @Test
@@ -202,7 +201,7 @@ public class GalleryPagerPresenterTest {
             mockedVideoRepository, mockedSharedPreferences, mockedProjectInstanceCache);
   }
 
-  public void getAProject() {
+  public void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

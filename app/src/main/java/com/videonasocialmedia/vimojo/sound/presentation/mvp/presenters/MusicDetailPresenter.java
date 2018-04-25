@@ -41,8 +41,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private MusicDetailView musicDetailView;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
     private Music musicSelected;
     private Context context;
     private AddAudioUseCase addAudioUseCase;

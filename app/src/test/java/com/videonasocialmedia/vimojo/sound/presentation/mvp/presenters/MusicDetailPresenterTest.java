@@ -73,7 +73,7 @@ public class MusicDetailPresenterTest {
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-        getAProject();
+        setAProject();
         when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
         getAMusicList();
         when(mockedGetMusicListUseCase.getAppMusic()).thenReturn(musicList);
@@ -92,6 +92,7 @@ public class MusicDetailPresenterTest {
     public void updatePresenterSetsCurrentProject() {
         MusicDetailPresenter musicDetailPresenter =
                 getMusicDetailPresenter(mockedUserEventTracker);
+
         musicDetailPresenter.updatePresenter(musicPath);
 
         assertThat(musicDetailPresenter.currentProject, is(currentProject));
@@ -101,7 +102,6 @@ public class MusicDetailPresenterTest {
     public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        musicDetailPresenter.updatePresenter(musicPath);
         final Music music = new Music(1, "Music title", 2,
             3, "Music Author", "3", 0);
         float volumeMusic = 0.85f;
@@ -126,7 +126,6 @@ public class MusicDetailPresenterTest {
     public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        musicDetailPresenter.updatePresenter(musicPath);
         final Music music = new Music(1, "Music title", 2,
             3, "Music Author", "3", 0);
         float volumeMusic = 0.85f;
@@ -150,7 +149,6 @@ public class MusicDetailPresenterTest {
     public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        musicDetailPresenter.updatePresenter(musicPath);
         Music music = new Music(1, "Music title", 2,
             3, "Music Author", "3", 0);
         doAnswer(new Answer() {
@@ -174,7 +172,6 @@ public class MusicDetailPresenterTest {
     public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        musicDetailPresenter.updatePresenter(musicPath);
         Music music = new Music(1, "Music title", 2,
             3, "Music Author", "3", 0);
         doAnswer(new Answer() {
@@ -208,7 +205,6 @@ public class MusicDetailPresenterTest {
     public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        musicDetailPresenter.updatePresenter(musicPath);
         AudioTrack musicTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
         Music music = new Music(1, "Music title", 2,
@@ -224,14 +220,17 @@ public class MusicDetailPresenterTest {
 
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
-        return new MusicDetailPresenter(mockedMusicDetailView, mockedContext, userEventTracker,
+        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(mockedMusicDetailView,
+            mockedContext, userEventTracker,
             mockedGetMediaListFromProjectUseCase, mockedGetAudioFromProject,
             mockedGetPreferencesTransitionsFromProject, mockedAddAudioUseCase,
             mockedRemoveAudioUseCase, mockedModifyTrackUseCase, mockedGetMusicListUseCase,
             mockedProjectInstanceCache);
+        musicDetailPresenter.currentProject = currentProject;
+        return musicDetailPresenter;
     }
 
-    public void getAProject() {
+    private void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();

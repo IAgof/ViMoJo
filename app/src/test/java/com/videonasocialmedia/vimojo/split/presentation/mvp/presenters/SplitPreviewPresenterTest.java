@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
+
 
 import android.media.MediaMetadataRetriever;
 import android.support.annotation.NonNull;
@@ -16,7 +23,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
-import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -60,7 +66,7 @@ public class SplitPreviewPresenterTest {
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-        getAProject();
+        setAProject();
         when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
         getAVideoList();
         when(mockedGetMediaListFromProjectUseCase.getMediaListFromProject(currentProject))
@@ -80,6 +86,7 @@ public class SplitPreviewPresenterTest {
     @Test
     public void updatePresenterSetsCurrentProject() {
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
+
         presenter.updatePresenter();
 
         assertThat(presenter.currentProject, is(currentProject));
@@ -89,7 +96,6 @@ public class SplitPreviewPresenterTest {
     @Config(shadows = {MediaMetadataRetrieverShadow.class})
     public void splitVideoCallsUserTracking() {
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
-        presenter.updatePresenter();
 
         presenter.trackSplitVideo();
 
@@ -122,12 +128,14 @@ public class SplitPreviewPresenterTest {
 
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
-        return new SplitPreviewPresenter(mockedSplitView,
+        SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedSplitView,
             mockedUserEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
             mockedProjectInstanceCache);
+        splitPreviewPresenter.currentProject = currentProject;
+        return splitPreviewPresenter;
     }
 
-    public void getAProject() {
+    public void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
                 VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();

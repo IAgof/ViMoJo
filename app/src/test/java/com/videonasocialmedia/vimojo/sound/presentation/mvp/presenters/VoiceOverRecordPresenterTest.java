@@ -67,8 +67,7 @@ public class VoiceOverRecordPresenterTest {
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-    when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
   }
 
   @Test
@@ -83,7 +82,6 @@ public class VoiceOverRecordPresenterTest {
 
   @Test
   public void setVoiceOverCallsApplyVoiceOverIfThereIsAudioRecorded() {
-
     VoiceOverRecordPresenter voiceOverRecordPresenter =
             Mockito.spy(getVoiceOverRecorderPresenter());
     when(voiceOverRecordPresenter.isVoiceOverRecorded()).thenReturn(true);
@@ -111,7 +109,6 @@ public class VoiceOverRecordPresenterTest {
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             any(OnAddMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
-    injectedPresenter.updatePresenter();
 
     injectedPresenter.addVoiceOver(voiceOver);
 
@@ -135,7 +132,6 @@ public class VoiceOverRecordPresenterTest {
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             any(OnAddMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
-    injectedPresenter.updatePresenter();
 
     injectedPresenter.addVoiceOver(voiceOver);
 
@@ -162,7 +158,6 @@ public class VoiceOverRecordPresenterTest {
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             Matchers.any(OnRemoveMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
-    injectedPresenter.updatePresenter();
 
     injectedPresenter.deletePreviousVoiceOver();
 
@@ -183,7 +178,7 @@ public class VoiceOverRecordPresenterTest {
             is(Music.DEFAULT_VOLUME));
   }
 
-  public void getAProject() {
+  private void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
@@ -192,9 +187,12 @@ public class VoiceOverRecordPresenterTest {
   }
 
   private VoiceOverRecordPresenter getVoiceOverRecorderPresenter(){
-    return new VoiceOverRecordPresenter(mockedContext, mockedVoiceOverRecordView,
+    VoiceOverRecordPresenter voiceOverRecordPresenter = new VoiceOverRecordPresenter(mockedContext,
+        mockedVoiceOverRecordView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromProjectUseCase,
         mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedUserEventTracker,
         mockedProjectInstanceCache);
+    voiceOverRecordPresenter.currentProject = currentProject;
+    return voiceOverRecordPresenter;
   }
 }

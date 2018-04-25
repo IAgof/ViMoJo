@@ -27,7 +27,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
@@ -102,13 +101,14 @@ public class ShareVideoPresenterTest {
             thenReturn(mockedStorageDir);
         when(Environment.getExternalStorageDirectory()).thenReturn(mockedStorageDir);
         PowerMockito.mockStatic(TextUtils.class);
-        getAProject();
+        setAProject();
         when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
     }
 
     @Test
     public void updatePresenterSetsCurrentProject() {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+
         shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
             isAppExportingProject);
 
@@ -130,8 +130,6 @@ public class ShareVideoPresenterTest {
     @Test
     public void shareVideoPresenterCallsTracking(){
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
-        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
         String socialNetwokId = "SocialNetwork";
         int totalVideosShared = 0;
 
@@ -174,8 +172,6 @@ public class ShareVideoPresenterTest {
     @Test
     public void clickUpdateToPlatformNavigateToProjectDetailsIfAnyProjectInfoFieldsIsEmpty() {
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
-        spyShareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
@@ -197,8 +193,6 @@ public class ShareVideoPresenterTest {
     @Test
     public void clickUpdateToPlatformShowMessageUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
-        spyShareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
         // Device is connected to network
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
@@ -224,8 +218,6 @@ public class ShareVideoPresenterTest {
     @Test
     public void clickUpdateToPlatformShowDialogNotNetworkUploadingVideoIfUserIsLoggedProjectInfoCompletedAndNetworkIsConnected() {
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
-        spyShareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
         // Device is NOT connected to network
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
@@ -269,7 +261,8 @@ public class ShareVideoPresenterTest {
         String videoExportedPath = "somePath";
         boolean isAppExportingProject = true;
 
-        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath, isAppExportingProject);
+        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
+            isAppExportingProject);
 
         verify(mockedShareVideoView).startVideoExport();
     }
@@ -304,8 +297,7 @@ public class ShareVideoPresenterTest {
     public void exportOrProcessVimojoNetworkIfProjectHasBeenExportedUploadToPlatform() {
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         boolean hasBeenProjectExported = true;
-        spyShareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
+        String videoExportedPath = "";
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
@@ -367,7 +359,7 @@ public class ShareVideoPresenterTest {
         verify(mockedShareVideoView).showIntentOtherNetwork(videoExportedPath);
     }
 
-    public void getAProject() {
+    private void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
@@ -377,11 +369,14 @@ public class ShareVideoPresenterTest {
 
     @NonNull
     private ShareVideoPresenter getShareVideoPresenter() {
-        return new ShareVideoPresenter(mockContext, mockedShareVideoView, mockedUserEventTracker,
+        ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
+            mockedShareVideoView, mockedUserEventTracker,
             mockedSharedPreferences, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
             mockedUploadToPlatformQueue, mockedLoggedValidator, mockedRunSyncAdapterHelper,
             mockedProjectInstanceCache);
+        shareVideoPresenter.currentProject = currentProject;
+        return shareVideoPresenter;
     }
 }

@@ -24,7 +24,7 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
   private ModifyTrackUseCase modifyTrackUseCase;
   private final ProjectInstanceCache projectInstanceCache;
   private static final float VOLUME_MUTE = 0f;
-  private Project currentProject;
+  protected Project currentProject;
 
   @Inject
     public SoundPresenter(SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,

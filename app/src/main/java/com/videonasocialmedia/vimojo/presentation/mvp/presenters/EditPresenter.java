@@ -46,7 +46,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         ElementChangedListener {
     private final String TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
-    private Project currentProject;
+    protected Project currentProject;
     private Context context;
     // TODO(jliarte): 2/05/17 inject delegate?
     final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate

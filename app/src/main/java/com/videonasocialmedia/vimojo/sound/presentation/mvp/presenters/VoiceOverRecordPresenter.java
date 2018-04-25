@@ -59,8 +59,8 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
     private AddAudioUseCase addAudioUseCase;
     private RemoveAudioUseCase removeAudioUseCase;
     private VoiceOverRecordView voiceOverRecordView;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
     private boolean isRecording = false;
     private Recorder audioRecorder;
     private String directoryVoiceOverRecorded;

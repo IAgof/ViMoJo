@@ -65,8 +65,7 @@ public class EditPresenterTest {
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
-    when(mockedProjectInstantCache.getCurrentProject()).thenReturn(currentProject);
+    setAProject();
   }
 
   @Test
@@ -116,7 +115,6 @@ public class EditPresenterTest {
   @Test
   public void ifRemoveVideoFromProjectDeleteLastVideoInProjectCallsNavigateToRecordOrGallery() throws IllegalItemOnTrack {
     EditPresenter editPresenter = getEditPresenter();
-    editPresenter.updatePresenter();
 
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
@@ -130,7 +128,6 @@ public class EditPresenterTest {
     MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video1);
     EditPresenter editPresenter = getEditPresenter();
-    editPresenter.updatePresenter();
 
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
@@ -158,7 +155,6 @@ public class EditPresenterTest {
         eq(toPosition), Matchers.any(OnReorderMediaListener.class));
     assertThat(currentProject.getMediaTrack().getItems().size(), is(2));
     EditPresenter editPresenter = getEditPresenter();
-    editPresenter.updatePresenter();
 
     editPresenter.finishedMoveItem(fromPosition, toPosition);
 
@@ -167,13 +163,15 @@ public class EditPresenterTest {
 
   @NonNull
   public EditPresenter getEditPresenter() {
-    return new EditPresenter(mockedEditorView, mockedContext,
+    EditPresenter editPresenter = new EditPresenter(mockedEditorView, mockedContext,
         mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
         mockedGetMediaListFromProjectUseCase, mockedVideoRemover, mockedMediaItemReorderer,
         mockedProjectInstantCache);
+    editPresenter.currentProject = currentProject;
+    return editPresenter;
   }
 
-  public void getAProject() {
+  public void setAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

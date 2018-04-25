@@ -15,8 +15,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -46,7 +44,7 @@ public class SoundPresenterTest {
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-    getAProject();
+    setAProject();
     when(mockedProjectInstantCache.getCurrentProject()).thenReturn(currentProject);
   }
 
@@ -150,10 +148,13 @@ public class SoundPresenterTest {
 
   @NonNull
   private SoundPresenter getSoundPresenter() {
-    return new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase, mockedProjectInstantCache);
+    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
+        mockedProjectInstantCache);
+    soundPresenter.currentProject = currentProject;
+    return soundPresenter;
   }
 
-  public void getAProject() {
+  private void setAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();

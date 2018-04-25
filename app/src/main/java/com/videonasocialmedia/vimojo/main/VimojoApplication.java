@@ -54,6 +54,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
 
     Tracker appTracker;
     private DataRepositoriesModule dataRepositoriesModule;
+    private VimojoApplicationModule vimojoApplicationModule;
     private ApplicationModule applicationModule;
     /**
      * Project instance across all application
@@ -93,7 +94,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         setupLeakCanary();
         setupDataBase();
         DaggerVimojoApplicationComponent.builder()
-                .vimojoApplicationModule(new VimojoApplicationModule(this))
+                .vimojoApplicationModule(getVimojoApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .build().inject(this);
     }
@@ -159,6 +160,13 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             }
             LeakCanary.install(this);
         }
+    }
+
+    public VimojoApplicationModule getVimojoApplicationModule() {
+        if (vimojoApplicationModule == null) {
+            vimojoApplicationModule = new VimojoApplicationModule(this);
+        }
+        return vimojoApplicationModule;
     }
 
     protected void setupDataBase() {

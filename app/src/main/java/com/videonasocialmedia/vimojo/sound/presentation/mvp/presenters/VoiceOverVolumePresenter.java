@@ -35,8 +35,8 @@ public class VoiceOverVolumePresenter implements OnVideosRetrieved {
     private VoiceOverVolumeView voiceOverVolumeView;
     private Context context;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private ModifyTrackUseCase modifyTrackUseCase;
     private RemoveAudioUseCase removeAudioUseCase;

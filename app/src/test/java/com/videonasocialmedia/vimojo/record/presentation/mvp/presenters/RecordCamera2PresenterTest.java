@@ -31,7 +31,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -111,7 +110,7 @@ public class RecordCamera2PresenterTest {
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     PowerMockito.mockStatic(Log.class);
-    getAProject();
+    setAProject();
     when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
@@ -154,7 +153,6 @@ public class RecordCamera2PresenterTest {
             .getNumVideosInProject();
     assertThat("There is not videos in project ", numVideosInProject, is(0));
     presenter = getRecordCamera2Presenter();
-    presenter.updatePresenter();
 
     presenter.navigateToEdit();
 
@@ -173,7 +171,6 @@ public class RecordCamera2PresenterTest {
     assertThat("There are videos in project", numVideosInProject, is(2));
     // TODO:(alvaro.martinez) 6/04/17 Assert also there are not videos pending to adapt, transcoding
     presenter = getRecordCamera2Presenter();
-    presenter.updatePresenter();
 
     presenter.navigateToEdit();
 
@@ -310,7 +307,6 @@ public class RecordCamera2PresenterTest {
   @Test
   public void stopRecordCallsTrackVideoRecorded() {
     presenter = getRecordCamera2Presenter();
-    presenter.updatePresenter();
     when(mockedSharedPreferences.getInt(anyString(), anyInt())).thenReturn(0);
     when(mockedEditor.commit()).thenReturn(true);
     when(mockedSharedPreferences.edit()).thenReturn(mockedEditor);
@@ -356,7 +352,7 @@ public class RecordCamera2PresenterTest {
     verify(mockedUserEventTracker).trackChangeFlashMode(anyBoolean());
   }
 
-  public void getAProject() {
+  private void setAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
@@ -369,10 +365,12 @@ public class RecordCamera2PresenterTest {
 
   @NonNull
   private RecordCamera2Presenter getRecordCamera2Presenter() {
-    return new RecordCamera2Presenter(mockedActivity,
+    RecordCamera2Presenter recordCamera2Presenter = new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
             mockedCameraSettingsRepository, mockedProjectInstanceCache);
+    recordCamera2Presenter.currentProject = currentProject;
+    return recordCamera2Presenter;
   }
 
   private CameraSettings getCameraSettings() {
