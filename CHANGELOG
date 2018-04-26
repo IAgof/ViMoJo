@@ -1,3 +1,7 @@
+v0.15.0
+- Moved exportation project process. Now share navigation buttons goes to share screen. First time
+network is selected, export project begins and when it is finished continue sharing video.
+
 v0.14.7
 - Enable beta platform url market for news. Go to http://beta.market4news.com
 

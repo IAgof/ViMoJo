@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 106 // 20180406
-            versionName "0.15.0" // 20180406
+            versionCode 107 // 20180425
+            versionName "0.16.0" // 20180425
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -154,8 +154,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 57 // 20180406
-            versionName "0.15.0.fThomsonFoundation" // 20180406
+            versionCode 58 // 20180425
+            versionName "0.16.0.fThomsonFoundation" // 20180425
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -198,8 +198,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 24 // 20180406
-            versionName "0.15.0.fMarketForNews" // 20180406
+            versionCode 25 // 20180425
+            versionName "0.16.0.fMarketForNews" // 20180425
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -221,8 +221,8 @@ android {
 
         nbc {
             applicationId "com.videonasocialmedia.vimojo.nbc"
-            versionCode 7 // 20180406
-            versionName "0.15.0.fComcastNbc" // 20180406
+            versionCode 8 // 20180425
+            versionName "0.16.0.fComcastNbc" // 20180425
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo NBC"
             resValue "string", "content_authority", applicationId + '.provider'
