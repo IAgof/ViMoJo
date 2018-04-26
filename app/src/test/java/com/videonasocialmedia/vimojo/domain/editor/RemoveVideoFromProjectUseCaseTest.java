@@ -14,7 +14,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,43 +21,26 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 23/10/16.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(EventBus.class)
 public class RemoveVideoFromProjectUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
-  @Mock VideoRepository mockedVideoRepository;
   @InjectMocks RemoveVideoFromProjectUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
-  private EventBus mockedEventBus;
   private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-  }
-
-  @Before
-  public void setupTestEventBus() {
-    PowerMockito.mockStatic(EventBus.class);
-    EventBus mockedEventBus = PowerMockito.mock(EventBus.class);
-    when(EventBus.getDefault()).thenReturn(mockedEventBus);
-    this.mockedEventBus = mockedEventBus;
   }
 
   @Test

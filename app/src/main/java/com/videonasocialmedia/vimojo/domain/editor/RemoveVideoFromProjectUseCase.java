@@ -11,8 +11,6 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
-import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
@@ -25,8 +23,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * This class is used to removed videos from the project.
@@ -83,12 +79,6 @@ public class RemoveVideoFromProjectUseCase {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
-            // TODO(jliarte): 23/10/16 get rid of EventBus?
-            EventBus.getDefault().post(
-                    new UpdateProjectDurationEvent(currentProject.getDuration()));
-            EventBus.getDefault().post(
-                    new NumVideosChangedEvent(currentProject.getMediaTrack()
-                            .getNumItemsInTrack()));
             result = true;
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             result = false;
