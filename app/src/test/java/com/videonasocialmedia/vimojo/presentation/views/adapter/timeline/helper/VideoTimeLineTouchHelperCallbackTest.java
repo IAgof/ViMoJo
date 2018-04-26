@@ -12,11 +12,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
@@ -39,6 +40,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 25/04/17.
@@ -47,15 +49,19 @@ import static org.mockito.Mockito.verify;
 @Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
         shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class VideoTimeLineTouchHelperCallbackTest {
-  @Mock private VideoTimeLineTouchHelperCallbackAdapter mockedCallbackAdapter;
+  @Mock private VideoTimeLineTouchHelperCallbackAdapterListener mockedCallbackAdapter;
   @Mock private RecyclerView mockedRecyclerView;
   @Mock private RecyclerView.ViewHolder mockedViewHolder;
   @Mock private RecyclerView.ViewHolder mockedViewHolderTarget;
   @Mock private VideoTimeLineRecyclerViewClickListener mockedListener;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  private Project currentProject;
 
   @Before
   public void setUpTestDoubles() {
     MockitoAnnotations.initMocks(this);
+ //   getAProject();
+ //   when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -100,7 +106,6 @@ public class VideoTimeLineTouchHelperCallbackTest {
 
   @Test
   public void clearViewCallsAdapterFinishMovement() {
-    getAProject();
     EditActivity editActivity = Robolectric.buildActivity(EditActivity.class).create().get();
     VideoTimeLineAdapter videoTimeLineAdapter = spy(new VideoTimeLineAdapter(mockedListener));
     View viewRoot = editActivity.findViewById(android.R.id.content);
@@ -113,15 +118,17 @@ public class VideoTimeLineTouchHelperCallbackTest {
 
     callback.clearView(mockedRecyclerView, viewHolder);
 
-    verify(videoTimeLineAdapter).finishMovement(viewHolder.getAdapterPosition());
+    verify(videoTimeLineAdapter).finishMovement();
   }
 
-  private Project getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+  public void getAProject() {
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+        VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
-        compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
+    if(currentProject.getVMComposition().getProfile() == null){
+      currentProject.setProfile(profile);
+    }
   }
 }

@@ -6,35 +6,33 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
 public interface EditorActivityView {
 
-  void updateViewResetProject();
+    void showError(int causeTextResource);
 
-  void showError(int causeTextResource);
+    void showMessage(int stringToast);
 
-  void showMessage(int stringToast);
+    void restartShareActivity(String extraDataIntent);
 
-  void expandFabMenu();
+    void restartActivity();
 
-  void restartShareActivity(String extraDataIntent);
+    void itemDarkThemePurchased();
 
-  void restartActivity();
+    void itemWatermarkPurchased();
 
-  void itemDarkThemePurchased();
+    void watermarkFeatureAvailable();
 
-  void itemWatermarkPurchased();
+    void hideWatermarkSwitch();
 
-  void watermarkFeatureAvailable();
+    void setIconsFeatures();
 
-  void hideWatermarkSwitch();
+    void setIconsPurchaseInApp();
 
-  void setIconsFeatures();
+    void hideVimojoStoreViews();
 
-  void setIconsPurchaseInApp();
+    void deactivateDarkTheme();
 
-  void hideVimojoStoreViews();
+    void activateWatermark();
 
-  void deactivateDarkTheme();
+    void setHeaderViewCurrentProject(String pathThumbProject, String projectName, String projectDate);
 
-  void activateWatermark();
-
-  void setHeaderViewCurrentProject(String pathThumbProject, String projectName, String projectDate);
+    void goToRecordOrGalleryScreen();
 }

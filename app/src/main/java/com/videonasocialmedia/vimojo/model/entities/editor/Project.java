@@ -47,13 +47,6 @@ public class Project implements ElementChangedListener {
   public static final String TEMP_FILES_AUDIO_MIXED_VOICE_OVER_RECORD = "voiceOverRecord";
 
     /**
-     * There could be just one project open at a time. So this converts Project in a Singleton.
-     */
-    // TODO(jliarte): 22/10/16 Would use project instance to store current project by now
-    @Deprecated
-    public static Project INSTANCE;
-
-    /**
      * The folder where de temp files of the project are stored
      */
     private String projectPath;
@@ -117,24 +110,6 @@ public class Project implements ElementChangedListener {
     return vmComposition;
   }
 
-
-    /**
-     * Project factory.
-     *
-     * (jliarte): since 21/10/16 Project stops being a singleton :P
-     *
-     * @return - Singleton instance of the current project.
-     */
-    @Deprecated
-    public static Project getInstance(ProjectInfo projectInfo, String rootPath, String privatePath,
-                                      Profile profile) {
-        if (INSTANCE == null) {
-            INSTANCE = new Project(projectInfo, rootPath, privatePath, profile);
-        }
-        return INSTANCE;
-    }
-
-
   // getters & setters
     public void setProjectPath(String projectPath) {
         this.projectPath = projectPath;
@@ -173,12 +148,6 @@ public class Project implements ElementChangedListener {
         this.duration = duration;
     }
 
-    public void clear() {
-        if (INSTANCE != null) {
-            INSTANCE = null;
-        }
-    }
-
     public int numberOfClips() {
         return getMediaTrack().getItems().size();
     }
@@ -205,7 +174,7 @@ public class Project implements ElementChangedListener {
     return lastModification;
   }
 
-  public void setLastModification(String lastModification) {
+  public void updateDateOfModification(String lastModification) {
     this.lastModification = lastModification;
   }
 

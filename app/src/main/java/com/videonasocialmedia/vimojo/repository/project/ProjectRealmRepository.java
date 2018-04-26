@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -50,7 +51,7 @@ public class ProjectRealmRepository implements ProjectRepository {
 
   @Override
   public void update(final Project item) {
-    item.setLastModification(DateUtils.getDateRightNow());
+    item.updateDateOfModification(DateUtils.getDateRightNow());
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
       @Override
@@ -95,7 +96,7 @@ public class ProjectRealmRepository implements ProjectRepository {
   }
 
   @Override
-  public Project getCurrentProject() {
+  public Project getLastModifiedProject() {
     // TODO(jliarte): 6/07/17 fix No space left on device
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()

@@ -2,9 +2,9 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,15 +27,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
@@ -44,16 +50,27 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter.VOLUME_MUTE;
+
 /**
  *
  */
-public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
+    VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
+
+  private static String LOG_TAG = EditorActivity.class.getCanonicalName();
+
+  private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
+  private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
+      "editor_activity_has_been_project_exported";
+  private static final String EDITOR_ACTIVITY_VIDEO_EXPORTED = "editor_activity_video_exported";
 
   @Inject
   UserEventTracker userEventTracker;
@@ -62,9 +79,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Nullable
   @BindView(R.id.text_dialog)
   EditText editTextDialog;
-
-  private AlertDialog alertDialog;
-
   @BindView(R.id.edit_activity_drawer_layout)
   DrawerLayout drawerLayout;
   @BindView(R.id.navigator_view)
@@ -79,14 +93,14 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Nullable
   @BindView(R.id.switch_watermark)
   SwitchCompat switchWatermark;
+  @Nullable @BindView(R.id.videona_player)
+  VideonaPlayerExo videonaPlayer;
   private boolean darkThemePurchased = false;
   private boolean watermarkPurchased = false;
   CircleImageView imageProjectThumb;
   TextView projectName;
   TextView projectDate;
   ImageButton projectEdit;
-  String userThumbPath = Constants.PATH_APP_TEMP + File.separator + Constants.USER_THUMB;
-  private int REQUEST_ICON_USER = 100;
   private boolean isVimojoStoreAvailable = true;
   private CompoundButton.OnCheckedChangeListener watermarkOnCheckedChangeListener =
           new CompoundButton.OnCheckedChangeListener() {
@@ -113,34 +127,112 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
   };
 
+  private boolean isVideoMute;
+  protected String videoExportedPath;
+  protected boolean projectHasBeenExported = false;
+  private int currentPlayerPosition = 0;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    setUpAndCheckHeaderViewCurrentProject();
   }
 
-  private void setUpAndCheckHeaderViewCurrentProject() {
-    imageProjectThumb = (CircleImageView) navigationView.getHeaderView(0)
+  @Override
+  protected void onStart() {
+    super.onStart();
+    videonaPlayer.setListener(this);
+    videonaPlayer.onShown(this);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    setupDrawer();
+    editorPresenter.updatePresenter(projectHasBeenExported, videoExportedPath, getCurrentAppliedTheme());
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    videonaPlayer.onPause();
+    editorPresenter.onPause();
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    currentPlayerPosition = videonaPlayer.getCurrentPosition();
+    outState.putInt(EDITOR_ACTIVITY_PROJECT_POSITION, currentPlayerPosition);
+    outState.putBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, projectHasBeenExported);
+    outState.putString(EDITOR_ACTIVITY_VIDEO_EXPORTED, videoExportedPath);
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  protected  void onRestoreInstanceState(Bundle state) {
+    super.onRestoreInstanceState(state);
+    if(state != null) {
+      currentPlayerPosition = state.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
+          0);
+      projectHasBeenExported = state.getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED,
+          false);
+      videoExportedPath = state.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
+    }
+  }
+
+  private void setupDrawer() {
+    if (navigationView != null) {
+      setUpDrawerHeader();
+      setupDrawerContent(navigationView);
+    }
+    setupSwitchThemeAppIntoDrawer();
+  }
+
+  private void setUpDrawerHeader() {
+    imageProjectThumb = navigationView.getHeaderView(0)
             .findViewById(R.id.image_drawer_thumb_project);
-    projectName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_title);
-    projectName.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        showDialogUpdateCurrentProjectTitle();
-      }
-    });
-    projectDate = (TextView) navigationView.getHeaderView(0).findViewById(R.id.project_date);
-    projectEdit = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.project_edit_button);
-    projectEdit.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        navigateTo(DetailProjectActivity.class);
-      }
-    });
-    editorPresenter.updateHeaderViewCurrentProject();
+    projectName = navigationView.getHeaderView(0).findViewById(R.id.project_title);
+    projectName.setOnClickListener(v -> showDialogUpdateCurrentProjectTitle());
+    projectDate = navigationView.getHeaderView(0).findViewById(R.id.project_date);
+    projectEdit = navigationView.getHeaderView(0).findViewById(R.id.project_edit_button);
+    projectEdit.setOnClickListener(v -> navigateTo(DetailProjectActivity.class));
+  }
+
+  private void setupDrawerContent(NavigationView navigationView) {
+    navigationView.setNavigationItemSelectedListener(
+            menuItem -> {
+              switch (menuItem.getItemId()) {
+                case R.id.menu_navview_gallery_projects:
+                  drawerLayout.closeDrawers();
+                  navigateTo(GalleryProjectListActivity.class);
+                  return false;
+                case R.id.menu_navview_new_project:
+                  showNewProjectCreationDialog(R.id.menu_navview_new_project);
+                  return false;
+                case R.id.menu_navview_user_profile:
+                  navigateTo(UserProfileActivity.class);
+                  return false;
+                case R.id.menu_navview_settings:
+                  navigateTo(SettingsActivity.class);
+                  return false;
+                case R.id.menu_navview_tutorial_edition:
+                  navigateTo(TutorialEditorActivity.class);
+                  return false;
+                case R.id.menu_navview_tutorial_record:
+                  navigateTo(TutorialRecordActivity.class);
+                  return false;
+                case R.id.menu_navview_vimojo_store_section:
+                  navigateTo(VimojoStoreActivity.class);
+                  return false;
+                case R.id.menu_navview_vimojo_kit_web_section:
+                  navigateToVimojoKitWeb();
+                  return false;
+                default:
+                  return false;
+              }
+            });
   }
 
   @Override
@@ -150,7 +242,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void setToolbar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     ActionBar ab = getSupportActionBar();
     if (ab != null) {
@@ -158,26 +250,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       ab.setHomeAsUpIndicator(R.drawable.ic_nav_menu);
       ab.setDisplayHomeAsUpEnabled(true);
     }
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    /*if (navigationView != null) {
-      setupDrawerContent(navigationView);
-      setUpAndCheckHeaderViewCurrentProject();
-    }*/
-    setupDrawerContent(navigationView);
-    setUpAndCheckHeaderViewCurrentProject();
-    editorPresenter.init();
-    setupSwitchThemeAppIntoDrawer();
-    editorPresenter.updateTheme();
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    editorPresenter.onPause();
   }
 
   private boolean checkIfThemeDarkIsSelected() {
@@ -221,46 +293,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   protected void inflateLinearLayout(int linearLayoutContainer, int layoutToAdd) {
-    LinearLayout contentLayoutEditActivity = (LinearLayout) findViewById(linearLayoutContainer);
+    LinearLayout contentLayoutEditActivity = findViewById(linearLayoutContainer);
     getLayoutInflater().inflate(layoutToAdd, contentLayoutEditActivity);
-  }
-
-  private void setupDrawerContent(NavigationView navigationView) {
-    navigationView.setNavigationItemSelectedListener(
-            new NavigationView.OnNavigationItemSelectedListener() {
-              @Override
-              public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                  case R.id.menu_navview_gallery_projects:
-                    drawerLayout.closeDrawers();
-                    navigateTo(GalleryProjectListActivity.class);
-                    return false;
-                  case R.id.menu_navview_delete_clip:
-                    createDialog(R.id.menu_navview_delete_clip);
-                    return false;
-                  case R.id.menu_navview_user_profile:
-                    navigateTo(UserProfileActivity.class);
-                    return false;
-                  case R.id.menu_navview_settings:
-                    navigateTo(SettingsActivity.class);
-                    return false;
-                  case R.id.menu_navview_tutorial_edition:
-                    navigateTo(TutorialEditorActivity.class);
-                    return false;
-                  case R.id.menu_navview_tutorial_record:
-                    navigateTo(TutorialRecordActivity.class);
-                    return false;
-                  case R.id.menu_navview_vimojo_store_section:
-                    navigateTo(VimojoStoreActivity.class);
-                    return false;
-                  case R.id.menu_navview_vimojo_kit_web_section:
-                    navigateToVimojoKitWeb();
-                    return false;
-                  default:
-                    return false;
-                }
-              }
-            });
   }
 
   private void navigateToVimojoKitWeb() {
@@ -268,34 +302,37 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     startActivity(Intent.createChooser(intent, getString(R.string.choose_browser)));
   }
 
-  private void createDialog(final int resourceItemMenuId) {
+  protected void showNewProjectCreationDialog(final int resourceId) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    if (resourceItemMenuId == R.id.menu_navview_delete_clip)
-      builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
+    builder.setMessage(getResources().getString(R.string.dialog_message_clean_project));
 
-    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-          case DialogInterface.BUTTON_POSITIVE:
-            if (resourceItemMenuId == R.id.menu_navview_delete_clip)
-              editorPresenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
-            break;
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_POSITIVE:
+          // TODO(jliarte): 20/04/18 review resetting exported video path and date
+          resetVideoExported();
+          // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
+          Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+          editorPresenter.resetCurrentProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+                  drawableFadeTransitionVideo);
+          break;
 
-          case DialogInterface.BUTTON_NEGATIVE:
-            drawerLayout.closeDrawers();
-            break;
-        }
+        case DialogInterface.BUTTON_NEGATIVE:
+          drawerLayout.closeDrawers();
+          if (resourceId == R.id.button_music_navigator)
+            navigateTo(SoundActivity.class);
+          if (resourceId == R.id.button_edit_navigator)
+            navigateTo(EditActivity.class);
+          break;
       }
     };
-
-    alertDialog = builder.setCancelable(true).
+    builder.setCancelable(true).
             setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
             .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
   }
 
   public void navigateTo(Class cls) {
-    Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+    Intent intent = new Intent(this, cls);
     startActivity(intent);
   }
 
@@ -336,18 +373,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private void updateNavigationIcon(int identifier, int resourceId) {
-    navigationView.getMenu().findItem(identifier)
-             .setIcon(this.getDrawable(resourceId));
+    navigationView.getMenu().findItem(identifier).setIcon(this.getDrawable(resourceId));
   }
 
   @Override
-  public void updateViewResetProject() {
+  public void goToRecordOrGalleryScreen() {
     navigateTo(GoToRecordOrGalleryActivity.class);
-  }
-
-  @Override
-  public void expandFabMenu() {
-    fabMenu.expand();
+    finish();
   }
 
   @Override
@@ -365,7 +397,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void restartShareActivity(String videoPath) {
     Intent intent = getIntent();
-    intent.putExtra("videoPath", videoPath);
+    intent.putExtra("videoExportedPath", videoPath);
     startActivity(intent);
     finish();
   }
@@ -424,7 +456,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   public void setHeaderViewCurrentProject(String pathThumbProject, String currentProjectName,
                                           String currentProjectDate) {
-    if(pathThumbProject != null) {
+    if (pathThumbProject != null) {
       updateCurrentProjectThumb(pathThumbProject);
     } else {
       updateCurrentProjectDefaultThumb();
@@ -447,6 +479,82 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
   }
 
+  @Override
+  public void bindVideoList(List<Video> movieList) {
+    videonaPlayer.bindVideoList(movieList);
+  }
+
+  @Override
+  public void bindMusic(Music music) {
+    videonaPlayer.setMusic(music);
+  }
+
+  @Override
+  public void bindVoiceOver(Music voiceOver){
+    videonaPlayer.setVoiceOver(voiceOver);
+  }
+
+  @Override
+  public void setVideoMute() {
+    isVideoMute = true;
+    videonaPlayer.setVideoVolume(0f);
+  }
+
+  @Override
+  public void setVideoVolume(float volume) {
+    videonaPlayer.setVideoVolume(volume);
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    videonaPlayer.setVoiceOverVolume(volume);
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    videonaPlayer.setMusicVolume(volume);
+  }
+
+  @Override
+  public void setVideoFadeTransitionAmongVideos() {
+    videonaPlayer.setVideoTransitionFade();
+  }
+
+  @Override
+  public void setAudioFadeTransitionAmongVideos() {
+    videonaPlayer.setAudioTransitionFade();
+  }
+
+  @Override
+  public void seekToClip(int clipPosition) {
+    videonaPlayer.seekToClip(clipPosition);
+  }
+
+  @Override
+  public void pausePreview() {
+    videonaPlayer.pausePreview();
+  }
+
+  @Override
+  public void updatePlayerVideos() {
+    editorPresenter.obtainVideoFromProject();
+  }
+
+  @Override
+  public void initPreviewFromVideo(List<Video> movieList) {
+    videonaPlayer.onPause();
+    videonaPlayer.onShown(this);
+    videonaPlayer.initPreviewLists(movieList);
+    videonaPlayer.initPreview(currentPlayerPosition);
+  }
+
+  @Override
+  public void newClipPlayed(int currentClipIndex) {
+    if (isVideoMute) {
+      videonaPlayer.setVideoVolume(VOLUME_MUTE);
+    }
+  }
+
   private void updateCurrentProjectThumb(String path) {
     File thumb = new File(path);
     if (thumb.exists()) {
@@ -464,28 +572,25 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void showDialogUpdateCurrentProjectTitle() {
     View dialogView = getLayoutInflater().inflate(R.layout.dialog_insert_text, null);
-    editTextDialog = (EditText) dialogView.findViewById(R.id.text_dialog);
+    editTextDialog = dialogView.findViewById(R.id.text_dialog);
     editTextDialog.setText(projectName.getText());
     editTextDialog.setSelectAllOnFocus(true);
 
     final DialogInterface.OnClickListener dialogClickListener =
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            hideKeyboard(editTextDialog);
-            switch (which) {
-              case DialogInterface.BUTTON_POSITIVE: {
-                String textPreference = editTextDialog.getText().toString();
-                if (textPreference.equals(projectName.getText()))
-                  return;
-                editorPresenter.updateTitleCurrentProject(textPreference);
-                projectName.setText(textPreference);
-                              }
-              case DialogInterface.BUTTON_NEGATIVE:
-                break;
-            }
-          }
-        };
+            (dialog, which) -> {
+              hideKeyboard(editTextDialog);
+              switch (which) {
+                case DialogInterface.BUTTON_POSITIVE: {
+                  String textPreference = editTextDialog.getText().toString();
+                  if (textPreference.equals(projectName.getText()))
+                    return;
+                  editorPresenter.updateTitleCurrentProject(textPreference);
+                  projectName.setText(textPreference);
+                                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                  break;
+              }
+            };
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     AlertDialog alertDialog = builder.setCancelable(false)
@@ -508,6 +613,22 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     InputMethodManager keyboard =
         (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
+  }
+
+  public void initVideoPlayerFromFilePath(String videoPath) {
+    this.videoExportedPath = videoPath;
+    editorPresenter.setupPlayer(projectHasBeenExported, videoExportedPath);
+  }
+
+  public void resetVideoExported() {
+    projectHasBeenExported = false;
+    videoExportedPath = null;
+  }
+
+  private String getCurrentAppliedTheme() {
+    TypedValue outValue = new TypedValue();
+    this.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+    return (String) outValue.string;
   }
 
 }

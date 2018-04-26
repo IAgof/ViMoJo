@@ -57,9 +57,7 @@ public class ModifyVideoTextAndPositionUseCase {
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
-    public void addTextToVideo(final Video videoToEdit, String text, String textPosition,
-                               Project project) {
-      final Project currentProject = getCurrentProject();
+    public void addTextToVideo(Project currentProject, final Video videoToEdit, String text, String textPosition) {
       setVideoTextParams(videoToEdit, text, textPosition, currentProject);
       videoRepository.update(videoToEdit);
 
@@ -68,7 +66,7 @@ public class ModifyVideoTextAndPositionUseCase {
         videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
                 applyText(currentProject, videoToEdit, text, textPosition)));
       } else {
-        runTextTranscodingTask(videoToEdit, project);
+        runTextTranscodingTask(videoToEdit, currentProject);
       }
     }
 
@@ -115,7 +113,7 @@ public class ModifyVideoTextAndPositionUseCase {
       Futures.addCallback(transcoderTextTask, new TextTaskCallback(project, videoToEdit));
     } catch (IOException ioError) {
       ioError.printStackTrace();
-      handleTranscodingError(videoToEdit, ioError.getMessage(), getCurrentProject());
+      handleTranscodingError(videoToEdit, ioError.getMessage(), project);
     }
     return transcoderTextTask;
   }
@@ -149,9 +147,6 @@ public class ModifyVideoTextAndPositionUseCase {
     videoRepository.setSuccessTranscodingVideo(video);
   }
 
-  private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
-  }
 
   private class TextTaskCallback implements FutureCallback<Video> {
     private final Project currentProject;

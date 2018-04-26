@@ -33,24 +33,26 @@ public class DeleteProjectUseCaseTest {
   @Mock TrackRepository mockedTrackRepository;
   @InjectMocks
   DeleteProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Test
   public void deleteProjectCallsRemoveProjectRepository(){
-    Project currentProject = getAProject();
     injectedUseCase.delete(currentProject);
+
     verify(mockedProjectRepository).remove(currentProject);
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path","private/path", profile);
+    currentProject = new Project(projectInfo, "/path","private/path", profile);
   }
 }

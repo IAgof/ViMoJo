@@ -6,6 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
@@ -13,13 +14,13 @@ import com.videonasocialmedia.vimojo.utils.Constants;
  */
 public class GetVideoFormatFromCurrentProjectUseCase {
 
-    public Project project;
+    private final ProjectRepository projectRepository;
 
-    public GetVideoFormatFromCurrentProjectUseCase() {
-        this.project = Project.getInstance(null, null, null, null);
+    public GetVideoFormatFromCurrentProjectUseCase(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
     }
 
-    public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase() {
+    public VideoCameraFormat getVideoRecordedFormatFromCurrentProjectUseCase(Project project) {
         VideoCameraFormat videoCameraFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
@@ -29,7 +30,7 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         return videoCameraFormat;
     }
 
-    public VideonaFormat getVideonaFormatFromCurrentProject() {
+    public VideonaFormat getVideonaFormatFromCurrentProject(Project project) {
         VideonaFormat videonaFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
@@ -48,7 +49,7 @@ public class GetVideoFormatFromCurrentProjectUseCase {
             Constants.DEFAULT_VIMOJO_AUDIO_CHANNELS);
     }
 
-    public VideonaFormat getVideonaFormatToAdaptVideoRecordedAudioAndVideo() {
+    public VideonaFormat getVideonaFormatToAdaptVideoRecordedAudioAndVideo(Project project) {
         VideonaFormat videonaFormat;
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();

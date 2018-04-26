@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapter;
+import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public class VideoTimeLineAdapter
         extends RecyclerView.Adapter<TimeLineVideoViewHolder>
-        implements VideoTimeLineTouchHelperCallbackAdapter {
+        implements VideoTimeLineTouchHelperCallbackAdapterListener {
   private final String TAG = VideoTimeLineAdapter.class.getCanonicalName();
   private List<Video> videoList;
   private int selectedVideoPosition;
@@ -61,6 +61,9 @@ public class VideoTimeLineAdapter
   }
 
   public void updateSelection(int position) {
+    if( selectedVideoPosition == position) {
+      return;
+    }
     notifyItemChanged(selectedVideoPosition);
     this.selectedVideoPosition = position;
     notifyItemChanged(position);
@@ -73,7 +76,7 @@ public class VideoTimeLineAdapter
   public void updateVideoList(List<Video> videoList) {
     this.videoList = videoList;
     notifyDataSetChanged();
-    Log.d(TAG, "timeline: videoList updated!");
+    Log.d(TAG, "timeline: videoList updated!, videolist size " + videoList.size());
 //    updateSelection(0);
   }
 
@@ -84,6 +87,7 @@ public class VideoTimeLineAdapter
 
   @Override
   public boolean onItemMove(int fromPosition, int toPosition) {
+    Log.d(TAG, "timeline: adapter move from " + fromPosition + " to: " + toPosition);
     if (fromPosition < toPosition) {
       for (int i = fromPosition; i < toPosition; i++) {
         Collections.swap(videoList, i, i + 1);
@@ -93,9 +97,8 @@ public class VideoTimeLineAdapter
         Collections.swap(videoList, i, i - 1);
       }
     }
-    Log.d(TAG, "timeline: adapter move from " + fromPosition + " to: " + toPosition);
     notifyItemMoved(fromPosition, toPosition);
-    videoTimeLineListener.onClipMoved(fromPosition, toPosition);
+    videoTimeLineListener.onClipMoving(fromPosition, toPosition);
     return true;
   }
 
@@ -105,8 +108,9 @@ public class VideoTimeLineAdapter
   }
 
   @Override
-  public void finishMovement(int adapterPosition) {
-    videoTimeLineListener.onClipReordered(adapterPosition);
+  public void finishMovement() {
+    Log.d(TAG, "finishMovement ");
+    videoTimeLineListener.onClipReordered();
   }
 
   protected int getSelectedVideoPosition() {
@@ -116,4 +120,5 @@ public class VideoTimeLineAdapter
   public void setFailedVideos(ArrayList<Video> failedVideos) {
     this.failedVideos = failedVideos;
   }
+
 }

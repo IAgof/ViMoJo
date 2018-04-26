@@ -3,7 +3,13 @@ package com.videonasocialmedia.vimojo.sound.domain;
 import android.media.MediaMetadataRetriever;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.integration.AssetManagerAndroidTest;
+import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Before;
@@ -27,12 +33,14 @@ public class MergeVoiceOverAudiosInstrumentationTest extends AssetManagerAndroid
 
   private String testPath;
   @Mock OnMergeVoiceOverAudiosListener mockedOnMergeVoiceOverAudiosListener;
+  private Project currentProject;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
         .getAbsolutePath();
+    getAProject();
   }
 
   @Test
@@ -45,7 +53,7 @@ public class MergeVoiceOverAudiosInstrumentationTest extends AssetManagerAndroid
     String pathFinalAudioMerged = new File(voiceOver1Path).getAbsolutePath() + File.separator +
         Constants.AUDIO_TEMP_RECORD_VOICE_OVER_FILENAME;
 
-    mergeAudio.mergeAudio(pathFinalAudioMerged, mockedOnMergeVoiceOverAudiosListener);
+    mergeAudio.mergeAudio(currentProject, pathFinalAudioMerged, mockedOnMergeVoiceOverAudiosListener);
 
     File fileAudioMerged = new File(pathFinalAudioMerged);
     assertThat(fileAudioMerged.exists(), is(true));
@@ -65,5 +73,13 @@ public class MergeVoiceOverAudiosInstrumentationTest extends AssetManagerAndroid
     mediaMetadataRetriever.setDataSource(videoPath);
     return mediaMetadataRetriever
         .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+  }
+
+  private void getAProject() {
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+    ProjectInfo projectInfo = new ProjectInfo("Project title",
+        "Project description", new ArrayList<>());
+    currentProject = new Project(projectInfo, "/path","private/path", compositionProfile);
   }
 }

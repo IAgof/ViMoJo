@@ -31,7 +31,7 @@ import de.greenrobot.event.EventBus;
 /**
  * This class is used to removed videos from the project.
  */
-public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectListener {
+public class RemoveVideoFromProjectUseCase {
     protected ProjectRepository projectRepository;
     protected VideoRepository videoRepository;
 
@@ -47,14 +47,12 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
         this.videoRepository = videoRepository;
     }
 
-    @Override
-    public void removeMediaItemsFromProject(ArrayList<Media> mediaList,
+    public void removeMediaItemsFromProject(Project currentProject, ArrayList<Media> mediaList,
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        Project currentProject = Project.getInstance(null, null, null, null);
         Track mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
-            correct = removeVideoItemFromTrack(media, mediaTrack);
+            correct = removeVideoItemFromTrack(currentProject, media, mediaTrack);
             if (!correct) break;
             //video repository remove media, remove videos from other projects also.
             videoRepository.remove((Video) media);
@@ -74,12 +72,11 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
      * @return bool if the item has been deleted from the track, return true. If it fails,
      *          return false.
      */
-    private boolean removeVideoItemFromTrack(Media video, Track mediaTrack) {
+    private boolean removeVideoItemFromTrack(Project currentProject, Media video, Track mediaTrack) {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
             // TODO(jliarte): 23/10/16 get rid of EventBus?
-            Project currentProject = Project.getInstance(null, null, null, null);
             EventBus.getDefault().post(
                     new UpdateProjectDurationEvent(currentProject.getDuration()));
             EventBus.getDefault().post(

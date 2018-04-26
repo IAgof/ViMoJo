@@ -34,48 +34,45 @@ public class UpdateCurrentProjectUseCaseTest {
   ProjectRepository mockedProjectRepository;
   @InjectMocks
   UpdateCurrentProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Test
   public void updateCurrentProjectUpdateLastModificationDate(){
-    Project currentProject = Project.getInstance(null, null, null, null);
-    currentProject.setLastModification("FakeDate");
+    currentProject.updateDateOfModification("FakeDate");
     String oldLastModification = currentProject.getLastModification();
 
     injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
 
-    Project actualProject = Project.getInstance(null, null, null, null);
-    String newLastModification = actualProject.getLastModification();
-
-    assertEquals(currentProject,actualProject);
+    String newLastModification = currentProject.getLastModification();
     assertNotEquals(oldLastModification, newLastModification);
   }
 
   @Test
   public void updateCurrentProjectCallsUpdateProjectRepository(){
-    Project currentProject = Project.getInstance(null, null, null, null);
     injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
+
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void shouldUpdateProjectInstanceIfProjectIsUpdate(){
-    Project project = getAProject();
-    injectedUseCase.updateLastModificationAndProjectInstance(project);
-    Project currentProject = Project.getInstance(null,null,null,null);
-    assertThat("currentProject is different", currentProject, CoreMatchers.is(project));
+    injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
+
+    assertThat("currentProject is different", currentProject, CoreMatchers.is(currentProject));
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 
 }

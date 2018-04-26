@@ -1,18 +1,17 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
-import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -20,30 +19,28 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -53,43 +50,29 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class EditPresenterTest {
 
-  @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private EditActivityView mockedEditorView;
   @Mock private Context mockedContext;
-  @Mock private VideonaPlayer mockedVideonaPlayer;
-  @Mock private MixpanelAPI mockedMixpanelApi;
   @Mock private UserEventTracker mockedUserEventTracker;
+  @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock private RemoveVideoFromProjectUseCase mockedVideoRemover;
-  @Mock private ReorderMediaItemUseCase mockedMediaItemReorderer;
-  @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
+  @Mock ReorderMediaItemUseCase mockedMediaItemReorderer;
   @Mock ListenableFuture<Video> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
-  @Mock private GetPreferencesTransitionFromProjectUseCase
-          mockedGetPreferencesTransitionsFromProject;
+  @Mock ProjectInstanceCache mockedProjectInstantCache;
+  private Project currentProject;
 
-  @InjectMocks private EditPresenter injectedEditPresenter;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void clearProjectInstance() {
-    Project.INSTANCE.clear();
+    setAProject();
   }
 
   @Test
   public void constructorSetsUserTracker() {
-    assertThat(injectedEditPresenter.userEventTracker, is(mockedUserEventTracker));
-  }
+    EditPresenter editPresenter = getEditPresenter();
 
-  @Test
-  public void loadProjectCallsGetMediaListFromProjectUseCase() {
-    injectedEditPresenter.obtainVideos();
-
-    verify(mockedGetMediaListFromProjectUseCase)
-            .getMediaListFromProject(any(OnVideosRetrieved.class));
+    assertThat(editPresenter.userEventTracker, is(mockedUserEventTracker));
   }
 
   // TODO(jliarte): 27/04/17 FIXME fix this test
@@ -101,28 +84,7 @@ public class EditPresenterTest {
 //  }
 
   @Test
-  public void loadProjectCallsEditorViewSetMusicIfProjectHasVoiceOver()
-          throws IllegalItemOnTrack {
-    Project project = getAProject();
-    String musicPath = "voice/over/path";
-    float musicVolume = 0.6f;
-    Music music = new Music(musicPath, musicVolume, 0);
-    project.getVMComposition().getAudioTracks().get(com.videonasocialmedia.videonamediaframework
-        .model.Constants.INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
-    GetAudioFromProjectUseCase getAudioFromProjectUseCase = new GetAudioFromProjectUseCase();
-    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedContext,
-            mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-            mockedVideoRemover, mockedMediaItemReorderer, getAudioFromProjectUseCase,
-            mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionsFromProject);
-
-    presenter.init();
-
-    verify(mockedEditorView).setMusic(music);
-  }
-
-  @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
     Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     video2.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
@@ -134,12 +96,9 @@ public class EditPresenterTest {
     List<Video> videoList = new ArrayList<>();
     videoList.add(video1);
     videoList.add(video2);
-    MediaTrack mediaTrack = project.getMediaTrack();
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video1);
-    EditPresenter presenter = new EditPresenter(mockedEditorView, mockedContext,
-            mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-            mockedVideoRemover, mockedMediaItemReorderer, mockedGetAudioFromProjectUseCase,
-            mockedGetMediaListFromProjectUseCase,mockedGetPreferencesTransitionsFromProject);
+    EditPresenter presenter = getEditPresenter();
 
     presenter.videoListErrorCheckerDelegate
             .checkWarningMessageVideosRetrieved(videoList, mockedVideoTranscodingErrorNotifier);
@@ -153,11 +112,71 @@ public class EditPresenterTest {
     assertThat(failedVideo2, is(video2));
   }
 
-  public Project getAProject() {
+  @Test
+  public void ifRemoveVideoFromProjectDeleteLastVideoInProjectCallsNavigateToRecordOrGallery() throws IllegalItemOnTrack {
+    EditPresenter editPresenter = getEditPresenter();
+
+    editPresenter.onRemoveMediaItemFromTrackSuccess();
+
+    assertThat(currentProject.getVMComposition().hasVideos(), is(false));
+    verify(mockedEditorView).goToRecordOrGallery();
+  }
+
+  @Test
+  public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdateTimeLine() throws IllegalItemOnTrack {
+    Video video1 = new Video("video/path", 1f);
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
+    mediaTrack.insertItem(video1);
+    EditPresenter editPresenter = getEditPresenter();
+
+    editPresenter.onRemoveMediaItemFromTrackSuccess();
+
+    assertThat(currentProject.getVMComposition().hasVideos(), is(true));
+    verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
+  }
+
+  @Test
+  public void moveItemCallsUpdatePlayerVideoListChanged() throws IllegalItemOnTrack {
+    Video video1 = new Video("video/path", 1f);
+    MediaTrack mediaTrack = currentProject.getMediaTrack();
+    mediaTrack.insertItem(video1);
+    mediaTrack.insertItem(video1);
+    int fromPosition = 1;
+    int toPosition = 0;
+    Answer<Void> answer = new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        OnReorderMediaListener listener = invocation.getArgument(3);
+        listener.onSuccessMediaReordered();
+        return null;
+      }
+    };
+    doAnswer(answer).when(mockedMediaItemReorderer).moveMediaItem(eq(currentProject), eq(fromPosition),
+        eq(toPosition), Matchers.any(OnReorderMediaListener.class));
+    assertThat(currentProject.getMediaTrack().getItems().size(), is(2));
+    EditPresenter editPresenter = getEditPresenter();
+
+    editPresenter.finishedMoveItem(fromPosition, toPosition);
+
+    verify(mockedEditorView).updatePlayerVideoListChanged();
+  }
+
+  @NonNull
+  public EditPresenter getEditPresenter() {
+    EditPresenter editPresenter = new EditPresenter(mockedEditorView, mockedContext,
+        mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
+        mockedGetMediaListFromProjectUseCase, mockedVideoRemover, mockedMediaItemReorderer,
+        mockedProjectInstantCache);
+    editPresenter.currentProject = currentProject;
+    return editPresenter;
+  }
+
+  public void setAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", profile);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
   }
+
 }

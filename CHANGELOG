@@ -1,3 +1,6 @@
+v0.14.7
+- Enable beta platform url market for news. Go to http://beta.market4news.com
+
 v0.14.6
 - Update compilation rules to protect releases, add security for application. Checked send video
 to platform feature is working in release versions.

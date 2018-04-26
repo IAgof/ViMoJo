@@ -43,23 +43,19 @@ public class VideoListErrorCheckerDelegateTest {
   ListenableFuture<Video> mockedTranscodingTask;
   @Mock
   VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
+  private Project currentProject;
 
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void clearProjectInstance() {
-    Project.INSTANCE.clear();
+    getAProject();
   }
 
   @Test
   public void ifProjectHasSomeVideoWithErrorsCallsShowWarningTempFile() throws IllegalItemOnTrack {
-    Project project = getAProject();
     Video video = new Video("somePath", Video.DEFAULT_VOLUME);
-    project.getMediaTrack().insertItem(video);
-    assertThat("Project has video", project.getVMComposition().hasVideos(), is(true));
+    currentProject.getMediaTrack().insertItem(video);
+    assertThat("Project has video", currentProject.getVMComposition().hasVideos(), is(true));
     Video video1 = new Video("video/path", Video.DEFAULT_VOLUME);
     Video video2 = new Video("video/path", Video.DEFAULT_VOLUME);
     List<Video> videoList = new ArrayList<>();
@@ -89,12 +85,12 @@ public class VideoListErrorCheckerDelegateTest {
     assertThat(failedVideo2, is(video2));
   }
 
-  public Project getAProject() {
+  public void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", profile);
+    currentProject = new Project(projectInfo, "/path", "private/path", profile);
   }
 }
 

@@ -33,13 +33,10 @@ public class RelaunchTranscoderTempBackgroundUseCase {
 
   private final Project currentProject;
 
-  public RelaunchTranscoderTempBackgroundUseCase(VideoRepository videoRepository) {
+  public RelaunchTranscoderTempBackgroundUseCase(Project project,
+                                                 VideoRepository videoRepository) {
     this.videoRepository = videoRepository;
-    this.currentProject = getCurrentProject();
-  }
-
-  private Project getCurrentProject() {
-    return Project.getInstance(null, null, null, null);
+    this.currentProject = project;
   }
 
   /**

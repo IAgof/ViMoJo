@@ -15,10 +15,8 @@ import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -28,200 +26,201 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 1/06/17.
  */
 
 public class AddAudioUseCaseTest {
-
-  @InjectMocks AddAudioUseCase injectedUseCase;
-
+  
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock TrackRepository mockedTrackRepository;
   @Mock MusicRepository mockedMusicRepository;
+  private Project currentProject;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void clearProject() {
-    Project.INSTANCE.clear();
+    getAProject();
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
   public void addMusicUpdateTrackPositionIfProjectHasNotVoiceOver() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    assertThat("Project has not voice over ", project.hasVoiceOver(), is(false));
+    assertThat("Project has not voice over ", currentProject.hasVoiceOver(), is(false));
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     assertThat("Initial position in track is 0", musicTrack.getPosition(), is(0));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated music track position to 1, ",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(1));
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(1));
   }
 
   @Test
   public void addMusicUpdateTrackPositionIfProjectHasVoiceOver() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
-    assertThat("Project has voiceOver", project.hasVoiceOver(), is(true));
+    assertThat("Project has voiceOver", currentProject.hasVoiceOver(), is(true));
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
     assertThat("Initial position in track is 0", musicTrack.getPosition(), is(0));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
-    assertThat("UseCase has updated music track position to 2, ", project.getAudioTracks()
+    assertThat("UseCase has updated music track position to 2, ", currentProject.getAudioTracks()
         .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getPosition(), is(2));
   }
 
   @Test
   public void addVoiceOverUpdateTrackPositionIfProjectHasNotMusic() throws IllegalItemOnTrack {
-    Project project = getAProject();
-    assertThat("Project has not music ", project.hasMusic(), is(false));
+    assertThat("Project has not music ", currentProject.hasMusic(), is(false));
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated voice over track position to 2, ",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getPosition(), is(1));
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getPosition(), is(1));
   }
 
   @Test
   public void addVoiceOverUpdateTrackPositionIfProjectHasMusic() throws IllegalItemOnTrack {
-    Project project = getAProject();
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
+    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     musicTrack.insertItem(music);
-    assertThat("Project has music", project.hasMusic(), is(true));
+    assertThat("Project has music", currentProject.hasMusic(), is(true));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AudioTrack voiceOverTrack = project.getAudioTracks()
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     assertThat("Initial position in track is 0", voiceOverTrack.getPosition(), is(0));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated voice over track position to 2, ",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getPosition(), is(2));
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getPosition(), is(2));
   }
 
   @Test
   public void addAudioUpdateVolumeToTrack() {
-    Project project = getAProject();
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     assertThat("Default volume VoiceOver track is 0.5f",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.5f));
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.5f));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated volume track to 0.7f ",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.7f));
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getVolume(), is(0.7f));
   }
 
   @Test
   public void addAudioUpdateRepositories() {
-    Project project = getAProject();
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
-    verify(mockedProjectRepository).update(project);
+    verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void addAudioInsertMusicToTrack() {
-    Project project = getAProject();
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     assertThat("Default items in track is zero",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(),
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(),
             is(0));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
     assertThat("UseCase has updated audio track items ",
-        project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(),
+        currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(),
             is(1));
   }
 
   @Test
   public void addAudioCreateNewAudioTrackIfVoiceOverIsAdded() {
-    Project project = getAProject();
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    assertThat("Default audioTrack list size is one",project.getAudioTracks().size(), is(1));
+    assertThat("Default audioTrack list size is one",currentProject.getAudioTracks().size(), is(1));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
+    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
         mockedOnAddMediaFinishedListener);
 
-    assertThat("UseCase has added one track to audioTrack list", project.getAudioTracks().size(),
+    assertThat("UseCase has added one track to audioTrack list", currentProject.getAudioTracks().size(),
       is(2));
   }
 
   @Test
   public void addAudioDontCreateNewAudioTrackIfMusicIsAdded() {
-    Project project = getAProject();
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
     Music music = new Music("somePath", defaultVolume, defaultDuration);
-    assertThat("Default audioTrack list size is one",project.getAudioTracks().size(), is(1));
+    assertThat("Default audioTrack list size is one",currentProject.getAudioTracks().size(), is(1));
+    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
 
-    injectedUseCase.addMusic(music, Constants.INDEX_AUDIO_TRACK_MUSIC,
+    addAudioUseCase.addMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnAddMediaFinishedListener);
 
-    assertThat("UseCase has added one track to audioTrack list", project.getAudioTracks().size(),
+    assertThat("UseCase has added one track to audioTrack list", currentProject.getAudioTracks().size(),
         is(1));
   }
 
 
-  private Project getAProject() {
+  private AddAudioUseCase getAddAudioUseCase() {
+    return new AddAudioUseCase(mockedProjectRepository);
+  }
+  
+  private void getAProject() {
     Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "root/path", "private/path", profile);
+    currentProject = new Project(projectInfo, "root/path", "private/path", profile);
   }
 }

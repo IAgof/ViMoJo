@@ -16,6 +16,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
@@ -33,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -51,16 +51,16 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
  * Created by ruth on 15/09/16.
  */
 public class VoiceOverRecordPresenter implements OnVideosRetrieved {
-
     private final String LOG_TAG = getClass().getSimpleName();
-    private Context context;
+  private final ProjectInstanceCache projectInstanceCache;
+  private Context context;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private AddAudioUseCase addAudioUseCase;
     private RemoveAudioUseCase removeAudioUseCase;
     private VoiceOverRecordView voiceOverRecordView;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
     private boolean isRecording = false;
     private Recorder audioRecorder;
     private String directoryVoiceOverRecorded;
@@ -72,12 +72,12 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
             new TranscoderHelper(drawableGenerator, mediaTranscoder);
 
     @Inject
-    public VoiceOverRecordPresenter(Context context, VoiceOverRecordView voiceOverRecordView,
-                                    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                    GetPreferencesTransitionFromProjectUseCase
-                                            getPreferencesTransitionFromProjectUseCase,
-                                    AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
-                                    removeAudioUseCase, UserEventTracker userEventTracker) {
+    public VoiceOverRecordPresenter(
+            Context context, VoiceOverRecordView voiceOverRecordView,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+            AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+            UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache) {
         this.context = context;
         this.voiceOverRecordView = voiceOverRecordView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -86,28 +86,28 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
         this.addAudioUseCase = addAudioUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.userEventTracker = userEventTracker;
-        this.currentProject = loadCurrentProject();
-        directoryVoiceOverRecorded =
-                currentProject.getProjectPathIntermediateAudioFilesVoiceOverRecord();
+        this.projectInstanceCache = projectInstanceCache;
     }
 
-    public void init() {
-        obtainVideos();
-        if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated()) {
-            voiceOverRecordView.setVideoFadeTransitionAmongVideos();
-        }
-        if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated() &&
-                !currentProject.getVMComposition().hasMusic()) {
-            voiceOverRecordView.setAudioFadeTransitionAmongVideos();
-        }
+    public void updatePresenter() {
+      this.currentProject = projectInstanceCache.getCurrentProject();
+      // TODO(jliarte): 23/04/18 add project changes listener
+      directoryVoiceOverRecorded = currentProject
+          .getProjectPathIntermediateAudioFilesVoiceOverRecord();
+      obtainVideos();
+      if (getPreferencesTransitionFromProjectUseCase
+              .isVideoFadeTransitionActivated(currentProject)) {
+        voiceOverRecordView.setVideoFadeTransitionAmongVideos();
+      }
+      if (getPreferencesTransitionFromProjectUseCase
+              .isAudioFadeTransitionActivated(currentProject)
+              && !currentProject.getVMComposition().hasMusic()) {
+        voiceOverRecordView.setAudioFadeTransitionAmongVideos();
+      }
     }
 
     private void obtainVideos() {
-        getMediaListFromProjectUseCase.getMediaListFromProject(this);
-    }
-
-    private Project loadCurrentProject() {
-        return Project.getInstance(null, null, null, null);
+        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, this);
     }
 
     @Override
@@ -238,7 +238,7 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
     }
 
     protected void addVoiceOver(final Music voiceOver) {
-        addAudioUseCase.addMusic(voiceOver,
+        addAudioUseCase.addMusic(currentProject, voiceOver,
                 INDEX_AUDIO_TRACK_VOICE_OVER,
                 new OnAddMediaFinishedListener() {
                     @Override
@@ -255,8 +255,8 @@ public class VoiceOverRecordPresenter implements OnVideosRetrieved {
                 });
     }
 
-    protected void deletePreviousVoiceOver(){
-        removeAudioUseCase.removeMusic((Music) currentProject.getAudioTracks()
+    protected void deletePreviousVoiceOver() {
+        removeAudioUseCase.removeMusic(currentProject, (Music) currentProject.getAudioTracks()
                         .get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0),
                 INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
                     @Override

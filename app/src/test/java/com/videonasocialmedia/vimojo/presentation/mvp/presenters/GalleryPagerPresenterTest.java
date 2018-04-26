@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -24,7 +25,6 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,23 +68,13 @@ public class GalleryPagerPresenterTest {
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
   @Mock private VideoRepository mockedVideoRepository;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @After
-  public void clearProject() {
-    Project.getInstance(null, null, null, null).clear();
-  }
-
-  @Test
-  public void constructorSetsCurrentProject() {
-    GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
-    Project project = getAProject();
-
-    assertThat(galleryPagerPresenter.currentProject, is(project));
+    setAProject();
   }
 
 //  @Test
@@ -176,14 +166,13 @@ public class GalleryPagerPresenterTest {
     doReturn(String.valueOf(videoResolution720.getWidth()))
             .when(mockedMetadataRetriever)
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-    Project project = getAProject();
     Video video1 = new Video("video1", Video.DEFAULT_VOLUME);
     Video video2 = new Video("video2", Video.DEFAULT_VOLUME);
-    project.getVMComposition().getMediaTrack().insertItem(video1);
-    assertThat(project.getVMComposition().getMediaTrack().getItems().size(), not(0));
+    currentProject.getVMComposition().getMediaTrack().insertItem(video1);
+    assertThat(currentProject.getVMComposition().getMediaTrack().getItems().size(), not(0));
     List<Video> videoList = Collections.singletonList(video2);
 
-    galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
+    galleryPagerPresenter.updateProfileForEmptyProject(currentProject, videoList);
 
     verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
         Mockito.any(VideoResolution.Resolution.class));
@@ -197,10 +186,9 @@ public class GalleryPagerPresenterTest {
     doReturn(String.valueOf(videoResolution720.getWidth()))
             .when(mockedMetadataRetriever)
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-    Project project = getAProject();
     List<Video> videoList = Collections.emptyList();
 
-    galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
+    galleryPagerPresenter.updateProfileForEmptyProject(currentProject, videoList);
 
     verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
         Mockito.any(VideoResolution.Resolution.class));
@@ -210,14 +198,14 @@ public class GalleryPagerPresenterTest {
     return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
             mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
             mockedApplyAVTransitionsUseCase, mockedProjectRepository,
-            mockedVideoRepository, mockedSharedPreferences);
+            mockedVideoRepository, mockedSharedPreferences, mockedProjectInstanceCache);
   }
 
-  public Project getAProject() {
+  public void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

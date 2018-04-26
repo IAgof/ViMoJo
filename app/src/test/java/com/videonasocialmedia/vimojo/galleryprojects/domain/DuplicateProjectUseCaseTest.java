@@ -32,26 +32,27 @@ public class DuplicateProjectUseCaseTest {
   ProjectRepository mockedProjectRepository;
   @InjectMocks
   DuplicateProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
+    getAProject();
   }
 
   @Ignore // TODO:(alvaro.martinez) 5/01/17 What this useCase should test? CopyFiles¿?
   @Test
   public void duplicateProjectCopyFileToNewProject() throws IllegalItemOnTrack {
-    Project project = getAProject();
 
-    injectedUseCase.duplicate(project);
+    injectedUseCase.duplicate(currentProject);
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
+    currentProject = new Project(projectInfo, "/path", "private/path",
         compositionProfile);
   }
 

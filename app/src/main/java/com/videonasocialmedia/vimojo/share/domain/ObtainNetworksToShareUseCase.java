@@ -43,26 +43,4 @@ public class ObtainNetworksToShareUseCase {
                 || appName.equalsIgnoreCase("Youtube")
                 || appName.equalsIgnoreCase("Instagram");
     }
-
-    public List<SocialNetwork> obtainSecondaryNetworks() {
-        List<SocialNetwork> networksList = provider.getSocialNetworksAppsInstalled();
-        List<SocialNetwork> secondaryNetworksList = new ArrayList<>();
-        for (SocialNetwork app : networksList) {
-            if (!isMainNetwork(app)) {
-                secondaryNetworksList.add(app);
-            }
-        }
-        return secondaryNetworksList;
-    }
-
-    public boolean checkIfSocialNetworkIsInstalled(String appName) {
-        boolean result = false;
-        List<SocialNetwork> networksList = provider.getSocialNetworksAppsInstalled();
-        for (SocialNetwork appInstalled : networksList) {
-            if ((appInstalled.getName()).toLowerCase().contains(appName)) {
-                result = true;
-            }
-        }
-        return result;
-    }
 }

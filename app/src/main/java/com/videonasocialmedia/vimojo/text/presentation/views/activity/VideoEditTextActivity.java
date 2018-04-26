@@ -100,12 +100,21 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
         restoreState(savedInstanceState);
+        presenter.init(videoIndexOnTrack);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
+        clipText.requestFocus();
+        showKeyboard();
     }
 
     @Override
@@ -115,17 +124,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.init(videoIndexOnTrack);
-        clipText.requestFocus();
-        showKeyboard();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
+        videonaPlayer.onDestroy();
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -325,7 +326,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void updateProject() {
-        presenter.init(videoIndexOnTrack);
+        presenter.updatePresenter();
     }
 
     @Override

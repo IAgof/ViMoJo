@@ -1,16 +1,17 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
-import android.content.SharedPreferences;
-
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.UpdateCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,36 +33,28 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 @RunWith(MockitoJUnitRunner.class)
 public class GalleryProjectListPresenterTest {
 
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @InjectMocks
-  GalleryProjectListPresenter injectedPresenter;
-  @Mock
-  GalleryProjectListView mockedGalleryProjectListView;
-  @Mock
-  private SharedPreferences mockedSharePreferences;
-  @Mock
-  UpdateCurrentProjectUseCase mockedUpdateCurrentProjectUseCase;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @InjectMocks GalleryProjectListPresenter injectedPresenter;
+  @Mock GalleryProjectListView mockedGalleryProjectListView;
+
+  private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
-  }
-
-  @Test
-  public void updateCurrentProjectCallsUpdateLastModificationAndProjectInstance() {
-    Project project = getAProject();
-    injectedPresenter.updateCurrentProject(project);
-    verify(mockedUpdateCurrentProjectUseCase).updateLastModificationAndProjectInstance(project);
+    getAProject();
   }
 
   @Test
   public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow() {
     List<Project> projectList = new ArrayList<>();
-    projectList.add(getAProject());
+    projectList.add(currentProject);
     doReturn(projectList).when(mockedProjectRepository)
             .getListProjectsByLastModificationDescending();
+
     injectedPresenter.updateProjectList();
+
     verify(mockedGalleryProjectListView).showProjectList(projectList);
   }
 
@@ -70,15 +63,46 @@ public class GalleryProjectListPresenterTest {
     List<Project> projectList = new ArrayList<>();
     doReturn(projectList).when(mockedProjectRepository)
             .getListProjectsByLastModificationDescending();
+
     injectedPresenter.updateProjectList();
+
     verify(mockedGalleryProjectListView).createDefaultProject();
   }
 
-  private Project getAProject() {
+  @Test
+  public void goToEditUpdateRepositoryAndNavigate() {
+    injectedPresenter.updateProjectList();
+
+    injectedPresenter.goToEdit(currentProject);
+
+    verify(mockedProjectRepository).update(currentProject);
+    verify(mockedGalleryProjectListView).navigateTo(EditActivity.class);
+  }
+
+  @Test
+  public void goToShareUpdateRepositoryAndNavigate() {
+    injectedPresenter.updateProjectList();
+
+    injectedPresenter.goToShare(currentProject);
+
+    verify(mockedProjectRepository).update(currentProject);
+    verify(mockedGalleryProjectListView).navigateTo(ShareActivity.class);
+  }
+
+  @Test
+  public void goToDetailsProjectUpdateRepositoryAndNavigate() {
+    injectedPresenter.updateProjectList();
+
+    injectedPresenter.goToDetailProject(currentProject);
+
+    verify(mockedGalleryProjectListView).navigateTo(DetailProjectActivity.class);
+  }
+
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

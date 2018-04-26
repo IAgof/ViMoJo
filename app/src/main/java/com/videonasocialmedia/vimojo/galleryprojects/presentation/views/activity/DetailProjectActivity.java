@@ -84,6 +84,7 @@ public class DetailProjectActivity extends VimojoActivity implements DetailProje
   @Override
   public void onResume() {
     super.onResume();
+    presenter.updatePresenter();
   }
 
   @Override

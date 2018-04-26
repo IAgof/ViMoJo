@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -28,39 +29,45 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 public class CameraSettingsPresenter {
-  private CameraSettings cameraSettings;
-  private CameraSettingsView cameraSettingsListView;
+  private final CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
   private CameraSettingsRepository cameraSettingsRepository;
   private ProjectRepository projectRepository;
+  private final ProjectInstanceCache projectInstanceCache;
+  private CameraSettings cameraSettings;
+
   private HashMap<Integer, String> resolutionNames;
   private HashMap<Integer, VideoResolution.Resolution> videoResolutionValues;
   private HashMap<Integer, String> frameRateNames;
   private HashMap<Integer, VideoFrameRate.FrameRate> frameRateValues;
   private HashMap<Integer, String> qualityNames;
-  private HashMap<Integer, VideoQuality.Quality> qualityValues;
 
+  private HashMap<Integer, VideoQuality.Quality> qualityValues;
   private HashMap<Integer, String> proInterfaceNames;
+  protected Project currentProject;
 
   @Inject
-  public CameraSettingsPresenter(CameraSettingsView cameraSettingsListView,
-                                 UserEventTracker userEventTracker,
-                                 GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
-                                 CameraSettingsRepository cameraSettingsRepository,
-                                 ProjectRepository
-                                           projectRepository) {
-    this.getSettingListUseCase = getSettingListUseCase;
+  public CameraSettingsPresenter(
+          CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
+          GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
+          CameraSettingsRepository cameraSettingsRepository, ProjectRepository projectRepository,
+          ProjectInstanceCache projectInstanceCache) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
+    this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
-    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.projectRepository = projectRepository;
-
+    this.projectInstanceCache = projectInstanceCache;
+    this.cameraSettings = cameraSettingsRepository.getCameraSettings();
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
     setupProInterfaceMappers();
+  }
+
+  public void updatePresenter() {
+    this.currentProject = projectInstanceCache.getCurrentProject();
   }
 
   private void setupProInterfaceMappers() {
@@ -132,10 +139,6 @@ public class CameraSettingsPresenter {
     qualityValues.put(CameraSettings.CAMERA_SETTING_QUALITY_50_ID, VideoQuality.Quality.HIGH);
   }
 
-  private Project loadCurrentProject() {
-    return Project.getInstance(null, null, null, null);
-  }
-
   public void getCameraSettingsList() {
     List<CameraSettingViewModel> cameraSettingViewModels =
             getSettingListUseCase.getCameraSettingsList(resolutionNames, qualityNames,
@@ -154,7 +157,6 @@ public class CameraSettingsPresenter {
   }
 
   public void setCameraResolutionSetting(int resolutionSelectedId) {
-    Project currentProject = loadCurrentProject();
     String resolution = resolutionNames.get(resolutionSelectedId);
     if (resolution == null) { resolution = DEFAULT_CAMERA_SETTING_RESOLUTION; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
@@ -170,7 +172,6 @@ public class CameraSettingsPresenter {
     if (frameRate == null) { frameRate = DEFAULT_CAMERA_SETTING_FRAME_RATE; }
     VideoFrameRate.FrameRate videoFrameRate = frameRateValues.get(frameRateSelectedId);
     if (videoFrameRate == null) { videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE; }
-    Project currentProject = loadCurrentProject();
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
     projectRepository.updateFrameRate(currentProject, videoFrameRate);
@@ -182,7 +183,6 @@ public class CameraSettingsPresenter {
     if (quality == null) { quality = DEFAULT_CAMERA_SETTING_QUALITY; }
     VideoQuality.Quality videoQuality = qualityValues.get(qualitySelectedId);
     if (videoQuality == null) { videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY; }
-    Project currentProject = loadCurrentProject();
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
     projectRepository.updateQuality(currentProject, videoQuality);

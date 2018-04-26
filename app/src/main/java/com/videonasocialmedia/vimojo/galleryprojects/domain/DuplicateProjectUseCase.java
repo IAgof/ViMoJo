@@ -19,7 +19,7 @@ public class DuplicateProjectUseCase {
   protected ProjectRepository projectRepository;
 
   @Inject
-  public DuplicateProjectUseCase(ProjectRepository projectRepository){
+  public DuplicateProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
@@ -27,7 +27,7 @@ public class DuplicateProjectUseCase {
     String origPath = project.getProjectPath();
     Project newProject = new Project(project);
     copyFilesToNewProject(origPath, newProject.getProjectPath());
-    projectRepository.update(newProject);
+    projectRepository.add(newProject);
   }
 
   private void copyFilesToNewProject(String projectPath, String newProjectPath) {

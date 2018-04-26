@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 28/02/17.
@@ -32,41 +33,39 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
   ProjectRepository mockedProjectRepository;
   @InjectMocks
   UpdateWatermarkPreferenceToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void setup(){
     MockitoAnnotations.initMocks(this);
+    getAProject();
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
   public void updateWatermarkPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null,null, null, null);
-    injectedUseCase.setWatermarkActivated(true);
+    injectedUseCase.setWatermarkActivated(currentProject, true);
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void shouldUpdateWatermarkPreferenceAfterUseCase(){
-    Project currentProject = getAProject();
     assertThat("Add watermark is false by default", currentProject.hasWatermark(),
         CoreMatchers.is(false));
     boolean activateWatermark = true;
 
-    injectedUseCase.setWatermarkActivated(activateWatermark);
-
-    currentProject = Project.getInstance(null, null, null, null);
+    injectedUseCase.setWatermarkActivated(currentProject, activateWatermark);
 
     assertThat("UseCase update Watermark ", currentProject.hasWatermark(),
         CoreMatchers.is(activateWatermark));
-
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return new Project(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 
 }

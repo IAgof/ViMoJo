@@ -11,12 +11,6 @@
     android:visibility="visible"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
-        android:id="@+id/videona_player"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:aspect="sixteen_nine"/>
-
     <ScrollView
         android:id="@+id/scrollview_timeline_audio_blocks"
         android:layout_width="match_parent"

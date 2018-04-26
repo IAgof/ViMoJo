@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
  */
 public interface OnReorderMediaListener {
 
-    void onMediaReordered(Media media, int newPosition);
+    void onSuccessMediaReordered();
 
     void onErrorReorderingMedia();
 }
