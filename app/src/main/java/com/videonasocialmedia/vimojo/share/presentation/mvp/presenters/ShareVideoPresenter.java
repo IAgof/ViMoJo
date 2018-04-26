@@ -17,7 +17,6 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
@@ -49,8 +48,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
-
-import static android.content.Context.*;
 
 /**
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
@@ -85,6 +82,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private boolean isMobileNetworkConnected;
     private FtpNetwork ftpNetworkSelected;
     private boolean hasBeenProjectExported;
+    protected boolean isAppExportingProject;
 
     @Inject
     public ShareVideoPresenter(
@@ -113,8 +111,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.projectInstanceCache = projectInstanceCache;
     }
 
-    public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath,
-                                boolean isAppExportingProject) {
+    public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
         this.currentProject = projectInstanceCache.getCurrentProject();
         obtainNetworksToShare();
         obtainListFtp();
@@ -126,7 +123,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.hasBeenProjectExported = hasBeenProjectExported;
         this.videoPath = videoExportedPath;
         if (isAppExportingProject) {
-            shareVideoViewReference.get().startVideoExport();
+            shareVideoViewReference.get().showProgressDialogVideoExporting();
         }
     }
 
@@ -179,25 +176,15 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     protected void startExport(int typeNetworkSelected) {
-        shareVideoViewReference.get().startVideoExport();
+        shareVideoViewReference.get().showProgressDialogVideoExporting();
+        isAppExportingProject = true;
         exportUseCase.export(currentProject, Constants.PATH_WATERMARK, new OnExportFinishedListener() {
             @Override
-            public void onExportError(String error) {
+            public void onExportError(int error, Exception exception) {
                 Crashlytics.log("Error exporting: " + error);
-                // TODO(jliarte): 28/04/17 pass the string?
-                // known strings
-                switch (error) {
-                    case "No space left on device":
-                        if (shareVideoViewReference.get() != null) {
-                            shareVideoViewReference.get()
-                                    .showVideoExportError(Constants.EXPORT_ERROR_NO_SPACE_LEFT);
-                        }
-                        break;
-                    default:
-                        if (shareVideoViewReference.get() != null) {
-                            shareVideoViewReference.get()
-                                    .showVideoExportError(Constants.EXPORT_ERROR_UNKNOWN);
-                        }
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().showVideoExportError(error, exception);
+                    isAppExportingProject = false;
                 }
             }
 
@@ -207,13 +194,22 @@ public class ShareVideoPresenter extends VimojoPresenter {
                     videoPath = video.getMediaPath();
                     shareVideoViewReference.get().loadExportedVideoPreview(videoPath);
                     processNetworkClicked(typeNetworkSelected, videoPath);
+                    isAppExportingProject = false;
                 }
             }
 
             @Override
-            public void onExportProgress(String progressMsg, int exportStage) {
+            public void onExportProgress(int exportStage) {
                 if (shareVideoViewReference.get() != null) {
-                    shareVideoViewReference.get().showExportProgress(progressMsg);
+                    shareVideoViewReference.get().showExportProgress(exportStage);
+                }
+            }
+
+            @Override
+            public void onExportCanceled() {
+                if (shareVideoViewReference.get() != null) {
+                    shareVideoViewReference.get().hideExportProgressDialogCanceled();
+                    isAppExportingProject = false;
                 }
             }
         });
@@ -390,4 +386,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         return socialNetworkSelected;
     }
 
+    public void cancelExportation() {
+        exportUseCase.cancelExport();
+    }
 }

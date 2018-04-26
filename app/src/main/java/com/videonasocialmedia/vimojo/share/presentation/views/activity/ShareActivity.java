@@ -21,8 +21,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
+import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
@@ -51,6 +53,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
+
 /**
  * Activity for sharing video final render to different networks and save locally.
  */
@@ -75,10 +78,10 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
+  private AlertDialog exportErrorDialog;
   private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
-  private boolean isAppExportingProject = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +105,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onResume() {
     super.onResume();
-    presenter.updatePresenter(projectHasBeenExported, videoExportedPath, isAppExportingProject);
+    presenter.updatePresenter(projectHasBeenExported, videoExportedPath);
   }
 
   @Override
@@ -110,6 +113,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     super.onPause();
     exportProgressDialog.dismiss();
     checkingUserProgressDialog.dismiss();
+    if(exportErrorDialog != null) {
+      exportErrorDialog.dismiss();
+    }
   }
 
   @Override
@@ -140,6 +146,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     exportProgressDialog.setProgressPercentFormat(null);
     exportProgressDialog.setCanceledOnTouchOutside(false);
     exportProgressDialog.setCancelable(false);
+    exportProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+        getString(R.string.cancel_exportation), onClickCancelExportation());
 
     checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
     checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
@@ -150,6 +158,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     checkingUserProgressDialog.setProgressPercentFormat(null);
     checkingUserProgressDialog.setCanceledOnTouchOutside(false);
     checkingUserProgressDialog.setCancelable(false);
+  }
+
+  @NonNull
+  private DialogInterface.OnClickListener onClickCancelExportation() {
+    return (dialog, which) -> presenter.cancelExportation();
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -262,16 +275,18 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showDialogNeedToCompleteDetailProjectFields() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
-    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-      switch (which) {
-        case DialogInterface.BUTTON_NEUTRAL:
-          navigateToProjectDetails();
-          break;
-      }
-    };
-    builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    runOnUiThread(() -> {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            navigateToProjectDetails();
+            break;
+        }
+      };
+      builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    });
   }
 
   @Override
@@ -302,6 +317,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void pauseVideoPlayerPreview() {
     pausePreview();
+  }
+
+  @Override
+  public void hideExportProgressDialogCanceled() {
+    runOnUiThread(() -> {
+      if (exportProgressDialog != null) {
+        exportProgressDialog.dismiss();
+      }
+    });
   }
 
   private void navigateToProjectDetails() {
@@ -392,9 +416,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
     @Override
-    public void startVideoExport() {
+    public void showProgressDialogVideoExporting() {
       exportProgressDialog.show();
-      isAppExportingProject = true;
     }
 
   public void navigateToUserAuth() {
@@ -413,7 +436,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             initVideoPlayerFromFilePath(mediaPath);
           }
           exportProgressDialog.dismiss();
-          isAppExportingProject = false;
       });
     }
 
@@ -429,16 +451,41 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showVideoExportError(int cause) {
+  public void showVideoExportError(int cause, Exception exception) {
     exportProgressDialog.dismiss();
     showVideoExportErrorDialog(cause);
+    Crashlytics.logException(exception);
   }
 
   @Override
-  public void showExportProgress(final String progressMsg) {
+  public void showExportProgress(final int progressMsg) {
     runOnUiThread(() -> {
       if (exportProgressDialog != null) {
-        exportProgressDialog.setMessage(progressMsg);
+        String progressMessage = "";
+        switch (progressMsg){
+          case VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING:
+            progressMessage = getString(R.string.export_wait_for_transcoding);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_WRITE_VIDEO_TO_DISK:
+            progressMessage = getString(R.string.export_write_video_to_disk);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_JOIN_VIDEOS:
+            progressMessage = getString(R.string.export_join_videos);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_ADD_AUDIO_TRACKS:
+            progressMessage = getString(R.string.export_add_audio_tracks);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_MIX_AUDIO:
+            progressMessage = getString(R.string.export_mix_audio);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_APPLY_AUDIO_MIXED:
+            progressMessage = getString(R.string.export_apply_audio_mixed);
+            break;
+          case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK:
+            progressMessage = getString(R.string.export_apply_watermark);
+            break;
+        }
+        exportProgressDialog.setMessage(progressMessage);
       }
     });
   }
@@ -455,13 +502,28 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       };
       int dialog_message_export_error = R.string.dialog_message_export_error_unknown;
       switch (cause) {
-        case Constants.EXPORT_ERROR_NO_SPACE_LEFT:
-          dialog_message_export_error = R.string.dialog_message_export_error_no_space_left;
+        case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_ERROR:
+          dialog_message_export_error = R.string.export_apply_watermark_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_MIX_AUDIO_ERROR:
+          dialog_message_export_error = R.string.export_mix_audio_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR:
+          dialog_message_export_error = R.string.export_apply_watermark_resource_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_JOIN_VIDEOS_ERROR:
+          dialog_message_export_error = R.string.export_join_videos_error;
+          break;
+        case VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR:
+          dialog_message_export_error = R.string.export_wait_for_transcoding_error;
+          break;
       }
       AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.VideonaDialog);
       builder.setCancelable(false).setTitle(R.string.dialog_title_export_error)
               .setMessage(dialog_message_export_error)
-              .setNeutralButton(R.string.ok, dialogClickListener).show();
+              .setNeutralButton(R.string.ok, dialogClickListener);
+      exportErrorDialog = builder.create();
+      exportErrorDialog.show();
     });
   }
 }

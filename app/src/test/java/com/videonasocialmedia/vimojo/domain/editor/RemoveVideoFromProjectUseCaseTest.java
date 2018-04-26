@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -21,14 +22,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 import static org.mockito.Mockito.verify;
 
@@ -36,27 +32,17 @@ import static org.mockito.Mockito.verify;
  * Created by jliarte on 23/10/16.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(EventBus.class)
 public class RemoveVideoFromProjectUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @Mock VideoRepository mockedVideoRepository;
   @InjectMocks RemoveVideoFromProjectUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
-  private EventBus mockedEventBus;
   private Project currentProject;
 
   @Before
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-  }
-
-  @Before
-  public void setupTestEventBus() {
-    PowerMockito.mockStatic(EventBus.class);
-    EventBus mockedEventBus = PowerMockito.mock(EventBus.class);
-    PowerMockito.when(EventBus.getDefault()).thenReturn(mockedEventBus);
-    this.mockedEventBus = mockedEventBus;
   }
 
   @Test
@@ -68,6 +54,18 @@ public class RemoveVideoFromProjectUseCaseTest {
     OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
 
     injectedUseCase.removeMediaItemsFromProject(currentProject, videos, listener);
+
+    verify(mockedProjectRepository).update(currentProject);
+  }
+
+  @Test
+  public void testRemoveMediaItemFromProjectCallsUpdateProject() throws IllegalItemOnTrack {
+    Video video = new Video("media/path", 1f);
+    int positionVideoToRemove = 0;
+    currentProject.getMediaTrack().insertItem(video);
+    OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
+
+    injectedUseCase.removeMediaItemFromProject(currentProject, positionVideoToRemove, listener);
 
     verify(mockedProjectRepository).update(currentProject);
   }

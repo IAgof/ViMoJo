@@ -205,10 +205,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     }
 
     public void removeVideoFromProject(int selectedVideoRemove) {
-        ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
-        mediaToDeleteFromProject.add(currentProject.getMediaTrack().getItems().get(selectedVideoRemove));
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
-                mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+        removeVideoFromProjectUseCase.removeMediaItemFromProject(currentProject,
+            selectedVideoRemove, new OnRemoveMediaFinishedListener() {
                     @Override
                     public void onRemoveMediaItemFromTrackSuccess() {
                         if (currentProject.getVMComposition().hasVideos()) {

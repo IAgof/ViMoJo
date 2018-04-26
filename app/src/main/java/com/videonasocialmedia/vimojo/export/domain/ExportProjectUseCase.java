@@ -15,10 +15,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
@@ -31,12 +29,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
+import static com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR;
+import static com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR;
+
 public class ExportProjectUseCase implements ExportListener {
   private static final String TAG = ExportProjectUseCase.class.getCanonicalName();
   private OnExportFinishedListener onExportFinishedListener;
   private VMCompositionExportSession vmCompositionExportSession;
   private Project project;
   private final VideoToAdaptRepository videoToAdaptRepository;
+  private boolean isExportCanceled = false;
 
   /**
    * Project VMCompositionExportSession use case.
@@ -61,6 +63,7 @@ public class ExportProjectUseCase implements ExportListener {
             outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
 
     this.onExportFinishedListener = onExportFinishedListener;
+    isExportCanceled = false;
     checkWatermarkResource(pathWatermark);
     try {
       ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
@@ -69,11 +72,14 @@ public class ExportProjectUseCase implements ExportListener {
         return null;
       });
     } catch (NoSuchElementException exception) {
-      onExportError(String.valueOf(exception));
+      Log.e(TAG, "Caught " +  exception.getClass().getName()
+          + "Error waiting for adapting jobs to finish before exporting" + exception.getMessage());
+      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR, exception);
     } catch (InterruptedException | ExecutionException e) {
-      Log.e(TAG, "Error waiting for adapting jobs to finish before exporting");
       e.printStackTrace();
-      onExportError(String.valueOf(e));
+      Log.e(TAG, "Caught " +  e.getClass().getName()
+          + "Error waiting for adapting jobs to finish before exporting" + e.getMessage());
+      onExportError(EXPORT_STAGE_WAIT_FOR_TRANSCODING_ERROR, e);
     }
   }
 
@@ -81,7 +87,9 @@ public class ExportProjectUseCase implements ExportListener {
     File watermarkResource = new File(pathWatermark);
     if (!watermarkResource.exists()) {
       if (!Utils.copyWatermarkResourceToDevice()) {
-        onExportError(VimojoApplication.getAppContext().getString(R.string.export_error_watermark));
+        Log.e(TAG, "Error applying watermark, resource not found");
+        onExportError(EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR,
+            new Exception("Error applying watermark, resource not found"));
       }
     }
   }
@@ -105,17 +113,32 @@ public class ExportProjectUseCase implements ExportListener {
 
   @Override
   public void onExportSuccess(Video video) {
-    onExportFinishedListener.onExportSuccess(video);
+    if (!isExportCanceled) {
+      onExportFinishedListener.onExportSuccess(video);
+    }
   }
 
   @Override
-  public void onExportProgress(String progressMsg, int exportStage) {
-    Log.d(TAG, progressMsg);
-    onExportFinishedListener.onExportProgress(progressMsg, exportStage);
+  public void onExportProgress(int exportStage) {
+    if (!isExportCanceled) {
+      onExportFinishedListener.onExportProgress(exportStage);
+    }
   }
 
   @Override
-  public void onExportError(String error) {
-    onExportFinishedListener.onExportError(error);
+  public void onExportError(int exportErrorStage, Exception exception) {
+    if (!isExportCanceled) {
+      onExportFinishedListener.onExportError(exportErrorStage, exception);
+    }
+  }
+
+  @Override
+  public void onCancelExport() {
+    onExportFinishedListener.onExportCanceled();
+  }
+
+  public void cancelExport() {
+    isExportCanceled = true;
+    vmCompositionExportSession.cancel();
   }
 }

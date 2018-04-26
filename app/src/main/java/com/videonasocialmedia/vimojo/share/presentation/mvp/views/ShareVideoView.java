@@ -17,11 +17,11 @@ public interface ShareVideoView {
 
   void loadExportedVideoPreview(String mediaPath);
 
-  void showVideoExportError(int cause);
+  void showVideoExportError(int cause, Exception exception);
 
-  void showExportProgress(String progressMsg);
+  void showExportProgress(int progressMsg);
 
-  void startVideoExport();
+  void showProgressDialogVideoExporting();
 
   void showMessage(int stringId);
 
@@ -44,4 +44,6 @@ public interface ShareVideoView {
   void showDialogNotNetworkUploadVideoOnConnection();
 
   void pauseVideoPlayerPreview();
+
+  void hideExportProgressDialogCanceled();
 }

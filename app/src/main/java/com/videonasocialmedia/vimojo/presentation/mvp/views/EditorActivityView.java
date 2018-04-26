@@ -10,9 +10,7 @@ public interface EditorActivityView {
 
     void showMessage(int stringToast);
 
-    void restartShareActivity(String extraDataIntent);
-
-    void restartActivity();
+    void restartActivity(Class clas);
 
     void itemDarkThemePurchased();
 

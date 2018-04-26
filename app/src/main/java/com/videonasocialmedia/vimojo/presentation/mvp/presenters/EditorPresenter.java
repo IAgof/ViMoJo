@@ -328,15 +328,14 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor.apply();
     if (preference.equals(ConfigPreferences.THEME_APP_DARK)) {
       userEventTracker.trackThemeAppDrawerChanged(isChecked);
-      if (isShareActivity()) {
-        editorActivityView.restartShareActivity(currentProject.getPathLastVideoExported());
-      } else {
-        editorActivityView.restartActivity();
-      }
+      editorActivityView.restartActivity(context.getClass());
     }
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
       projectRepository.setWatermarkActivated(currentProject, isChecked);
+      if (isShareActivity()) {
+        editorActivityView.restartActivity(context.getClass());
+      }
     }
   }
 
@@ -345,12 +344,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     String currentTheme = getCurrentAppliedTheme(currentAppliedTheme);
     if (isDarkThemeActivated && currentTheme.equals(THEME_LIGHT)
             || !isDarkThemeActivated && currentTheme.equals(THEME_DARK)) {
-      if (isShareActivity()) {
-        // TODO: 20/2/18 Update restartShareActivity, getPathLastVideoExported bad approximation
-        editorActivityView.restartShareActivity(currentProject.getPathLastVideoExported());
-      } else {
-        editorActivityView.restartActivity();
-      }
+      editorActivityView.restartActivity(context.getClass());
     }
   }
 
@@ -372,7 +366,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     if (BuildConfig.FEATURE_FORCE_WATERMARK) {
       return true;
     }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+    return currentProject.hasWatermark();
   }
 
   private void activateWatermarkPreference() {

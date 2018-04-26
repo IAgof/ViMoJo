@@ -395,16 +395,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void restartShareActivity(String videoPath) {
-    Intent intent = getIntent();
-    intent.putExtra("videoExportedPath", videoPath);
-    startActivity(intent);
-    finish();
-  }
-
-  @Override
-  public void restartActivity() {
-    Intent intent = getIntent();
+  public void restartActivity(Class clas) {
+    Intent intent = new Intent(this, clas);
     startActivity(intent);
     finish();
   }
