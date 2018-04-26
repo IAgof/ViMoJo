@@ -90,7 +90,6 @@ public class ShareVideoPresenterTest {
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
-    private boolean isAppExportingProject = false;
 
     @Before
     public void injectMocks() {
@@ -109,8 +108,7 @@ public class ShareVideoPresenterTest {
     public void updatePresenterSetsCurrentProject() {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
 
-        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
+        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath);
 
         assertThat(shareVideoPresenter.currentProject, is(currentProject));
     }
@@ -259,10 +257,9 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         boolean hasBeenProjectExported = false;
         String videoExportedPath = "somePath";
-        boolean isAppExportingProject = true;
+        shareVideoPresenter.isAppExportingProject = true;
 
-        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-            isAppExportingProject);
+        shareVideoPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath);
 
         verify(mockedShareVideoView).showProgressDialogVideoExporting();
     }

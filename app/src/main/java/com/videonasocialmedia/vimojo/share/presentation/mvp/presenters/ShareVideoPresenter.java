@@ -82,7 +82,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private boolean isMobileNetworkConnected;
     private FtpNetwork ftpNetworkSelected;
     private boolean hasBeenProjectExported;
-    private boolean isAppExportingProject;
+    protected boolean isAppExportingProject;
 
     @Inject
     public ShareVideoPresenter(
@@ -184,6 +184,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
                 Crashlytics.log("Error exporting: " + error);
                 if (shareVideoViewReference.get() != null) {
                     shareVideoViewReference.get().showVideoExportError(error, exception);
+                    isAppExportingProject = false;
                 }
             }
 

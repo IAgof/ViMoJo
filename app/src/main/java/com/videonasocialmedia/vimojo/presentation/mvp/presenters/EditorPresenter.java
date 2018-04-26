@@ -336,7 +336,6 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
       }
-      projectRepository.setWatermarkActivated(currentProject, isChecked);
     }
   }
 

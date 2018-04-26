@@ -14,6 +14,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 public class RemoveVideoFromProjectUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
+  @Mock VideoRepository mockedVideoRepository;
   @InjectMocks RemoveVideoFromProjectUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
   private Project currentProject;
