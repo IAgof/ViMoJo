@@ -1,3 +1,17 @@
+v0.16.0
+- Added option to cancel exportation.
+
+v0.15.0
+- Moved exportation project process. Now share navigation buttons goes to share screen. First time
+network is selected, export project begins and when it is finished continue sharing video.
+
+v0.14.7
+- Enable beta platform url market for news. Go to http://beta.market4news.com
+
+v0.14.6
+- Update compilation rules to protect releases, add security for application. Checked send video
+to platform feature is working in release versions.
+
 v0.14.5
 - Update names product type list.
 - By default, expand details project view, make all description card, clickable to edit field.

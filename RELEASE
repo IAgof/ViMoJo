@@ -1,3 +1,2 @@
-v0.14.6
-- Update compilation rules to protect releases, add security for application. Checked send video
-to platform feature is working in release versions.
+v0.16.1
+- Added feature toggle FEATURE_SHARE_SHOW_SOCIAL_NETWORKS. Show or hide social networks in share screen.

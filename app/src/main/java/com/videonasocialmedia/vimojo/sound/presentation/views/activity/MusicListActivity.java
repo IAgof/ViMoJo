@@ -3,13 +3,8 @@ package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 /**
  * Created by ruth on 13/09/16.
  */
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,15 +15,12 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.presentation.views.services.ExportProjectService;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.SoundListAdapter;
-import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
@@ -53,7 +45,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     private SoundListAdapter soundAdapter;
-    private BroadcastReceiver exportReceiver;
     private int currentProjectPosition;
 
     @Override
@@ -63,10 +54,22 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
         setupToolbar();
-        createExportReceiver();
         restoreState(savedInstanceState);
         videonaPlayer.setListener(this);
         initVideoListRecycler();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videonaPlayer.onPause();
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -83,26 +86,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         ab.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void createExportReceiver() {
-        exportReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getExtras();
-                if (bundle != null) {
-                    String videoToSharePath = bundle.getString(ExportProjectService.FILEPATH);
-                    int resultCode = bundle.getInt(ExportProjectService.RESULT);
-                    if (resultCode == RESULT_OK) {
-                        goToShare(videoToSharePath);
-                    } else {
-                        Snackbar.make(soundList, R.string.shareError, Snackbar.LENGTH_LONG).show();
-                    }
-                }
-            }
-        };
-
-    }
-
     private void initVideoListRecycler() {
         soundAdapter = new SoundListAdapter();
         soundAdapter.setSoundRecyclerViewClickListener(this);
@@ -113,31 +96,10 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         soundList.setAdapter(soundAdapter);
     }
 
-    public void goToShare(String videoToSharePath) {
-        Intent intent = new Intent(this, ShareActivity.class);
-        intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
-        startActivity(intent);
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(MUSIC_LIST_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        videonaPlayer.onPause();
-        unregisterReceiver(exportReceiver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.init();
-        registerReceiver(exportReceiver, new IntentFilter(ExportProjectService.NOTIFICATION));
     }
 
     public void navigateTo(Class cls) {
@@ -174,7 +136,7 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
 
     @Override
     public void updateProject() {
-        presenter.init();
+        presenter.updatePresenter();
     }
 
     @Override

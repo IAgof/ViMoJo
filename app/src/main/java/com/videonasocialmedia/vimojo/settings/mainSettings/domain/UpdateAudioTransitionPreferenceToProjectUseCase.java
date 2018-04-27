@@ -9,15 +9,13 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 public class UpdateAudioTransitionPreferenceToProjectUseCase {
 
-  private Project currentProject;
   private ProjectRepository projectRepository;
 
   public UpdateAudioTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
-  public void setAudioFadeTransitionActivated(boolean data) {
-    currentProject = Project.getInstance(null, null, null, null);
+  public void setAudioFadeTransitionActivated(Project currentProject, boolean data) {
     currentProject.getVMComposition().setAudioFadeTransitionActivated(data);
     projectRepository.update(currentProject);
   }

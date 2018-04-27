@@ -40,6 +40,7 @@ public class AdaptVideoToFormatUseCaseInstrumentationTest extends AssetManagerAn
   private String testPath;
   @Mock private VideoRepository videoRepository;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
+  private Project currentProject;
 
   @Before
   public void setUp() {
@@ -47,6 +48,7 @@ public class AdaptVideoToFormatUseCaseInstrumentationTest extends AssetManagerAn
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
     MockitoAnnotations.initMocks(this);
+    getCurrentProject();
   }
 
   @Test
@@ -61,7 +63,7 @@ public class AdaptVideoToFormatUseCaseInstrumentationTest extends AssetManagerAn
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
 
-    adaptVideoToFormatUseCase.adaptVideo(videoToAdapt, videoFormat, mockedAdaptListener);
+    adaptVideoToFormatUseCase.adaptVideo(project, videoToAdapt, videoFormat, mockedAdaptListener);
     videoToAdapt.getVideo().getTranscodingTask().get();
 
     assertThat(video.getMediaPath(), is(destPath));
@@ -70,15 +72,14 @@ public class AdaptVideoToFormatUseCaseInstrumentationTest extends AssetManagerAn
   }
 
   private Project setupProjectPath() {
-    Project project = getCurrentProject();
-    project.setProjectPath(testPath);
-    return project;
+    currentProject.setProjectPath(testPath);
+    return currentProject;
   }
 
-  private Project getCurrentProject() {
+  private void getCurrentProject() {
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, testPath, testPath, null);
+    currentProject = new Project(projectInfo, testPath, testPath, null);
   }
 
 }

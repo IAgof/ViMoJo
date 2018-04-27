@@ -38,7 +38,7 @@
             android:title="@string/drawerMyProjects"/>
 
         <item
-            android:id="@+id/menu_navview_delete_clip"
+            android:id="@+id/menu_navview_new_project"
             android:icon="@drawable/activity_editor_drawer_new_project"
             android:title="@string/new_project"/>
 

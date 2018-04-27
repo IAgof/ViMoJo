@@ -11,13 +11,13 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -51,30 +51,27 @@ public class CameraSettingsPresenterTest {
 
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
-  @Mock
-  GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
+  @Mock GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectRepository mockedProjectRepository;
-
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private MixpanelAPI mockedMixpanelAPI;
+  private Project currentProject;
 
   @Before
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
+    setAProject();
   }
 
-  @After
-  public void tearDown() {
-    Project.getInstance(null, null, null, null).clear();
-  }
 
   @Test
   public void constructorSetsUserTracker() {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
-            mockedCameraSettingsRepository, mockedProjectRepository);
+            mockedCameraSettingsRepository, mockedProjectRepository, mockedProjectInstanceCache);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -98,14 +95,13 @@ public class CameraSettingsPresenterTest {
   public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int resolutionPreferenceId = ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
-    Project project = getAProject();
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
     verify(mockedCameraSettingsRepository).setResolutionSetting(cameraSettings, "720p");
-    verify(mockedProjectRepository).updateResolution(project, VideoResolution.Resolution.HD720);
+    verify(mockedProjectRepository).updateResolution(currentProject, VideoResolution.Resolution.HD720);
     verify(mockedUserEventTracker).trackChangeResolution("720p");
   }
 
@@ -113,14 +109,13 @@ public class CameraSettingsPresenterTest {
   public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int frameRatePreferenceId = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
-    Project project = getAProject();
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraFrameRateSetting(frameRatePreferenceId);
 
     verify(mockedCameraSettingsRepository).setFrameRateSetting(cameraSettings, "30 fps");
-    verify(mockedProjectRepository).updateFrameRate(project, VideoFrameRate.FrameRate.FPS30);
+    verify(mockedProjectRepository).updateFrameRate(currentProject, VideoFrameRate.FrameRate.FPS30);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
   }
 
@@ -129,21 +124,22 @@ public class CameraSettingsPresenterTest {
   public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int qualityPreferenceId = CameraSettings.CAMERA_SETTING_QUALITY_16_ID;
-    Project project = getAProject();
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
 
     presenter.setCameraQualitySetting(qualityPreferenceId);
 
     verify(mockedCameraSettingsRepository).setQualitySetting(cameraSettings, "16 Mbps");
-    verify(mockedProjectRepository).updateQuality(project, VideoQuality.Quality.LOW);
+    verify(mockedProjectRepository).updateQuality(currentProject, VideoQuality.Quality.LOW);
     verify(mockedUserEventTracker).trackChangeQuality("16 Mbps");
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {
-    return new CameraSettingsPresenter(mockedCameraSettingsListView,
+    CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(mockedCameraSettingsListView,
         mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
-        mockedProjectRepository);
+        mockedProjectRepository, mockedProjectInstanceCache);
+    cameraSettingsPresenter.currentProject = currentProject;
+    return cameraSettingsPresenter;
   }
 
 
@@ -169,11 +165,11 @@ public class CameraSettingsPresenterTest {
         cameraIdSelected);
   }
 
-  public Project getAProject() {
+  public void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

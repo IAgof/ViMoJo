@@ -57,7 +57,7 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
   public void ifDateOfLastModificationAndVideoExportedAreDifferentCallsVideoExported(){
 
     Project project = getAProjectWithVideoExportedAndSameDates();
-    project.setLastModification("fakeDate");
+    project.updateDateOfModification("fakeDate");
 
     injectedUseCase.compareDate(project, mockedOnProjectExportedListener);
 
@@ -70,11 +70,11 @@ public class CheckIfProjectHasBeenExportedUseCaseTest {
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    Project project = Project.getInstance(projectInfo, "/path", "private/path",
+    Project project = new Project(projectInfo, "/path", "private/path",
         compositionProfile);
 
     String date = DateUtils.getDateRightNow();
-    project.setLastModification(date);
+    project.updateDateOfModification(date);
 
     LastVideoExported lastVideoExported = new LastVideoExported("somePath", date);
     project.setLastVideoExported(lastVideoExported);

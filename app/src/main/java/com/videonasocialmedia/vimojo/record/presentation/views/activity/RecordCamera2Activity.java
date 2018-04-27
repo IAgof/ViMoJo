@@ -367,7 +367,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onResume() {
     super.onResume();
     initOrientationHelper();
-    presenter.onResume();
+    presenter.updatePresenter();
     presenter.initViews();
     hideSystemUi();
     registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));

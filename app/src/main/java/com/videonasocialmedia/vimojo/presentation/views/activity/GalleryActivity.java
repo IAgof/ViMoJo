@@ -86,6 +86,12 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        galleryPagerPresenter.updatePresenter();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         countVideosSelected = getSelectedVideos().size();

@@ -1,14 +1,24 @@
-package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -19,11 +29,9 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPrevie
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,24 +50,24 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TrimPreviewPresenterTest {
-    @InjectMocks private TrimPreviewPresenter trimPreviewPresenter;
-    @Mock private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     @Mock private TrimView mockedTrimView;
     @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
-
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
+    @Mock ProjectInstanceCache mockedProjectInstanceCache;
+    private Project currentProject;
+    List<Media> videoList = new ArrayList<>();
 
     @Before
     public void injectMocks() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @After
-    public void tearDown() {
-        Project.getInstance(null, null, null, null).clear();
+        setAProject();
+        when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+        getAVideoList();
+        when(mockedGetMediaListFromProjectUseCase.getMediaListFromProject(currentProject))
+            .thenReturn(videoList);
     }
 
     @Test
@@ -67,28 +75,28 @@ public class TrimPreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
             mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase);
+            mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
 
     @Test
-    public void constructorSetsCurrentProject() {
+    public void updatePresenterSetsCurrentProject() {
         TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
-        Project videonaProject = getAProject();
 
-        assertThat(trimPreviewPresenter.currentProject, is(videonaProject));
+        trimPreviewPresenter.updatePresenter();
+
+        assertThat(trimPreviewPresenter.currentProject, is(currentProject));
     }
 
 
     @Test
     public void setTrimCallsTracking() {
-        Project videonaProject = getAProject();
+        TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
 
-        //trimPreviewPresenter.setTrim(0, 10);
         trimPreviewPresenter.trackVideoTrimmed();
 
-        verify(mockedUserEventTracker).trackClipTrimmed(videonaProject);
+        verify(mockedUserEventTracker).trackClipTrimmed(currentProject);
     }
 
     @Test
@@ -175,7 +183,7 @@ public class TrimPreviewPresenterTest {
 
     @Test
     public void setupActivityViewsCallsUpdateViewToThemeDarkIfThemeIsDark() {
-        trimPreviewPresenter = getTrimPreviewPresenter();
+        TrimPreviewPresenter trimPreviewPresenter = getTrimPreviewPresenter();
         when(mockedSharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE)).thenReturn(true);
 
@@ -186,16 +194,23 @@ public class TrimPreviewPresenterTest {
 
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
-        return new TrimPreviewPresenter(mockedTrimView, mockedSharedPreferences,
+        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView, mockedSharedPreferences,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase);
+            mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
+        trimPreviewPresenter.currentProject = currentProject;
+        return trimPreviewPresenter;
     }
 
-    public Project getAProject() {
+    private void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-        return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+        currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
+    }
+
+    public void getAVideoList(){
+        Video video = new Video("media/path", Video.DEFAULT_VOLUME);
+        videoList.add(video);
     }
 }

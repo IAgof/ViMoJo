@@ -1,9 +1,11 @@
 package com.videonasocialmedia.vimojo.repository.project;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Repository;
 
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
 public interface ProjectRepository extends Repository<Project> {
   void updateWithDate(Project item, String date);
 
-  Project getCurrentProject();
+  Project getLastModifiedProject();
 
   List<Project> getListProjectsByLastModificationDescending();
 

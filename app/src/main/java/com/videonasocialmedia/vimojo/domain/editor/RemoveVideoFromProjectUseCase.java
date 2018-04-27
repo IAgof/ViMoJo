@@ -11,8 +11,6 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.eventbus.events.project.UpdateProjectDurationEvent;
-import com.videonasocialmedia.vimojo.eventbus.events.video.NumVideosChangedEvent;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
@@ -26,12 +24,10 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * This class is used to removed videos from the project.
  */
-public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectListener {
+public class RemoveVideoFromProjectUseCase {
     protected ProjectRepository projectRepository;
     protected VideoRepository videoRepository;
 
@@ -47,24 +43,29 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
         this.videoRepository = videoRepository;
     }
 
-    @Override
-    public void removeMediaItemsFromProject(ArrayList<Media> mediaList,
+    public void removeMediaItemsFromProject(Project currentProject, ArrayList<Media> mediaList,
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
-        Project currentProject = Project.getInstance(null, null, null, null);
         Track mediaTrack = currentProject.getMediaTrack();
         for (Media media : mediaList) {
-            correct = removeVideoItemFromTrack(media, mediaTrack);
+            correct = removeVideoItemFromTrack(currentProject, media, mediaTrack);
             if (!correct) break;
             //video repository remove media, remove videos from other projects also.
             videoRepository.remove((Video) media);
         }
-        if (correct) {
-            projectRepository.update(currentProject);
-            listener.onRemoveMediaItemFromTrackSuccess();
-        } else {
-            listener.onRemoveMediaItemFromTrackError();
-        }
+        notifyResultToListener(currentProject, listener, correct);
+    }
+
+    public void removeMediaItemFromProject(Project currentProject, int positionVideoToRemove,
+                                            OnRemoveMediaFinishedListener listener) {
+
+        Track mediaTrack = currentProject.getMediaTrack();
+        Media media = mediaTrack.getItems().get(positionVideoToRemove);
+        boolean correct = removeVideoItemFromTrack(currentProject, media, mediaTrack);
+        if (!correct) return;
+        //video repository remove media, remove videos from other projects also.
+        videoRepository.remove((Video) media);
+        notifyResultToListener(currentProject, listener, correct);
     }
 
     /**
@@ -74,17 +75,10 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
      * @return bool if the item has been deleted from the track, return true. If it fails,
      *          return false.
      */
-    private boolean removeVideoItemFromTrack(Media video, Track mediaTrack) {
+    private boolean removeVideoItemFromTrack(Project currentProject, Media video, Track mediaTrack) {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
-            // TODO(jliarte): 23/10/16 get rid of EventBus?
-            Project currentProject = Project.getInstance(null, null, null, null);
-            EventBus.getDefault().post(
-                    new UpdateProjectDurationEvent(currentProject.getDuration()));
-            EventBus.getDefault().post(
-                    new NumVideosChangedEvent(currentProject.getMediaTrack()
-                            .getNumItemsInTrack()));
             result = true;
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             result = false;
@@ -93,5 +87,15 @@ public class RemoveVideoFromProjectUseCase implements RemoveMediaFromProjectList
             result = false;
         }
         return result;
+    }
+
+    private void notifyResultToListener(Project currentProject,
+                                        OnRemoveMediaFinishedListener listener, boolean correct) {
+        if (correct) {
+            projectRepository.update(currentProject);
+            listener.onRemoveMediaItemFromTrackSuccess();
+        } else {
+            listener.onRemoveMediaItemFromTrackError();
+        }
     }
 }

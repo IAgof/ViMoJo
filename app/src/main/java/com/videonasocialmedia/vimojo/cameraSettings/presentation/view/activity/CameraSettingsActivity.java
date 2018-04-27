@@ -51,6 +51,15 @@ public class CameraSettingsActivity extends VimojoActivity implements
     initCameraSettingsRecycler();
   }
 
+  @Override
+  protected void onResume() {
+    presenter.updatePresenter();
+    if (cameraSettingPackageList == null || cameraSettingPackageList.size() == 0) {
+      presenter.getCameraSettingsList();
+    }
+    super.onResume();
+  }
+
   private void initCameraSettingsRecycler() {
     int orientation = LinearLayoutManager.VERTICAL;
     adapter = new CameraSettingsAdapter();
@@ -59,14 +68,6 @@ public class CameraSettingsActivity extends VimojoActivity implements
         NUM_COLUMNS_GRID_RECYCLER, orientation, false);
     recyclerCameraSettingsList.setLayoutManager(layoutManager);
     recyclerCameraSettingsList.setAdapter(adapter);
-  }
-
-  @Override
-  protected void onResume() {
-    if (cameraSettingPackageList == null || cameraSettingPackageList.size() == 0) {
-      presenter.getCameraSettingsList();
-    }
-    super.onResume();
   }
 
   @Override

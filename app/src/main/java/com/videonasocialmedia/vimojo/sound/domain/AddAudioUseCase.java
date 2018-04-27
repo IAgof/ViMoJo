@@ -17,7 +17,6 @@ import javax.inject.Inject;
 
 public class AddAudioUseCase {
 
-  private Project currentProject;
   private ProjectRepository projectRepository;
   private final int SECOND_POSITION = 2;
   private final int FIRST_POSITION = 1;
@@ -25,18 +24,17 @@ public class AddAudioUseCase {
   @Inject
   public AddAudioUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
-    currentProject = Project.getInstance(null,null,null,null);
   }
 
-  public void addMusic(Music music, int trackIndex, OnAddMediaFinishedListener listener) {
-    Track audioTrack = createOrGetTrackFromProject(trackIndex);
-    updateTrack(audioTrack, trackIndex, music);
+  public void addMusic(Project currentProject, Music music, int trackIndex, OnAddMediaFinishedListener listener) {
+    Track audioTrack = createOrGetTrackFromProject(currentProject, trackIndex);
+    updateTrack(currentProject, audioTrack, trackIndex, music);
     addMusicToTrack(music, listener, audioTrack);
-    updateProject();
+    updateProject(currentProject);
   }
 
 
-  private AudioTrack createOrGetTrackFromProject(int trackIndex) {
+  private AudioTrack createOrGetTrackFromProject(Project currentProject, int trackIndex) {
     //Trick to manage correct index in AudioTracks arrayList. VMComposition always will have at
     // least one audio track, musicTrack with index INDEX_AUDIO_TRACK_MUSIC. It it would be exist
     // voice overTrack will be in next position in index
@@ -59,8 +57,8 @@ public class AddAudioUseCase {
     return currentProject.getAudioTracks().get(trackIndex);
   }
 
-  private void updateTrack(Track audioTrack, int trackIndex, Music music) {
-    audioTrack.setPosition(getTrackPositionByUserInteraction(audioTrack, trackIndex));
+  private void updateTrack(Project currentProject, Track audioTrack, int trackIndex, Music music) {
+    audioTrack.setPosition(getTrackPositionByUserInteraction(currentProject, audioTrack, trackIndex));
     audioTrack.setVolume(music.getVolume());
   }
 
@@ -74,11 +72,12 @@ public class AddAudioUseCase {
     }
   }
 
-  private void updateProject() {
+  private void updateProject(Project currentProject) {
     projectRepository.update(currentProject);
   }
 
-  private int getTrackPositionByUserInteraction(Track audioTrack, int trackIndex) {
+  private int getTrackPositionByUserInteraction(Project currentProject, Track audioTrack,
+                                                int trackIndex) {
     if(audioTrack.getPosition()!=0){
       return audioTrack.getPosition();
     }

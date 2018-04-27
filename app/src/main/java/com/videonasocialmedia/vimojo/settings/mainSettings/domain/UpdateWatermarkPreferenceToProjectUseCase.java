@@ -8,7 +8,6 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
  */
 
 public class UpdateWatermarkPreferenceToProjectUseCase {
-  private Project currentProject;
   private ProjectRepository projectRepository;
   private String TAG = "UpdateWatermarkPreferenceToProjectUseCase";
 
@@ -16,8 +15,7 @@ public class UpdateWatermarkPreferenceToProjectUseCase {
     this.projectRepository = projectRepository;
   }
 
-  public void setWatermarkActivated(boolean data) {
-    currentProject = Project.getInstance(null,null, null,null);
+  public void setWatermarkActivated(Project currentProject, boolean data) {
     currentProject.setWatermarkActivated(data);
     projectRepository.update(currentProject);
   }

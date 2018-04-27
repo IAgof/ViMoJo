@@ -71,7 +71,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
         Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
-    currentProject.setLastModification(realmProject.lastModification);
+    currentProject.updateDateOfModification(realmProject.lastModification);
     currentProject.setDuration(realmProject.duration);
     currentProject.getVMComposition().setAudioFadeTransitionActivated(
             realmProject.isAudioFadeTransitionActivated);

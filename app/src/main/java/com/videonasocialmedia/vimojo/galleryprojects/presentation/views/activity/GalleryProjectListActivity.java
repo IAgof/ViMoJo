@@ -6,25 +6,18 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activit
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
-
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
@@ -73,7 +66,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   }
 
   @Override
-  public void onResume(){
+  public void onResume() {
     super.onResume();
     presenter.updateProjectList();
   }
@@ -100,7 +93,10 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void createDefaultProject() {
-    presenter.createNewDefaultProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID);
+    // TODO(jliarte): 20/04/18 review this workflow
+    // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
+    Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+    presenter.setNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
     //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }
@@ -143,20 +139,17 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void goToEditActivity(Project project) {
-    presenter.updateCurrentProject(project);
-    navigateTo(EditActivity.class);
+    presenter.goToEdit(project);
   }
 
   @Override
   public void goToShareActivity(Project project) {
-    presenter.checkNavigationToShare(project);
-
+    presenter.goToShare(project);
   }
 
   @Override
   public void goToDetailActivity(Project project) {
-    presenter.updateCurrentProject(project);
-    navigateTo(DetailProjectActivity.class);
+    presenter.goToDetailProject(project);
   }
 
   @OnClick(R.id.backButton)

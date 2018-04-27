@@ -11,7 +11,11 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.ActivityPresentersComponent;
+import com.videonasocialmedia.vimojo.main.DaggerActivityPresentersComponent;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -50,8 +54,9 @@ public class TimeLineVideoViewHolderTest {
   @Mock private VideoTimeLineRecyclerViewClickListener mockedListener;
   @InjectMocks private VideoTimeLineAdapter injectedAdapter;
   private VideoTimeLineAdapter adapterSpy;
+  @Mock VimojoTestApplication mockedVimojoTestApplication;
+  @Mock VimojoActivity mockedVimojoActivity;
 
-  @Before
   public void setUpEditActivity() {
     editActivity = Robolectric.buildActivity(EditActivity.class).create().get();
   }
@@ -60,16 +65,7 @@ public class TimeLineVideoViewHolderTest {
   public void setUpTestDoubles() {
     MockitoAnnotations.initMocks(this);
     adapterSpy = spy(injectedAdapter);
-    getAProject();
-  }
-
-  private Project getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-        VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
-    List<String> productType = new ArrayList<>();
-    ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path",
-        compositionProfile);
+    setUpEditActivity();
   }
 
   @Test

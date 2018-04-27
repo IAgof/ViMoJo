@@ -11,28 +11,20 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 public class ModifyTrackUseCase {
   ProjectRepository projectRepository;
-  Project currentProject;
-
   public ModifyTrackUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
-  public void setTrackVolume(Track track, float volume) {
-    currentProject = Project.getInstance(null, null, null, null);
+  public void setTrackVolume(Project currentProject, Track track, float volume) {
     for(Media item: track.getItems()){
       item.setVolume(volume);
     }
     track.setVolume(volume);
-    updateProject();
+    projectRepository.update(currentProject);
   }
 
-  public void setTrackMute(Track track, boolean isMute) {
-    currentProject = Project.getInstance(null, null, null, null);
+  public void setTrackMute(Project currentProject, Track track, boolean isMute) {
     track.setMute(isMute);
-    updateProject();
-  }
-
-  private void updateProject() {
     projectRepository.update(currentProject);
   }
 

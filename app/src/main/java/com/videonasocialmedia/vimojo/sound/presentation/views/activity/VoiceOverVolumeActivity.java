@@ -70,18 +70,16 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
         textSeekBarVolume.setText(currentSoundVolumePosition+" % ");
     }
 
-    private void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            currentSoundVolumePosition = savedInstanceState.getInt(SOUND_VOLUME_POSITION_VOLUME, 0);
-            currentProjectPosition = savedInstanceState.getInt(SOUND_VOLUME_PROJECT_POSITION, 0);
-            soundVoiceOverPath = savedInstanceState.getString(VOICE_OVER_RECORDED_PATH);
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
+    protected void onResume() {
+        super.onResume();
+        videonaPlayer.onShown(this);
+        presenter.updatePresenter();
     }
 
     @Override
@@ -91,20 +89,22 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.init();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        videonaPlayer.onDestroy();
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            currentSoundVolumePosition = savedInstanceState.getInt(SOUND_VOLUME_POSITION_VOLUME, 0);
+            currentProjectPosition = savedInstanceState.getInt(SOUND_VOLUME_PROJECT_POSITION, 0);
+            soundVoiceOverPath = savedInstanceState.getString(VOICE_OVER_RECORDED_PATH);
+        }
     }
 
     public void navigateTo(Class cls) {

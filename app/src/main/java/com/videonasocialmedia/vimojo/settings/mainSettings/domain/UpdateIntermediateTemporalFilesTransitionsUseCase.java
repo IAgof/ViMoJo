@@ -14,22 +14,17 @@ import java.util.List;
 
 public class UpdateIntermediateTemporalFilesTransitionsUseCase {
 
-  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-
-  public UpdateIntermediateTemporalFilesTransitionsUseCase(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase) {
-    this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
+  public UpdateIntermediateTemporalFilesTransitionsUseCase() {
   }
 
-  public void execute(OnRelaunchTemporalFileListener listener) {
-    Project project = Project.getInstance(null, null, null, null);
-    List<Media> items = getMediaListFromProjectUseCase.getMediaListFromProject();
+  public void execute(Project currentProject, OnRelaunchTemporalFileListener listener) {
+    List<Media> items = currentProject.getMediaTrack().getItems();
     if (items.size() > 0)    {
       for (Media media : items) {
         Video video = (Video) media;
-        video.setTempPath(project.getProjectPathIntermediateFiles());
+        video.setTempPath(currentProject.getProjectPathIntermediateFiles());
         listener.videoToRelaunch(video.getUuid(),
-                project.getProjectPathIntermediateFileAudioFade());
+            currentProject.getProjectPathIntermediateFileAudioFade());
       }
     }
   }

@@ -25,7 +25,9 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 10/01/17.
@@ -37,38 +39,37 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @Mock private ApplyAVTransitionsUseCase mockedApplyAVTransitionUseCase;
+  private Project currentProject;
 
   @Before
   public void init() {
     MockitoAnnotations.initMocks(this);
-    Project project = Project.getInstance(null, null, null, null);
-    project.clear();
+    getAProject();
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
   public void ifProjectHasVideosCallsVideoToRelaunchListener() {
-    Project project = getAProject();
     AddVideoToProjectUseCase addVideoToProjectUseCase =
             new AddVideoToProjectUseCase(mockedProjectRepository, mockedApplyAVTransitionUseCase);
     Video videoAdded = new Video("somepath", 1f);
     videoAdded.setTempPath("tempDirectory");
-    addVideoToProjectUseCase.addVideoToProjectAtPosition(videoAdded, 0,
+    addVideoToProjectUseCase.addVideoToProjectAtPosition(currentProject, videoAdded, 0,
         mockedOnAddMediaFinishedListener);
-    GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
-            new GetMediaListFromProjectUseCase();
+    assert(currentProject.getVMComposition().hasVideos());
 
-    new UpdateIntermediateTemporalFilesTransitionsUseCase(getMediaListFromProjectUseCase)
-            .execute(mockedOnRelaunchTemporalFileListener);
+    new UpdateIntermediateTemporalFilesTransitionsUseCase()
+            .execute(currentProject, mockedOnRelaunchTemporalFileListener);
 
     verify(mockedOnRelaunchTemporalFileListener).videoToRelaunch(videoAdded.getUuid(),
-            project.getProjectPathIntermediateFileAudioFade());
+            currentProject.getProjectPathIntermediateFileAudioFade());
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 }

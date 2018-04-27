@@ -1,9 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -14,6 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
@@ -27,7 +26,6 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -36,7 +34,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,26 +54,25 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class VoiceOverRecordPresenterTest {
 
-  @InjectMocks VoiceOverRecordPresenter injectedPresenter;
-
   @Mock Context mockedContext;
   @Mock VoiceOverRecordView mockedVoiceOverRecordView;
   @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
   @Mock GetPreferencesTransitionFromProjectUseCase mockedGetPreferencesTransitionFromProjectUseCase;
-  @Mock Log mockedLog;
-  @Mock File mockedFile;
   @Mock AddAudioUseCase mockedAddAudioUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock UserEventTracker mockedUserEventTracker;
-  @Mock ListenableFuture<Void> mockedListenableFuture;
+  @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  private Project currentProject;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
+    setAProject();
   }
 
   @Test
   public void setVoiceOverShowErrorIfThereAreNotAudiosRecorded() throws IOException {
+    VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
 
     injectedPresenter.setVoiceOver("somePath");
 
@@ -86,7 +82,6 @@ public class VoiceOverRecordPresenterTest {
 
   @Test
   public void setVoiceOverCallsApplyVoiceOverIfThereIsAudioRecorded() {
-
     VoiceOverRecordPresenter voiceOverRecordPresenter =
             Mockito.spy(getVoiceOverRecorderPresenter());
     when(voiceOverRecordPresenter.isVoiceOverRecorded()).thenReturn(true);
@@ -99,7 +94,6 @@ public class VoiceOverRecordPresenterTest {
 
   @Test
   public void addVoiceOverCallsTrackingAndNavigateOnAddMediaItemToTrackSuccess() {
-    Project project = getAProject();
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     String mediaPath = "somePath";
@@ -107,18 +101,19 @@ public class VoiceOverRecordPresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener = invocation.getArgument(2);
+        OnAddMediaFinishedListener listener = invocation.getArgument(3);
         listener.onAddMediaItemToTrackSuccess(voiceOver);
         return null;
       }
-    }).when(mockedAddAudioUseCase).addMusic(eq(voiceOver),
+    }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(voiceOver),
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             any(OnAddMediaFinishedListener.class));
+    VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
 
     injectedPresenter.addVoiceOver(voiceOver);
 
     verify(mockedVoiceOverRecordView).navigateToVoiceOverVolumeActivity(mediaPath);
-    verify(mockedUserEventTracker).trackVoiceOverSet(project);
+    verify(mockedUserEventTracker).trackVoiceOverSet(currentProject);
   }
 
   @Test
@@ -129,13 +124,14 @@ public class VoiceOverRecordPresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnAddMediaFinishedListener listener = invocation.getArgument(2);
+        OnAddMediaFinishedListener listener = invocation.getArgument(3);
         listener.onAddMediaItemToTrackError();
         return null;
       }
-    }).when(mockedAddAudioUseCase).addMusic(eq(voiceOver),
+    }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(voiceOver),
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             any(OnAddMediaFinishedListener.class));
+    VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
 
     injectedPresenter.addVoiceOver(voiceOver);
 
@@ -145,23 +141,23 @@ public class VoiceOverRecordPresenterTest {
   @Test
   public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError()
           throws IllegalItemOnTrack {
-    Project project = getAProject();
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    project.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
-    assertThat("Project has voice over", project.hasVoiceOver(), is(true));
+    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
+    currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(voiceOver);
+    assertThat("Project has voice over", currentProject.hasVoiceOver(), is(true));
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
+        OnRemoveMediaFinishedListener listener = invocation.getArgument(3);
         listener.onRemoveMediaItemFromTrackError();
         return null;
       }
-    }).when(mockedRemoveAudioUseCase).removeMusic(eq(voiceOver),
+    }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(voiceOver),
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             Matchers.any(OnRemoveMediaFinishedListener.class));
+    VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
 
     injectedPresenter.deletePreviousVoiceOver();
 
@@ -170,6 +166,8 @@ public class VoiceOverRecordPresenterTest {
 
   @Test
   public void getVoiceOverAsMusicCreateVoiceOverObject() {
+    VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
+
     Music voiceOver = injectedPresenter.getVoiceOverAsMusic("media/path");
 
     assertThat("Voice over has correct title", voiceOver.getMusicTitle(),
@@ -180,18 +178,21 @@ public class VoiceOverRecordPresenterTest {
             is(Music.DEFAULT_VOLUME));
   }
 
-  public Project getAProject() {
+  private void setAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return Project.getInstance(projectInfo, "/path", "private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);
   }
 
   private VoiceOverRecordPresenter getVoiceOverRecorderPresenter(){
-    return new VoiceOverRecordPresenter(mockedContext, mockedVoiceOverRecordView,
-            mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromProjectUseCase,
-            mockedAddAudioUseCase, mockedRemoveAudioUseCase,
-            mockedUserEventTracker);
+    VoiceOverRecordPresenter voiceOverRecordPresenter = new VoiceOverRecordPresenter(mockedContext,
+        mockedVoiceOverRecordView,
+        mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromProjectUseCase,
+        mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedUserEventTracker,
+        mockedProjectInstanceCache);
+    voiceOverRecordPresenter.currentProject = currentProject;
+    return voiceOverRecordPresenter;
   }
 }

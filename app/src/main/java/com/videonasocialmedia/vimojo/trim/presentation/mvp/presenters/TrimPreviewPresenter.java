@@ -12,9 +12,8 @@ import android.widget.RadioButton;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -36,11 +35,11 @@ import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR
  * Created by vlf on 7/7/15.
  */
 public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
-
     /**
      * LOG_TAG
      */
     private final String LOG_TAG = getClass().getSimpleName();
+    private final ProjectInstanceCache projectInstanceCache;
 
     private Video videoToEdit;
 
@@ -53,31 +52,34 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
     private SharedPreferences sharedPreferences;
-    public UserEventTracker userEventTracker;
-    public Project currentProject;
+    protected UserEventTracker userEventTracker;
+    protected Project currentProject;
+    private int videoToTrimIndex;
 
     @Inject
-    public TrimPreviewPresenter(TrimView trimView, SharedPreferences sharedPreferences,
-                                UserEventTracker userEventTracker,
-                                GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                                ModifyVideoDurationUseCase modifyVideoDurationUseCase) {
-        //this.trimView = new WeakReference<>(trimView);
+    public TrimPreviewPresenter(
+            TrimView trimView, SharedPreferences sharedPreferences,
+            UserEventTracker userEventTracker,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+            ProjectInstanceCache projectInstanceCache) {
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
-        this.currentProject = loadCurrentProject();
-        currentProject.addListener(this);
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
-    }
-
-    private Project loadCurrentProject() {
-        // TODO(jliarte): this should make use of a repository or use case to load the Project
-        return Project.getInstance(null, null, null, null);
+        this.projectInstanceCache = projectInstanceCache;
     }
 
     public void init(int videoToTrimIndex) {
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject();
+        this.videoToTrimIndex = videoToTrimIndex;
+    }
+
+    public void updatePresenter() {
+        this.currentProject = projectInstanceCache.getCurrentProject();
+        currentProject.addListener(this);
+        List<Media> videoList = getMediaListFromProjectUseCase
+                .getMediaListFromProject(currentProject);
         if (videoList != null) {
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoToTrimIndex);

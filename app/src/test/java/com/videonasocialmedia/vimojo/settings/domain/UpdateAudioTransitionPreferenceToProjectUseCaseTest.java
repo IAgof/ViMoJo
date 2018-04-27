@@ -21,6 +21,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 10/01/17.
@@ -31,39 +32,39 @@ public class UpdateAudioTransitionPreferenceToProjectUseCaseTest {
   ProjectRepository mockedProjectRepository;
   @InjectMocks
   UpdateAudioTransitionPreferenceToProjectUseCase injectedUseCase;
+  private Project currentProject;
 
   @Before
   public void setup(){
     MockitoAnnotations.initMocks(this);
+    getAProject();
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
   public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    Project currentProject = Project.getInstance(null, null, null, null);
-    injectedUseCase.setAudioFadeTransitionActivated(false);
+    injectedUseCase.setAudioFadeTransitionActivated(currentProject, false);
+
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
   public void shouldUpdateVideoTransitionPreferenceProjectAfterUseCase(){
-    Project project = getAProject();
     boolean audioTransitionActivated = true;
     assertThat("project videoTransitionPreference false by default ",
-        project.getVMComposition().isAudioFadeTransitionActivated(), is(false));
+        currentProject.getVMComposition().isAudioFadeTransitionActivated(), is(false));
 
-    injectedUseCase.setAudioFadeTransitionActivated(audioTransitionActivated);
-
-    project = Project.getInstance(null,null,null,null);
+    injectedUseCase.setAudioFadeTransitionActivated(currentProject, audioTransitionActivated);
 
     assertThat("project videoTransitionPreference is value injected",
-        project.getVMComposition().isAudioFadeTransitionActivated(), is(audioTransitionActivated));
+        currentProject.getVMComposition().isAudioFadeTransitionActivated(), is(audioTransitionActivated));
   }
 
-  private Project getAProject() {
+  private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
-    return new Project(projectInfo, "/path","private/path", compositionProfile);
+    currentProject = new Project(projectInfo, "/path","private/path", compositionProfile);
   }
 }
