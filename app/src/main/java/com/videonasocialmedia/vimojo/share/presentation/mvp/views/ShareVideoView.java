@@ -46,4 +46,6 @@ public interface ShareVideoView {
   void pauseVideoPlayerPreview();
 
   void hideExportProgressDialogCanceled();
+
+  void hideShowMoreSocialNetworks();
 }

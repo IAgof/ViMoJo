@@ -138,7 +138,11 @@ public class ShareVideoPresenter extends VimojoPresenter {
     }
 
     public void obtainNetworksToShare() {
-        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+        if(BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {
+            socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+        } else {
+            shareVideoViewReference.get().hideShowMoreSocialNetworks();
+        }
     }
 
     private void obtainListOptionsToShare(VimojoNetwork vimojoNetwork, List<FtpNetwork> ftpList,
@@ -150,7 +154,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
         if (BuildConfig.FEATURE_FTP) {
             optionToShareList.addAll(ftpList);
         }
-        optionToShareList.addAll(socialNetworkList);
+        if(BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {
+            optionToShareList.addAll(socialNetworkList);
+        }
     }
 
     private void updateNumTotalVideosShared() {

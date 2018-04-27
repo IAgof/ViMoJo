@@ -1,3 +1,6 @@
+v0.16.0
+- Added option to cancel exportation.
+
 v0.15.0
 - Moved exportation project process. Now share navigation buttons goes to share screen. First time
 network is selected, export project begins and when it is finished continue sharing video.

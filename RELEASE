@@ -1,2 +1,2 @@
-v0.16.0
-- Added option to cancel exportation.
+v0.16.1
+- Added feature toggle FEATURE_SHARE_SHOW_SOCIAL_NETWORKS. Show or hide social networks in share screen.
