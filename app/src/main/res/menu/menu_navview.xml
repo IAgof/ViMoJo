@@ -61,6 +61,11 @@
             android:icon="@drawable/activity_drawer_user_profile"
             android:title="@string/drawerUserProfile"/>
         <item
+            android:id="@+id/menu_navview_platform"
+            android:icon="@drawable/activity_drawer_platform"
+            android:title="@string/drawer_go_to_platform"/>
+
+        <item
             android:id="@+id/menu_navview_settings"
             android:icon="@drawable/activity_drawer_settings"
             android:title="@string/drawerSettings"/>
