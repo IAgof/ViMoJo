@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:785913bfe9aa3690",
+        "mobilesdk_app_id": "1:937422921949:android:bf279228c9c5f781",
         "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.main"
+          "package_name": "com.videonasocialmedia.vimojo.elconfidencial"
         }
       },
       "oauth_client": [
@@ -43,9 +43,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:502ebc26f8c1f134",
+        "mobilesdk_app_id": "1:937422921949:android:1d94a8bc4fe9e6d2",
         "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.main.debug"
+          "package_name": "com.videonasocialmedia.vimojo.elconfidencial.debug"
         }
       },
       "oauth_client": [
@@ -148,6 +148,216 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:937422921949:android:eca2f8020a712d35",
+        "android_client_info": {
+          "package_name": "com.videonasocialmedia.vimojo.m4n"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937422921949:android:2290b75511f30341",
+        "android_client_info": {
+          "package_name": "com.videonasocialmedia.vimojo.m4n.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937422921949:android:785913bfe9aa3690",
+        "android_client_info": {
+          "package_name": "com.videonasocialmedia.vimojo.main"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937422921949:android:502ebc26f8c1f134",
+        "android_client_info": {
+          "package_name": "com.videonasocialmedia.vimojo.main.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937422921949:android:73b27085984607ad",
+        "android_client_info": {
+          "package_name": "com.videonasocialmedia.vimojo.nbc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937422921949:android:84f25479105f8243",
+        "android_client_info": {
+          "package_name": "com.videonasocialmedia.vimojo.nbc.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:937422921949:android:d82e691e2c53529d",
         "android_client_info": {
           "package_name": "com.videonasocialmedia.vimojo.rtve"
@@ -186,76 +396,6 @@
         "mobilesdk_app_id": "1:937422921949:android:393a6338219970ff",
         "android_client_info": {
           "package_name": "com.videonasocialmedia.vimojo.rtve.debug"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:0d21de8bd8d48630",
-        "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.vimojowatermark"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:221d12beeaaa8bd8",
-        "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.vimojowatermark.debug"
         }
       },
       "oauth_client": [
@@ -358,9 +498,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:2290b75511f30341",
+        "mobilesdk_app_id": "1:937422921949:android:0d21de8bd8d48630",
         "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.m4n.debug"
+          "package_name": "com.videonasocialmedia.vimojo.vimojowatermark"
         }
       },
       "oauth_client": [
@@ -393,79 +533,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:eca2f8020a712d35",
+        "mobilesdk_app_id": "1:937422921949:android:221d12beeaaa8bd8",
         "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.m4n"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:73b27085984607ad",
-        "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.nbc"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "937422921949-07elant92pq4qoq27taocjr1vml6n20u.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "937422921949-4k1c7rcem9p8flsq0oku0lpn489jj0r8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAA3amaFqpskrdOQ_qIQ1jgPN9vqn3ZB60"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:937422921949:android:84f25479105f8243",
-        "android_client_info": {
-          "package_name": "com.videonasocialmedia.vimojo.nbc.debug"
+          "package_name": "com.videonasocialmedia.vimojo.vimojowatermark.debug"
         }
       },
       "oauth_client": [
