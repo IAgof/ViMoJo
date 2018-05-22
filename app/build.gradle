@@ -226,7 +226,7 @@ android {
             manifestPlaceholders = [vimojoAppName: "Vimojo Market4News", fabricApiKey: "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"]
         }
 
-        nbc {
+       /* nbc {
             applicationId "com.videonasocialmedia.vimojo.nbc"
             versionCode 9 // 20180426
             versionName "0.16.1.fComcastNbc" // 20180426
@@ -248,7 +248,7 @@ android {
             ext.fabricApiKey = "60975c88785d14ed56393acb658081f33b93678f"
             ext.fabricApiSecret = "393c86bf03f37c4cf603df78c122f715fbd4aa4d3da89e0b3dc95333728e6308"
             manifestPlaceholders = [vimojoAppName: "Vimojo NBC", fabricApiKey: "60975c88785d14ed56393acb658081f33b93678f"]
-        }
+        }*/
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
