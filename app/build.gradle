@@ -69,8 +69,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 109 // 20180523
-            versionName "0.17.0" // 20180523
+            versionCode 110 // 20180523
+            versionName "0.18.0" // 20180523
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -162,8 +162,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 60 // 20180523
-            versionName "0.17.0.fThomsonFoundation" // 20180523
+            versionCode 61 // 20180523
+            versionName "0.18.0.fThomsonFoundation" // 20180523
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -210,8 +210,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 27 // 20180523
-            versionName "0.17.0.fMarketForNews" // 20180523
+            versionCode 28 // 20180523
+            versionName "0.18.0.fMarketForNews" // 20180523
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -260,8 +260,8 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 2 // 20180523
-            versionName "0.17.0.fElConfidencial" // 20180523
+            versionCode 3 // 20180523
+            versionName "0.18.0.fElConfidencial" // 20180523
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
