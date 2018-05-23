@@ -1,4 +1,2 @@
-v0.17.0
-- Created new flavour El Confidencial
-- Remove support NBC flavour.
-- Separate login/register backgrounds images in every flavour.
+v0.18.0
+- Add a link in the drawer to go to platform

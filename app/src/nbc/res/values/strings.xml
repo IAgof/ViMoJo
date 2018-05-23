@@ -6,4 +6,5 @@
     <string name="activity_music_title_acoustic_breeze">Acoustic music with a soft and mellow mood featuring folk guitar and cello</string>
 
     <string name="vimojo_kit_web">http://vimojo.co/mojokit/?utm_source=m4n_android&amp;utm_medium=app_link</string>
+    <string name="vimojo_platform">"http://vimojo.co/platform/?utm_source=vimojo_android&amp;utm_medium=app_link"</string>
 </resources>

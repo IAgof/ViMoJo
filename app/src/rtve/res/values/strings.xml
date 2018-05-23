@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="vimojo_kit_web">http://vimojo.co/mojokit/?utm_source=rtve_android&amp;utm_medium=app_link</string>
+    <string name="vimojo_platform">"http://vimojo.co/platform/?utm_source=vimojo_android&amp;utm_medium=app_link"</string>
 </resources>
