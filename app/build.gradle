@@ -216,7 +216,7 @@ android {
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "http://beta.market4news.com/api/v1/", release: "http://beta.market4news.com/api/v1/"]
+            ext.api_base_url = [debug: "http://market4news.com/api/v1/", release: "http://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -226,7 +226,7 @@ android {
             buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "false"
             ext.fabricApiKey = "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"
             ext.fabricApiSecret = "40b9ea4d7a095ba1c106dbdebd1cf69c9761460d54f2c8418b206c167f677ea4"
