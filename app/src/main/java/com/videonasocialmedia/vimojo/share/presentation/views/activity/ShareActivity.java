@@ -241,22 +241,24 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showDialogUploadVideoWithMobileNetwork() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    builder.setMessage(getResources().getString(R.string.upload_video_with_mobile_network));
-    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-      switch (which) {
-        case DialogInterface.BUTTON_POSITIVE:
-          isAcceptedUploadWithMobileNetwork = true;
-          onVimojoPlatformClicked();
-          break;
-        case DialogInterface.BUTTON_NEGATIVE:
-          isAcceptedUploadWithMobileNetwork = false;
-          break;
-      }
-    };
-    builder.setCancelable(true)
-            .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
-            .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+    runOnUiThread(() -> {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      builder.setMessage(getResources().getString(R.string.upload_video_with_mobile_network));
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_POSITIVE:
+            isAcceptedUploadWithMobileNetwork = true;
+            onVimojoPlatformClicked();
+            break;
+          case DialogInterface.BUTTON_NEGATIVE:
+            isAcceptedUploadWithMobileNetwork = false;
+            break;
+        }
+      };
+      builder.setCancelable(true)
+              .setPositiveButton(R.string.dialog_accept_clean_project, dialogClickListener)
+              .setNegativeButton(R.string.dialog_cancel_clean_project, dialogClickListener).show();
+    });
   }
 
   @Override
