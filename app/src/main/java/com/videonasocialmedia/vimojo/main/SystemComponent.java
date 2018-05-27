@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.sync.CancelUploadBroadcastReceiver;
 import com.videonasocialmedia.vimojo.sync.SyncService;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -38,4 +39,5 @@ public interface SystemComponent {
   CameraSettingsRepository getCameraRepository();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
+  void inject(CancelUploadBroadcastReceiver cancelUploadBroadcastReceiver);
 }

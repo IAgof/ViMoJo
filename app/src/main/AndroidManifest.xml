@@ -112,6 +112,12 @@
             <action android:name="android.net.wifi.STATE_CHANGE"/>
         </receiver>
 
+        <receiver android:name=".sync.CancelUploadBroadcastReceiver"  android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.UPLOAD_CANCELED"/>/>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".presentation.views.activity.InitAppActivity"
             android:configChanges="orientation|screenSize"

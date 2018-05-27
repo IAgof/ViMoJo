@@ -73,4 +73,9 @@ public class IntentConstants {
    */
 
   public static final String LICENSE_SELECTED = "license_selected";
+
+  /**
+   * Cancel upload
+   */
+  public static final String ACTION_CANCEL_UPLOAD = "action_cancel_upload";
 }

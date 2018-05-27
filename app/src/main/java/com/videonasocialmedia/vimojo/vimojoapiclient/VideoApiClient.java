@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
 import retrofit2.Response;
 
 import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MIME_TYPE_VIDEO;
@@ -31,6 +32,8 @@ public class VideoApiClient extends VimojoApiClient {
   public static final String VIDEO_API_KEY_TITLE = "title";
   public static final String VIDEO_API_KEY_DESCRIPTION = "description";
   public static final String VIDEO_API_KEY_PRODUCT_TYPE = "productType";
+
+  private Call<Video> videoUploadTask;
 
   public VideoApiClient() {
   }
@@ -65,9 +68,9 @@ public class VideoApiClient extends VimojoApiClient {
     requestBodyHashMap.put(VIDEO_API_KEY_TITLE, requestBodyTitle);
     requestBodyHashMap.put(VIDEO_API_KEY_DESCRIPTION, requestBodyDescription);
     requestBodyHashMap.put(VIDEO_API_KEY_PRODUCT_TYPE, requestBodyProductTypes);
-
+    videoUploadTask = videoService.uploadVideo(requestBodyHashMap, body);
     try {
-      Response<Video> response = videoService.uploadVideo(requestBodyHashMap, body).execute();
+      Response<Video> response = videoUploadTask.execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {

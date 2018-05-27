@@ -9,7 +9,10 @@ package com.videonasocialmedia.vimojo.sync;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -70,7 +73,8 @@ public class UploadNotification {
   }
 
   public void startInfiniteProgressNotification(int notificationUploadId, int iconNotificationId,
-                                                String uploadingVideo) {
+                                                String uploadingVideo,
+                                                PendingIntent cancelUploadPendingIntent) {
     showBundleSummary(R.drawable.notification_uploading_small);
     Log.d(LOG_TAG, "Starting notification id " + notificationUploadId);
     NotificationManager notificationManager = getNotificationManager();
@@ -78,12 +82,21 @@ public class UploadNotification {
     notificationBuilder.setSmallIcon(iconNotificationId);
     notificationBuilder.setContentTitle(uploadingVideo);
     notificationBuilder.setProgress(0, 0, true);
+    notificationBuilder.addAction(R.drawable.activity_edit_common_icon_cancel, "CANCEL",
+        cancelUploadPendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
   public void finishNotification(int notificationUploadId, String result, String videoTitle,
-                                 boolean success) {
+                                 boolean success, String userId) {
     Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
+
+    Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
+    String URL_PLATFORM_BASE = "http://www.vimojo.co";
+    String URL_USER_PLATFORM = URL_PLATFORM_BASE + "/user/" + userId + "/videos";
+    notificationIntent.setData(Uri.parse(URL_USER_PLATFORM));
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+        notificationIntent, 0);
 
     int smallIconNotificationId = success ? successNotificationId : errorNotificationId;
     showBundleSummary(smallIconNotificationId);
@@ -95,6 +108,7 @@ public class UploadNotification {
     notificationBuilder.setContentText(message);
     notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationBuilder.setProgress(0, 0, false);
+    notificationBuilder.setContentIntent(pendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
@@ -111,9 +125,18 @@ public class UploadNotification {
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void cancelNotification(int notificationUploadId) {
+  public void cancelNotification(int notificationUploadId, String title) {
+    showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
+    notificationBuilder.setContentTitle(context.getString(R.string.cancel_uploading_video));
+    notificationBuilder.setContentText(title);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
+        .bigText(context.getString(R.string.upload_video_network_error)));
+    notificationBuilder.setProgress(0, 0, false);
     notificationManager.cancel(notificationUploadId);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
   public void errorUnauthorizedUploadingVideos(int notificationUploadId) {

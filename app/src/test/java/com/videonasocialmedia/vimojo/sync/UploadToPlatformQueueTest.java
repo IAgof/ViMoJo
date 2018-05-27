@@ -88,7 +88,8 @@ public class UploadToPlatformQueueTest {
     video = getAVideo();
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
-    doReturn(new AuthToken(token, ""))
+    String userId = "user_id";
+    doReturn(new AuthToken(token, userId))
             .when(mockedGetAuthToken).getAuthToken(any(Context.class));
     //Upload success
     when(mockedVideoApiClient.uploadVideo(token, videoUpload)).thenReturn(video);
@@ -97,7 +98,7 @@ public class UploadToPlatformQueueTest {
 
     verify(mockedUploadNotification).finishNotification(videoUpload.getId(), mockedContext.getString(R.string.upload_video_success),
         videoUpload.getTitle(),
-        true);
+        true, userId);
   }
 
   @Test
@@ -105,6 +106,7 @@ public class UploadToPlatformQueueTest {
     UploadToPlatformQueue uploadToPlatformQueue = Mockito.spy(getUploadToPlatformQueue());
     VideoUpload videoUpload = getAVideoUpload();
     video = getAVideo();
+    String userId = "user_id";
     // Add two element to queue
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     // MAX_NUM_TRIES_UPLOAD = 3
@@ -114,11 +116,11 @@ public class UploadToPlatformQueueTest {
     videoUpload.incrementNumTries();
     assertThat(videoUpload.getNumTries() > MAX_NUM_TRIES_UPLOAD, is(true));
 
-    uploadToPlatformQueue.retryItemUpload(videoUpload);
+    uploadToPlatformQueue.retryItemUpload(videoUpload, userId);
 
     verify(mockedUploadNotification).finishNotification(videoUpload.getId(), mockedContext.getString(R.string.upload_video_error),
         videoUpload.getTitle(),
-        false);
+        false, userId);
   }
 
   @Test
@@ -230,14 +232,15 @@ public class UploadToPlatformQueueTest {
     video = getAVideo();
     uploadToPlatformQueue.addVideoToUpload(videoUpload);
     String token = "token";
-    doReturn(new AuthToken(token, "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
+    String userId = "user_id";
+    doReturn(new AuthToken(token, userId)).when(mockedGetAuthToken).getAuthToken(any(Context.class));
     doThrow(new VimojoApiException(-1, VimojoApiException.UNKNOWN_ERROR))
             .when(mockedVideoApiClient).uploadVideo(token, videoUpload);
     mockedVideoApiClient.uploadVideo(token, videoUpload);
 
     uploadToPlatformQueue.processNextQueueItem();
 
-    verify(uploadToPlatformQueue).retryItemUpload(videoUpload);
+    verify(uploadToPlatformQueue).retryItemUpload(videoUpload, userId);
   }
 
   @NonNull
