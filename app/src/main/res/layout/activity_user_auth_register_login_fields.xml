@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="@dimen/activity_user_auth_height_fields"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/register_login_slogan_text_view"
-              android:layout_centerInParent="true"
-              android:layout_margin="8dp"
-              android:background="@drawable/activity_user_auth_round_white_background"
-              android:orientation="vertical"
-              android:layout_alignWithParentIfMissing="true">
+    android:layout_width="@dimen/activity_user_auth_height_fields"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_below="@+id/register_login_slogan_text_view"
+    android:layout_centerInParent="true"
+    android:layout_margin="8dp"
+    android:background="@drawable/activity_user_auth_round_white_background"
+    android:orientation="vertical"
+    android:layout_alignWithParentIfMissing="true">
 
         <EditText
             android:id="@+id/user_name_field"
@@ -53,17 +54,30 @@
             android:paddingLeft="12dp"
             android:textColor="@color/colorSecondary"/>
 
-    <CheckBox
-        android:id="@+id/check_box_Accept_Term"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:buttonTint="@color/colorSecondary"
-        android:text="@string/title_checkbox_termService"
-        android:textColor="@color/colorSecondary"
-        android:textSize="12sp"
-        android:paddingRight="4dp"
-        android:paddingLeft="6dp"
-        android:paddingBottom="4dp"/>
+    <LinearLayout
+        android:id="@+id/linear_layout_accept_term"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:orientation="horizontal">
 
+        <CheckBox
+            android:id="@+id/check_box_Accept_Term"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:checked="false"
+            android:buttonTint="@color/colorSecondary"
+            android:textColor="@color/colorSecondary"
+            android:textSize="12sp"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/textView_Accept_Term"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
+            android:layout_gravity="center_vertical"
+            tools:text="I agree to the term of service and privacy"/>
+
+    </LinearLayout>
 </LinearLayout>
