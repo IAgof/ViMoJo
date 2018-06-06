@@ -11,8 +11,8 @@ import android.content.Context;
 
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
 import javax.inject.Singleton;
@@ -27,16 +27,16 @@ import dagger.Provides;
  */
 
 @Module
-public class UploadToPlatformQueueModule {
+public class UploadToPlatformModule {
 
   private final Context context;
 
-  public UploadToPlatformQueueModule(VimojoApplication application) {
+  public UploadToPlatformModule(VimojoApplication application) {
    this.context = application;
   }
 
   @Singleton @Provides
-  UploadToPlatformQueue provideUploadToPlatformQueue(UploadNotification uploadNotification,
+  UploadToPlatformQueue provideUploadToPlatform(UploadNotification uploadNotification,
                                                      VideoApiClient videoApiClient,
                                                      GetAuthToken getAuthToken) {
     return new UploadToPlatformQueue(context, uploadNotification, videoApiClient, getAuthToken);

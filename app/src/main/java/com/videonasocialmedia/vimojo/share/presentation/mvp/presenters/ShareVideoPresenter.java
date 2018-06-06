@@ -31,6 +31,7 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -71,7 +72,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
     private ExportProjectUseCase exportUseCase;
     private final GetAuthToken getAuthToken;
-    private UploadToPlatformQueue uploadToPlatformQueue;
+    private UploadToPlatform uploadToPlatform;
     private final LoggedValidator loggedValidator;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
     private final ProjectInstanceCache projectInstanceCache;
@@ -93,7 +94,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             ExportProjectUseCase exportProjectUseCase,
             ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
             GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
-            UploadToPlatformQueue uploadToPlatformQueue, LoggedValidator loggedValidator,
+            UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
             RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
@@ -105,7 +106,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.obtainNetworksToShareUseCase = obtainNetworksToShareUseCase;
         this.getFtpListUseCase = getFtpListUseCase;
         this.getAuthToken = getAuthToken;
-        this.uploadToPlatformQueue = uploadToPlatformQueue;
+        this.uploadToPlatform = uploadToPlatform;
         this.loggedValidator = loggedValidator;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
         this.projectInstanceCache = projectInstanceCache;
@@ -297,10 +298,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
         String productTypeListToString = TextUtils.join(", ", productTypeList);
         int id = (int) (new Date().getTime()/1000);
         VideoUpload videoUpload = new VideoUpload(id, mediaPath, title, description,
-            productTypeListToString, isAcceptedUploadMobileNetwork);
+            productTypeListToString, isAcceptedUploadMobileNetwork, false);
         executeUseCaseCall((Callable<Void>) () -> {
             try {
-                uploadToPlatformQueue.addVideoToUpload(videoUpload);
+                uploadToPlatform.addVideoToUpload(videoUpload);
                 runSyncAdapterHelper.runNowSyncAdapter();
             } catch (IOException ioException) {
                 ioException.printStackTrace();

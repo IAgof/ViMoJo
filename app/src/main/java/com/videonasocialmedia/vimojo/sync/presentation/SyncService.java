@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.sync;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.sync.presentation;
 
 /**
  * Created by alvaro on 31/1/18.
@@ -11,6 +18,8 @@ import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 
 import javax.inject.Inject;
 
@@ -26,7 +35,8 @@ public class SyncService extends Service {
   // Object to use as a thread-safe lock
   private static final Object sSyncAdapterLock = new Object();
 
-  @Inject UploadToPlatformQueue uploadToPlatformQueue;
+  @Inject UploadToPlatform uploadToPlatform;
+  @Inject UploadRepository uploadRepository;
 
   /*
    * Instantiate the sync adapter object.
@@ -44,7 +54,7 @@ public class SyncService extends Service {
     synchronized (sSyncAdapterLock) {
       if (sSyncAdapter == null) {
         sSyncAdapter = new SyncAdapter(getApplicationContext(), true,
-            uploadToPlatformQueue);
+            uploadToPlatform, uploadRepository);
       }
     }
   }

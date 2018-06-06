@@ -15,8 +15,8 @@ import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
@@ -301,18 +301,18 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   ShareVideoPresenter provideVideoSharePresenter(
-          UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-          ExportProjectUseCase exportProjectUseCase,
-          ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-          GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
-          UploadToPlatformQueue uploadToPlatformQueue, LoggedValidator loggedValidator,
-          RunSyncAdapterHelper runSyncAdapterHelper) {
+      UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+      ExportProjectUseCase exportProjectUseCase,
+      ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+      GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
+      UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
+      RunSyncAdapterHelper runSyncAdapterHelper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase, getAuthToken,
-            uploadToPlatformQueue, loggedValidator, runSyncAdapterHelper, projectInstanceCache);
+            uploadToPlatform, loggedValidator, runSyncAdapterHelper, projectInstanceCache);
   }
 
   @Provides @PerActivity

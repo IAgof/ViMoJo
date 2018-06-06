@@ -19,6 +19,7 @@ import com.squareup.tape2.ObjectQueue;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
+import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
@@ -54,7 +55,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class UploadToPlatformQueueTest {
   UploadToPlatformQueue injectedUploadToPlatformQueue;
 
-  @Mock UploadNotification mockedUploadNotification;
+  @Mock
+  UploadNotification mockedUploadNotification;
   @Mock Context mockedContext;
   @Mock VideoApiClient mockedVideoApiClient;
   @Mock GetAuthToken mockedGetAuthToken;

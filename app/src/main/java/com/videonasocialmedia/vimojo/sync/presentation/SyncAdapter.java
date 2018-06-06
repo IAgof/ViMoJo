@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.sync;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.sync.presentation;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -10,13 +17,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.squareup.tape2.ObjectQueue;
-import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import io.realm.Realm;
 
 
 /**
@@ -39,20 +45,22 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   private Context context;
   private boolean isWifiConnected;
   private boolean isMobileNetworkConnected;
-  private UploadToPlatformQueue uploadToPlatformQueue;
+  private UploadToPlatform uploadToPlatform;
+  private UploadRepository uploadRepository;
 
   /**
    * Set up the sync adapter
    */
   public SyncAdapter(Context context, boolean autoInitialize,
-                     UploadToPlatformQueue uploadToPlatformQueue) {
+                     UploadToPlatform uploadToPlatform, UploadRepository uploadRepository) {
     super(context, autoInitialize);
         /*
          * If your app uses a content resolver, get an instance of it
          * from the incoming Context
          */
     this.context = context;
-    this.uploadToPlatformQueue = uploadToPlatformQueue;
+    this.uploadToPlatform = uploadToPlatform;
+    this.uploadRepository = uploadRepository;
     Log.d(LOG_TAG, "created SyncAdapter...");
   }
 
@@ -61,32 +69,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
-    if (!queue.isEmpty()) {
-      try {
-        while (uploadToPlatformQueue.getQueue().iterator().hasNext()) {
-          Log.d(LOG_TAG, "launchingQueue");
-          boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
-          if (isThereNetworkConnected(isAcceptedUploadMobileNetwork)) {
-            // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
-            // reimplement this loop
-            uploadToPlatformQueue.processNextQueueItem();
-          }
-          sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
-        }
-      } catch (IOException ioException) {
-        Log.d(LOG_TAG, ioException.getMessage());
-        if (BuildConfig.DEBUG) {
-          // TODO(jliarte): 5/03/18 I'm sometimes getting an error here, even with a non empty queue
-          // file (maybe it gets corrupted somehow?) not able to reproduce properly. deeply
-          // investigate how to deal with it
-          ioException.printStackTrace();
-        }
-        Crashlytics.log("Error getting queue element, isAcceptedUploadMobileNetwork");
-        Crashlytics.logException(ioException);
+    for(VideoUpload video: uploadRepository.getAllVideosToUpload()) {
+      if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
+        uploadToPlatform.processAsyncUpload(video);
+        sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
       }
     }
-
   }
 
   private void sleep() {

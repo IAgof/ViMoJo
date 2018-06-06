@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.sync;
+package com.videonasocialmedia.vimojo.sync.presentation.ui;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,7 +25,7 @@ import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
  *
  * Class to manage uploads notification
  * Create notification by id
- * Start, update, finish, cancel notification
+ * Start, update, finish, pause, cancel notification
  *
  */
 
@@ -74,7 +74,8 @@ public class UploadNotification {
 
   public void startInfiniteProgressNotification(int notificationUploadId, int iconNotificationId,
                                                 String uploadingVideo,
-                                                PendingIntent cancelUploadPendingIntent) {
+                                                PendingIntent cancelUploadPendingIntent,
+                                                PendingIntent pauseUploadPendingIntent) {
     showBundleSummary(R.drawable.notification_uploading_small);
     Log.d(LOG_TAG, "Starting notification id " + notificationUploadId);
     NotificationManager notificationManager = getNotificationManager();
@@ -84,6 +85,8 @@ public class UploadNotification {
     notificationBuilder.setProgress(0, 0, true);
     notificationBuilder.addAction(R.drawable.activity_edit_common_icon_cancel, "CANCEL",
         cancelUploadPendingIntent);
+    notificationBuilder.addAction(R.drawable.activity_edit_common_icon_cancel, "PAUSE",
+        pauseUploadPendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
@@ -92,8 +95,11 @@ public class UploadNotification {
     Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
 
     Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
+    // TODO: 5/6/18 Create BuildConfig URL_PLATFORM_BASE
     String URL_PLATFORM_BASE = "http://www.vimojo.co";
-    String URL_USER_PLATFORM = URL_PLATFORM_BASE + "/user/" + userId + "/videos";
+    String URL_PLATFORM_BASE_FILTER = URL_PLATFORM_BASE.substring(0,
+        URL_PLATFORM_BASE.lastIndexOf("/") + 1) ;
+    String URL_USER_PLATFORM = URL_PLATFORM_BASE_FILTER + "/user/" + userId + "/videos";
     notificationIntent.setData(Uri.parse(URL_USER_PLATFORM));
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
         notificationIntent, 0);
@@ -132,8 +138,21 @@ public class UploadNotification {
     notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
     notificationBuilder.setContentTitle(context.getString(R.string.cancel_uploading_video));
     notificationBuilder.setContentText(title);
-    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
-        .bigText(context.getString(R.string.upload_video_network_error)));
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(title));
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.cancel(notificationUploadId);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  public void pauseNotification(int notificationUploadId, String title) {
+    // TODO: 5/6/18 Add pause upload icon
+    showBundleSummary(R.drawable.notification_error_small);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
+    notificationBuilder.setContentTitle(context.getString(R.string.cancel_uploading_video));
+    notificationBuilder.setContentText(title);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(title));
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.cancel(notificationUploadId);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
@@ -165,5 +184,11 @@ public class UploadNotification {
                     + context.getString(R.string.upload_video_file_not_found)));
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  public void setProgress(int percentage) {
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setProgress(100, percentage, false);
   }
 }

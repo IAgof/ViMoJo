@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.sync;
+package com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import javax.inject.Inject;
@@ -22,11 +24,12 @@ import javax.inject.Inject;
  * Created by alvaro on 27/5/18.
  */
 
-public class CancelUploadBroadcastReceiver  extends BroadcastReceiver {
+public class UploadBroadcastReceiver extends BroadcastReceiver {
 
-  @Inject UploadToPlatformQueue uploadToPlatformQueue;
+  @Inject UploadToPlatform uploadToPlatform;
+  @Inject UploadRepository uploadRepository;
   private Context context;
-  private String LOG_TAG = CancelUploadBroadcastReceiver.class.getName();
+  private String LOG_TAG = UploadBroadcastReceiver.class.getName();
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -34,12 +37,19 @@ public class CancelUploadBroadcastReceiver  extends BroadcastReceiver {
     if (context.getApplicationContext() instanceof VimojoApplication) {
       getSystemComponent().inject(this);
     }
-    LOG_TAG = "CancelUploadBroadcastReceiver";
+    LOG_TAG = "UploadBroadcastReceiver";
     Log.d(LOG_TAG,  "intent " + intent.getAction().toString());
     if (intent.getAction().equals(IntentConstants.ACTION_CANCEL_UPLOAD)) {
       // UploadNotification cancel
       Log.d(LOG_TAG,  "cancel upload notification broadcast");
-      uploadToPlatformQueue.cancelUploadByUser();
+      String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
+      uploadToPlatform.cancelUploadByUser(uploadRepository.getVideoToUploadByUUID(UUID));
+    }
+    if (intent.getAction().equals(IntentConstants.ACTION_PAUSE_UPLOAD)) {
+      // UploadNotification pause
+      Log.d(LOG_TAG,  "pause upload notification broadcast");
+      String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
+      uploadToPlatform.pauseUploadByUser(uploadRepository.getVideoToUploadByUUID(UUID));
     }
   }
   public SystemComponent getSystemComponent() {

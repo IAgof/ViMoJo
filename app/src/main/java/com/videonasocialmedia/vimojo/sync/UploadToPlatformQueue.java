@@ -23,7 +23,10 @@ import com.squareup.tape2.QueueFile;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
+import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadBroadcastReceiver;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.sync.helper.ProgressRequestBody;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
@@ -34,19 +37,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.app.Notification.EXTRA_NOTIFICATION_ID;
+import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MIME_TYPE_VIDEO;
 
 /**
  * Class to unify video uploads to platform.
  * Create/init ObjectQueue, add objects and launchQueue.
  * FIFO, atomic ObjectQueue.
  */
-public class UploadToPlatformQueue {
+public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallbacks {
   private final String LOG_TAG = UploadToPlatformQueue.class.getCanonicalName();
   private final Context context;
   private final VideoApiClient videoApiClient;
   private final GetAuthToken getAuthToken;
   private UploadNotification uploadNotification;
+  private Call<Video> uploadVideoAsync;
 
   public UploadToPlatformQueue(Context context, UploadNotification uploadNotification,
                                VideoApiClient videoApiClient, GetAuthToken getAuthToken) {
@@ -87,19 +96,26 @@ public class UploadToPlatformQueue {
     Log.d(LOG_TAG, "startNotification");
     VideoUpload element = getQueue().iterator().next();
     int notificationUploadId = element.getId();
-    Intent cancelUploadIntent = new Intent(context, CancelUploadBroadcastReceiver.class);
+    Intent cancelUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
     cancelUploadIntent.setAction(IntentConstants.ACTION_CANCEL_UPLOAD);
     cancelUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
     PendingIntent cancelUploadPendingIntent =
         PendingIntent.getBroadcast(context, 0, cancelUploadIntent, 0);
+    Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_UPLOAD);
+    pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
+    PendingIntent pauseUploadPendingIntent =
+        PendingIntent.getBroadcast(context, 0, pauseUploadIntent, 0);
     uploadNotification.startInfiniteProgressNotification(notificationUploadId,
             R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-            cancelUploadPendingIntent);
+            cancelUploadPendingIntent, pauseUploadPendingIntent);
     AuthToken authToken = getAuthToken.getAuthToken(context);
     try {
       String token = authToken.getToken();
       // TODO(jliarte): 27/02/18 check what to do with plaform response
+      Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
       Video video = videoApiClient.uploadVideo(token, element);
+      Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
       removeHeadElement(getQueue());
       Log.d(LOG_TAG, "finishNotification success");
       uploadNotification.finishNotification(notificationUploadId,
@@ -129,16 +145,106 @@ public class UploadToPlatformQueue {
     }
   }
 
-  public void cancelUploadByUser() {
-    // TODO: 27/5/18 Cancel synchronus retrofit call videoApiClient.uploadVideo Now only works UI, video is been uploading to server.
-    ObjectQueue<VideoUpload> queue = getQueue();
+  public void processAsyncNextQueueItem() {
+    Log.d(LOG_TAG, "processAsyncNextQueueItem");
+    Log.d(LOG_TAG, "startNotification");
     VideoUpload element = getQueue().iterator().next();
     int notificationUploadId = element.getId();
-    uploadNotification.cancelNotification(notificationUploadId, element.getTitle());
-    removeHeadElement(queue);
-    ObjectQueue<VideoUpload> updatedQueue = getQueue();
-    if(updatedQueue.iterator().hasNext()) {
-      processNextQueueItem();
+    Intent cancelUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
+    cancelUploadIntent.setAction(IntentConstants.ACTION_CANCEL_UPLOAD);
+    cancelUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
+    PendingIntent cancelUploadPendingIntent =
+        PendingIntent.getBroadcast(context, 0, cancelUploadIntent, 0);
+    Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_UPLOAD);
+    pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
+    PendingIntent pauseUploadPendingIntent =
+        PendingIntent.getBroadcast(context, 0, pauseUploadIntent, 0);
+    uploadNotification.startInfiniteProgressNotification(notificationUploadId,
+        R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
+        cancelUploadPendingIntent, pauseUploadPendingIntent);
+    AuthToken authToken = getAuthToken.getAuthToken(context);
+    try {
+      String token = authToken.getToken();
+      // TODO(jliarte): 27/02/18 check what to do with plaform response
+      Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
+      File file = new File(element.getMediaPath());
+      ProgressRequestBody fileBody = new ProgressRequestBody(file, MIME_TYPE_VIDEO, this);
+      uploadVideoAsync = videoApiClient.uploadVideoAsync(token, element, fileBody);
+      uploadVideoAsync.enqueue(new Callback<Video>() {
+        @Override
+        public void onResponse(Call<Video> call, Response<Video> response) {
+          Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
+          removeHeadElement(getQueue());
+          Log.d(LOG_TAG, "finishNotification success");
+          uploadNotification.finishNotification(notificationUploadId,
+              context.getString(R.string.upload_video_success), element.getTitle(), true,
+              authToken.getId());
+        }
+
+        @Override
+        public void onFailure(Call<Video> call, Throwable t) {
+          if (call.isCanceled()) {
+            ObjectQueue<VideoUpload> queue = getQueue();
+            VideoUpload element = getQueue().iterator().next();
+            int notificationUploadId = element.getId();
+            uploadNotification.cancelNotification(notificationUploadId, element.getTitle());
+            Log.d(LOG_TAG, "canceled video by user");
+            removeHeadElement(queue);
+            ObjectQueue<VideoUpload> updatedQueue = getQueue();
+            if(updatedQueue.iterator().hasNext()) {
+              processAsyncNextQueueItem();
+            }
+          }
+          else {
+
+          }
+        }
+      });
+
+    } catch (VimojoApiException vimojoApiException) {
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process upload vimojoApiException");
+      Crashlytics.logException(vimojoApiException);
+      switch (vimojoApiException.getApiErrorCode()) {
+        case VimojoApiException.UNAUTHORIZED:
+          uploadNotification.errorUnauthorizedUploadingVideos(notificationUploadId);
+          break;
+        case VimojoApiException.NETWORK_ERROR:
+          uploadNotification.errorNetworkNotification(notificationUploadId);
+          break;
+        default:
+          retryItemUpload(element, authToken.getId());
+      }
+    } catch (FileNotFoundException fileNotFoundError) {
+      if (BuildConfig.DEBUG) {
+        fileNotFoundError.printStackTrace();
+      }
+      Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
+      uploadNotification.errorFileNotFound(notificationUploadId, element);
+      // (jliarte): 27/02/18 Check this error management
+      removeHeadElement(getQueue());
+    }
+  }
+
+
+  public void cancelUploadByUser() {
+    // TODO: 27/5/18 Cancel synchronus retrofit call videoApiClient.uploadVideo Now only works UI, video is been uploading to server.
+    Log.d(LOG_TAG, "cancelUploadByUser");
+    if (uploadVideoAsync != null) {
+      Log.d(LOG_TAG, "cancel and remove");
+      uploadVideoAsync.cancel();
+    }
+  }
+
+  public void pauseUploadByUser() {
+    Log.d(LOG_TAG, "pauseUploadByUser");
+    VideoUpload element = getQueue().iterator().next();
+    int notificationUploadId = element.getId();
+    uploadNotification.pauseNotification(notificationUploadId, element.getTitle());
+    if (uploadVideoAsync != null) {
+      Log.d(LOG_TAG, "pause");
+      uploadVideoAsync.cancel();
     }
   }
 
@@ -174,4 +280,18 @@ public class UploadToPlatformQueue {
     }
   }
 
+  @Override
+  public void onProgressUpdate(int percentage) {
+    uploadNotification.setProgress(percentage);
+  }
+
+  @Override
+  public void onError() {
+
+  }
+
+  @Override
+  public void onFinish() {
+    uploadNotification.setProgress(100);
+  }
 }

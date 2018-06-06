@@ -7,6 +7,8 @@
 
 package com.videonasocialmedia.vimojo.sync.model;
 
+import java.util.UUID;
+
 /**
  * Model for enqueue video uploads to vimojo platform.
  * AuthToken, mediaPath, description info needed for video api service
@@ -14,6 +16,7 @@ package com.videonasocialmedia.vimojo.sync.model;
  */
 public class VideoUpload {
 
+  private String uuid = UUID.randomUUID().toString();
   private final int id;
   private String mediaPath;
   private String title;
@@ -22,9 +25,11 @@ public class VideoUpload {
   private int numTries;
   private boolean isAcceptedUploadMobileNetwork;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
+  private boolean isUploading;
 
   public VideoUpload(int id, String mediaPath, String title, String description,
-                     String productTypeList, boolean isAcceptedUploadMobileNetwork) {
+                     String productTypeList, boolean isAcceptedUploadMobileNetwork,
+                     boolean isUploading) {
     this.id = id;
     this.mediaPath = mediaPath;
     this.title = title;
@@ -32,6 +37,7 @@ public class VideoUpload {
     this.productTypeList = productTypeList;
     this.numTries = 0;
     this.isAcceptedUploadMobileNetwork = isAcceptedUploadMobileNetwork;
+    this.isUploading = isUploading;
   }
 
   public int getId() {
@@ -64,5 +70,21 @@ public class VideoUpload {
 
   public boolean isAcceptedUploadMobileNetwork() {
     return isAcceptedUploadMobileNetwork;
+  }
+
+  public boolean isUploading() {
+    return isUploading;
+  }
+
+  public void setUploading(boolean uploading) {
+    isUploading = uploading;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 }

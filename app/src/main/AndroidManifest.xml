@@ -106,13 +106,13 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".sync.WifiMobileNetworkReceiver">
+        <receiver android:name=".sync.presentation.broadcastreceiver.WifiMobileNetworkReceiver">
             <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
             <action android:name="android.net.wifi.STATE_CHANGE"/>
         </receiver>
 
-        <receiver android:name=".sync.CancelUploadBroadcastReceiver"  android:exported="true">
+        <receiver android:name=".sync.presentation.broadcastreceiver.UploadBroadcastReceiver"  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.UPLOAD_CANCELED"/>/>
             </intent-filter>
@@ -354,7 +354,7 @@
         </service>
 
         <service
-            android:name=".sync.SyncService"
+            android:name=".sync.presentation.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
@@ -365,7 +365,7 @@
         </service>
 
         <provider
-            android:name=".sync.StubProvider"
+            android:name=".sync.presentation.StubProvider"
             android:authorities="@string/content_authority"
             android:exported="false" />
 

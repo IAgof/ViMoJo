@@ -7,14 +7,14 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
-import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformQueueModule;
+import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.sync.CancelUploadBroadcastReceiver;
-import com.videonasocialmedia.vimojo.sync.SyncService;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadBroadcastReceiver;
+import com.videonasocialmedia.vimojo.sync.presentation.SyncService;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import javax.inject.Singleton;
@@ -26,7 +26,7 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = {ApplicationModule.class, DataRepositoriesModule.class,
-        TrackerModule.class, UploadToPlatformQueueModule.class})
+        TrackerModule.class, UploadToPlatformModule.class})
 public interface SystemComponent {
   ProjectRepository getProjectRepository();
   VideoRepository getVideoRepository();
@@ -34,10 +34,10 @@ public interface SystemComponent {
   TrackRepository getTrackRepository();
   MusicRepository getMusicRepository();
   UserEventTracker getUserEventTracker();
-  UploadToPlatformQueue getUploadToPlatformQueue();
+  UploadToPlatform getUploadToPlatform();
   SharedPreferences getSharedPreferences();
   CameraSettingsRepository getCameraRepository();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
-  void inject(CancelUploadBroadcastReceiver cancelUploadBroadcastReceiver);
+  void inject(UploadBroadcastReceiver uploadBroadcastReceiver);
 }

@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
-import com.videonasocialmedia.vimojo.sync.SyncConstants;
 
 import javax.inject.Inject;
 
