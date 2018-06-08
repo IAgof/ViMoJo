@@ -2529,4 +2529,8 @@ and Conditions.\n\n
 
     <string name="profession">Profession</string>
 
+    <!-- Notifications -->
+    <string name="notification_pause">PAUSE</string>
+    <string name="notification_cancel">CANCEL</string>
+
 </resources>

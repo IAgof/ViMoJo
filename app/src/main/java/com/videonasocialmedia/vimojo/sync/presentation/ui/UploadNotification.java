@@ -82,11 +82,11 @@ public class UploadNotification {
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(iconNotificationId);
     notificationBuilder.setContentTitle(uploadingVideo);
-    notificationBuilder.setProgress(0, 0, true);
-    notificationBuilder.addAction(R.drawable.activity_edit_common_icon_cancel, "CANCEL",
-        cancelUploadPendingIntent);
-    notificationBuilder.addAction(R.drawable.activity_edit_common_icon_cancel, "PAUSE",
-        pauseUploadPendingIntent);
+    notificationBuilder.setProgress(100, 0, false);
+    notificationBuilder.addAction(R.drawable.notification_cancel,
+        context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
+    notificationBuilder.addAction(R.drawable.notification_pause,
+        context.getString(R.string.notification_pause), pauseUploadPendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
@@ -95,12 +95,10 @@ public class UploadNotification {
     Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
 
     Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-    // TODO: 5/6/18 Create BuildConfig URL_PLATFORM_BASE
-    String URL_PLATFORM_BASE = "http://www.vimojo.co";
-    String URL_PLATFORM_BASE_FILTER = URL_PLATFORM_BASE.substring(0,
-        URL_PLATFORM_BASE.lastIndexOf("/") + 1) ;
-    String URL_USER_PLATFORM = URL_PLATFORM_BASE_FILTER + "/user/" + userId + "/videos";
-    notificationIntent.setData(Uri.parse(URL_USER_PLATFORM));
+    String urlPlatformHome = getURLFromApiBase(BuildConfig.API_BASE_URL);
+    String urlUserPlatform = urlPlatformHome + "/user/" + userId + "/videos";
+    Log.d(LOG_TAG, "finishNotification, onClick navigate to " + urlUserPlatform);
+    notificationIntent.setData(Uri.parse(urlUserPlatform));
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
         notificationIntent, 0);
 
@@ -116,6 +114,15 @@ public class UploadNotification {
     notificationBuilder.setProgress(0, 0, false);
     notificationBuilder.setContentIntent(pendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  // Delete two last '/',  /api/v1/
+  private String getURLFromApiBase(String apiBaseUrl) {
+    String urlHome = apiBaseUrl;
+    for(int i = 0; i < 3; i++) {
+      urlHome = urlHome.substring(0, urlHome.lastIndexOf('/'));
+    }
+    return urlHome;
   }
 
   public void errorNetworkNotification(int notificationUploadId) {
@@ -186,9 +193,21 @@ public class UploadNotification {
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void setProgress(int percentage) {
+  public void setProgress(int notificationUploadId, int iconNotificationId, String uploadingVideo,
+                          PendingIntent cancelUploadPendingIntent,
+                          PendingIntent pauseUploadPendingIntent, int percentage) {
+    showBundleSummary(R.drawable.notification_uploading_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(iconNotificationId);
+    notificationBuilder.setContentTitle(uploadingVideo);
+    String message = percentage + "%";
+    notificationBuilder.setContentText(message);
     notificationBuilder.setProgress(100, percentage, false);
+    notificationBuilder.addAction(R.drawable.notification_cancel,
+        context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
+    notificationBuilder.addAction(R.drawable.notification_pause,
+        context.getString(R.string.notification_pause), pauseUploadPendingIntent);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 }

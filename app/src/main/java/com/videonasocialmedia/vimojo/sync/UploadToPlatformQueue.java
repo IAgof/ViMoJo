@@ -56,6 +56,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
   private final GetAuthToken getAuthToken;
   private UploadNotification uploadNotification;
   private Call<Video> uploadVideoAsync;
+  private int notificationUploadId;
 
   public UploadToPlatformQueue(Context context, UploadNotification uploadNotification,
                                VideoApiClient videoApiClient, GetAuthToken getAuthToken) {
@@ -149,7 +150,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
     Log.d(LOG_TAG, "processAsyncNextQueueItem");
     Log.d(LOG_TAG, "startNotification");
     VideoUpload element = getQueue().iterator().next();
-    int notificationUploadId = element.getId();
+    notificationUploadId = element.getId();
     Intent cancelUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
     cancelUploadIntent.setAction(IntentConstants.ACTION_CANCEL_UPLOAD);
     cancelUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
@@ -282,7 +283,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
 
   @Override
   public void onProgressUpdate(int percentage) {
-    uploadNotification.setProgress(percentage);
+   // uploadNotification.setProgress(notificationUploadId, notificationUploadId, context.getString(R.string.uploading_video), cancelUploadPendingIntent, pauseUploadPendingIntent, percentage);
   }
 
   @Override
@@ -292,6 +293,6 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
 
   @Override
   public void onFinish() {
-    uploadNotification.setProgress(100);
+   // uploadNotification.setProgress(notificationUploadId, notificationUploadId, context.getString(R.string.uploading_video), cancelUploadPendingIntent, pauseUploadPendingIntent, 100);
   }
 }

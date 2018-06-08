@@ -34,8 +34,8 @@ import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
@@ -81,7 +81,7 @@ public class ShareVideoPresenterTest {
     @Mock private ObtainNetworksToShareUseCase mockedShareNetworksProvider;
     @Mock private GetFtpListUseCase mockedFtpListUseCase;
     @Mock private GetAuthToken mockedGetAuthToken;
-    @Mock private UploadToPlatformQueue mockedUploadToPlatformQueue;
+    @Mock private UploadToPlatform mockedUploadToPlatform;
     @Mock private LoggedValidator mockedLoggedValidator;
     private File mockedStorageDir;
     @Mock SocialNetwork mockedSocialNetwork;
@@ -120,7 +120,7 @@ public class ShareVideoPresenterTest {
                 mockedShareVideoView, userEventTracker, mockedSharedPreferences,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedGetAuthToken, mockedUploadToPlatformQueue, mockedLoggedValidator,
+                mockedGetAuthToken, mockedUploadToPlatform, mockedLoggedValidator,
                 mockedRunSyncAdapterHelper, mockedProjectInstanceCache);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
@@ -371,7 +371,7 @@ public class ShareVideoPresenterTest {
             mockedSharedPreferences, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
-            mockedUploadToPlatformQueue, mockedLoggedValidator, mockedRunSyncAdapterHelper,
+            mockedUploadToPlatform, mockedLoggedValidator, mockedRunSyncAdapterHelper,
             mockedProjectInstanceCache);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;

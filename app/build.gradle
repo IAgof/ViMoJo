@@ -75,7 +75,6 @@ android {
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            resValue "string", "url_platform_base", "http://vimojo.co"
             //ext.api_base_url = [debug: "http://vimojo.co/platform/api/v1/", release: "http://vimojo.co/platform/api/v1/"]
             ext.api_base_url = [debug: "http://192.168.1.36/api/v1/", release: "http://vimojo.co/platform/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
@@ -170,7 +169,6 @@ android {
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            resValue "string", "url_platform_base", "http://vimojo.co"
             ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_FTP", "true"
@@ -219,7 +217,6 @@ android {
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            resValue "string", "url_platform_base", "http://market4news.com"
             ext.api_base_url = [debug: "http://market4news.com/api/v1/", release: "http://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
@@ -270,7 +267,6 @@ android {
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            resValue "string", "url_platform_base", "http://54.173.108.6"
             ext.api_base_url = [debug: "http://54.173.108.6/api/v1/", release: "http://54.173.108.6/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"

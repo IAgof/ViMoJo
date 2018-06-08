@@ -7,7 +7,12 @@
 
 package com.videonasocialmedia.vimojo.sync.model;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
+
 import java.util.UUID;
+
+import retrofit2.Call;
 
 /**
  * Model for enqueue video uploads to vimojo platform.
@@ -26,6 +31,9 @@ public class VideoUpload {
   private boolean isAcceptedUploadMobileNetwork;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
   private boolean isUploading;
+
+  private ListenableFuture<VideoUpload> uploadingTask;
+  private Call<Video> uploadVideoAsync;
 
   public VideoUpload(int id, String mediaPath, String title, String description,
                      String productTypeList, boolean isAcceptedUploadMobileNetwork,
@@ -86,5 +94,21 @@ public class VideoUpload {
 
   public void setUuid(String uuid) {
     this.uuid = uuid;
+  }
+
+  public ListenableFuture<VideoUpload> getUploadingTask() {
+    return uploadingTask;
+  }
+
+  public void setUploadingTask(ListenableFuture<VideoUpload> uploadingTask) {
+    this.uploadingTask = uploadingTask;
+  }
+
+  public Call<Video> getUploadVideoAsync() {
+    return uploadVideoAsync;
+  }
+
+  public void setUploadVideoAsync(Call<Video> uploadVideoAsync) {
+    this.uploadVideoAsync = uploadVideoAsync;
   }
 }

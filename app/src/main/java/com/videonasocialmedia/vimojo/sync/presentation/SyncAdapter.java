@@ -17,13 +17,13 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
+import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
 import java.util.concurrent.TimeUnit;
-
-import io.realm.Realm;
-
 
 /**
  * Created by alvaro on 31/1/18.
@@ -70,18 +70,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
     for(VideoUpload video: uploadRepository.getAllVideosToUpload()) {
+      Log.d(LOG_TAG, "video to upload: " + video);
       if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
+        Log.d(LOG_TAG, "launching video to upload: " + video);
+        UploadNotification uploadNotification = new UploadNotification(context);
+        VideoApiClient videoApiClient = new VideoApiClient();
+        GetAuthToken getAuthToken = new GetAuthToken();
+        UploadToPlatform uploadToPlatform = new UploadToPlatform(context, uploadNotification,
+            videoApiClient, getAuthToken, uploadRepository);
         uploadToPlatform.processAsyncUpload(video);
-        sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
       }
-    }
-  }
-
-  private void sleep() {
-    try {
-      TimeUnit.SECONDS.sleep(10);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     }
   }
 

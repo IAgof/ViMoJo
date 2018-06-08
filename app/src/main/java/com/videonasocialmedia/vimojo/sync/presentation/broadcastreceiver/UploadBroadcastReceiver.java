@@ -15,6 +15,7 @@ import android.util.Log;
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
@@ -43,13 +44,19 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
       // UploadNotification cancel
       Log.d(LOG_TAG,  "cancel upload notification broadcast");
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
-      uploadToPlatform.cancelUploadByUser(uploadRepository.getVideoToUploadByUUID(UUID));
+      VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
+      if (videoUpload != null) {
+        uploadToPlatform.cancelUploadByUser(videoUpload);
+      }
     }
     if (intent.getAction().equals(IntentConstants.ACTION_PAUSE_UPLOAD)) {
       // UploadNotification pause
       Log.d(LOG_TAG,  "pause upload notification broadcast");
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
-      uploadToPlatform.pauseUploadByUser(uploadRepository.getVideoToUploadByUUID(UUID));
+      VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
+      if (videoUpload != null) {
+        uploadToPlatform.pauseUploadByUser(videoUpload);
+      }
     }
   }
   public SystemComponent getSystemComponent() {

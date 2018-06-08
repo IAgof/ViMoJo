@@ -29,7 +29,6 @@ import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;

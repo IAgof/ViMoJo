@@ -35,6 +35,8 @@
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission
         android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         tools:replace="label"
@@ -106,15 +108,20 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".sync.presentation.broadcastreceiver.WifiMobileNetworkReceiver">
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-            <action android:name="android.net.wifi.STATE_CHANGE"/>
+        <receiver android:name=".sync.presentation.broadcastreceiver.WifiMobileNetworkReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+            </intent-filter>
         </receiver>
 
-        <receiver android:name=".sync.presentation.broadcastreceiver.UploadBroadcastReceiver"  android:exported="true">
+        <receiver android:name=".sync.presentation.broadcastreceiver.UploadBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.UPLOAD_CANCELED"/>/>
+                <action android:name="android.intent.action.UPLOAD_CANCELED"/>
+                <action android:name="android.intent.action.UPLOAD_PAUSED"/>
             </intent-filter>
         </receiver>
 

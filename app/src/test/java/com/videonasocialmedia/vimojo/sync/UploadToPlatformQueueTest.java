@@ -256,7 +256,7 @@ public class UploadToPlatformQueueTest {
     boolean isAcceptedUploadMobileNetwork = true;
     return new VideoUpload(1, "mediaPath",
         "title", "description", "productTypeList",
-        isAcceptedUploadMobileNetwork);
+        isAcceptedUploadMobileNetwork, false);
   }
 
   @NonNull

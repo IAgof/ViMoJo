@@ -11,7 +11,10 @@ import android.content.Context;
 
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
@@ -35,11 +38,13 @@ public class UploadToPlatformModule {
    this.context = application;
   }
 
-  @Singleton @Provides
-  UploadToPlatformQueue provideUploadToPlatform(UploadNotification uploadNotification,
-                                                     VideoApiClient videoApiClient,
-                                                     GetAuthToken getAuthToken) {
-    return new UploadToPlatformQueue(context, uploadNotification, videoApiClient, getAuthToken);
+  @Provides
+  UploadToPlatform provideUploadToPlatform(UploadNotification uploadNotification,
+                                           VideoApiClient videoApiClient,
+                                           GetAuthToken getAuthToken,
+                                           UploadRepository uploadRepository) {
+    return new UploadToPlatform(context, uploadNotification, videoApiClient, getAuthToken,
+        uploadRepository);
   }
 
   @Provides
@@ -57,4 +62,8 @@ public class UploadToPlatformModule {
     return new GetAuthToken();
   }
 
+  @Singleton @Provides
+  UploadRepository providesUploadRepository() {
+    return new UploadRealmRepository();
+  }
 }

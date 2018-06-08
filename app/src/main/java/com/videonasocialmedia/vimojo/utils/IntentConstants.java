@@ -88,6 +88,6 @@ public class IntentConstants {
   /**
    * Video upload UUID
    */
-  public static final String VIDEO_UPLOAD_UUID = "action_pause_upload";
+  public static final String VIDEO_UPLOAD_UUID = "video_upload_uuid";
 
 }

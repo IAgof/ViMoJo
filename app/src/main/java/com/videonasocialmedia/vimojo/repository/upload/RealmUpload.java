@@ -9,6 +9,7 @@ package com.videonasocialmedia.vimojo.repository.upload;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * Created by alvaro on 6/6/18.
@@ -19,16 +20,20 @@ import io.realm.annotations.PrimaryKey;
 
 public class RealmUpload extends RealmObject {
 
-  @PrimaryKey
-  public String uuid;
-  public int id;
-  public String mediaPath;
-  public String title;
-  public String description;
-  public String productTypeList;
-  public int numTries;
-  public boolean isAcceptedUploadWithMobileNetwork;
-  public boolean isUploading;
+  @PrimaryKey @Required
+  protected String uuid;
+  protected int id;
+  @Required
+  protected String mediaPath;
+  @Required
+  protected String title;
+  @Required
+  protected String description;
+  @Required
+  protected String productTypeList;
+  protected int numTries;
+  protected boolean isAcceptedUploadWithMobileNetwork;
+  protected boolean isUploading;
 
   public RealmUpload() {
 

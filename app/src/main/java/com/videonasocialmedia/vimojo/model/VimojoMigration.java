@@ -648,6 +648,40 @@ public class VimojoMigration implements RealmMigration {
       oldVersion++;
     }
 
+    /**
+     * new RealmUpload table
+     * RealmUpload extends RealmObject {
+     *   @PrimaryKey
+     *   public String uuid;
+     *   public int id;
+     *   public String mediaPath;
+     *   public String title;
+     *   public String description;
+     *   public String productTypeList;
+     *   public int numTries;
+     *   public boolean isAcceptedUploadWithMobileNetwork;
+     *   public boolean isUploading;
+     */
+    // Migrate from version 11 to 12, 20180607. Added UploadRepository
+    if(oldVersion == 12) {
+      RealmObjectSchema realmUploadTable = schema.get("RealmUpload");
+      if (schema.get("RealmUpload") == null) {
+        RealmObjectSchema uploadSchema = schema.create("RealmUpload")
+            .addField("uuid", String.class, FieldAttribute.PRIMARY_KEY,
+                FieldAttribute.REQUIRED)
+            .addField("id", Integer.class, FieldAttribute.REQUIRED)
+            .addField("mediaPath", String.class, FieldAttribute.REQUIRED)
+            .addField("title", String.class, FieldAttribute.REQUIRED)
+            .addField("description", String.class, FieldAttribute.REQUIRED)
+            .addField("productTypeList", String.class, FieldAttribute.REQUIRED)
+            .addField("numTries", Integer.class, FieldAttribute.REQUIRED)
+            .addField("isAcceptedUploadWithMobileNetwork", Boolean.class,
+                FieldAttribute.REQUIRED)
+            .addField("isUploading", Boolean.class, FieldAttribute.REQUIRED);
+      }
+      oldVersion++;
+    }
+
     }
 
   private void updateRealmProjectPrimaryKeyToUuid(RealmObjectSchema realmProject) {
