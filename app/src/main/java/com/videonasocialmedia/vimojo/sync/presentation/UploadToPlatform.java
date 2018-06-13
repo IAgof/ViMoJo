@@ -72,18 +72,17 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   }
 
   public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
-    // add videoUpload to realm
     uploadRepository.add(videoUpload);
   }
 
   public void processAsyncUpload(VideoUpload videoUpload) {
-    Log.d(LOG_TAG, "processAsyncNextQueueItem");
-    Log.d(LOG_TAG, "startNotification");
+    Log.d(LOG_TAG, "processAsyncUpload");
+    Log.d(LOG_TAG, "startNotification " + videoUpload.getUuid());
     notificationUploadId = videoUpload.getId();
     createPendingIntents(videoUpload.getUuid());
-   /* uploadNotification.startInfiniteProgressNotification(notificationUploadId,
+    uploadNotification.startInfiniteProgressNotification(notificationUploadId,
         R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-        cancelUploadPendingIntent, pauseUploadPendingIntent);*/
+        cancelUploadPendingIntent, pauseUploadPendingIntent);
     AuthToken authToken = getAuthToken.getAuthToken(context);
     try {
       String token = authToken.getToken();
@@ -94,13 +93,13 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
       videoUpload.setUploading(true);
       uploadRepository.update(videoUpload);
       uploadVideoAsync = videoApiClient.uploadVideoAsync(token, videoUpload, fileBody);
-      videoUpload.setUploadVideoAsync(uploadVideoAsync);
       uploadVideoAsync.enqueue(new Callback<Video>() {
         @Override
         public void onResponse(Call<Video> call, Response<Video> response) {
           Log.d(LOG_TAG, "onResponse uploaded video ... videoApiClient.uploadVideo");
           removeVideoUpload(videoUpload);
           Log.d(LOG_TAG, "finishNotification success");
+          resetProgressBar();
           uploadNotification.finishNotification(notificationUploadId, context.getString(R.string.upload_video_success),
               videoUpload.getTitle(), true, authToken.getId());
         }
@@ -108,11 +107,8 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
         @Override
         public void onFailure(Call<Video> call, Throwable t) {
           Log.d(LOG_TAG, "onFailure uploading video ... videoApiClient.uploadVideo");
-          if (call.isCanceled()) {
-            int notificationUploadId = videoUpload.getId();
-            uploadNotification.cancelNotification(notificationUploadId, videoUpload.getTitle());
-          } else {
-            retryItemUpload(videoUpload);
+          if (!call.isCanceled()) {
+            retryItemUpload(videoUpload); 
           }
         }
       });
@@ -142,19 +138,23 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     }
   }
 
+  public void resetProgressBar() {
+    percentageShowed = 0;
+  }
+
   private void createPendingIntents(String videoUploadUuid) {
     Intent cancelUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
     cancelUploadIntent.setAction(IntentConstants.ACTION_CANCEL_UPLOAD);
     cancelUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
     cancelUploadIntent.putExtra(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     cancelUploadPendingIntent = PendingIntent.getBroadcast(context, 0,
-        cancelUploadIntent, 0);
+        cancelUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
-    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_UPLOAD);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD);
     pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
     pauseUploadIntent.putExtra(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     pauseUploadPendingIntent = PendingIntent.getBroadcast(context, 0,
-        pauseUploadIntent, 0);
+        pauseUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
   }
 
   private void retryItemUpload(VideoUpload videoUpload) {
@@ -167,25 +167,25 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
 
   public void cancelUploadByUser(VideoUpload videoUpload) {
-    // TODO: 27/5/18 Cancel synchronus retrofit call videoApiClient.uploadVideo Now only works UI, video is been uploading to server.
     Log.d(LOG_TAG, "cancelUploadByUser");
-    if (uploadVideoAsync != null || videoUpload.getUploadVideoAsync() != null) {
+    if (uploadVideoAsync != null) {
       Log.d(LOG_TAG, "cancel and remove");
       uploadVideoAsync.cancel();
-      videoUpload.getUploadVideoAsync().cancel();
-      removeVideoUpload(videoUpload);
-      uploadNotification.cancelNotification(notificationUploadId, videoUpload.getTitle());
     }
+    removeVideoUpload(videoUpload);
+    uploadNotification.cancelNotification(notificationUploadId, videoUpload.getTitle());
   }
 
   public void pauseUploadByUser(VideoUpload videoUpload) {
     Log.d(LOG_TAG, "pauseUploadByUser");
+    if (uploadVideoAsync != null) {
+      Log.d(LOG_TAG, "pauseUploadByUser uploadVideoAsync");
+      uploadVideoAsync.cancel();
+    }
     videoUpload.setUploading(false);
     uploadRepository.update(videoUpload);
-    if (uploadVideoAsync != null || videoUpload.getUploadVideoAsync() != null) {
-      uploadVideoAsync.cancel();
-      videoUpload.getUploadVideoAsync().cancel();
-    }
+    uploadNotification.pauseNotification(notificationUploadId, videoUpload.getTitle(),
+        cancelUploadPendingIntent, pauseUploadPendingIntent);
   }
 
   private void removeVideoUpload(VideoUpload videoUpload) {
@@ -214,6 +214,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     uploadNotification.setProgress(notificationUploadId, notificationUploadId,
         context.getString(R.string.uploading_video), cancelUploadPendingIntent,
         pauseUploadPendingIntent, 100);
+    resetProgressBar();
   }
 
 }

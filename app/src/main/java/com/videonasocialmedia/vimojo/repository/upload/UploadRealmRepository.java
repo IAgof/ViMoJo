@@ -41,6 +41,7 @@ public class UploadRealmRepository implements UploadRepository {
     for(RealmUpload realmUpload: realmResults){
       videoUploadList.add(toVideoUploadMapper.map(realm.copyFromRealm(realmUpload)));
     }
+    realm.close();
     return videoUploadList;
   }
 
@@ -53,6 +54,7 @@ public class UploadRealmRepository implements UploadRepository {
         return toVideoUploadMapper.map(realm.copyFromRealm(realmUpload));
       }
     }
+    realm.close();
     return null;
   }
 
@@ -84,6 +86,7 @@ public class UploadRealmRepository implements UploadRepository {
         realm.copyToRealmOrUpdate(toRealmUploadMapper.map(item));
       }
     });
+    realm.close();
   }
 
   @Override
@@ -97,6 +100,7 @@ public class UploadRealmRepository implements UploadRepository {
         result.deleteAllFromRealm();
       }
     });
+    realm.close();
   }
 
   @Override

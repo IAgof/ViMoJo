@@ -31,6 +31,7 @@ public class RealmUploadTest {
   @Test
   public void testRealmUploadFields() {
     RealmUpload realmUpload = new RealmUpload();
+    realmUpload.uuid = "qwerty1234";
     realmUpload.id = 1234;
     realmUpload.mediaPath = "/some/path";
     realmUpload.title = "title";
@@ -40,6 +41,7 @@ public class RealmUploadTest {
     realmUpload.isAcceptedUploadWithMobileNetwork = false;
     realmUpload.isUploading = false;
 
+    assertThat(realmUpload.uuid, is("qwerty1234"));
     assertThat(realmUpload.id, is(1234));
     assertThat(realmUpload.mediaPath, is("/some/path"));
     assertThat(realmUpload.title, is("title"));

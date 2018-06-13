@@ -77,13 +77,18 @@ public class IntentConstants {
   /**
    * Cancel upload
    */
-  public static final String ACTION_CANCEL_UPLOAD = "action_cancel_upload";
+  public static final String ACTION_START_UPLOAD = "action_start_upload";
 
   /**
-   * Pause upload
+   * Cancel upload
+   */
+  public static final String ACTION_CANCEL_UPLOAD = "action_cancel_upload";
+
+   /**
+   * Activate/Pause upload
    */
 
-  public static final String ACTION_PAUSE_UPLOAD = "action_pause_upload";
+  public static final String ACTION_PAUSE_ACTIVATE_UPLOAD = "action_pause_activate_upload";
 
   /**
    * Video upload UUID

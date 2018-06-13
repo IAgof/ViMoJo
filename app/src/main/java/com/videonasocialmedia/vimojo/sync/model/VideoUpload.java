@@ -32,9 +32,6 @@ public class VideoUpload {
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
   private boolean isUploading;
 
-  private ListenableFuture<VideoUpload> uploadingTask;
-  private Call<Video> uploadVideoAsync;
-
   public VideoUpload(int id, String mediaPath, String title, String description,
                      String productTypeList, boolean isAcceptedUploadMobileNetwork,
                      boolean isUploading) {
@@ -96,19 +93,4 @@ public class VideoUpload {
     this.uuid = uuid;
   }
 
-  public ListenableFuture<VideoUpload> getUploadingTask() {
-    return uploadingTask;
-  }
-
-  public void setUploadingTask(ListenableFuture<VideoUpload> uploadingTask) {
-    this.uploadingTask = uploadingTask;
-  }
-
-  public Call<Video> getUploadVideoAsync() {
-    return uploadVideoAsync;
-  }
-
-  public void setUploadVideoAsync(Call<Video> uploadVideoAsync) {
-    this.uploadVideoAsync = uploadVideoAsync;
-  }
 }

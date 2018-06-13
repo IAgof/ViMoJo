@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
 import java.util.concurrent.TimeUnit;
@@ -69,21 +70,40 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    for(VideoUpload video: uploadRepository.getAllVideosToUpload()) {
-      Log.d(LOG_TAG, "video to upload: " + video);
-      if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
-        Log.d(LOG_TAG, "launching video to upload: " + video);
-        UploadNotification uploadNotification = new UploadNotification(context);
-        VideoApiClient videoApiClient = new VideoApiClient();
-        GetAuthToken getAuthToken = new GetAuthToken();
-        UploadToPlatform uploadToPlatform = new UploadToPlatform(context, uploadNotification,
-            videoApiClient, getAuthToken, uploadRepository);
-        uploadToPlatform.processAsyncUpload(video);
+    if (bundle.getBoolean(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD)) {
+      Log.d(LOG_TAG, "onPerformSync ACTION_PAUSE_UPLOAD");
+      String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
+      VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
+      uploadToPlatform.pauseUploadByUser(videoUpload);
+    } else {
+      if (bundle.getBoolean(IntentConstants.ACTION_CANCEL_UPLOAD)) {
+        Log.d(LOG_TAG, "onPerformSync ACTION_CANCEL_UPLOAD");
+        String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
+        VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
+        uploadToPlatform.cancelUploadByUser(videoUpload);
+      } else {
+        if (bundle.getBoolean(IntentConstants.ACTION_START_UPLOAD)) {
+          Log.d(LOG_TAG, "onPerformSync ACTION_START_UPLOAD");
+          String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
+          VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
+          uploadToPlatform.processAsyncUpload(videoUpload);
+        } else {
+          // Pending videos to upload.
+          for (VideoUpload video : uploadRepository.getAllVideosToUpload()) {
+            Log.d(LOG_TAG, "video to upload: " + video.getUuid());
+            if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
+              Log.d(LOG_TAG, "launching video to upload: ");
+              if (areThereNetworksConnected(video.isAcceptedUploadMobileNetwork())) {
+                uploadToPlatform.processAsyncUpload(video);
+              }
+            }
+          }
+        }
       }
     }
   }
 
-  private boolean isThereNetworkConnected(boolean isAcceptedUploadMobileNetwork) {
+  private boolean areThereNetworksConnected(boolean isAcceptedUploadMobileNetwork) {
     checkNetworksAvailable();
     return isWifiConnected || (isMobileNetworkConnected && isAcceptedUploadMobileNetwork);
   }

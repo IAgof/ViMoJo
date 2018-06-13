@@ -301,7 +301,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
         executeUseCaseCall((Callable<Void>) () -> {
             try {
                 uploadToPlatform.addVideoToUpload(videoUpload);
-                runSyncAdapterHelper.runNowSyncAdapter();
+                Log.d(LOG_TAG, "uploadVideo " + videoUpload.getUuid());
+                runSyncAdapterHelper.startUpload(videoUpload.getUuid());
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 Log.d(LOG_TAG, ioException.getMessage());

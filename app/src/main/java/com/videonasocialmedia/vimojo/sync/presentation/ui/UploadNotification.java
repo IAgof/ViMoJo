@@ -151,17 +151,22 @@ public class UploadNotification {
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void pauseNotification(int notificationUploadId, String title) {
+  public void pauseNotification(int notificationUploadId, String title,
+                                PendingIntent cancelUploadPendingIntent,
+                                PendingIntent pauseUploadPendingIntent) {
     // TODO: 5/6/18 Add pause upload icon
-    showBundleSummary(R.drawable.notification_error_small);
+    showBundleSummary(R.drawable.notification_pause_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
-    notificationBuilder.setContentTitle(context.getString(R.string.cancel_uploading_video));
+    notificationBuilder.setContentTitle(context.getString(R.string.pause_uploading_video));
     notificationBuilder.setContentText(title);
     notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(title));
-    notificationBuilder.setProgress(0, 0, false);
     notificationManager.cancel(notificationUploadId);
+    notificationBuilder.addAction(R.drawable.notification_cancel,
+        context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
+    notificationBuilder.addAction(R.drawable.notification_activate,
+        context.getString(R.string.notification_activate), pauseUploadPendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 

@@ -103,7 +103,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
     PendingIntent cancelUploadPendingIntent =
         PendingIntent.getBroadcast(context, 0, cancelUploadIntent, 0);
     Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
-    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_UPLOAD);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD);
     pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
     PendingIntent pauseUploadPendingIntent =
         PendingIntent.getBroadcast(context, 0, pauseUploadIntent, 0);
@@ -157,7 +157,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
     PendingIntent cancelUploadPendingIntent =
         PendingIntent.getBroadcast(context, 0, cancelUploadIntent, 0);
     Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
-    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_UPLOAD);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD);
     pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
     PendingIntent pauseUploadPendingIntent =
         PendingIntent.getBroadcast(context, 0, pauseUploadIntent, 0);
@@ -225,27 +225,6 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
       uploadNotification.errorFileNotFound(notificationUploadId, element);
       // (jliarte): 27/02/18 Check this error management
       removeHeadElement(getQueue());
-    }
-  }
-
-
-  public void cancelUploadByUser() {
-    // TODO: 27/5/18 Cancel synchronus retrofit call videoApiClient.uploadVideo Now only works UI, video is been uploading to server.
-    Log.d(LOG_TAG, "cancelUploadByUser");
-    if (uploadVideoAsync != null) {
-      Log.d(LOG_TAG, "cancel and remove");
-      uploadVideoAsync.cancel();
-    }
-  }
-
-  public void pauseUploadByUser() {
-    Log.d(LOG_TAG, "pauseUploadByUser");
-    VideoUpload element = getQueue().iterator().next();
-    int notificationUploadId = element.getId();
-    uploadNotification.pauseNotification(notificationUploadId, element.getTitle());
-    if (uploadVideoAsync != null) {
-      Log.d(LOG_TAG, "pause");
-      uploadVideoAsync.cancel();
     }
   }
 

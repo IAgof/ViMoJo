@@ -694,6 +694,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="profession">Profesión</string>
 
     <!-- Notifications -->
+    <string name="notification_activate">ACTIVAR</string>
     <string name="notification_pause">PAUSAR</string>
     <string name="notification_cancel">CANCELAR</string>
 
