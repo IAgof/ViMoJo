@@ -1,3 +1,7 @@
+v0.18.3
+- Fix bug check box accepting box.
+- Update vimojo flavor platform and url to platform.vimojo.co
+
 v0.18.2
 - Fix bug uploading video with mobile network.
 
