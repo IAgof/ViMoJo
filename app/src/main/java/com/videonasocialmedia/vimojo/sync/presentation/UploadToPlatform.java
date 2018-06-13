@@ -59,6 +59,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   private int notificationUploadId;
   private PendingIntent cancelUploadPendingIntent;
   private PendingIntent pauseUploadPendingIntent;
+  private PendingIntent removePendingIntent;
   private int percentageShowed = 0;
 
   public UploadToPlatform(Context context, UploadNotification uploadNotification,
@@ -82,7 +83,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     createPendingIntents(videoUpload.getUuid());
     uploadNotification.startInfiniteProgressNotification(notificationUploadId,
         R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-        cancelUploadPendingIntent, pauseUploadPendingIntent);
+        cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
     AuthToken authToken = getAuthToken.getAuthToken(context);
     try {
       String token = authToken.getToken();
@@ -155,7 +156,11 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     pauseUploadIntent.putExtra(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     pauseUploadPendingIntent = PendingIntent.getBroadcast(context, 0,
         pauseUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-  }
+    Intent removeUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
+    removeUploadIntent.setAction(IntentConstants.ACTION_REMOVE_UPLOAD);
+    removePendingIntent = PendingIntent.getBroadcast(
+        context, 0, removeUploadIntent, 0);
+      }
 
   private void retryItemUpload(VideoUpload videoUpload) {
     if (videoUpload.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD) {
@@ -185,7 +190,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     videoUpload.setUploading(false);
     uploadRepository.update(videoUpload);
     uploadNotification.pauseNotification(notificationUploadId, videoUpload.getTitle(),
-        cancelUploadPendingIntent, pauseUploadPendingIntent);
+        cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
   }
 
   private void removeVideoUpload(VideoUpload videoUpload) {

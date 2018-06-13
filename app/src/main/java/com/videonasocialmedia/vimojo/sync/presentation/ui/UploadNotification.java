@@ -75,7 +75,8 @@ public class UploadNotification {
   public void startInfiniteProgressNotification(int notificationUploadId, int iconNotificationId,
                                                 String uploadingVideo,
                                                 PendingIntent cancelUploadPendingIntent,
-                                                PendingIntent pauseUploadPendingIntent) {
+                                                PendingIntent pauseUploadPendingIntent,
+                                                PendingIntent removeUploadPendingIntent) {
     showBundleSummary(R.drawable.notification_uploading_small);
     Log.d(LOG_TAG, "Starting notification id " + notificationUploadId);
     NotificationManager notificationManager = getNotificationManager();
@@ -87,6 +88,7 @@ public class UploadNotification {
         context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
     notificationBuilder.addAction(R.drawable.notification_pause,
         context.getString(R.string.notification_pause), pauseUploadPendingIntent);
+    notificationBuilder.setDeleteIntent(removeUploadPendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
@@ -153,12 +155,13 @@ public class UploadNotification {
 
   public void pauseNotification(int notificationUploadId, String title,
                                 PendingIntent cancelUploadPendingIntent,
-                                PendingIntent pauseUploadPendingIntent) {
+                                PendingIntent pauseUploadPendingIntent,
+                                PendingIntent removeUploadPendingIntent) {
     // TODO: 5/6/18 Add pause upload icon
     showBundleSummary(R.drawable.notification_pause_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
-    notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
+    notificationBuilder.setSmallIcon(R.drawable.notification_pause_small);
     notificationBuilder.setContentTitle(context.getString(R.string.pause_uploading_video));
     notificationBuilder.setContentText(title);
     notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(title));
@@ -167,6 +170,7 @@ public class UploadNotification {
         context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
     notificationBuilder.addAction(R.drawable.notification_activate,
         context.getString(R.string.notification_activate), pauseUploadPendingIntent);
+    notificationBuilder.setDeleteIntent(removeUploadPendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 

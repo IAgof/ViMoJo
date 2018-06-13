@@ -109,7 +109,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
         PendingIntent.getBroadcast(context, 0, pauseUploadIntent, 0);
     uploadNotification.startInfiniteProgressNotification(notificationUploadId,
             R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-            cancelUploadPendingIntent, pauseUploadPendingIntent);
+            cancelUploadPendingIntent, pauseUploadPendingIntent, cancelUploadPendingIntent);
     AuthToken authToken = getAuthToken.getAuthToken(context);
     try {
       String token = authToken.getToken();
@@ -163,7 +163,7 @@ public class UploadToPlatformQueue implements ProgressRequestBody.UploadCallback
         PendingIntent.getBroadcast(context, 0, pauseUploadIntent, 0);
     uploadNotification.startInfiniteProgressNotification(notificationUploadId,
         R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-        cancelUploadPendingIntent, pauseUploadPendingIntent);
+        cancelUploadPendingIntent, pauseUploadPendingIntent, cancelUploadPendingIntent);
     AuthToken authToken = getAuthToken.getAuthToken(context);
     try {
       String token = authToken.getToken();

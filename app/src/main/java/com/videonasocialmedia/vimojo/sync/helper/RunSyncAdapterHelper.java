@@ -42,13 +42,11 @@ public class RunSyncAdapterHelper {
 
   // A content resolver for accessing the provider
   ContentResolver contentResolver;
-  private Account account;
   private String authority;
 
   @Inject
   public RunSyncAdapterHelper(Context context) {
     this.context = context;
-    account = UserAccountUtil.getAccount(context);
     authority = SyncConstants.VIMOJO_CONTENT_AUTHORITY;
   }
 
@@ -56,6 +54,7 @@ public class RunSyncAdapterHelper {
     Log.d(LOG_TAG, "runSyncAdapterPeriodic");
     // Get the content resolver for your app
     contentResolver = context.getContentResolver();
+    Account account = UserAccountUtil.getAccount(context);
     // we can enable inexact timers in our periodic sync
     SyncRequest request = new SyncRequest.Builder().
         syncPeriodic(SYNC_INTERVAL, SYNC_FLEX_TIME).
@@ -117,6 +116,7 @@ public class RunSyncAdapterHelper {
    * manual sync settings
    */
   public void requestSync(Bundle settingsBundle) {
+    Account account = UserAccountUtil.getAccount(context);
     if (account != null) {
       Log.d(LOG_TAG, "Requesting sync!");
       ContentResolver.requestSync(account, authority, settingsBundle);

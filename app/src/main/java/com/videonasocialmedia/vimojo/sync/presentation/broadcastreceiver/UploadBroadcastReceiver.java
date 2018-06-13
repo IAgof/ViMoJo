@@ -36,11 +36,11 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
+    Log.d(LOG_TAG, "onReceive "  + intent.getData());
     this.context = context;
     if (context.getApplicationContext() instanceof VimojoApplication) {
       getSystemComponent().inject(this);
     }
-    Log.d(LOG_TAG,  "intent " + intent.getAction().toString());
     if (intent.getAction().equals(IntentConstants.ACTION_CANCEL_UPLOAD)) {
       // UploadNotification cancel
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
@@ -65,6 +65,10 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
           runSyncAdapterHelper.startUpload(videoUpload.getUuid());
         }
       }
+    }
+
+    if (intent.getAction().equals(IntentConstants.ACTION_REMOVE_UPLOAD)) {
+      Log.d(LOG_TAG,  "remove, clear notification");
     }
   }
   public SystemComponent getSystemComponent() {
