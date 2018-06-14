@@ -340,6 +340,21 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     fabShareRoom.setVisibility(View.GONE);
   }
 
+  @Override
+  public void showDialogVideoIsBeingSendingToPlatform() {
+    runOnUiThread(() -> {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      builder.setMessage(getResources().getString(R.string.upload_video_is_being_sending));
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_NEUTRAL:
+            break;
+        }
+      };
+      builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+    });
+  }
+
   private void navigateToProjectDetails() {
     Intent intent = new Intent(this, DetailProjectActivity.class);
     startActivityForResult(intent, REQUEST_FILL_PROJECT_DETAILS);

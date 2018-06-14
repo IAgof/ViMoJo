@@ -202,19 +202,6 @@ public class UploadNotification {
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void errorUnknownUploadingVideos(int notificationUploadId) {
-    showBundleSummary(R.drawable.notification_error_small);
-    NotificationManager notificationManager = getNotificationManager();
-    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
-    notificationBuilder.setSmallIcon(errorNotificationId);
-    notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
-    notificationBuilder.setContentText(context.getString(R.string.upload_video_unknown_error));
-    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
-        .bigText(context.getString(R.string.upload_video_unknown_error)));
-    notificationBuilder.setProgress(0, 0, false);
-    notificationManager.notify(notificationUploadId, notificationBuilder.build());
-  }
-
   public void setProgress(int notificationUploadId, int iconNotificationId, String uploadingVideo,
                           PendingIntent cancelUploadPendingIntent,
                           PendingIntent pauseUploadPendingIntent,

@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
-import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import javax.inject.Inject;
@@ -27,19 +26,18 @@ import javax.inject.Inject;
  *
  * Manage when we want to run sync service, immediately or periodically
  *
+ * Start, pause, cancel, relaunch and remove video upload
+ *
  */
 
 public class RunSyncAdapterHelper {
 
   private final String LOG_TAG = this.getClass().getSimpleName();
-
   private static final long SECONDS_PER_MINUTE = 60L;
   private static final long SYNC_INTERVAL_IN_MINUTES = 1L;
   private static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
   private static final long SYNC_FLEX_TIME =  SYNC_INTERVAL/3;
-
   private final Context context;
-
   // A content resolver for accessing the provider
   ContentResolver contentResolver;
   private String authority;
@@ -76,8 +74,6 @@ public class RunSyncAdapterHelper {
 
   public void startUpload(String videoUploadUuid) {
     Log.d(LOG_TAG, "Start upload " + videoUploadUuid);
-    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
-    // Pass the settings flags by inserting them in a bundle
     Bundle settingsBundle = getBaseSettingsBundle();
     settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     requestSync(settingsBundle);
@@ -85,7 +81,6 @@ public class RunSyncAdapterHelper {
 
   public void pauseUpload(String videoUploadUuid) {
     Log.d(LOG_TAG, "Pause upload " + videoUploadUuid);
-    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
     Bundle settingsBundle = getBaseSettingsBundle();
     settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     settingsBundle.putBoolean(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD, true);
@@ -94,8 +89,6 @@ public class RunSyncAdapterHelper {
 
   public void relaunchUpload(String videoUploadUuid) {
     Log.d(LOG_TAG, "RelaunchUpload upload " + videoUploadUuid);
-    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
-    // Pass the settings flags by inserting them in a bundle
     Bundle settingsBundle = getBaseSettingsBundle();
     settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     settingsBundle.putBoolean(IntentConstants.ACTION_ACTIVATE_UPLOAD, true);
@@ -104,10 +97,16 @@ public class RunSyncAdapterHelper {
 
   public void cancelUpload(String videoUploadUuid) {
     Log.d(LOG_TAG, "Cancel upload " + videoUploadUuid);
-    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
     Bundle settingsBundle = getBaseSettingsBundle();
     settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     settingsBundle.putBoolean(IntentConstants.ACTION_CANCEL_UPLOAD, true);
+    requestSync(settingsBundle);
+  }
+
+  public void removeVideosToUpload() {
+    Log.d(LOG_TAG, "Remove videos pending to upload ");
+    Bundle settingsBundle = getBaseSettingsBundle();
+    settingsBundle.putBoolean(IntentConstants.ACTION_REMOVE_UPLOAD, true);
     requestSync(settingsBundle);
   }
 
@@ -130,11 +129,5 @@ public class RunSyncAdapterHelper {
       Log.d(LOG_TAG, "Requesting sync!");
       ContentResolver.requestSync(account, authority, settingsBundle);
     }
-  }
-
-  public void removeVideosToUpload() {
-    Bundle settingsBundle = getBaseSettingsBundle();
-    settingsBundle.putBoolean(IntentConstants.ACTION_REMOVE_UPLOAD, true);
-    requestSync(settingsBundle);
   }
 }

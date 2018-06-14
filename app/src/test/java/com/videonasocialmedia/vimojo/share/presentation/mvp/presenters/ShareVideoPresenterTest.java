@@ -35,6 +35,7 @@ import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
@@ -51,6 +52,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -239,16 +241,38 @@ public class ShareVideoPresenterTest {
     }
 
     @Test
-    public void uploadVideoRunSyncAdapter() {
+    public void uploadVideoRunSyncAdapterStartUpload() throws IOException {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
+        String videoPath = "";
+        boolean isAcceptedUploadMobileNetwork = true;
+        ProjectInfo projectInfo = currentProject.getProjectInfo();
+        VideoUpload videoUpload = new VideoUpload(1234, "mediaPath", "title",
+            "description","productTypeListToString",
+            isAcceptedUploadMobileNetwork, false);
+        when(mockedUploadToPlatform.isBeingSendingToPlatform(videoUpload)).thenReturn(false);
+
+        spyShareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
+            projectInfo.getProductTypeList(), isAcceptedUploadMobileNetwork);
+
+        verify(mockedRunSyncAdapterHelper, timeout(2000)).startUpload(videoUpload.getUuid());
+    }
+
+    @Test
+    public void uploadVideoShowDialogIfVideoIsBeingSendingToPlatform() throws IOException {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         String videoPath = "";
         boolean isAcceptedUploadMobileNetwork = true;
         ProjectInfo projectInfo = currentProject.getProjectInfo();
+        VideoUpload videoUpload = new VideoUpload(1234, "mediaPath", "title",
+            "description","productTypeListToString",
+            isAcceptedUploadMobileNetwork, false);
+        when(mockedUploadToPlatform.isBeingSendingToPlatform(videoUpload)).thenReturn(true);
 
         shareVideoPresenter.uploadVideo(videoPath, projectInfo.getTitle(), projectInfo.getDescription(),
             projectInfo.getProductTypeList(), isAcceptedUploadMobileNetwork);
 
-        verify(mockedRunSyncAdapterHelper, timeout(2000)).runNowSyncAdapter();
+        verify(mockedShareVideoView).showDialogVideoIsBeingSendingToPlatform();
     }
 
 

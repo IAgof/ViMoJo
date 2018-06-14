@@ -49,6 +49,7 @@
     <string name="upload_video_completed">En plataforma</string>
     <string name="upload_video_error">Error</string>
     <string name="upload_video_success">Vídeo subido</string>
+    <string name="upload_video_is_being_sending">Vídeo subiéndose a plataforma</string>
     <string name="upload_video_network_error">Error, conecte su móvil a la red</string>
     <string name="upload_video_with_network_connected">Móvil no conectado a red, el vídeo se subirá una vez se conecte a internet.</string>
     <string name="upload_video_unauthorization_upload_error">Problema de autenticación subiendo vídeos</string>

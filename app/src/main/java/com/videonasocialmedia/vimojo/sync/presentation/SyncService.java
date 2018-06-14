@@ -18,7 +18,6 @@ import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 
 import javax.inject.Inject;

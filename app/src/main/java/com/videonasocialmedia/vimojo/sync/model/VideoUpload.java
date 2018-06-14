@@ -7,12 +7,7 @@
 
 package com.videonasocialmedia.vimojo.sync.model;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
-
 import java.util.UUID;
-
-import retrofit2.Call;
 
 /**
  * Model for enqueue video uploads to vimojo platform.

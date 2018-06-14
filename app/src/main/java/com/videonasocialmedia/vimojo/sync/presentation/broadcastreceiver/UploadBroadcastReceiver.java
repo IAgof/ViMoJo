@@ -42,7 +42,6 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
       getSystemComponent().inject(this);
     }
     if (intent.getAction().equals(IntentConstants.ACTION_CANCEL_UPLOAD)) {
-      // UploadNotification cancel
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
       Log.d(LOG_TAG,  "cancel upload notification broadcast " + UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
@@ -52,27 +51,17 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
       }
     }
     if (intent.getAction().equals(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD)) {
-      // UploadNotification pause/activate
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
       Log.d(LOG_TAG,  "pause upload notification broadcast " + UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
-      //if (videoUpload.isUploading()) {
-        runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
-      //} else {
-      //  runSyncAdapterHelper.relaunch(videoUpload.getUuid());
-      //}
+      runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
     }
 
     if (intent.getAction().equals(IntentConstants.ACTION_ACTIVATE_UPLOAD)) {
-      // UploadNotification pause/activate
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
       Log.d(LOG_TAG,  "activate upload notification broadcast " + UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
-      //if (videoUpload.isUploading()) {
-      //  runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
-      //} else {
-        runSyncAdapterHelper.relaunchUpload(videoUpload.getUuid());
-      //}
+      runSyncAdapterHelper.relaunchUpload(videoUpload.getUuid());
     }
 
     if (intent.getAction().equals(IntentConstants.ACTION_REMOVE_UPLOAD)) {

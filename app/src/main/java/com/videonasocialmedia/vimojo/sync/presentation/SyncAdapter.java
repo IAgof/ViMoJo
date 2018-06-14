@@ -17,14 +17,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
-import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by alvaro on 31/1/18.

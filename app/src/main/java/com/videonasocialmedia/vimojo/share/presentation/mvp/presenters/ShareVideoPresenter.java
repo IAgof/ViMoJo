@@ -298,19 +298,23 @@ public class ShareVideoPresenter extends VimojoPresenter {
         int id = (int) (new Date().getTime()/1000);
         VideoUpload videoUpload = new VideoUpload(id, mediaPath, title, description,
             productTypeListToString, isAcceptedUploadMobileNetwork, false);
-        executeUseCaseCall((Callable<Void>) () -> {
-            try {
-                uploadToPlatform.addVideoToUpload(videoUpload);
-                Log.d(LOG_TAG, "uploadVideo " + videoUpload.getUuid());
-                runSyncAdapterHelper.startUpload(videoUpload.getUuid());
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-                Log.d(LOG_TAG, ioException.getMessage());
-                Crashlytics.log("Error adding video to upload");
-                Crashlytics.logException(ioException);
-            }
-            return null;
-        });
+        if (uploadToPlatform.isBeingSendingToPlatform(videoUpload)) {
+            shareVideoViewReference.get().showDialogVideoIsBeingSendingToPlatform();
+        } else {
+            executeUseCaseCall((Callable<Void>) () -> {
+                try {
+                    uploadToPlatform.addVideoToUpload(videoUpload);
+                    Log.d(LOG_TAG, "uploadVideo " + videoUpload.getUuid());
+                    runSyncAdapterHelper.startUpload(videoUpload.getUuid());
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                    Log.d(LOG_TAG, ioException.getMessage());
+                    Crashlytics.log("Error adding video to upload");
+                    Crashlytics.logException(ioException);
+                }
+                return null;
+            });
+        }
     }
 
     private boolean isThereFreeStorageOnPlatform(String mediaPath) {

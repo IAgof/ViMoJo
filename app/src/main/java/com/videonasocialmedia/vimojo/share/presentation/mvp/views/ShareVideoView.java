@@ -48,4 +48,6 @@ public interface ShareVideoView {
   void hideExportProgressDialogCanceled();
 
   void hideShowMoreSocialNetworks();
+
+  void showDialogVideoIsBeingSendingToPlatform();
 }
