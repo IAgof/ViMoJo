@@ -83,7 +83,7 @@ public class RunSyncAdapterHelper {
     Log.d(LOG_TAG, "Pause upload " + videoUploadUuid);
     Bundle settingsBundle = getBaseSettingsBundle();
     settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
-    settingsBundle.putBoolean(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD, true);
+    settingsBundle.putBoolean(IntentConstants.ACTION_PAUSE_UPLOAD, true);
     requestSync(settingsBundle);
   }
 

@@ -64,7 +64,6 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   private PendingIntent removePendingIntent;
   private int percentageShowed = 0;
 
-  @Inject
   public UploadToPlatform(Context context, UploadNotification uploadNotification,
                           VideoApiClient videoApiClient, GetAuthToken getAuthToken,
                           UploadRepository uploadRepository) {
@@ -82,10 +81,10 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   public boolean isBeingSendingToPlatform(VideoUpload videoUpload) {
     for (VideoUpload videoAddedToUpload: uploadRepository.getAllVideosToUpload()) {
       if (videoAddedToUpload.getMediaPath().equals(videoUpload.getMediaPath())) {
-        return false;
+        return true;
       }
     }
-    return true;
+    return false;
   }
 
   public void processAsyncUpload(VideoUpload videoUpload) {
@@ -122,13 +121,13 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
         public void onFailure(Call<Video> call, Throwable t) {
           Log.d(LOG_TAG, "onFailure uploading video ... " + t.getMessage()
               + " cause " + t.getCause());
-          if (t instanceof IOException) {
-            videoUpload.setUploading(false);
-            uploadRepository.update(videoUpload);
-            uploadNotification.errorNetworkNotification(notificationUploadId);
-            return;
-          }
           if (!call.isCanceled()) {
+            if (t instanceof IOException) {
+              videoUpload.setUploading(false);
+              uploadRepository.update(videoUpload);
+              uploadNotification.errorNetworkNotification(notificationUploadId);
+              return;
+            }
             if (videoUpload.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD) {
               retryItemUpload(videoUpload);
             }
@@ -177,7 +176,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     cancelUploadPendingIntent = PendingIntent.getBroadcast(context, 0,
         cancelUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
-    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_PAUSE_UPLOAD);
     pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
     pauseUploadIntent.putExtra(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
     pauseUploadPendingIntent = PendingIntent.getBroadcast(context, 0,
@@ -225,7 +224,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   @Override
   public void onProgressUpdate(int percentage) {
-    if(percentageShowed < percentage && percentage%5==0) {
+    if(percentageShowed < percentage) {
       Log.d(LOG_TAG, "progress " + percentage);
       percentageShowed = percentage;
       uploadNotification.setProgress(notificationUploadId, R.drawable.notification_uploading_small,

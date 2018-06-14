@@ -87,7 +87,7 @@ public class IntentConstants {
    /**
    * Activate/Pause upload
    */
-  public static final String ACTION_PAUSE_ACTIVATE_UPLOAD = "action_pause_activate_upload";
+  public static final String ACTION_PAUSE_UPLOAD = "action_pause_upload";
 
   /**
    * Activate upload

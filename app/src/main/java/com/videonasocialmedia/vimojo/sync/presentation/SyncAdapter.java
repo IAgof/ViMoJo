@@ -65,25 +65,32 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
     Log.d(LOG_TAG, "onPerformSync");
-    if (bundle.getBoolean(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD)) {
+    if (bundle.getBoolean(IntentConstants.ACTION_PAUSE_UPLOAD)) {
       Log.d(LOG_TAG, "onPerformSync ACTION_PAUSE_UPLOAD");
       String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
-      uploadToPlatform.pauseUploadByUser(videoUpload);
+      if (videoUpload != null) {
+        uploadToPlatform.pauseUploadByUser(videoUpload);
+      }
     } else {
       if (bundle.getBoolean(IntentConstants.ACTION_CANCEL_UPLOAD)) {
         Log.d(LOG_TAG, "onPerformSync ACTION_CANCEL_UPLOAD");
         String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
         VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
-        uploadToPlatform.cancelUploadByUser(videoUpload);
+        if (videoUpload != null) {
+          uploadToPlatform.cancelUploadByUser(videoUpload);
+        }
       } else {
         if (bundle.getBoolean(IntentConstants.ACTION_ACTIVATE_UPLOAD)) {
           Log.d(LOG_TAG, "onPerformSync ACTION_ACTIVATE_UPLOAD");
           String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
           VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
-          uploadToPlatform.processAsyncUpload(videoUpload);
+          if (videoUpload != null) {
+            uploadToPlatform.processAsyncUpload(videoUpload);
+          }
         } else {
           if (bundle.getBoolean(IntentConstants.ACTION_REMOVE_UPLOAD)) {
+            Log.d(LOG_TAG, "onPerformSync ACTION_REMOVE_UPLOAD");
             uploadToPlatform.removeUploadByUser();
           } else {
             // Pending videos to upload.

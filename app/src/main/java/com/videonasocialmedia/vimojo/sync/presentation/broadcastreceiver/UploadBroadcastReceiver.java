@@ -50,18 +50,22 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
         runSyncAdapterHelper.cancelUpload(videoUpload.getUuid());
       }
     }
-    if (intent.getAction().equals(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD)) {
+    if (intent.getAction().equals(IntentConstants.ACTION_PAUSE_UPLOAD)) {
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
       Log.d(LOG_TAG,  "pause upload notification broadcast " + UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
-      runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
+      if (videoUpload != null) {
+        runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
+      }
     }
 
     if (intent.getAction().equals(IntentConstants.ACTION_ACTIVATE_UPLOAD)) {
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
       Log.d(LOG_TAG,  "activate upload notification broadcast " + UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
-      runSyncAdapterHelper.relaunchUpload(videoUpload.getUuid());
+      if (videoUpload != null) {
+        runSyncAdapterHelper.relaunchUpload(videoUpload.getUuid());
+      }
     }
 
     if (intent.getAction().equals(IntentConstants.ACTION_REMOVE_UPLOAD)) {
