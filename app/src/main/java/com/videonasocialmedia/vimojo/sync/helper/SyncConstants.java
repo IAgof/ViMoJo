@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.sync;
+package com.videonasocialmedia.vimojo.sync.helper;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 

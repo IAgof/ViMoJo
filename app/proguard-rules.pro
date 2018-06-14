@@ -70,7 +70,7 @@
     public *;
 }
 
-##--- Begin:retrofit, okio, okhttp, moshi ----
+##--- Begin:retrofit, okio, okhttp ----
 
 # Retrofit. http://square.github.io/retrofit/
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
@@ -118,13 +118,7 @@
 -keep class okhttp3.** { *; }
 -keep interface okhttp3.** { *; }
 
-# Moshi, converter square. Used to send videos to platform https://github.com/square/moshi#proguard
--keepclasseswithmembers class * {
-    @com.squareup.moshi.* <methods>;
-}
--keep @com.squareup.moshi.JsonQualifier interface *
-
-##--- End:retrofit, okio, okhttp, moshi ----
+##--- End:retrofit, okio, okhttp ----
 
 ##--- Begin:GSON ---- https://medium.com/@abangkis/retrofit-2-and-the-three-body-problem-f8a93039aeb2
 # Gson uses generic type information stored in a class file when working with fields. Proguard
@@ -202,6 +196,7 @@
 -keep class com.videonasocialmedia.vimojo.repository.video.RealmVideo
 -keep class com.videonasocialmedia.vimojo.repository.music.RealmMusic
 -keep class com.videonasocialmedia.vimojo.repository.track.RealmTrack
+-keep class com.videonasocialmedia.vimojo.repository.upload.RealmUpload
 -keep class com.videonasocialmedia.vimojo.cameraSettings.repository.RealmCameraSettings
 
 -keep class io.realm.annotations.RealmModule
