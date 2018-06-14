@@ -1,3 +1,10 @@
+v0.18.3
+- Fix bug check box accepting box.
+- Update vimojo flavor platform and url to platform.vimojo.co
+
+v0.18.2
+- Fix bug uploading video with mobile network.
+
 v0.18.1
 - Update m4n urls to production stage. Activated show link go to m4n platform.
 
