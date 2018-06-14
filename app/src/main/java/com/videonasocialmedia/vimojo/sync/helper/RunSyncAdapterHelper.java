@@ -74,6 +74,15 @@ public class RunSyncAdapterHelper {
     requestSync(settingsBundle);
   }
 
+  public void startUpload(String videoUploadUuid) {
+    Log.d(LOG_TAG, "Start upload " + videoUploadUuid);
+    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
+    // Pass the settings flags by inserting them in a bundle
+    Bundle settingsBundle = getBaseSettingsBundle();
+    settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
+    requestSync(settingsBundle);
+  }
+
   public void pauseUpload(String videoUploadUuid) {
     Log.d(LOG_TAG, "Pause upload " + videoUploadUuid);
     Log.d(LOG_TAG, "Run NOW SyncAdapter...");
@@ -83,22 +92,22 @@ public class RunSyncAdapterHelper {
     requestSync(settingsBundle);
   }
 
-  public void cancelUpload(String videoUploadUuid) {
-    Log.d(LOG_TAG, "Pause upload " + videoUploadUuid);
-    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
-    Bundle settingsBundle = getBaseSettingsBundle();
-    settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
-    settingsBundle.putBoolean(IntentConstants.ACTION_CANCEL_UPLOAD, true);
-    requestSync(settingsBundle);
-  }
-
-  public void startUpload(String videoUploadUuid) {
-    Log.d(LOG_TAG, "Start upload " + videoUploadUuid);
+  public void relaunchUpload(String videoUploadUuid) {
+    Log.d(LOG_TAG, "RelaunchUpload upload " + videoUploadUuid);
     Log.d(LOG_TAG, "Run NOW SyncAdapter...");
     // Pass the settings flags by inserting them in a bundle
     Bundle settingsBundle = getBaseSettingsBundle();
     settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
-    settingsBundle.putBoolean(IntentConstants.ACTION_START_UPLOAD, true);
+    settingsBundle.putBoolean(IntentConstants.ACTION_ACTIVATE_UPLOAD, true);
+    requestSync(settingsBundle);
+  }
+
+  public void cancelUpload(String videoUploadUuid) {
+    Log.d(LOG_TAG, "Cancel upload " + videoUploadUuid);
+    Log.d(LOG_TAG, "Run NOW SyncAdapter...");
+    Bundle settingsBundle = getBaseSettingsBundle();
+    settingsBundle.putString(IntentConstants.VIDEO_UPLOAD_UUID, videoUploadUuid);
+    settingsBundle.putBoolean(IntentConstants.ACTION_CANCEL_UPLOAD, true);
     requestSync(settingsBundle);
   }
 
@@ -123,4 +132,9 @@ public class RunSyncAdapterHelper {
     }
   }
 
+  public void removeVideosToUpload() {
+    Bundle settingsBundle = getBaseSettingsBundle();
+    settingsBundle.putBoolean(IntentConstants.ACTION_REMOVE_UPLOAD, true);
+    requestSync(settingsBundle);
+  }
 }

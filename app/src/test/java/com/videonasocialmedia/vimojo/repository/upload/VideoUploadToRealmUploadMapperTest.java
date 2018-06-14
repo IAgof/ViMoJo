@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class VideoUploadToRealmUploadMapperTest {
   @Test
   public void testMapReturnsARealmVideoUploadInstance() {
-    VideoUpload videoUpload = new VideoUpload("qwerty1234",1234, "/some/path","title",
+    VideoUpload videoUpload = new VideoUpload(1234, "/some/path","title",
         "description", "interviews, live on tape",
         false, false);
     VideoUploadToRealmUploadMapper mapper = new VideoUploadToRealmUploadMapper();

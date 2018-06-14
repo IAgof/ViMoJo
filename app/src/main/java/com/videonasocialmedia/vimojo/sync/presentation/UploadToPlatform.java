@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
@@ -35,7 +34,6 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,6 +79,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     Log.d(LOG_TAG, "startNotification " + videoUpload.getUuid());
     notificationUploadId = videoUpload.getId();
     createPendingIntents(videoUpload.getUuid());
+    resetProgressBar();
     uploadNotification.startInfiniteProgressNotification(notificationUploadId,
         R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
         cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
@@ -101,19 +100,22 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
           removeVideoUpload(videoUpload);
           Log.d(LOG_TAG, "finishNotification success");
           resetProgressBar();
-          uploadNotification.finishNotification(notificationUploadId, context.getString(R.string.upload_video_success),
-              videoUpload.getTitle(), true, authToken.getId());
+          uploadNotification.finishNotification(notificationUploadId,
+              context.getString(R.string.upload_video_success), videoUpload.getTitle(),
+              true, authToken.getId());
         }
-
         @Override
         public void onFailure(Call<Video> call, Throwable t) {
-          Log.d(LOG_TAG, "onFailure uploading video ... videoApiClient.uploadVideo");
+          Log.d(LOG_TAG, "onFailure uploading video ... " + t.getMessage()
+              + " cause " + t.getCause());
           if (!call.isCanceled()) {
-            retryItemUpload(videoUpload); 
+            videoUpload.setUploading(false);
+            uploadRepository.update(videoUpload);
+            uploadNotification.errorNetworkNotification(notificationUploadId);
+            //retryItemUpload(videoUpload);
           }
         }
       });
-
     } catch (VimojoApiException vimojoApiException) {
       Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
       Crashlytics.log("Error process upload vimojoApiException");
@@ -124,6 +126,8 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
           break;
         case VimojoApiException.NETWORK_ERROR:
           uploadNotification.errorNetworkNotification(notificationUploadId);
+          videoUpload.setUploading(false);
+          uploadRepository.update(videoUpload);
           break;
         default:
           retryItemUpload(videoUpload);
@@ -136,6 +140,14 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
       uploadNotification.errorFileNotFound(notificationUploadId, videoUpload);
       // (jliarte): 27/02/18 Check this error management
       removeVideoUpload(videoUpload);
+    } catch (IOException ioException) {
+      Log.d(LOG_TAG, "IOException " + ioException.getMessage());
+      ioException.printStackTrace();
+      Crashlytics.log("Error process upload ioException");
+      Crashlytics.logException(ioException);
+      uploadNotification.errorNetworkNotification(notificationUploadId);
+      videoUpload.setUploading(false);
+      uploadRepository.update(videoUpload);
     }
   }
 
@@ -159,7 +171,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     Intent removeUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
     removeUploadIntent.setAction(IntentConstants.ACTION_REMOVE_UPLOAD);
     removePendingIntent = PendingIntent.getBroadcast(
-        context, 0, removeUploadIntent, 0);
+        context, 0, removeUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       }
 
   private void retryItemUpload(VideoUpload videoUpload) {
@@ -170,25 +182,26 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     }
   }
 
-
   public void cancelUploadByUser(VideoUpload videoUpload) {
     Log.d(LOG_TAG, "cancelUploadByUser");
-    if (uploadVideoAsync != null) {
-      Log.d(LOG_TAG, "cancel and remove");
-      uploadVideoAsync.cancel();
-    }
+    Log.d(LOG_TAG, "cancel and remove");
+    uploadVideoAsync.cancel();
     removeVideoUpload(videoUpload);
     uploadNotification.cancelNotification(notificationUploadId, videoUpload.getTitle());
   }
 
   public void pauseUploadByUser(VideoUpload videoUpload) {
     Log.d(LOG_TAG, "pauseUploadByUser");
-    if (uploadVideoAsync != null) {
-      Log.d(LOG_TAG, "pauseUploadByUser uploadVideoAsync");
-      uploadVideoAsync.cancel();
-    }
-    videoUpload.setUploading(false);
-    uploadRepository.update(videoUpload);
+    Log.d(LOG_TAG, "pauseUploadByUser uploadVideoAsync");
+    uploadVideoAsync.cancel();
+    //videoUpload.setUploading(false);
+    //uploadRepository.update(videoUpload);
+    Intent pauseUploadIntent = new Intent(context, UploadBroadcastReceiver.class);
+    pauseUploadIntent.setAction(IntentConstants.ACTION_ACTIVATE_UPLOAD);
+    pauseUploadIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationUploadId);
+    pauseUploadIntent.putExtra(IntentConstants.VIDEO_UPLOAD_UUID, videoUpload.getUuid());
+    pauseUploadPendingIntent = PendingIntent.getBroadcast(context, 0,
+        pauseUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     uploadNotification.pauseNotification(notificationUploadId, videoUpload.getTitle(),
         cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
   }
@@ -199,12 +212,12 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   @Override
   public void onProgressUpdate(int percentage) {
-    if(percentageShowed < percentage) {
+    if(percentageShowed < percentage && percentage%5==0) {
       Log.d(LOG_TAG, "progress " + percentage);
       percentageShowed = percentage;
       uploadNotification.setProgress(notificationUploadId, R.drawable.notification_uploading_small,
           context.getString(R.string.uploading_video), cancelUploadPendingIntent,
-          pauseUploadPendingIntent, percentage);
+          pauseUploadPendingIntent, removePendingIntent, percentage);
     }
   }
 
@@ -218,8 +231,11 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     Log.d(LOG_TAG, "progress finished 100");
     uploadNotification.setProgress(notificationUploadId, notificationUploadId,
         context.getString(R.string.uploading_video), cancelUploadPendingIntent,
-        pauseUploadPendingIntent, 100);
+        pauseUploadPendingIntent, cancelUploadPendingIntent, 100);
     resetProgressBar();
   }
 
+  public void removeUploadByUser() {
+    uploadNotification.removeNotification(notificationUploadId);
+  }
 }

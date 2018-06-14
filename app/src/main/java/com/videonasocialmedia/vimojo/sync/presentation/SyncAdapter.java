@@ -82,19 +82,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
         uploadToPlatform.cancelUploadByUser(videoUpload);
       } else {
-        if (bundle.getBoolean(IntentConstants.ACTION_START_UPLOAD)) {
-          Log.d(LOG_TAG, "onPerformSync ACTION_START_UPLOAD");
+        if (bundle.getBoolean(IntentConstants.ACTION_ACTIVATE_UPLOAD)) {
+          Log.d(LOG_TAG, "onPerformSync ACTION_ACTIVATE_UPLOAD");
           String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
           VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(videoUploadUuid);
           uploadToPlatform.processAsyncUpload(videoUpload);
         } else {
-          // Pending videos to upload.
-          for (VideoUpload video : uploadRepository.getAllVideosToUpload()) {
-            Log.d(LOG_TAG, "video to upload: " + video.getUuid());
-            if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
-              Log.d(LOG_TAG, "launching video to upload: ");
-              if (areThereNetworksConnected(video.isAcceptedUploadMobileNetwork())) {
-                uploadToPlatform.processAsyncUpload(video);
+          if (bundle.getBoolean(IntentConstants.ACTION_REMOVE_UPLOAD)) {
+            uploadToPlatform.removeUploadByUser();
+          } else {
+            // Pending videos to upload.
+            for (VideoUpload video : uploadRepository.getAllVideosToUpload()) {
+              Log.d(LOG_TAG, "video to upload: " + video.getUuid());
+              if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
+                Log.d(LOG_TAG, "launching video to upload: ");
+                if (areThereNetworksConnected(video.isAcceptedUploadMobileNetwork())) {
+                  uploadToPlatform.processAsyncUpload(video);
+                }
               }
             }
           }

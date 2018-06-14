@@ -54,21 +54,33 @@ public class UploadBroadcastReceiver extends BroadcastReceiver {
     if (intent.getAction().equals(IntentConstants.ACTION_PAUSE_ACTIVATE_UPLOAD)) {
       // UploadNotification pause/activate
       String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
-      Log.d(LOG_TAG,  "activate or pause upload notification broadcast " + UUID);
+      Log.d(LOG_TAG,  "pause upload notification broadcast " + UUID);
       VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
-      if (videoUpload != null) {
-        Log.d(LOG_TAG,  "runSyncAdapterHelper");
-        if (videoUpload.isUploading()) {
-          runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
-        } else {
-          //activate upload paused, relaunch
-          runSyncAdapterHelper.startUpload(videoUpload.getUuid());
-        }
-      }
+      //if (videoUpload.isUploading()) {
+        runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
+      //} else {
+      //  runSyncAdapterHelper.relaunch(videoUpload.getUuid());
+      //}
+    }
+
+    if (intent.getAction().equals(IntentConstants.ACTION_ACTIVATE_UPLOAD)) {
+      // UploadNotification pause/activate
+      String UUID = intent.getStringExtra(IntentConstants.VIDEO_UPLOAD_UUID);
+      Log.d(LOG_TAG,  "activate upload notification broadcast " + UUID);
+      VideoUpload videoUpload = uploadRepository.getVideoToUploadByUUID(UUID);
+      //if (videoUpload.isUploading()) {
+      //  runSyncAdapterHelper.pauseUpload(videoUpload.getUuid());
+      //} else {
+        runSyncAdapterHelper.relaunchUpload(videoUpload.getUuid());
+      //}
     }
 
     if (intent.getAction().equals(IntentConstants.ACTION_REMOVE_UPLOAD)) {
       Log.d(LOG_TAG,  "remove, clear notification");
+      if (uploadRepository.getAllVideosToUpload().size() > 0) {
+        uploadRepository.removeAllVideosToUpload();
+        runSyncAdapterHelper.removeVideosToUpload();
+      }
     }
   }
   public SystemComponent getSystemComponent() {

@@ -52,6 +52,8 @@
     <string name="upload_video_network_error">Error, conecte su móvil a la red</string>
     <string name="upload_video_with_network_connected">Móvil no conectado a red, el vídeo se subirá una vez se conecte a internet.</string>
     <string name="upload_video_unauthorization_upload_error">Problema de autenticación subiendo vídeos</string>
+    <string name="upload_video_unknown_error">Error desconocido, la subida se reiniciará más tarde</string>
+    <string name="upload_video_remove_uploads">Canceladas todas las subidas de vídeos en pausa</string>
     <string name="upload_video_file_not_found">no se encuentra en el dispositivo</string>
     <string name="upload_video_finish_singular">vídeo subido</string>
     <string name="upload_video_finish_plural">vídeos subidos</string>

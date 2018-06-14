@@ -20,4 +20,6 @@ public interface UploadRepository extends Repository<VideoUpload>{
   List<VideoUpload> getAllVideosToUpload();
 
   VideoUpload getVideoToUploadByUUID(String uuid);
+
+  void removeAllVideosToUpload();
 }

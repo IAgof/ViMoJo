@@ -109,6 +109,19 @@ public class UploadRealmRepository implements UploadRepository {
   }
 
   @Override
+  public void removeAllVideosToUpload() {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        RealmResults<RealmUpload> result = realm.where(RealmUpload.class).findAll();
+        result.deleteAllFromRealm();
+      }
+    });
+    realm.close();
+  }
+
+  @Override
   public List<VideoUpload> query(Specification specification) {
     return null;
   }

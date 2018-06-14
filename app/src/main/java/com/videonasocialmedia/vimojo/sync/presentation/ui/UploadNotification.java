@@ -83,6 +83,7 @@ public class UploadNotification {
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(iconNotificationId);
     notificationBuilder.setContentTitle(uploadingVideo);
+    notificationBuilder.setContentText(""); //required
     notificationBuilder.setProgress(100, 0, false);
     notificationBuilder.addAction(R.drawable.notification_cancel,
         context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
@@ -128,32 +129,32 @@ public class UploadNotification {
   }
 
   public void errorNetworkNotification(int notificationUploadId) {
+    String message = context.getString(R.string.upload_video_network_error);
     showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
     notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
-    notificationBuilder.setContentText(context.getString(R.string.upload_video_network_error));
-    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
-            .bigText(context.getString(R.string.upload_video_network_error)));
+    notificationBuilder.setContentText(message);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void cancelNotification(int notificationUploadId, String title) {
+  public void cancelNotification(int notificationUploadId, String message) {
     showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(R.drawable.notification_error_small);
     notificationBuilder.setContentTitle(context.getString(R.string.cancel_uploading_video));
-    notificationBuilder.setContentText(title);
-    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(title));
+    notificationBuilder.setContentText(message);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.cancel(notificationUploadId);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
-  public void pauseNotification(int notificationUploadId, String title,
+  public void pauseNotification(int notificationUploadId, String message,
                                 PendingIntent cancelUploadPendingIntent,
                                 PendingIntent pauseUploadPendingIntent,
                                 PendingIntent removeUploadPendingIntent) {
@@ -163,8 +164,8 @@ public class UploadNotification {
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(R.drawable.notification_pause_small);
     notificationBuilder.setContentTitle(context.getString(R.string.pause_uploading_video));
-    notificationBuilder.setContentText(title);
-    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(title));
+    notificationBuilder.setContentText(message);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationManager.cancel(notificationUploadId);
     notificationBuilder.addAction(R.drawable.notification_cancel,
         context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
@@ -175,36 +176,49 @@ public class UploadNotification {
   }
 
   public void errorUnauthorizedUploadingVideos(int notificationUploadId) {
+    String message = context.getString(R.string.upload_video_unauthorization_upload_error);
     showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(errorNotificationId);
     notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
-    notificationBuilder.setContentText(context.getString(R.string.upload_video_unauthorization_upload_error));
-    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
-            .bigText(context.getString(R.string.upload_video_unauthorization_upload_error)));
+    notificationBuilder.setContentText(message);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
   public void errorFileNotFound(int notificationUploadId, VideoUpload videoUpload) {
+    String message = context.getString(R.string.upload_video_file_not_found);
     showBundleSummary(R.drawable.notification_error_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
     notificationBuilder.setSmallIcon(errorNotificationId);
     notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
-    notificationBuilder.setContentText(videoUpload.getTitle() + " " +
-        context.getString(R.string.upload_video_file_not_found));
+    notificationBuilder.setContentText(videoUpload.getTitle() + " " + message);
     notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
-            .bigText(videoUpload.getTitle() + " "
-                    + context.getString(R.string.upload_video_file_not_found)));
+            .bigText(videoUpload.getTitle() + " " + message));
+    notificationBuilder.setProgress(0, 0, false);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  public void errorUnknownUploadingVideos(int notificationUploadId) {
+    showBundleSummary(R.drawable.notification_error_small);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(errorNotificationId);
+    notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
+    notificationBuilder.setContentText(context.getString(R.string.upload_video_unknown_error));
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle()
+        .bigText(context.getString(R.string.upload_video_unknown_error)));
     notificationBuilder.setProgress(0, 0, false);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 
   public void setProgress(int notificationUploadId, int iconNotificationId, String uploadingVideo,
                           PendingIntent cancelUploadPendingIntent,
-                          PendingIntent pauseUploadPendingIntent, int percentage) {
+                          PendingIntent pauseUploadPendingIntent,
+                          PendingIntent removeUploadPendingIntent, int percentage) {
     showBundleSummary(R.drawable.notification_uploading_small);
     NotificationManager notificationManager = getNotificationManager();
     NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
@@ -217,6 +231,19 @@ public class UploadNotification {
         context.getString(R.string.notification_cancel), cancelUploadPendingIntent);
     notificationBuilder.addAction(R.drawable.notification_pause,
         context.getString(R.string.notification_pause), pauseUploadPendingIntent);
+    notificationBuilder.setDeleteIntent(removeUploadPendingIntent);
+    notificationManager.notify(notificationUploadId, notificationBuilder.build());
+  }
+
+  public void removeNotification(int notificationUploadId) {
+    String message = context.getString(R.string.upload_video_remove_uploads);
+    showBundleSummary(R.drawable.notification_error_small);
+    NotificationManager notificationManager = getNotificationManager();
+    NotificationCompat.Builder notificationBuilder = getBuilder(notificationManager);
+    notificationBuilder.setSmallIcon(errorNotificationId);
+    notificationBuilder.setContentTitle(context.getString(R.string.error_uploading_video));
+    notificationBuilder.setContentText(message);
+    notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
   }
 }
