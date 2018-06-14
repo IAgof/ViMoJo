@@ -314,6 +314,7 @@
     <string name="drawerMyProjects">Mis proyectos</string>
     <string name="drawerNewProject">Nuevo proyecto</string>
     <string name="drawerUserProfile">Perfil de usuario</string>
+    <string name="drawer_go_to_platform">Ir a plataforma</string>
     <string name="drawerSettings">Ajustes</string>
     <string name="menuSuggestions">Sugerencias</string>
     <string name="title_tutorial_edition_section">Tutorial de edición</string>

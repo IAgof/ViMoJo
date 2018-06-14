@@ -69,6 +69,10 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   EditText userNameField;
   @BindView(R.id.check_box_Accept_Term)
   CheckBox checkBoxAcceptTerm;
+  @BindView(R.id.textView_Accept_Term)
+  TextView textViewAcceptTerm;
+  @BindView(R.id.linear_layout_accept_term)
+  LinearLayout linearLayoutAcceptTerm;
   @BindView(R.id.user_auth_main_relative_layout)
   RelativeLayout mainRelativeLayout;
   @BindView(R.id.register_login_slogan_text_view)
@@ -304,13 +308,17 @@ public class UserAuthActivity extends VimojoActivity implements UserAuthView {
   @Override
   public void hideTermsCheckbox() {
     checkBoxAcceptTerm.setVisibility(View.GONE);
+    textViewAcceptTerm.setVisibility(View.GONE);
+    linearLayoutAcceptTerm.setVisibility(View.GONE);
   }
 
   @Override
   public void showTermsCheckbox() {
     checkBoxAcceptTerm.setMovementMethod(LinkMovementMethod.getInstance());
-    checkBoxAcceptTerm.setText(createFooterTextForRegister());
+    textViewAcceptTerm.setText(createFooterTextForRegister());
+    textViewAcceptTerm.setVisibility(View.VISIBLE);
     checkBoxAcceptTerm.setVisibility(View.VISIBLE);
+    linearLayoutAcceptTerm.setVisibility(View.VISIBLE);
   }
 
   @OnClick(R.id.register_button)

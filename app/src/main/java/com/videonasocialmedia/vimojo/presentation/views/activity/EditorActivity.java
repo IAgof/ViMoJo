@@ -214,6 +214,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 case R.id.menu_navview_user_profile:
                   navigateTo(UserProfileActivity.class);
                   return false;
+                case R.id.menu_navview_platform:
+                  navigateToWeb(R.string.vimojo_platform);
+                  return false;
                 case R.id.menu_navview_settings:
                   navigateTo(SettingsActivity.class);
                   return false;
@@ -227,7 +230,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                   navigateTo(VimojoStoreActivity.class);
                   return false;
                 case R.id.menu_navview_vimojo_kit_web_section:
-                  navigateToVimojoKitWeb();
+                  navigateToWeb(R.string.vimojo_kit_web);
                   return false;
                 default:
                   return false;
@@ -297,8 +300,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     getLayoutInflater().inflate(layoutToAdd, contentLayoutEditActivity);
   }
 
-  private void navigateToVimojoKitWeb() {
-    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.vimojo_kit_web)));
+  private void navigateToWeb(int url){
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(url)));
     startActivity(Intent.createChooser(intent, getString(R.string.choose_browser)));
   }
 
@@ -443,6 +446,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     MenuItem target = menu.findItem(R.id.menu_navview_vimojo_store_section);
     target.setVisible(false);
     isVimojoStoreAvailable = false;
+  }
+
+  @Override
+  public void hideLinkToVimojoPlatform() {
+    Menu menu = navigationView.getMenu();
+    MenuItem target = menu.findItem(R.id.menu_navview_platform);
+    target.setVisible(false);
   }
 
   @Override

@@ -149,6 +149,13 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private void checkFeaturesAvailable() {
     checkWatermark();
     checkVimojoStore();
+    checkVimojoPlatform();
+  }
+
+  private void checkVimojoPlatform() {
+    if(!BuildConfig.FEATURE_SHOW_LINK_VIMOJO_PLATFORM) {
+      editorActivityView.hideLinkToVimojoPlatform();
+    }
   }
 
   private void checkVimojoStore() {

@@ -33,4 +33,6 @@ public interface EditorActivityView {
     void setHeaderViewCurrentProject(String pathThumbProject, String projectName, String projectDate);
 
     void goToRecordOrGalleryScreen();
+
+    void hideLinkToVimojoPlatform();
 }
