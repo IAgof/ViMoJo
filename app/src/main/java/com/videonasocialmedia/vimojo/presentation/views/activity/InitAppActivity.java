@@ -64,7 +64,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.videonasocialmedia.vimojo.sync.SyncAdapter.SYNC_INTERVAL;
+import static com.videonasocialmedia.vimojo.sync.presentation.SyncAdapter.SYNC_INTERVAL;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 

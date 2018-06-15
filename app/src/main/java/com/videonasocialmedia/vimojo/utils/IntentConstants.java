@@ -73,4 +73,35 @@ public class IntentConstants {
    */
 
   public static final String LICENSE_SELECTED = "license_selected";
+
+  /**
+   * Cancel upload
+   */
+  public static final String ACTION_START_UPLOAD = "action_start_upload";
+
+  /**
+   * Cancel upload
+   */
+  public static final String ACTION_CANCEL_UPLOAD = "action_cancel_upload";
+
+   /**
+   * Activate/Pause upload
+   */
+  public static final String ACTION_PAUSE_UPLOAD = "action_pause_upload";
+
+  /**
+   * Activate upload
+   */
+  public static final String ACTION_ACTIVATE_UPLOAD = "action_activate_upload";
+
+  /**
+   * Remove upload
+   */
+  public static final String ACTION_REMOVE_UPLOAD = "action_remove_upload";
+
+  /**
+   * Video upload UUID
+   */
+  public static final String VIDEO_UPLOAD_UUID = "video_upload_uuid";
+
 }

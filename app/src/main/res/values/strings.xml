@@ -42,12 +42,17 @@
     <string name="upload_bundle_summary_title">Platform uploads</string>
     <string name="uploading_video">Uploading video</string>
     <string name="error_uploading_video">Error uploading video</string>
+    <string name="cancel_uploading_video">Canceled uploading video</string>
+    <string name="pause_uploading_video">Paused uploading video</string>
     <string name="upload_video_completed">Uploaded to platform</string>
     <string name="upload_video_error">Error</string>
     <string name="upload_video_success">Success</string>
+    <string name="upload_video_is_being_sending">Video is being sending to platform</string>
     <string name="upload_video_network_error">Error, connect to network</string>
     <string name="upload_video_with_network_connected">Device not connected to internet, video will be uploaded when device connects to network</string>
     <string name="upload_video_unauthorization_upload_error">Authorization problem uploading videos</string>
+    <string name="upload_video_unknown_error">Unknown error, upload will be relaunch later</string>
+    <string name="upload_video_remove_uploads">Cancelled all videos pending to upload</string>
     <string name="upload_video_file_not_found">file not longer exists on device</string>
     <string name="upload_video_finish_singular">video uploaded</string>
     <string name="upload_video_finish_plural">videos uploaded</string>
@@ -2526,5 +2531,10 @@ and Conditions.\n\n
 
 
     <string name="profession">Profession</string>
+
+    <!-- Notifications -->
+    <string name="notification_activate">ACTIVATE</string>
+    <string name="notification_pause">PAUSE</string>
+    <string name="notification_cancel">CANCEL</string>
 
 </resources>

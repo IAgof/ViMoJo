@@ -32,7 +32,7 @@ import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
-import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformQueueModule;
+import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -104,7 +104,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .applicationModule(getApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
-                .uploadToPlatformQueueModule(getUploadToPlatformModule())
+                .uploadToPlatformModule(getUploadToPlatformModule())
 //                .activityPresentersModule(getActivityPresentersModule())
                 .build();
     }
@@ -121,8 +121,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         return new TrackerModule(this);
     }
 
-    private UploadToPlatformQueueModule getUploadToPlatformModule() {
-        return new UploadToPlatformQueueModule(this);
+    private UploadToPlatformModule getUploadToPlatformModule() {
+        return new UploadToPlatformModule(this);
     }
 
     private ActivityPresentersModule getActivityPresentersModule() {
@@ -176,7 +176,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         // create your Realm configuration
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .name("vimojoDB")
-                .schemaVersion(12) //v0.14.4 8-3-2018 - v0.8.2 8-2-2018
+                .schemaVersion(13) //from v0.14.4 8-3-2018 to v0.19.0 7-6-2018
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);

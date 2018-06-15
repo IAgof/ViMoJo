@@ -11,8 +11,10 @@ import android.content.Context;
 
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.sync.UploadNotification;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
+import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
 import javax.inject.Singleton;
@@ -27,19 +29,21 @@ import dagger.Provides;
  */
 
 @Module
-public class UploadToPlatformQueueModule {
+public class UploadToPlatformModule {
 
   private final Context context;
 
-  public UploadToPlatformQueueModule(VimojoApplication application) {
+  public UploadToPlatformModule(VimojoApplication application) {
    this.context = application;
   }
 
-  @Singleton @Provides
-  UploadToPlatformQueue provideUploadToPlatformQueue(UploadNotification uploadNotification,
-                                                     VideoApiClient videoApiClient,
-                                                     GetAuthToken getAuthToken) {
-    return new UploadToPlatformQueue(context, uploadNotification, videoApiClient, getAuthToken);
+  @Provides
+  UploadToPlatform provideUploadToPlatform(UploadNotification uploadNotification,
+                                           VideoApiClient videoApiClient,
+                                           GetAuthToken getAuthToken,
+                                           UploadRepository uploadRepository) {
+    return new UploadToPlatform(context, uploadNotification, videoApiClient, getAuthToken,
+        uploadRepository);
   }
 
   @Provides
@@ -57,4 +61,8 @@ public class UploadToPlatformQueueModule {
     return new GetAuthToken();
   }
 
+  @Singleton @Provides
+  UploadRepository providesUploadRepository() {
+    return new UploadRealmRepository();
+  }
 }
