@@ -47,9 +47,11 @@ public class UploadNotification {
             .Builder(context, NOTIFICATION_CHANNEL_ID).setGroup(NOTIFICATION_GROUP_ID);
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       String name = BuildConfig.FLAVOR;
-      int importance = NotificationManager.IMPORTANCE_DEFAULT;
+      int importance = NotificationManager.IMPORTANCE_HIGH; // For expand notification
       NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
               name, importance);
+      channel.setSound(null,null); // mute sound notification
+      channel.enableVibration(false);
       notificationManager.createNotificationChannel(channel);
       return builder.setChannelId(NOTIFICATION_CHANNEL_ID);
     }

@@ -224,7 +224,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   @Override
   public void onProgressUpdate(int percentage) {
-    if(percentageShowed < percentage) {
+    if(percentageShowed < percentage && (percentage % 5 == 0)) {
       Log.d(LOG_TAG, "progress " + percentage);
       percentageShowed = percentage;
       uploadNotification.setProgress(notificationUploadId, R.drawable.notification_uploading_small,
