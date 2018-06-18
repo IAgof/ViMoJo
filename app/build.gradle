@@ -75,7 +75,7 @@ android {
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "http://platform.vimojo.co/api/v1/", release: "http://platform.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://platform.vimojo.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -216,7 +216,7 @@ android {
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "http://market4news.com/api/v1/", release: "http://market4news.com/api/v1/"]
+            ext.api_base_url = [debug: "https://market4news.com/api/v1/", release: "https://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -266,7 +266,7 @@ android {
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "http://elconfidencial.vimojo.co/api/v1/", release: "http://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://elconfidencial.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"

@@ -5,7 +5,7 @@
     <string name="activity_music_title_jazzy_frenchy">Jazz music featuring acoustic guitar, double bass, accordion and vibes</string>
     <string name="activity_music_title_acoustic_breeze">Acoustic music with a soft and mellow mood featuring folk guitar and cello</string>
 
-    <string name="vimojo_kit_web">http://vimojo.co/mojokit/?utm_source=elconfidencial_android&amp;utm_medium=app_link</string>
-    <string name="vimojo_platform_base">http://elconfidencial.vimojo.co</string>
-    <string name="vimojo_platform">"http://elconfidencial.vimojo.co/?utm_source=elconfidencial_android&amp;utm_medium=app_link"</string>
+    <string name="vimojo_kit_web">https://vimojo.co/mojokit/?utm_source=elconfidencial_android&amp;utm_medium=app_link</string>
+    <string name="vimojo_platform_base">https://elconfidencial.vimojo.co</string>
+    <string name="vimojo_platform">"https://elconfidencial.vimojo.co/?utm_source=elconfidencial_android&amp;utm_medium=app_link"</string>
 </resources>
