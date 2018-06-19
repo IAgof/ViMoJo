@@ -1,3 +1,6 @@
+v0.19.2
+- Update urls platforms from http to https.
+
 v0.19.1
 - Fix sound problem with upload video notification in last Android version device.
 
