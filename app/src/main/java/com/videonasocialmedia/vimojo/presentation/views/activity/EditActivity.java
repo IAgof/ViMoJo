@@ -103,8 +103,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     private FloatingActionButton newFab;
 
   private String warningTranscodingFilesMessage;
-  private int fromPosition;
-  private int toPosition;
   private RecyclerView.LayoutManager layoutManager;
   private Parcelable videoListState;
   private VideoTimeLineTouchHelperCallback videoTimeLineTouchHelperCallback;
@@ -326,17 +324,16 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void onClipLongClicked(int adapterPosition) {
     Log.d(LOG_TAG, "onClipLongCLicked " + adapterPosition);
-    // save origin position to finishedMoveItem.
-    fromPosition = adapterPosition;
     pausePreview();
     setSelectedClip(adapterPosition);
   }
 
   public void setSelectedClip(int position) {
-      Log.d(LOG_TAG, "setSelectedClip");
+      Log.d(LOG_TAG, "setSelectedClip position " + position);
         currentVideoIndex = position;
         seekToClip(position);
         timeLineAdapter.updateSelection(position);
+        timeLineAdapter.initPositionMovement(position);
     }
 
     @Override
@@ -370,12 +367,10 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     @Override
     public void onClipMoving(int fromPosition, int toPosition) {
       Log.d(LOG_TAG, "onClipMoving " + fromPosition + " to " + toPosition);
-      // Updating currentVideoIndex while clip is moving, this will be also our finishedMoveItem toPosition.
-      this.toPosition = toPosition;
     }
 
     @Override
-    public void onClipReordered() {
+    public void onClipReordered(int fromPosition, int toPosition) {
       Log.d(LOG_TAG, "onClipReordered " + fromPosition + " to  " + toPosition);
       currentVideoIndex = toPosition;
       editPresenter.finishedMoveItem(fromPosition, toPosition);
