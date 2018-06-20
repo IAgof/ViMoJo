@@ -116,7 +116,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     super.onPause();
     exportProgressDialog.dismiss();
     checkingUserProgressDialog.dismiss();
-    if(exportErrorDialog != null) {
+    if (exportErrorDialog != null) {
       exportErrorDialog.dismiss();
     }
   }
@@ -124,6 +124,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onDestroy(){
     super.onDestroy();
+    presenter.destroy();
   }
 
   @Override
