@@ -30,6 +30,8 @@ public class VideoTimeLineAdapter
   private VideoTimeLineRecyclerViewClickListener videoTimeLineListener;
   private final HashMap<Video, TimeLineVideoViewHolder> videoViewHolders = new HashMap<>();
   private ArrayList<Video> failedVideos = new ArrayList<>();
+  private int initPosition;
+  private int endPosition = -1;
 
   public VideoTimeLineAdapter(VideoTimeLineRecyclerViewClickListener listener) {
     this.videoList = new ArrayList<>();
@@ -62,14 +64,17 @@ public class VideoTimeLineAdapter
 
   public void updateSelection(int position) {
     if( selectedVideoPosition == position) {
+      Log.d(TAG, "timeline: updateSelection same position");
       return;
     }
     notifyItemChanged(selectedVideoPosition);
     this.selectedVideoPosition = position;
     notifyItemChanged(position);
+    Log.d(TAG, "timeline: updateSelection position " + position);
   }
 
   public void remove(int selectedVideoRemovePosition) {
+    Log.d(TAG, "timeline: remove position " + selectedVideoRemovePosition);
     videoTimeLineListener.onClipRemoveClicked(selectedVideoRemovePosition);
   }
 
@@ -77,7 +82,6 @@ public class VideoTimeLineAdapter
     this.videoList = videoList;
     notifyDataSetChanged();
     Log.d(TAG, "timeline: videoList updated!, videolist size " + videoList.size());
-//    updateSelection(0);
   }
 
   @Override
@@ -87,7 +91,7 @@ public class VideoTimeLineAdapter
 
   @Override
   public boolean onItemMove(int fromPosition, int toPosition) {
-    Log.d(TAG, "timeline: adapter move from " + fromPosition + " to: " + toPosition);
+    Log.d(TAG, "timeline: onItemMove adapter move from " + fromPosition + " to: " + toPosition);
     if (fromPosition < toPosition) {
       for (int i = fromPosition; i < toPosition; i++) {
         Collections.swap(videoList, i, i + 1);
@@ -99,6 +103,7 @@ public class VideoTimeLineAdapter
     }
     notifyItemMoved(fromPosition, toPosition);
     videoTimeLineListener.onClipMoving(fromPosition, toPosition);
+    endPosition = toPosition;
     return true;
   }
 
@@ -109,8 +114,15 @@ public class VideoTimeLineAdapter
 
   @Override
   public void finishMovement() {
-    Log.d(TAG, "finishMovement ");
-    videoTimeLineListener.onClipReordered();
+    Log.d(TAG, "timeline: finishMovement initPosition " + initPosition + " to " + endPosition);
+    if (endPosition >= 0) {
+      videoTimeLineListener.onClipReordered(initPosition, endPosition);
+      resetEndPosition();
+    }
+  }
+
+  public void resetEndPosition() {
+    endPosition = -1;
   }
 
   protected int getSelectedVideoPosition() {
@@ -121,4 +133,7 @@ public class VideoTimeLineAdapter
     this.failedVideos = failedVideos;
   }
 
+  public void initPositionMovement(int position) {
+    initPosition = position;
+  }
 }

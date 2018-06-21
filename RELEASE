@@ -1,2 +1,3 @@
-v0.19.1
-- Fix sound problem with upload video notification in last Android version device.
+v0.19.4
+- Fixed problems with time line in editor screen.
+- Updated debug flavors platform api_base to beta.viday.co

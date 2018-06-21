@@ -127,6 +127,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
         }
     }
 
+    public void destroy() {
+        exportUseCase.removeCallbacks();
+    }
+
     private void setupVimojoNetwork() {
         vimojoNetwork = new VimojoNetwork(ConfigPreferences.VIMOJO_NETWORK,
                 context.getString(R.string.upload_to_server),
@@ -400,4 +404,5 @@ public class ShareVideoPresenter extends VimojoPresenter {
     public void cancelExportation() {
         exportUseCase.cancelExport();
     }
+
 }
