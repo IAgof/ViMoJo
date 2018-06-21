@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
@@ -249,14 +250,16 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   GalleryPagerPresenter provideGalleryPagerPresenter(
-          AddVideoToProjectUseCase addVideoToProjectUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-          ProjectRepository projectRepository,
-          SharedPreferences sharedPreferences, VideoRepository videoRepository) {
+      AddVideoToProjectUseCase addVideoToProjectUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+      ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
+      ProjectRepository projectRepository,
+      SharedPreferences sharedPreferences, VideoRepository videoRepository,
+      AssetUploadQueue assetUploadQueue) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
             getVideonaFormatFromCurrentProjectUseCase, applyAVTransitionsUseCase,
-            projectRepository, videoRepository, sharedPreferences, projectInstanceCache);
+            projectRepository, videoRepository, sharedPreferences, projectInstanceCache,
+            assetUploadQueue);
   }
 
  /* @Provides @PerActivity

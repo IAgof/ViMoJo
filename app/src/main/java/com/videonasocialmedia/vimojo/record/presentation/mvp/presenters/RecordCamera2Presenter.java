@@ -36,7 +36,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerAmplitudeDbListener;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.PicometerSamplingLoopThread;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;

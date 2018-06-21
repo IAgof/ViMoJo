@@ -69,7 +69,7 @@ public class AssetUploadQueue {
     return assetUploadObjectQueue;
   }
 
-  public void addVideoToUpload(AssetUpload assetUpload) throws IOException {
+  public void addAssetToUpload(AssetUpload assetUpload) throws IOException {
     ObjectQueue<AssetUpload> queue = getQueue();
     queue.add(assetUpload);
   }

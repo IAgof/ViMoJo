@@ -30,17 +30,24 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 /**
  * This class is used for adding new videos to the project.
  */
-public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
+public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMediaFinishedListener,
     OnRemoveMediaFinishedListener
 //        , OnLaunchAVTransitionTempFileListener
 //        , TranscoderHelperListener
@@ -63,18 +70,21 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
     private final ProjectRepository projectRepository;
+    private final AssetUploadQueue assetUploadQueue;
+    private final RunSyncAdapterHelper runSyncAdapterHelper;
 
     /**
      * Constructor.
      */
     @Inject public GalleryPagerPresenter(
-            GalleryPagerView galleryPagerView, Context context,
-            AddVideoToProjectUseCase addVideoToProjectUseCase,
-            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-            ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-            ProjectRepository projectRepository,
-            VideoRepository videoRepository, SharedPreferences preferences,
-            ProjectInstanceCache projectInstanceCache) {
+        GalleryPagerView galleryPagerView, Context context,
+        AddVideoToProjectUseCase addVideoToProjectUseCase,
+        GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+        ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
+        ProjectRepository projectRepository,
+        VideoRepository videoRepository, SharedPreferences preferences,
+        ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
+        RunSyncAdapterHelper runSyncAdapterHelper) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
@@ -86,6 +96,8 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         // TODO(jliarte): 23/04/18 inject this dependency? maybe abstracting from android with an interface
         metadataRetriever = new MediaMetadataRetriever();
         this.projectInstanceCache = projectInstanceCache;
+        this.assetUploadQueue = assetUploadQueue;
+        this.runSyncAdapterHelper = runSyncAdapterHelper;
     }
 
     public void updatePresenter() {
@@ -116,6 +128,22 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
 
     private void addVideoToProject(List<Video> checkedVideoList) {
         addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, this);
+        for(Video video: checkedVideoList) {
+            AssetUpload assetUpload = new AssetUpload(video);
+            executeUseCaseCall((Callable<Void>) () -> {
+                try {
+                    assetUploadQueue.addAssetToUpload(assetUpload);
+                    Log.d(LOG_TAG, "uploadVideo " + assetUpload.getName());
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                    Log.d(LOG_TAG, ioException.getMessage());
+                    Crashlytics.log("Error adding video to upload");
+                    Crashlytics.logException(ioException);
+                }
+                return null;
+            });
+        }
+        runSyncAdapterHelper.runNowSyncAdapter();
     }
 
     private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(
