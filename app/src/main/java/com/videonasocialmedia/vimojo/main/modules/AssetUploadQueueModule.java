@@ -11,9 +11,8 @@ import android.content.Context;
 
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 
 import javax.inject.Singleton;
 
@@ -27,28 +26,23 @@ import dagger.Provides;
  */
 
 @Module
-public class UploadToPlatformQueueModule {
+public class AssetUploadQueueModule {
 
   private final Context context;
 
-  public UploadToPlatformQueueModule(VimojoApplication application) {
+  public AssetUploadQueueModule(VimojoApplication application) {
     this.context = application;
   }
 
   @Singleton @Provides
-  UploadToPlatformQueue provideUploadToPlatformQueue(VideoApiClient videoApiClient,
-                                                     GetAuthToken getAuthToken) {
-    return new UploadToPlatformQueue(context, videoApiClient, getAuthToken);
+  AssetUploadQueue provideAssetUploadQueue(AssetApiClient assetApiClient,
+                                                GetAuthToken getAuthToken) {
+    return new AssetUploadQueue(context, assetApiClient, getAuthToken);
   }
 
   @Provides
-  UploadNotification providesUploadNotification() {
-    return new UploadNotification(context);
-  }
-
-  @Provides
-  VideoApiClient providesVideoApiClient() {
-    return new VideoApiClient();
+  AssetApiClient providesAssetApiClient() {
+    return new AssetApiClient();
   }
 
   @Provides

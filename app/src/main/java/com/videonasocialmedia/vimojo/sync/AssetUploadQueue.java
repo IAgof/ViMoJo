@@ -11,9 +11,7 @@ package com.videonasocialmedia.vimojo.sync;
  * Created by alvaro on 6/2/18.
  */
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -22,11 +20,11 @@ import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
-import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,30 +35,30 @@ import java.io.IOException;
  * Create/init ObjectQueue, add objects and launchQueue.
  * FIFO, atomic ObjectQueue.
  */
-public class UploadToPlatformQueue {
-  private final String LOG_TAG = UploadToPlatformQueue.class.getCanonicalName();
+public class AssetUploadQueue {
+  private final String LOG_TAG = AssetUploadQueue.class.getCanonicalName();
   private final Context context;
-  private final VideoApiClient videoApiClient;
+  private final AssetApiClient assetApiClient;
   private final GetAuthToken getAuthToken;
 
-  public UploadToPlatformQueue(Context context, VideoApiClient videoApiClient,
-                               GetAuthToken getAuthToken) {
+  public AssetUploadQueue(Context context, AssetApiClient assetApiClient,
+                          GetAuthToken getAuthToken) {
     this.context = context;
-    this.videoApiClient = videoApiClient;
+    this.assetApiClient = assetApiClient;
     this.getAuthToken = getAuthToken;
     Log.d(LOG_TAG, "Created sync queue...");
   }
 
-  public ObjectQueue<VideoUpload> getQueue() {
+  public ObjectQueue<AssetUpload> getQueue() {
     Log.d(LOG_TAG, "getting queue...");
     String uploadQUEUE = "QueueUploads_" + BuildConfig.FLAVOR;
     File file = new File(context.getFilesDir(), uploadQUEUE);
-    ObjectQueue<VideoUpload> videoUploadObjectQueue = null;
+    ObjectQueue<AssetUpload> assetUploadObjectQueue = null;
     try {
       QueueFile queueFile = new QueueFile.Builder(file).build();
       Moshi moshi = new Moshi.Builder().build();
-      MoshiConverter converter = new MoshiConverter(moshi, VideoUpload.class);
-      videoUploadObjectQueue = ObjectQueue.create(queueFile, converter);
+      MoshiConverter converter = new MoshiConverter(moshi, AssetUpload.class);
+      assetUploadObjectQueue = ObjectQueue.create(queueFile, converter);
     } catch (IOException ioException) {
       ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());
@@ -68,24 +66,24 @@ public class UploadToPlatformQueue {
       Crashlytics.logException(ioException);
     }
     Log.d(LOG_TAG, "...returned queue");
-    return videoUploadObjectQueue;
+    return assetUploadObjectQueue;
   }
 
-  public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
-    ObjectQueue<VideoUpload> queue = getQueue();
-    queue.add(videoUpload);
+  public void addVideoToUpload(AssetUpload assetUpload) throws IOException {
+    ObjectQueue<AssetUpload> queue = getQueue();
+    queue.add(assetUpload);
   }
 
   public void processNextQueueItem() {
     Log.d(LOG_TAG, "processNextQueueItem");
     Log.d(LOG_TAG, "startNotification");
-    VideoUpload element = getQueue().iterator().next();
+    AssetUpload element = getQueue().iterator().next();
     AuthToken authToken = getAuthToken.getAuthToken(context);
     try {
       String token = authToken.getToken();
       // TODO(jliarte): 27/02/18 check what to do with plaform response
       Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
-      Video video = videoApiClient.uploadVideo(token, element);
+      Asset asset = assetApiClient.uploadVideo(token, element);
       Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
       removeHeadElement(getQueue());
       Log.d(LOG_TAG, "finishNotification success");
@@ -95,10 +93,12 @@ public class UploadToPlatformQueue {
       Crashlytics.logException(vimojoApiException);
       switch (vimojoApiException.getApiErrorCode()) {
         case VimojoApiException.UNAUTHORIZED:
-          //inform user
+          // TODO: 21/6/18 inform user
+          Log.d(LOG_TAG, "VimojoApiException.UNAUTHORIZED");
           break;
         case VimojoApiException.NETWORK_ERROR:
-          // inform user
+          Log.d(LOG_TAG, "VimojoApiException.NETWORK_ERROR");
+          // TODO: 21/6/18 inform user
           break;
         default:
           retryItemUpload(element, authToken.getId());
@@ -113,15 +113,15 @@ public class UploadToPlatformQueue {
   }
 
 
-  protected void retryItemUpload(VideoUpload element, String userId) {
+  protected void retryItemUpload(AssetUpload element, String userId) {
     incrementHeadNumTries(getQueue());
-    if (element.getNumTries() > VideoUpload.MAX_NUM_TRIES_UPLOAD) {
+    if (element.getNumTries() > AssetUpload.MAX_NUM_TRIES_UPLOAD) {
       removeHeadElement(getQueue());
       Log.d(LOG_TAG, "finishNotification, error");
     }
   }
 
-  private void incrementHeadNumTries(ObjectQueue<VideoUpload> queue) {
+  private void incrementHeadNumTries(ObjectQueue<AssetUpload> queue) {
     try {
       queue.peek().incrementNumTries();
     } catch (IOException ioException) {
@@ -131,7 +131,7 @@ public class UploadToPlatformQueue {
     }
   }
 
-  private void removeHeadElement(ObjectQueue<VideoUpload> queue) {
+  private void removeHeadElement(ObjectQueue<AssetUpload> queue) {
     if (queue.iterator().hasNext()) {
       try {
         queue.remove();

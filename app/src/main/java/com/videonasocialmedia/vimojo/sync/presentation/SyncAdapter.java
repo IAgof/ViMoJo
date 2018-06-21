@@ -21,9 +21,10 @@ import com.crashlytics.android.Crashlytics;
 import com.squareup.tape2.ObjectQueue;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
-import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +50,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   private boolean isWifiConnected;
   private boolean isMobileNetworkConnected;
   private UploadToPlatform uploadToPlatform;
-  private UploadToPlatformQueue uploadToPlatformQueue;
+  private AssetUploadQueue assetUploadQueue;
   private UploadRepository uploadRepository;
 
   /**
@@ -57,7 +58,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
    */
   public SyncAdapter(Context context, boolean autoInitialize,
                      UploadToPlatform uploadToPlatform,
-                     UploadToPlatformQueue uploadToPlatformQueue,
+                     AssetUploadQueue assetUploadQueue,
                      UploadRepository uploadRepository) {
     super(context, autoInitialize);
         /*
@@ -66,7 +67,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          */
     this.context = context;
     this.uploadToPlatform = uploadToPlatform;
-    this.uploadToPlatformQueue = uploadToPlatformQueue;
+    this.assetUploadQueue = assetUploadQueue;
     this.uploadRepository = uploadRepository;
     Log.d(LOG_TAG, "created SyncAdapter...");
   }
@@ -119,17 +120,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       }
     }
 
-    // QUEUE model
-    ObjectQueue<VideoUpload> queue = uploadToPlatformQueue.getQueue();
+    // QUEUE asset model
+    ObjectQueue<AssetUpload> queue = assetUploadQueue.getQueue();
     if (!queue.isEmpty()) {
       try {
-        while (uploadToPlatformQueue.getQueue().iterator().hasNext()) {
+        while (assetUploadQueue.getQueue().iterator().hasNext()) {
           Log.d(LOG_TAG, "launchingQueue");
           boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
           if (areThereNetworksConnected(isAcceptedUploadMobileNetwork)) {
             // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
             // reimplement this loop
-            uploadToPlatformQueue.processNextQueueItem();
+            assetUploadQueue.processNextQueueItem();
           }
           sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
         }

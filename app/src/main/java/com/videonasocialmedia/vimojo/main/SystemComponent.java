@@ -8,11 +8,12 @@ import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
-import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformQueueModule;
+import com.videonasocialmedia.vimojo.main.modules.AssetUploadQueueModule;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadBroadcastReceiver;
 import com.videonasocialmedia.vimojo.sync.presentation.SyncService;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
@@ -28,7 +29,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {ApplicationModule.class, DataRepositoriesModule.class,
         TrackerModule.class, UploadToPlatformModule.class,
-        UploadToPlatformQueueModule.class})
+        AssetUploadQueueModule.class})
 public interface SystemComponent {
   ProjectRepository getProjectRepository();
   VideoRepository getVideoRepository();
@@ -37,6 +38,7 @@ public interface SystemComponent {
   MusicRepository getMusicRepository();
   UserEventTracker getUserEventTracker();
   UploadToPlatform getUploadToPlatform();
+  AssetUploadQueue getAssetUploadQueue();
   SharedPreferences getSharedPreferences();
   CameraSettingsRepository getCameraRepository();
   void inject(VimojoActivity activity);
