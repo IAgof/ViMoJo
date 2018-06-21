@@ -1,2 +1,3 @@
-v0.19.3
-- Update urls vimojo platform from vimojo.co/platform to platform.vimojo.co
+v0.19.4
+- Fixed problems with time line in editor screen.
+- Updated debug flavors platform api_base to beta.viday.co

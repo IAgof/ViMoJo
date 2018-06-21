@@ -33,7 +33,6 @@ public class ReorderMediaItemUseCase {
       Track videoTrack = currentProject.getMediaTrack();
         try {
           Media media = videoTrack.getItems().get(fromPosition);
-          Log.d(TAG, "timeline: reorder media with position " + media.getPosition() + " to: " + toPosition);
           videoTrack.moveItemTo(toPosition, media);
           new ReorderProjectVideoListUseCase().reorderVideoList(currentProject);
           projectRepository.update(currentProject);

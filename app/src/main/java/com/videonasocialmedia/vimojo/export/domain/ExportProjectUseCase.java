@@ -83,6 +83,10 @@ public class ExportProjectUseCase implements ExportListener {
     }
   }
 
+  public void removeCallbacks() {
+    this.onExportFinishedListener = null;
+  }
+
   private void checkWatermarkResource(String pathWatermark) {
     File watermarkResource = new File(pathWatermark);
     if (!watermarkResource.exists()) {
@@ -113,32 +117,35 @@ public class ExportProjectUseCase implements ExportListener {
 
   @Override
   public void onExportSuccess(Video video) {
-    if (!isExportCanceled) {
+    if (!isExportCanceled && onExportFinishedListener != null) {
       onExportFinishedListener.onExportSuccess(video);
     }
   }
 
   @Override
   public void onExportProgress(int exportStage) {
-    if (!isExportCanceled) {
+    if (!isExportCanceled && onExportFinishedListener != null) {
       onExportFinishedListener.onExportProgress(exportStage);
     }
   }
 
   @Override
   public void onExportError(int exportErrorStage, Exception exception) {
-    if (!isExportCanceled) {
+    if (!isExportCanceled && onExportFinishedListener != null) {
       onExportFinishedListener.onExportError(exportErrorStage, exception);
     }
   }
 
   @Override
   public void onCancelExport() {
-    onExportFinishedListener.onExportCanceled();
+    if (onExportFinishedListener != null) {
+      onExportFinishedListener.onExportCanceled();
+    }
   }
 
   public void cancelExport() {
     isExportCanceled = true;
     vmCompositionExportSession.cancel();
   }
+
 }

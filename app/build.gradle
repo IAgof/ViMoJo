@@ -69,13 +69,13 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 118 // 20180619
-            versionName "0.19.3" // 20180619
+            versionCode 119 // 20180620
+            versionName "0.19.4" // 20180620
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "https://platform.vimojo.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -162,8 +162,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 69 // 20180619
-            versionName "0.19.3.fThomsonFoundation" // 20180619
+            versionCode 70 // 20180620
+            versionName "0.19.4.fThomsonFoundation" // 20180620
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -210,13 +210,13 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 36 // 20180619
-            versionName "0.19.3.fMarketForNews" // 20180619
+            versionCode 37 // 20180620
+            versionName "0.19.4.fMarketForNews" // 20180620
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "https://market4news.com/api/v1/", release: "https://market4news.com/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
@@ -260,13 +260,13 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 11 // 20180619
-            versionName "0.19.3.fElConfidencial" // 20180619
+            versionCode 12 // 20180620
+            versionName "0.19.4.fElConfidencial" // 20180620
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth"
-            ext.api_base_url = [debug: "https://elconfidencial.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
