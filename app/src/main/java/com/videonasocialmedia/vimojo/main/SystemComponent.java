@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
+import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformQueueModule;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
@@ -26,7 +27,8 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = {ApplicationModule.class, DataRepositoriesModule.class,
-        TrackerModule.class, UploadToPlatformModule.class})
+        TrackerModule.class, UploadToPlatformModule.class,
+        UploadToPlatformQueueModule.class})
 public interface SystemComponent {
   ProjectRepository getProjectRepository();
   VideoRepository getVideoRepository();

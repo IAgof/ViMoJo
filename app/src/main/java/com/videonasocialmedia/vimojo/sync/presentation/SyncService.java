@@ -19,6 +19,7 @@ import android.util.Log;
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.sync.UploadToPlatformQueue;
 
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ public class SyncService extends Service {
   private static final Object sSyncAdapterLock = new Object();
 
   @Inject UploadToPlatform uploadToPlatform;
+  @Inject UploadToPlatformQueue uploadToPlatformQueue;
   @Inject UploadRepository uploadRepository;
 
   /*
@@ -53,7 +55,7 @@ public class SyncService extends Service {
     synchronized (sSyncAdapterLock) {
       if (sSyncAdapter == null) {
         sSyncAdapter = new SyncAdapter(getApplicationContext(), true,
-            uploadToPlatform, uploadRepository);
+            uploadToPlatform, uploadToPlatformQueue, uploadRepository);
       }
     }
   }
