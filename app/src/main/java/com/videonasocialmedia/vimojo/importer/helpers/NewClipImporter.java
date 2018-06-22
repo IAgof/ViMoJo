@@ -24,6 +24,8 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
@@ -49,6 +51,7 @@ public class NewClipImporter {
   private final RunSyncAdapterHelper runSyncAdapterHelper;
   private static final int N_THREADS = 5;
   private final ListeningExecutorService executorPool;
+  private CompositionApiClient compositionApiClient;
 
   public NewClipImporter(
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
@@ -57,7 +60,7 @@ public class NewClipImporter {
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       ProjectRepository projectRepository, VideoRepository videoRepository,
       VideoToAdaptRepository videoToAdaptRepository, AssetUploadQueue assetUploadQueue,
-      RunSyncAdapterHelper runSyncAdapterHelper) {
+      RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
@@ -68,6 +71,7 @@ public class NewClipImporter {
     this.assetUploadQueue = assetUploadQueue;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
+    this.compositionApiClient = compositionApiClient;
   }
 
   public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
@@ -82,6 +86,7 @@ public class NewClipImporter {
       public void onSuccessAdapting(Video video) {
         // TODO(jliarte): 31/08/17 implement this method
         addAssetToUpload(video);
+        updateCompositionWithPlatform(currentProject);
       }
 
       @Override
@@ -118,6 +123,15 @@ public class NewClipImporter {
       return null;
     });
     runSyncAdapterHelper.runNowSyncAdapter();
+  }
+
+  private void updateCompositionWithPlatform(Project currentProject) {
+    try {
+      compositionApiClient.uploadComposition(currentProject);
+    } catch (VimojoApiException e) {
+      Log.d(TAG, "Error uploading composition with server " + e.getApiErrorCode());
+      e.printStackTrace();
+    }
   }
 
   protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {

@@ -9,6 +9,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
+import android.support.design.widget.TabLayout;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
@@ -29,6 +30,8 @@ import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
@@ -60,17 +63,18 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
     private GetMusicListUseCase getMusicListUseCase;
     private final AssetUploadQueue assetUploadQueue;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
+    private final CompositionApiClient compositionApiClient;
 
     @Inject
     public MusicDetailPresenter(
-            MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-            AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-            ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
-            RunSyncAdapterHelper runSyncAdapterHelper) {
+        MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+        ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
+        ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
+        RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -86,6 +90,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
         musicSelected = new Music("", 0);
         this.assetUploadQueue = assetUploadQueue;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void updatePresenter(String musicPath) {
@@ -142,6 +147,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {
                 userEventTracker.trackMusicSet(currentProject);
+                updateCompositionWithPlatform(currentProject);
                 addAssetToUpload(media);
                 musicDetailView.goToSoundActivity();
             }
@@ -154,17 +160,26 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
         });
     }
 
+    private void updateCompositionWithPlatform(Project currentProject) {
+        try {
+            compositionApiClient.uploadComposition(currentProject);
+        } catch (VimojoApiException e) {
+            Log.d(LOG_TAG, "Error uploading composition with server " + e.getApiErrorCode());
+            e.printStackTrace();
+        }
+    }
+
     private void addAssetToUpload(Media media) {
         // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
         AssetUpload assetUpload = new AssetUpload("ElConfiHack", media);
         executeUseCaseCall((Callable<Void>) () -> {
             try {
                 assetUploadQueue.addAssetToUpload(assetUpload);
-                Log.d(LOG_TAG, "uploadVideo " + assetUpload.getName());
+                Log.d(LOG_TAG, "uploadAsset " + assetUpload.getName());
             } catch (IOException ioException) {
                 ioException.printStackTrace();
                 Log.d(LOG_TAG, ioException.getMessage());
-                Crashlytics.log("Error adding video to upload");
+                Crashlytics.log("Error adding asset to upload");
                 Crashlytics.logException(ioException);
             }
             return null;

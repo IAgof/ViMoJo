@@ -7,6 +7,8 @@
 
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
+import android.util.Log;
+
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -20,6 +22,8 @@ import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,18 +52,20 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     private int maxSeekBarSplit;
     private int videoIndexOnTrack;
+    private CompositionApiClient compositionApiClient;
 
     @Inject
     public SplitPreviewPresenter(
             SplitView splitView, UserEventTracker userEventTracker,
             SplitVideoUseCase splitVideoUseCase,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache, CompositionApiClient compositionApiClient) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void init(int videoIndexOnTrack) {
@@ -101,10 +107,20 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void splitVideo(int positionInAdapter, int timeMs) {
         splitVideoUseCase.splitVideo(currentProject, videoToEdit, positionInAdapter,timeMs, this);
         trackSplitVideo();
+        updateCompositionWithPlatform(currentProject);
     }
 
     public void trackSplitVideo() {
         userEventTracker.trackClipSplitted(currentProject);
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        try {
+            compositionApiClient.uploadComposition(currentProject);
+        } catch (VimojoApiException e) {
+            Log.d(LOG_TAG, "Error uploading composition with server " + e.getApiErrorCode());
+            e.printStackTrace();
+        }
     }
 
     @Override

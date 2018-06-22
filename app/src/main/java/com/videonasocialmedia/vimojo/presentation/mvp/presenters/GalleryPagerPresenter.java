@@ -34,6 +34,8 @@ import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
@@ -71,6 +73,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     private final ProjectRepository projectRepository;
     private final AssetUploadQueue assetUploadQueue;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
+    private final CompositionApiClient compositionApiClient;
 
     /**
      * Constructor.
@@ -83,7 +86,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
         ProjectRepository projectRepository,
         VideoRepository videoRepository, SharedPreferences preferences,
         ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
-        RunSyncAdapterHelper runSyncAdapterHelper) {
+        RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
@@ -97,6 +100,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
         this.projectInstanceCache = projectInstanceCache;
         this.assetUploadQueue = assetUploadQueue;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void updatePresenter() {
@@ -144,6 +148,16 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
             });
         }
         runSyncAdapterHelper.runNowSyncAdapter();
+        updateCompositionWithPlatform(currentProject);
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        try {
+            compositionApiClient.uploadComposition(currentProject);
+        } catch (VimojoApiException e) {
+            Log.d(LOG_TAG, "Error uploading composition with server " + e.getApiErrorCode());
+            e.printStackTrace();
+        }
     }
 
     private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(

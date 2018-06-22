@@ -8,6 +8,7 @@
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.RadioButton;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
@@ -22,6 +23,8 @@ import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +58,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private int videoToTrimIndex;
+    private CompositionApiClient compositionApiClient;
 
     @Inject
     public TrimPreviewPresenter(
@@ -62,13 +66,14 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
             UserEventTracker userEventTracker,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache, CompositionApiClient compositionApiClient) {
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void init(int videoToTrimIndex) {
@@ -106,6 +111,16 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
             currentProject);
         trackVideoTrimmed();
+        updateCompositionWithPlatform(currentProject);
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        try {
+            compositionApiClient.uploadComposition(currentProject);
+        } catch (VimojoApiException e) {
+            Log.d(LOG_TAG, "Error uploading composition with server " + e.getApiErrorCode());
+            e.printStackTrace();
+        }
     }
 
     public void trackVideoTrimmed() {

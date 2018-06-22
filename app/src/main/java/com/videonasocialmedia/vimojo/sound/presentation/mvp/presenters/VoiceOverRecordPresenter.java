@@ -33,6 +33,8 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.File;
@@ -78,6 +80,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       new TranscoderHelper(drawableGenerator, mediaTranscoder);
   private final AssetUploadQueue assetUploadQueue;
   private final RunSyncAdapterHelper runSyncAdapterHelper;
+  private CompositionApiClient compositionApiClient;
 
   @Inject
   public VoiceOverRecordPresenter(
@@ -86,7 +89,8 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
       UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
-      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper) {
+      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
+      CompositionApiClient compositionApiClient) {
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -98,6 +102,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
     this.projectInstanceCache = projectInstanceCache;
     this.assetUploadQueue = assetUploadQueue;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
+    this.compositionApiClient = compositionApiClient;
   }
 
   public void updatePresenter() {
@@ -256,6 +261,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
           public void onAddMediaItemToTrackSuccess(Media media) {
             trackVoiceOverVideo();
             addAssetToUpload(media);
+            updateCompositionWithPlatform(currentProject);
             voiceOverRecordView
                 .navigateToVoiceOverVolumeActivity(voiceOver.getMediaPath());
           }
@@ -266,6 +272,15 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
                 .alert_dialog_title_message_adding_voice_over));
           }
         });
+  }
+
+  private void updateCompositionWithPlatform(Project currentProject) {
+    try {
+      compositionApiClient.uploadComposition(currentProject);
+    } catch (VimojoApiException e) {
+      Log.d(LOG_TAG, "Error uploading composition with server " + e.getApiErrorCode());
+      e.printStackTrace();
+    }
   }
 
   private void addAssetToUpload(Media media) {

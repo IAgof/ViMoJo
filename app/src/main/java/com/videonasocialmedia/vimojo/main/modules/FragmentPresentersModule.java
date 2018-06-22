@@ -27,6 +27,9 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermar
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 
 import dagger.Module;
@@ -144,15 +147,18 @@ public class FragmentPresentersModule {
 
   @Provides
   NewClipImporter clipImporterProvider(
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoToFormatUseCase adaptVideosUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
-          ProjectRepository projectRepository,
-          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
-          ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase) {
+      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+      AdaptVideoToFormatUseCase adaptVideosUseCase,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
+      ProjectRepository projectRepository,
+      VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
+      ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase,
+      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
+      CompositionApiClient compositionApiClient) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
             launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase,
-            projectRepository, videoRepository, videoToAdaptRepository);
+            projectRepository, videoRepository, videoToAdaptRepository, assetUploadQueue,
+            runSyncAdapterHelper, compositionApiClient);
   }
 
   @Provides

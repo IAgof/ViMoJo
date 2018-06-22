@@ -35,6 +35,8 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,6 +65,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private EditActivityView editActivityView;
     private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
     protected UserEventTracker userEventTracker;
+    private CompositionApiClient compositionApiClient;
 
     @Inject
     public EditPresenter(EditActivityView editActivityView,
@@ -72,7 +75,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase,
-                         ProjectInstanceCache projectInstanceCache) {
+                         ProjectInstanceCache projectInstanceCache,
+                         CompositionApiClient compositionApiClient) {
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
@@ -81,6 +85,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
         this.projectInstanceCache = projectInstanceCache;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void addElementChangedListener() {
@@ -147,6 +152,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 // If everything was right the UI is already updated since the user did the
                 // reordering over the "model view"
                 userEventTracker.trackClipsReordered(currentProject);
+                updateCompositionWithPlatform(currentProject);
                 editActivityView.updatePlayerVideoListChanged();
             }
 
@@ -157,6 +163,15 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 editActivityView.updatePlayerVideoListChanged();
             }
         });
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        try {
+            compositionApiClient.uploadComposition(currentProject);
+        } catch (VimojoApiException e) {
+            Log.d(TAG, "Error uploading composition with server " + e.getApiErrorCode());
+            e.printStackTrace();
+        }
     }
 
     @Override

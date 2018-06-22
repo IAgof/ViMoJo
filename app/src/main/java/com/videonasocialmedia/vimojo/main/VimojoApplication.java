@@ -106,7 +106,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
                 .uploadToPlatformModule(getUploadToPlatformModule())
-                .uploadToPlatformQueueModule(getAssetUploadQueueModule())
+                .assetUploadQueueModule(getAssetUploadQueueModule())
 //                .activityPresentersModule(getActivityPresentersModule())
                 .build();
     }
