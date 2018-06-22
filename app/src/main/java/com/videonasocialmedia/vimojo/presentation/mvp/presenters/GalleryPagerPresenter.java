@@ -34,7 +34,6 @@ import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
@@ -129,7 +128,8 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     private void addVideoToProject(List<Video> checkedVideoList) {
         addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, this);
         for(Video video: checkedVideoList) {
-            AssetUpload assetUpload = new AssetUpload(video);
+          // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
+            AssetUpload assetUpload = new AssetUpload("ElConfiHack", video);
             executeUseCaseCall((Callable<Void>) () -> {
                 try {
                     assetUploadQueue.addAssetToUpload(assetUpload);

@@ -164,10 +164,12 @@ public class ActivityPresentersModule {
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-      UserEventTracker userEventTracker) {
+      UserEventTracker userEventTracker, AssetUploadQueue assetUploadQueue,
+      RunSyncAdapterHelper runSyncAdapterHelper) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache);
+            addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache,
+            assetUploadQueue, runSyncAdapterHelper);
   }
 
   @Provides @PerActivity
@@ -255,11 +257,11 @@ public class ActivityPresentersModule {
       ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
       ProjectRepository projectRepository,
       SharedPreferences sharedPreferences, VideoRepository videoRepository,
-      AssetUploadQueue assetUploadQueue) {
+      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
             getVideonaFormatFromCurrentProjectUseCase, applyAVTransitionsUseCase,
             projectRepository, videoRepository, sharedPreferences, projectInstanceCache,
-            assetUploadQueue);
+            assetUploadQueue, runSyncAdapterHelper);
   }
 
  /* @Provides @PerActivity

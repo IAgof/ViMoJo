@@ -18,16 +18,18 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
 
 /**
  * Created by alvaro on 21/6/18.
  */
 
-public abstract class AssetService {
+public interface AssetService {
 
   @Multipart
-  @POST("asset")
-  abstract Call<Asset> uploadAsset(
+  @POST("project/{projectId}/asset")
+  Call<Asset> uploadAsset(
+      @Path("projectId") String projectId,
       // TODO(jliarte): 8/02/18 check if we can model the request body into a vimojoapiclient.model
       @PartMap() Map<String, RequestBody> partMap,
       @Part MultipartBody.Part file

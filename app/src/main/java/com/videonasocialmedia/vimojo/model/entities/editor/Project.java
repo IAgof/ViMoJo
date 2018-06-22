@@ -59,6 +59,8 @@ public class Project implements ElementChangedListener {
 
   private LastVideoExported lastVideoExported;
 
+  private String projectId;
+
     /**
      * Project profile. Defines some limitations and characteristic of the project based on user
      * subscription.
@@ -294,5 +296,9 @@ public class Project implements ElementChangedListener {
 
   public void setProjectInfo(ProjectInfo projectInfo) {
     this.projectInfo = projectInfo;
+  }
+
+  public String getProjectId() {
+    return projectId;
   }
 }

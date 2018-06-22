@@ -3,8 +3,12 @@ package com.videonasocialmedia.vimojo.importer.helpers;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -17,11 +21,17 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 /**
  * Created by jliarte on 6/07/17.
@@ -35,14 +45,19 @@ public class NewClipImporter {
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+  private final AssetUploadQueue assetUploadQueue;
+  private final RunSyncAdapterHelper runSyncAdapterHelper;
+  private static final int N_THREADS = 5;
+  private final ListeningExecutorService executorPool;
 
   public NewClipImporter(
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
-          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository, VideoRepository videoRepository,
-          VideoToAdaptRepository videoToAdaptRepository) {
+      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+      AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
+      ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      ProjectRepository projectRepository, VideoRepository videoRepository,
+      VideoToAdaptRepository videoToAdaptRepository, AssetUploadQueue assetUploadQueue,
+      RunSyncAdapterHelper runSyncAdapterHelper) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
@@ -50,6 +65,9 @@ public class NewClipImporter {
     this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;
     this.videoToAdaptRepository = videoToAdaptRepository;
+    this.assetUploadQueue = assetUploadQueue;
+    this.runSyncAdapterHelper = runSyncAdapterHelper;
+    executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
   }
 
   public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
@@ -63,6 +81,7 @@ public class NewClipImporter {
       @Override
       public void onSuccessAdapting(Video video) {
         // TODO(jliarte): 31/08/17 implement this method
+        addAssetToUpload(video);
       }
 
       @Override
@@ -81,6 +100,28 @@ public class NewClipImporter {
       e.printStackTrace();
       adaptListener.onErrorAdapting(video, "adaptVideoToFormatUseCase");
     }
+  }
+
+  private void addAssetToUpload(Media media) {
+    // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
+    AssetUpload assetUpload = new AssetUpload("ElConfiHack", media);
+    executeUseCaseCall((Callable<Void>) () -> {
+      try {
+        assetUploadQueue.addAssetToUpload(assetUpload);
+        Log.d(TAG, "uploadVideo " + assetUpload.getName());
+      } catch (IOException ioException) {
+        ioException.printStackTrace();
+        Log.d(TAG, ioException.getMessage());
+        Crashlytics.log("Error adding video to upload");
+        Crashlytics.logException(ioException);
+      }
+      return null;
+    });
+    runSyncAdapterHelper.runNowSyncAdapter();
+  }
+
+  protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
+    return executorPool.submit(callable);
   }
 
   private void applyAVTransitions(Video video, Project currentProject) {

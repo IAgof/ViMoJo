@@ -10,7 +10,6 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -83,7 +82,6 @@ public class AdaptVideoToFormatUseCase {
       videoRepository.update(video);
       notifySuccess(video);
     }
-
     private void notifySuccess(Video video) {
       AdaptListener listener = adaptListener.get();
       if (listener != null) {

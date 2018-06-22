@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
@@ -8,6 +9,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import android.content.Context;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -23,9 +25,15 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromPro
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -33,9 +41,10 @@ import javax.inject.Inject;
 /**
  *
  */
-public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProjectCallback,
-        ElementChangedListener{
+public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRetrieved,
+    GetMusicFromProjectCallback, ElementChangedListener {
 
+    private final String LOG_TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
@@ -49,6 +58,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
     private RemoveAudioUseCase removeAudioUseCase;
     private ModifyTrackUseCase modifyTrackUseCase;
     private GetMusicListUseCase getMusicListUseCase;
+    private final AssetUploadQueue assetUploadQueue;
+    private final RunSyncAdapterHelper runSyncAdapterHelper;
 
     @Inject
     public MusicDetailPresenter(
@@ -58,7 +69,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
             ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
+            RunSyncAdapterHelper runSyncAdapterHelper) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -72,6 +84,8 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
         this.getMusicListUseCase = getMusicListUseCase;
         this.projectInstanceCache = projectInstanceCache;
         musicSelected = new Music("", 0);
+        this.assetUploadQueue = assetUploadQueue;
+        this.runSyncAdapterHelper = runSyncAdapterHelper;
     }
 
     public void updatePresenter(String musicPath) {
@@ -128,6 +142,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {
                 userEventTracker.trackMusicSet(currentProject);
+                addAssetToUpload(media);
                 musicDetailView.goToSoundActivity();
             }
 
@@ -137,6 +152,24 @@ public class MusicDetailPresenter implements OnVideosRetrieved, GetMusicFromProj
                     context.getString(R.string.alert_dialog_title_message_adding_music));
             }
         });
+    }
+
+    private void addAssetToUpload(Media media) {
+        // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
+        AssetUpload assetUpload = new AssetUpload("ElConfiHack", media);
+        executeUseCaseCall((Callable<Void>) () -> {
+            try {
+                assetUploadQueue.addAssetToUpload(assetUpload);
+                Log.d(LOG_TAG, "uploadVideo " + assetUpload.getName());
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+                Log.d(LOG_TAG, ioException.getMessage());
+                Crashlytics.log("Error adding video to upload");
+                Crashlytics.logException(ioException);
+            }
+            return null;
+        });
+        runSyncAdapterHelper.runNowSyncAdapter();
     }
 
     @Override

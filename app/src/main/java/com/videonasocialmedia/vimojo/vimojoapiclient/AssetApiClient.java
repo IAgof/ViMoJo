@@ -68,7 +68,8 @@ public class AssetApiClient extends VimojoApiClient {
     requestBodyHashMap.put(ASSET_API_KEY_TYPE, requestBodyType);
     requestBodyHashMap.put(ASSET_API_KEY_HASH, requestBodyHash);
     requestBodyHashMap.put(ASSET_API_KEY_DATE, requestBodyDate);
-    Call<Asset> assetUploadTask = assetService.uploadAsset(requestBodyHashMap, body);
+    Call<Asset> assetUploadTask = assetService.uploadAsset(assetUpload.getId(),
+        requestBodyHashMap, body);
     try {
       Response<Asset> response = assetUploadTask.execute();
       if (response.isSuccessful()) {
