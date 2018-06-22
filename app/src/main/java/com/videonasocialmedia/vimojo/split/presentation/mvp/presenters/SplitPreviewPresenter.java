@@ -7,6 +7,11 @@
 
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
+import android.util.Log;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -20,17 +25,22 @@ import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * Created by vlf on 7/7/15.
  */
-public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoListener,
-        ElementChangedListener {
+public class SplitPreviewPresenter extends VimojoPresenter implements OnVideosRetrieved,
+    OnSplitVideoListener, ElementChangedListener {
     /**
      * LOG_TAG
      */
@@ -48,18 +58,20 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
 
     private int maxSeekBarSplit;
     private int videoIndexOnTrack;
+    private CompositionApiClient compositionApiClient;
 
     @Inject
     public SplitPreviewPresenter(
             SplitView splitView, UserEventTracker userEventTracker,
             SplitVideoUseCase splitVideoUseCase,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache, CompositionApiClient compositionApiClient) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void init(int videoIndexOnTrack) {
@@ -101,10 +113,31 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void splitVideo(int positionInAdapter, int timeMs) {
         splitVideoUseCase.splitVideo(currentProject, videoToEdit, positionInAdapter,timeMs, this);
         trackSplitVideo();
+        updateCompositionWithPlatform(currentProject);
     }
 
     public void trackSplitVideo() {
         userEventTracker.trackClipSplitted(currentProject);
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
+            @Override
+            public Project call() throws Exception {
+                return compositionApiClient.uploadComposition(currentProject);
+            }
+        });
+        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
+            @Override
+            public void onSuccess(@Nullable Project result) {
+                Log.d(LOG_TAG, "Success uploading composition to server ");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
+            }
+        });
     }
 
     @Override

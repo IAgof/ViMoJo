@@ -7,6 +7,11 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
+import android.util.Log;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -18,16 +23,22 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * Created by vlf on 7/7/15.
  */
-public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
+public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVideosRetrieved,
+    ElementChangedListener {
     /**
      * LOG_TAG
      */
@@ -41,6 +52,7 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
     private Video videoToEdit;
     protected Project currentProject;
     private int videoIndexOnTrack;
+    private CompositionApiClient compositionApiClient;
 
     /**
      * Get media list from project use case
@@ -49,12 +61,13 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
             DuplicateView duplicateView, UserEventTracker userEventTracker,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache, CompositionApiClient compositionApiClient) {
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void init(int videoIndexOnTrack) {
@@ -107,6 +120,8 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
                 });
         }
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
+        updateCompositionWithPlatform(currentProject);
+
     }
     @Override
     public void onObjectUpdated() {
@@ -117,6 +132,25 @@ public class DuplicatePreviewPresenter implements OnVideosRetrieved, ElementChan
         return new Video(videoToEdit);
     }
 
+    private void updateCompositionWithPlatform(Project currentProject) {
+        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
+            @Override
+            public Project call() throws Exception {
+                return compositionApiClient.uploadComposition(currentProject);
+            }
+        });
+        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
+            @Override
+            public void onSuccess(@Nullable Project result) {
+                Log.d(LOG_TAG, "Success uploading composition to server ");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
+            }
+        });
+    }
 }
 
 

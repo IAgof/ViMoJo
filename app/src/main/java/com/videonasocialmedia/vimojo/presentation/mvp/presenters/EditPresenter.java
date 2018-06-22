@@ -16,6 +16,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
@@ -35,15 +38,20 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaFinishedListener,
-        ElementChangedListener {
+public class EditPresenter extends VimojoPresenter implements OnAddMediaFinishedListener,
+    OnRemoveMediaFinishedListener, ElementChangedListener {
     private final String TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
     protected Project currentProject;
@@ -63,6 +71,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     private EditActivityView editActivityView;
     private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
     protected UserEventTracker userEventTracker;
+    private CompositionApiClient compositionApiClient;
 
     @Inject
     public EditPresenter(EditActivityView editActivityView,
@@ -72,7 +81,8 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
                          ReorderMediaItemUseCase reorderMediaItemUseCase,
-                         ProjectInstanceCache projectInstanceCache) {
+                         ProjectInstanceCache projectInstanceCache,
+                         CompositionApiClient compositionApiClient) {
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
@@ -81,6 +91,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
         this.projectInstanceCache = projectInstanceCache;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void addElementChangedListener() {
@@ -147,6 +158,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 // If everything was right the UI is already updated since the user did the
                 // reordering over the "model view"
                 userEventTracker.trackClipsReordered(currentProject);
+                updateCompositionWithPlatform(currentProject);
                 editActivityView.updatePlayerVideoListChanged();
             }
 
@@ -155,6 +167,26 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
                 //The reordering went wrong so we ask the project for the actual video list
                 Log.d(TAG, "timeline:  error reordering!!");
                 editActivityView.updatePlayerVideoListChanged();
+            }
+        });
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
+            @Override
+            public Project call() throws Exception {
+                return compositionApiClient.uploadComposition(currentProject);
+            }
+        });
+        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
+            @Override
+            public void onSuccess(@Nullable Project result) {
+                Log.d(TAG, "Success uploading composition to server ");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d(TAG, "Error uploading composition to server " + t.getMessage());
             }
         });
     }
@@ -179,6 +211,7 @@ public class EditPresenter implements OnAddMediaFinishedListener, OnRemoveMediaF
     // TODO(jliarte): 23/04/18 move/remove
     @Override
     public void onRemoveMediaItemFromTrackSuccess() {
+        updateCompositionWithPlatform(currentProject);
         if (currentProject.getVMComposition().hasVideos()) {
             editActivityView.updatePlayerAndTimeLineVideoListChanged();
         } else {

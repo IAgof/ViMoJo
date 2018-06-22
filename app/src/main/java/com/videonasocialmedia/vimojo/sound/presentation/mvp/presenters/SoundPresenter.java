@@ -1,5 +1,10 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.util.Log;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
@@ -10,28 +15,38 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * Created by ruth on 13/09/16.
  */
-public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementChangedListener {
+public class SoundPresenter extends VimojoPresenter implements VideoTranscodingErrorNotifier,
+    ElementChangedListener {
 
+  private String LOG_TAG = getClass().getSimpleName();
   private SoundView soundView;
   private ModifyTrackUseCase modifyTrackUseCase;
   private final ProjectInstanceCache projectInstanceCache;
   private static final float VOLUME_MUTE = 0f;
   protected Project currentProject;
+  private CompositionApiClient compositionApiClient;
 
   @Inject
     public SoundPresenter(SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
-                          ProjectInstanceCache projectInstanceCache) {
+                          ProjectInstanceCache projectInstanceCache, CompositionApiClient
+                          compositionApiClient) {
         this.soundView = soundView;
         this.projectInstanceCache = projectInstanceCache;
         this.modifyTrackUseCase = modifyTrackUseCase;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void updatePresenter() {
@@ -92,6 +107,7 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
     float volume = (float) (seekBarProgress * 0.01);
     modifyTrackUseCase.setTrackVolume(currentProject, track, volume);
     updatePlayerVolume(id, volume);
+    updateCompositionWithPlatform(currentProject);
   }
 
   private void updatePlayerVolume(int id, float volume) {
@@ -125,8 +141,28 @@ public class SoundPresenter implements VideoTranscodingErrorNotifier, ElementCha
     Track track = getTrackById(id);
     modifyTrackUseCase.setTrackMute(currentProject, track, isMute);
     updatePlayerMute(id, isMute);
+    updateCompositionWithPlatform(currentProject);
   }
 
+  private void updateCompositionWithPlatform(Project currentProject) {
+    ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
+      @Override
+      public Project call() throws Exception {
+        return compositionApiClient.uploadComposition(currentProject);
+      }
+    });
+    Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
+      @Override
+      public void onSuccess(@Nullable Project result) {
+        Log.d(LOG_TAG, "Success uploading composition to server ");
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
+      }
+    });
+  }
   private void updatePlayerMute(int id, boolean isMute) {
     switch (id) {
       case Constants.INDEX_MEDIA_TRACK:

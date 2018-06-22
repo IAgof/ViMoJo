@@ -16,6 +16,9 @@ import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -34,6 +37,8 @@ import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
@@ -41,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
@@ -71,6 +77,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     private final ProjectRepository projectRepository;
     private final AssetUploadQueue assetUploadQueue;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
+    private final CompositionApiClient compositionApiClient;
 
     /**
      * Constructor.
@@ -83,7 +90,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
         ProjectRepository projectRepository,
         VideoRepository videoRepository, SharedPreferences preferences,
         ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
-        RunSyncAdapterHelper runSyncAdapterHelper) {
+        RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
@@ -97,6 +104,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
         this.projectInstanceCache = projectInstanceCache;
         this.assetUploadQueue = assetUploadQueue;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
+        this.compositionApiClient = compositionApiClient;
     }
 
     public void updatePresenter() {
@@ -144,6 +152,27 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
             });
         }
         runSyncAdapterHelper.runNowSyncAdapter();
+        updateCompositionWithPlatform(currentProject);
+    }
+
+    private void updateCompositionWithPlatform(Project currentProject) {
+        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
+            @Override
+            public Project call() throws Exception {
+                return compositionApiClient.uploadComposition(currentProject);
+            }
+        });
+        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
+            @Override
+            public void onSuccess(@Nullable Project result) {
+                Log.d(LOG_TAG, "Success uploading composition to server ");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
+            }
+        });
     }
 
     private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(

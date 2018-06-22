@@ -7,7 +7,7 @@
 
 package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.*;
 
 import java.util.Date;
 
@@ -18,7 +18,7 @@ import java.util.Date;
 public class AssetUpload {
 
   private final String projectId;
-  private final Media media;
+  private final String mediaPath;
   private String name;
   private String type;
   private String hash;
@@ -28,16 +28,17 @@ public class AssetUpload {
 
   public AssetUpload(String projectId, Media media) {
     this.projectId = projectId;
-    this.media = media;
+    this.mediaPath = media.getMediaPath();
+    this.name = media.getTitle();
     this.numTries = 0;
   }
 
   public String getMediaPath() {
-    return media.getMediaPath();
+    return mediaPath;
   }
 
   public String getName() {
-    return media.getTitle();
+    return name;
   }
 
   public String getType() {

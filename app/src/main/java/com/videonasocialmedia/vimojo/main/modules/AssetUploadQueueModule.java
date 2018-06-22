@@ -45,9 +45,9 @@ public class AssetUploadQueueModule {
     return new AssetApiClient();
   }
 
-  @Provides
+  /*@Provides
   GetAuthToken providesGetAuthToken() {
     return new GetAuthToken();
-  }
+  }*/
 
 }

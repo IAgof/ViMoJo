@@ -86,7 +86,7 @@ public class AssetUploadQueue {
       Asset asset = assetApiClient.uploadVideo(token, element);
       Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
       removeHeadElement(getQueue());
-      Log.d(LOG_TAG, "finishNotification success");
+      Log.d(LOG_TAG, "finish upload success");
     } catch (VimojoApiException vimojoApiException) {
       Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
       Crashlytics.log("Error process upload vimojoApiException");

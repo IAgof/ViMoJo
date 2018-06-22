@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -24,6 +25,8 @@ import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
@@ -32,6 +35,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by jliarte on 6/07/17.
@@ -49,6 +54,7 @@ public class NewClipImporter {
   private final RunSyncAdapterHelper runSyncAdapterHelper;
   private static final int N_THREADS = 5;
   private final ListeningExecutorService executorPool;
+  private CompositionApiClient compositionApiClient;
 
   public NewClipImporter(
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
@@ -57,7 +63,7 @@ public class NewClipImporter {
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       ProjectRepository projectRepository, VideoRepository videoRepository,
       VideoToAdaptRepository videoToAdaptRepository, AssetUploadQueue assetUploadQueue,
-      RunSyncAdapterHelper runSyncAdapterHelper) {
+      RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
@@ -68,6 +74,7 @@ public class NewClipImporter {
     this.assetUploadQueue = assetUploadQueue;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
+    this.compositionApiClient = compositionApiClient;
   }
 
   public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
@@ -82,6 +89,7 @@ public class NewClipImporter {
       public void onSuccessAdapting(Video video) {
         // TODO(jliarte): 31/08/17 implement this method
         addAssetToUpload(video);
+        updateCompositionWithPlatform(currentProject);
       }
 
       @Override
@@ -118,6 +126,26 @@ public class NewClipImporter {
       return null;
     });
     runSyncAdapterHelper.runNowSyncAdapter();
+  }
+
+  private void updateCompositionWithPlatform(Project currentProject) {
+    ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
+      @Override
+      public Project call() throws Exception {
+        return compositionApiClient.uploadComposition(currentProject);
+      }
+    });
+    Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
+      @Override
+      public void onSuccess(@Nullable Project result) {
+        Log.d(TAG, "Success uploading composition to server ");
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        Log.d(TAG, "Error uploading composition to server " + t.getMessage());
+      }
+    });
   }
 
   protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
