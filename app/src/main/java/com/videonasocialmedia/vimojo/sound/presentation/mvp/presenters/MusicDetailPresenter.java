@@ -152,7 +152,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             public void onAddMediaItemToTrackSuccess(Media media) {
                 userEventTracker.trackMusicSet(currentProject);
                 updateCompositionWithPlatform(currentProject);
-                addAssetToUpload(media);
+                addAssetToUpload(music);
                 musicDetailView.goToSoundActivity();
             }
 

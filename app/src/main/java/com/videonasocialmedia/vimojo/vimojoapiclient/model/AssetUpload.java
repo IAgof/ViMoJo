@@ -8,6 +8,7 @@
 package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 import com.videonasocialmedia.videonamediaframework.model.media.*;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import java.util.Date;
 
@@ -30,6 +31,18 @@ public class AssetUpload {
     this.projectId = projectId;
     this.mediaPath = media.getMediaPath();
     this.name = media.getTitle();
+    if (media instanceof Video) {
+      this.type = "video";
+    } else {
+      if (media instanceof Music) {
+        if (media.getTitle().equals(com.videonasocialmedia.vimojo.utils.Constants
+            .MUSIC_AUDIO_VOICEOVER_TITLE)) {
+          this.type = "voiceOver";
+        } else {
+          this.type = "music";
+        }
+      }
+    }
     this.numTries = 0;
   }
 
@@ -42,8 +55,11 @@ public class AssetUpload {
   }
 
   public String getType() {
-    // TODO: 21/6/18 Handle all types of media
-    return "video";
+    // TODO: 22/6/18 Handle error
+    if (type == null) {
+      return "video";
+    }
+    return type;
   }
 
   public String getHash() {

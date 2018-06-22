@@ -261,7 +261,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
           @Override
           public void onAddMediaItemToTrackSuccess(Media media) {
             trackVoiceOverVideo();
-            addAssetToUpload(media);
+            addAssetToUpload(voiceOver);
             updateCompositionWithPlatform(currentProject);
             voiceOverRecordView
                 .navigateToVoiceOverVolumeActivity(voiceOver.getMediaPath());
