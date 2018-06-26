@@ -100,7 +100,7 @@ public class UploadNotification {
     Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
 
     Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-    String urlPlatformHome = getURLFromApiBase(BuildConfig.API_BASE_URL);
+    String urlPlatformHome = context.getString(R.string.vimojo_platform_base);
     String urlUserPlatform = urlPlatformHome + "/user/" + userId + "/videos";
     Log.d(LOG_TAG, "finishNotification, onClick navigate to " + urlUserPlatform);
     notificationIntent.setData(Uri.parse(urlUserPlatform));
@@ -119,15 +119,6 @@ public class UploadNotification {
     notificationBuilder.setProgress(0, 0, false);
     notificationBuilder.setContentIntent(pendingIntent);
     notificationManager.notify(notificationUploadId, notificationBuilder.build());
-  }
-
-  // Delete two last '/',  /api/v1/
-  private String getURLFromApiBase(String apiBaseUrl) {
-    String urlHome = apiBaseUrl;
-    for(int i = 0; i < 3; i++) {
-      urlHome = urlHome.substring(0, urlHome.lastIndexOf('/'));
-    }
-    return urlHome;
   }
 
   public void errorNetworkNotification(int notificationUploadId) {
