@@ -100,7 +100,9 @@ public class UploadNotification {
     Log.d(LOG_TAG, "Finishing notification id " + notificationUploadId);
 
     Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-    String urlPlatformHome = context.getString(R.string.vimojo_platform_base);
+    String urlPlatformHome = BuildConfig.DEBUG ?
+        context.getString(R.string.vimojo_platform_base_debug) :
+        context.getString(R.string.vimojo_platform_base) ;
     String urlUserPlatform = urlPlatformHome + "/user/" + userId + "/videos";
     Log.d(LOG_TAG, "finishNotification, onClick navigate to " + urlUserPlatform);
     notificationIntent.setData(Uri.parse(urlUserPlatform));

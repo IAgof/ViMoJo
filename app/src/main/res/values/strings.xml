@@ -2537,4 +2537,6 @@ and Conditions.\n\n
     <string name="notification_pause">PAUSE</string>
     <string name="notification_cancel">CANCEL</string>
 
+    <string name="vimojo_platform_base_debug">https://beta.viday.co</string>
+
 </resources>
