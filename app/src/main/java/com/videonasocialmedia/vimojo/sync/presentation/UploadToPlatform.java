@@ -35,8 +35,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,7 +103,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
       ProgressRequestBody fileBody = new ProgressRequestBody(file, MIME_TYPE_VIDEO, this);
       videoUpload.setUploading(true);
       uploadRepository.update(videoUpload);
-      uploadVideoAsync = videoApiClient.uploadVideoAsync(token, videoUpload, fileBody);
+      uploadVideoAsync = videoApiClient.uploadVideoAsyncWithProgress(token, videoUpload, fileBody);
       uploadVideoAsync.enqueue(new Callback<Video>() {
         @Override
         public void onResponse(Call<Video> call, Response<Video> response) {
