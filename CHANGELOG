@@ -1,3 +1,6 @@
+v0.19.5
+- Fix problem sending file name uploading video to platform.
+
 v0.19.4
 - Fixed problems with time line in editor screen.
 - Updated debug flavors platform api_base to beta.viday.co
