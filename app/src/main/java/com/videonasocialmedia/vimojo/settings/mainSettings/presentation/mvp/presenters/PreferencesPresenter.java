@@ -16,7 +16,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.Preference;
-import android.text.TextUtils;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -26,7 +25,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -47,6 +45,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ public class PreferencesPresenter extends VimojoPresenter
         OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
     private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
     private final BillingManager billingManager;
-    private final GetAuthToken getAuthToken;
+    private UserApiClient userApiClient;
     private final ProjectInstanceCache projectInstanceCache;
     private PlayStoreBillingDelegate playStoreBillingDelegate;
     private Context context;
@@ -93,8 +92,7 @@ public class PreferencesPresenter extends VimojoPresenter
      *  @param preferencesView
      * @param context
      * @param sharedPreferences
-     * @param getAuthToken
-     * @param getAccount
+     * @param userApiClient
      */
     public PreferencesPresenter(
             PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
@@ -111,8 +109,8 @@ public class PreferencesPresenter extends VimojoPresenter
             UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
             RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-            BillingManager billingManager, GetAuthToken getAuthToken, GetAccount getAccount,
-            ProjectInstanceCache projectInstanceCache) {
+            BillingManager billingManager, UserApiClient userApiClient, ProjectInstanceCache
+                projectInstanceCache) {
         this.preferencesView = preferencesView;
         this.context = context;
         this.sharedPreferences = sharedPreferences;
@@ -136,10 +134,9 @@ public class PreferencesPresenter extends VimojoPresenter
         userEventTracker = UserEventTracker.getInstance(MixpanelAPI
                 .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
         this.billingManager = billingManager;
-        this.getAuthToken = getAuthToken;
         this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
-        this.getAccount = getAccount;
         this.projectInstanceCache = projectInstanceCache;
+        this.userApiClient = userApiClient;
     }
 
     public void updatePresenter(Activity activity) {
@@ -336,23 +333,12 @@ public class PreferencesPresenter extends VimojoPresenter
             preferencesView.hideRegisterLoginView();
             return;
         }
-        ListenableFuture<String> authTokenFuture = executeUseCaseCall(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return getAuthToken.getAuthToken(getContext()).getToken();
-            }
-        });
-        Futures.addCallback(authTokenFuture, new FutureCallback<String>() {
-            @Override
-            public void onSuccess(String authToken) {
-                preferencesView.setupUserAuthentication(!TextUtils.isEmpty(authToken));
-            }
 
-            @Override
-            public void onFailure(Throwable errorGettingToken) {
-                preferencesView.setupUserAuthentication(false);
-            }
-        });
+        if (userApiClient.isLogged()) {
+            preferencesView.setupUserAuthentication(true);
+        } else {
+            preferencesView.setupUserAuthentication(false);
+        }
     }
 
     public Context getContext() {
@@ -365,6 +351,9 @@ public class PreferencesPresenter extends VimojoPresenter
     }
 
     private void deleteAccount() {
+
+        userApiClient.signOut();
+
         ListenableFuture<Account> accountFuture = executeUseCaseCall(new Callable<Account>() {
             @Override
             public Account call() throws Exception {

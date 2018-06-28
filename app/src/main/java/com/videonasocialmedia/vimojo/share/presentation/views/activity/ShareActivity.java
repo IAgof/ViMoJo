@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,18 +18,27 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationAPIClient;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.authentication.storage.SecureCredentialsManager;
+import com.auth0.android.authentication.storage.SharedPreferencesStorage;
+import com.auth0.android.provider.AuthCallback;
+import com.auth0.android.provider.WebAuthProvider;
+import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuth0Activity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -60,25 +70,28 @@ import butterknife.Optional;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
+
+  private String LOG_TAG = ShareActivity.class.getCanonicalName();
+
   private static final int REQUEST_FILL_PROJECT_DETAILS = 54831;
   private static final int REQUEST_USER_AUTH = 54832;
   @Inject ShareVideoPresenter presenter;
+
     @Inject SharedPreferences sharedPreferences;
-
-    @Nullable @BindView(R.id.linear_layout_activity_share)
+  @Nullable @BindView(R.id.linear_layout_activity_share)
     RelativeLayout coordinatorLayout;
-    @Nullable @BindView(R.id.options_to_share_list)
+  @Nullable @BindView(R.id.options_to_share_list)
     RecyclerView optionsToShareList;
-    @Nullable @BindView(R.id.text_dialog)
+  @Nullable @BindView(R.id.text_dialog)
     EditText editTextDialog;
-    @Nullable @BindView(R.id.bottomBar)
+  @Nullable @BindView(R.id.bottomBar)
     BottomBar bottomBar;
-    @BindView(R.id.fab_edit_room)
+  @BindView(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
-    @Nullable @BindView(R.id.fab_share_room)
+  @Nullable @BindView(R.id.fab_share_room)
     FloatingActionButton fabShareRoom;
-    private OptionsToShareAdapter optionsShareAdapter;
 
+    private OptionsToShareAdapter optionsShareAdapter;
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
   private AlertDialog exportErrorDialog;
@@ -449,7 +462,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
 
   public void navigateToUserAuth() {
-    Intent intent = new Intent(this, UserAuthActivity.class);
+    Intent intent = new Intent(this, UserAuth0Activity.class);
     startActivityForResult(intent, REQUEST_USER_AUTH);
   }
 

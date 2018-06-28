@@ -333,14 +333,16 @@
         </activity>
 
         <activity
+            android:name=".auth.presentation.view.activity.UserAuth0Activity"
+            android:label="@string/app_name"
+            android:theme="@style/ViMoJoTutorial"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
             android:name=".store.presentation.view.activity.VimojoStoreActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".auth.presentation.view.activity.UserAuthActivity"
-            android:label="@string/app_name"
             android:screenOrientation="portrait"/>
 
         <service

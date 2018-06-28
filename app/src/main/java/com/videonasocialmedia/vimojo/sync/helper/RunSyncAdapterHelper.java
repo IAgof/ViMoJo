@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import javax.inject.Inject;
 
@@ -41,11 +42,13 @@ public class RunSyncAdapterHelper {
   // A content resolver for accessing the provider
   ContentResolver contentResolver;
   private String authority;
+  private UserApiClient userApiClient;
 
   @Inject
-  public RunSyncAdapterHelper(Context context) {
+  public RunSyncAdapterHelper(Context context, UserApiClient userApiClient) {
     this.context = context;
     authority = SyncConstants.VIMOJO_CONTENT_AUTHORITY;
+    this.userApiClient = userApiClient;
   }
 
   public void runSyncAdapterPeriodically() {
@@ -125,7 +128,7 @@ public class RunSyncAdapterHelper {
    */
   public void requestSync(Bundle settingsBundle) {
     Account account = UserAccountUtil.getAccount(context);
-    if (account != null) {
+    if (userApiClient.isLogged()) {
       Log.d(LOG_TAG, "Requesting sync!");
       ContentResolver.requestSync(account, authority, settingsBundle);
     }

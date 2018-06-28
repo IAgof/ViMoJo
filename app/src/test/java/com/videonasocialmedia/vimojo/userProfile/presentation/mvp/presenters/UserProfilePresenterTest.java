@@ -81,7 +81,7 @@ public class UserProfilePresenterTest {
     presenter.onClickEmail(true);
 
     if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
-      verify(mockedUserProfileView).navigateToUserAuth();
+      verify(mockedUserProfileView).navigateToUserAuth0();
   }
 
   @Test
@@ -91,7 +91,7 @@ public class UserProfilePresenterTest {
     presenter.onClickUsername(true);
 
     if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
-      verify(mockedUserProfileView).navigateToUserAuth();
+      verify(mockedUserProfileView).navigateToUserAuth0();
   }
 
   @NonNull

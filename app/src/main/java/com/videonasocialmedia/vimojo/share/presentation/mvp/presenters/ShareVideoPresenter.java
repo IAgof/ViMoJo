@@ -37,6 +37,7 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,8 +56,8 @@ import javax.inject.Inject;
 public class ShareVideoPresenter extends VimojoPresenter {
     private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
     private Context context;
-
     private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
+
     private GetFtpListUseCase getFtpListUseCase;
     private CreateDefaultProjectUseCase createDefaultProjectUseCase;
     private WeakReference<ShareVideoView> shareVideoViewReference;
@@ -83,18 +84,20 @@ public class ShareVideoPresenter extends VimojoPresenter {
     private FtpNetwork ftpNetworkSelected;
     private boolean hasBeenProjectExported;
     protected boolean isAppExportingProject;
+    private UserApiClient userApiClient;
 
     @Inject
     public ShareVideoPresenter(
-            Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-            SharedPreferences sharedPreferences,
-            CreateDefaultProjectUseCase createDefaultProjectUseCase,
-            AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-            ExportProjectUseCase exportProjectUseCase,
-            ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-            GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
-            UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
-            RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache) {
+        Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+        SharedPreferences sharedPreferences,
+        CreateDefaultProjectUseCase createDefaultProjectUseCase,
+        AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+        ExportProjectUseCase exportProjectUseCase,
+        ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+        GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
+        UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
+        RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+        UserApiClient userApiClient) {
         this.context = context;
         this.shareVideoViewReference = new WeakReference<>(shareVideoView);
         this.userEventTracker = userEventTracker;
@@ -109,6 +112,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         this.loggedValidator = loggedValidator;
         this.runSyncAdapterHelper = runSyncAdapterHelper;
         this.projectInstanceCache = projectInstanceCache;
+        this.userApiClient = userApiClient;
     }
 
     public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -234,7 +238,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
             shareVideoViewReference.get().showDialogUploadVideoWithMobileNetwork();
             return;
         }
-        if (!isUserLogged()) {
+        if (!userApiClient.isLogged()) {
             shareVideoViewReference.get().showDialogNeedToRegisterLoginToUploadVideo();
             return;
         }
@@ -276,23 +280,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
                                                          boolean isMobileNetworConnected,
                                                          boolean acceptUploadVideoMobileNetwork) {
         return !isWifiConnected && isMobileNetworConnected && !acceptUploadVideoMobileNetwork;
-    }
-
-    protected boolean isUserLogged() {
-        shareVideoViewReference.get().showProgressDialogCheckingUserAuth();
-        String authToken = "";
-        try {
-            authToken = executeUseCaseCall(() -> getAuthToken.getAuthToken(context).getToken())
-                    .get();
-        } catch (InterruptedException | ExecutionException errorGettingToken) {
-            if (BuildConfig.DEBUG) {
-                errorGettingToken.printStackTrace();
-            }
-            Crashlytics.log("Error getting info from user e");
-            Crashlytics.logException(errorGettingToken);
-        }
-        shareVideoViewReference.get().hideProgressDialogCheckingUserAuth();
-        return loggedValidator.loggedValidate(authToken);
     }
 
     protected void uploadVideo(String mediaPath, String title, String description,

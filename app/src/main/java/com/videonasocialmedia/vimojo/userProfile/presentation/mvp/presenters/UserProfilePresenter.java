@@ -2,11 +2,13 @@ package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.authentication.storage.CredentialsManagerException;
+import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.result.Credentials;
+import com.auth0.android.result.UserProfile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -17,36 +19,30 @@ import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProf
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * TODO: document this class, whats the objective and responsibility for this class?
  */
 public class UserProfilePresenter extends VimojoPresenter {
+  private String LOG_TAG = UserProfilePresenter.class.getCanonicalName();
   private final SharedPreferences sharedPreferences;
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
-  private final GetAuthToken getAuthToken;
   private final Context context;
   private final UserApiClient userApiClient;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase, GetAuthToken getAuthToken,
-                              UserApiClient userApiClient) {
+                              obtainLocalVideosUseCase, UserApiClient userApiClient) {
     this.context = context;
     this.userProfileView =view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
-    this.getAuthToken = getAuthToken;
     this.userApiClient = userApiClient;
   }
 
@@ -79,53 +75,59 @@ public class UserProfilePresenter extends VimojoPresenter {
     if (!BuildConfig.FEATURE_VIMOJO_PLATFORM) {
       return;
     }
-    ListenableFuture<AuthToken> authTokenFuture = executeUseCaseCall(new Callable<AuthToken>() {
+
+    if (!userApiClient.isLogged()) {
+      return;
+    }
+    // Get token, needed for get user info.
+    final String[] accesToken = new String[1];
+    userApiClient.getManager().getCredentials(new BaseCallback<Credentials,
+        CredentialsManagerException>() {
       @Override
-      public AuthToken call() throws Exception {
-        return getAuthToken.getAuthToken(context);
+      public void onSuccess(Credentials credentials) {
+        //Use credentials
+        accesToken[0] = credentials.getAccessToken();
+        // Get User Info
+        getUserInfo(accesToken[0]);
+      }
+
+      @Override
+      public void onFailure(CredentialsManagerException error) {
+        //No credentials were previously saved or they couldn't be refreshed
+        return;
       }
     });
-    Futures.addCallback(authTokenFuture, new FutureCallback<AuthToken>() {
-      @Override
-      public void onSuccess(AuthToken authToken) {
-        callUserServiceGetUser(authToken.getToken(), authToken.getId());
-      }
-      @Override
-      public void onFailure(@NonNull Throwable errorGettingToken) {
-      }
-    });
+
   }
 
-  private void callUserServiceGetUser(String token, String id) {
-    ListenableFuture<User> userFuture = executeUseCaseCall(new Callable<User>() {
-      @Override
-      public User call() throws Exception {
-        return userApiClient.getUser(token, id);
-      }
-    });
-    Futures.addCallback(userFuture, new FutureCallback<User>() {
-      @Override
-      public void onSuccess(@Nullable User result) {
-        userProfileView.showPreferenceUserName(result.getUsername());
-        userProfileView.showPreferenceEmail(result.getEmail());
-      }
+  private void getUserInfo(String accessToken) {
+    userApiClient.getAuthenticator().userInfo(accessToken)
+        .start(new BaseCallback<UserProfile, AuthenticationException>() {
+          @Override
+          public void onSuccess(UserProfile userinfo) {
+            // Display the user profile
+            Log.d(LOG_TAG, " onSuccess userInfo id " + userinfo.getId());
+            userProfileView.showPreferenceUserName(userinfo.getName());
+            userProfileView.showPreferenceEmail(userinfo.getEmail());
+          }
 
-      @Override
-      public void onFailure(Throwable t) {
-        userProfileView.showError(R.string.error);
-      }
-    });
+          @Override
+          public void onFailure(AuthenticationException error) {
+            // Show error
+            userProfileView.showError(R.string.error);
+          }
+        });
   }
 
   public void onClickUsername(boolean emptyField) {
     if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
-      userProfileView.navigateToUserAuth();
+      userProfileView.navigateToUserAuth0();
     }
   }
 
   public void onClickEmail(boolean emptyField) {
     if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
-      userProfileView.navigateToUserAuth();
+      userProfileView.navigateToUserAuth0();
     }
   }
 }

@@ -19,5 +19,5 @@ public interface UserProfileView {
 
   void showError(int stringId);
 
-  void navigateToUserAuth();
+  void navigateToUserAuth0();
 }

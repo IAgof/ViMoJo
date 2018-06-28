@@ -16,4 +16,7 @@ import retrofit2.http.Path;
 public interface UserService {
   @GET("user/{id}")
   Call<User> getUser(@Path("id") String id);
+
+  @GET("user/getId")
+  Call<String> getUserId(String token);
 }

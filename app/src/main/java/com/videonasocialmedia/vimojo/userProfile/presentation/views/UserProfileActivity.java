@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.views;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,18 +8,29 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationAPIClient;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.authentication.storage.SecureCredentialsManager;
+import com.auth0.android.authentication.storage.SharedPreferencesStorage;
+import com.auth0.android.provider.AuthCallback;
+import com.auth0.android.provider.WebAuthProvider;
+import com.auth0.android.result.Credentials;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
+import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuth0Activity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
@@ -37,9 +49,10 @@ import butterknife.OnClick;
 
 public class UserProfileActivity extends VimojoActivity implements UserProfileView {
 
+  private String LOG_TAG = UserProfileActivity.class.getCanonicalName();
+
   @Inject
   UserProfilePresenter presenter;
-
   @BindView(R.id.image_user_profile)
   CircleImageView image_user;
   @BindView(R.id.user_profile_prefession)
@@ -251,8 +264,8 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   }
 
   @Override
-  public void navigateToUserAuth() {
-    Intent intent = new Intent(this, UserAuthActivity.class);
+  public void navigateToUserAuth0() {
+    Intent intent = new Intent(this, UserAuth0Activity.class);
     startActivity(intent);
   }
 
