@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadBroadcastReceiver;
 import com.videonasocialmedia.vimojo.sync.presentation.SyncService;
@@ -33,6 +34,7 @@ public interface SystemComponent {
   VideoToAdaptRepository getVideoToAdaptRepository();
   TrackRepository getTrackRepository();
   MusicRepository getMusicRepository();
+  UploadRepository getUploadRepository();
   UserEventTracker getUserEventTracker();
   UploadToPlatform getUploadToPlatform();
   SharedPreferences getSharedPreferences();

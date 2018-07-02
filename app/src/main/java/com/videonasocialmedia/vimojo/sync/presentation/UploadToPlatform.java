@@ -16,19 +16,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.auth0.android.Auth0;
-import com.auth0.android.authentication.AuthenticationAPIClient;
-import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.authentication.storage.CredentialsManagerException;
-import com.auth0.android.authentication.storage.SecureCredentialsManager;
-import com.auth0.android.authentication.storage.SharedPreferencesStorage;
 import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Credentials;
-import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.helper.ProgressRequestBody;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
@@ -38,14 +32,11 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,6 +56,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   private final Context context;
   private final VideoApiClient videoApiClient;
   private final UserApiClient userApiClient;
+  private final UserAuth0Helper userAuth0Helper;
   private UploadNotification uploadNotification;
   private Call<Video> uploadVideoAsync;
   private UploadRepository uploadRepository;
@@ -76,11 +68,12 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   public UploadToPlatform(Context context, UploadNotification uploadNotification,
                           VideoApiClient videoApiClient, UserApiClient userApiClient,
-                          UploadRepository uploadRepository) {
+                          UserAuth0Helper userAuth0Helper, UploadRepository uploadRepository) {
     this.context = context;
     this.uploadNotification = uploadNotification;
     this.videoApiClient = videoApiClient;
     this.userApiClient = userApiClient;
+    this.userAuth0Helper = userAuth0Helper;
     this.uploadRepository = uploadRepository;
   }
 
@@ -100,14 +93,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   public void processAsyncUpload(VideoUpload videoUpload) {
     Log.d(LOG_TAG, "processAsyncUpload");
     Log.d(LOG_TAG, "startNotification " + videoUpload.getUuid());
-    notificationUploadId = videoUpload.getId();
-    createPendingIntents(videoUpload.getUuid());
-    resetProgressBar();
-    uploadNotification.startInfiniteProgressNotification(notificationUploadId,
-        R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-        cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
-
-    userApiClient.getManager().getCredentials(new BaseCallback<Credentials,
+    userAuth0Helper.getAccessToken(new BaseCallback<Credentials,
         CredentialsManagerException>() {
       @Override
       public void onSuccess(Credentials credentials) {
@@ -116,6 +102,12 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
         try {
           // UserId
           String userId = userApiClient.getUserId(accesToken);
+          notificationUploadId = videoUpload.getId();
+          createPendingIntents(videoUpload.getUuid());
+          resetProgressBar();
+          uploadNotification.startInfiniteProgressNotification(notificationUploadId,
+              R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
+              cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
           // Uploading video
           uploadVideo(accesToken, userId, videoUpload);
         } catch (VimojoApiException vimojoApiException) {
@@ -151,6 +143,9 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
       @Override
       public void onFailure(CredentialsManagerException error) {
         //No credentials were previously saved or they couldn't be refreshed
+        Log.d(LOG_TAG, "processAsyncUpload, getAccessToken onFailure No credentials were " +
+            "previously saved or they couldn't be refreshed");
+        Crashlytics.log("Error processAsyncUpload getAccessToken");
       }
     });
   }

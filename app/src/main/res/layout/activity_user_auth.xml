@@ -83,18 +83,6 @@
                     android:textColor="@color/colorWhite"
                     android:visibility="visible"
                     />
-                <Button
-                    android:id="@+id/auth0_button"
-                    android:layout_width="@dimen/activity_user_auth_height_fields"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/register_button"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/activity_user_auth_round_background"
-                    android:text="Auth0"
-                    android:textColor="@color/colorWhite"
-                    android:visibility="visible"
-                    />
             </LinearLayout>
 
             <LinearLayout

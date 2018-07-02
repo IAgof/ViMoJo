@@ -1,24 +1,28 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.authentication.storage.CredentialsManagerException;
 import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import java.util.List;
 
@@ -33,17 +37,17 @@ public class UserProfilePresenter extends VimojoPresenter {
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private final Context context;
-  private final UserApiClient userApiClient;
+  protected final UserAuth0Helper userAuth0Helper;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase, UserApiClient userApiClient) {
+                                  obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper) {
     this.context = context;
-    this.userProfileView =view;
+    this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
-    this.userApiClient = userApiClient;
+    this.userAuth0Helper = userAuth0Helper;
   }
 
   public void getInfoVideosRecordedEditedShared() {
@@ -76,58 +80,108 @@ public class UserProfilePresenter extends VimojoPresenter {
       return;
     }
 
-    if (!userApiClient.isLogged()) {
+    if (!userAuth0Helper.isLogged()) {
       return;
     }
     // Get token, needed for get user info.
-    final String[] accesToken = new String[1];
-    userApiClient.getManager().getCredentials(new BaseCallback<Credentials,
-        CredentialsManagerException>() {
+    userAuth0Helper.getAccessToken(new BaseCallback<Credentials, CredentialsManagerException>() {
       @Override
-      public void onSuccess(Credentials credentials) {
-        //Use credentials
-        accesToken[0] = credentials.getAccessToken();
-        // Get User Info
-        getUserInfo(accesToken[0]);
+      public void onFailure(CredentialsManagerException error) {
+        Log.d(LOG_TAG, "Error getAccessToken CredentialsManagerException "
+            + error.getMessage());
+        Crashlytics.log("Error getAccessToken CredentialsManagerException: " + error);
+        // Show error
+        userProfileView.showError(R.string.error);
       }
 
       @Override
-      public void onFailure(CredentialsManagerException error) {
-        //No credentials were previously saved or they couldn't be refreshed
-        return;
+      public void onSuccess(Credentials credentials) {
+        userAuth0Helper.getUserProfile(credentials.getAccessToken(),
+            new BaseCallback<UserProfile, AuthenticationException>() {
+              @Override
+              public void onFailure(AuthenticationException error) {
+                Log.d(LOG_TAG, "Error getAccessToken AuthenticationException "
+                    + error.getMessage());
+                Crashlytics.log("Error getAccessToken AuthenticationException: " + error);
+                // Show error
+                userProfileView.showError(R.string.error);
+              }
+
+              @Override
+              public void onSuccess(UserProfile userProfile) {
+                // Display the user profile
+                Log.d(LOG_TAG, " onSuccess getAccessToken userInfo id " + userProfile.getId());
+                userProfileView.showPreferenceUserName(userProfile.getName());
+                userProfileView.showPreferenceEmail(userProfile.getEmail());
+              }
+            });
       }
     });
 
   }
 
-  private void getUserInfo(String accessToken) {
-    userApiClient.getAuthenticator().userInfo(accessToken)
-        .start(new BaseCallback<UserProfile, AuthenticationException>() {
+  public void onClickUsername(Activity activity, boolean emptyField) {
+    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
+      performLoginAndSaveAccount(activity);
+    }
+  }
+
+  public void onClickEmail(Activity activity, boolean emptyField) {
+    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
+      performLoginAndSaveAccount(activity);
+    }
+  }
+
+  protected void performLoginAndSaveAccount(Activity activity) {
+    userAuth0Helper.performLogin(activity, context.getString(R.string.com_auth0_domain),
+        new AuthCallback() {
           @Override
-          public void onSuccess(UserProfile userinfo) {
-            // Display the user profile
-            Log.d(LOG_TAG, " onSuccess userInfo id " + userinfo.getId());
-            userProfileView.showPreferenceUserName(userinfo.getName());
-            userProfileView.showPreferenceEmail(userinfo.getEmail());
+          public void onFailure(@NonNull Dialog dialog) {
+            Log.d(LOG_TAG, "Error performLogin onFailure ");
+            userProfileView.showError(R.string.error);
           }
 
           @Override
-          public void onFailure(AuthenticationException error) {
-            // Show error
+          public void onFailure(AuthenticationException exception) {
+            Log.d(LOG_TAG, "Error performLogin AuthenticationException "
+                + exception.getMessage());
+            Crashlytics.log("Error performLogin AuthenticationException: " + exception);
             userProfileView.showError(R.string.error);
+          }
+
+          @Override
+          public void onSuccess(@NonNull Credentials credentials) {
+            Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
+            userAuth0Helper.saveCredentials(credentials);
+            String accessToken = credentials.getAccessToken();
+            getUserProfile(accessToken);
           }
         });
   }
 
-  public void onClickUsername(boolean emptyField) {
-    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
-      userProfileView.navigateToUserAuth0();
-    }
+  private void getUserProfile(String accessToken) {
+    userAuth0Helper.getUserProfile(accessToken,
+        new BaseCallback<UserProfile, AuthenticationException>() {
+          @Override
+          public void onFailure(AuthenticationException error) {
+            Log.d(LOG_TAG, "Error getting user profile info " + error.getMessage());
+            Crashlytics.log("Error getUserProfile AuthenticationException: " + error);
+          }
+
+          @Override
+          public void onSuccess(UserProfile userProfile) {
+            saveAccountManager(userProfile, accessToken);
+            // Display the user profile
+            Log.d(LOG_TAG, " onSuccess getUserProfile userInfo id " + userProfile.getId());
+            userProfileView.showPreferenceUserName(userProfile.getName());
+            userProfileView.showPreferenceEmail(userProfile.getEmail());
+          }
+        });
   }
 
-  public void onClickEmail(boolean emptyField) {
-    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
-      userProfileView.navigateToUserAuth0();
-    }
+  private void saveAccountManager(UserProfile userProfile, String accessToken) {
+    userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
+        accessToken, userProfile.getId());
   }
+
 }

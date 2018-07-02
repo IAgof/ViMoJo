@@ -7,6 +7,7 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
 import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -103,7 +104,6 @@ import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimA
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import dagger.Module;
 import dagger.Provides;
@@ -308,12 +308,12 @@ public class ActivityPresentersModule {
       ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
       GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
       UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
-      RunSyncAdapterHelper runSyncAdapterHelper, UserApiClient userApiClient) {
+      RunSyncAdapterHelper runSyncAdapterHelper, UserAuth0Helper userAuth0Helper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase, getAuthToken,
             uploadToPlatform, loggedValidator, runSyncAdapterHelper, projectInstanceCache,
-            userApiClient);
+            userAuth0Helper);
   }
 
   @Provides @PerActivity
@@ -379,9 +379,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          UserApiClient userApiClient) {
+          UserAuth0Helper userAuth0Helper) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, userApiClient);
+        obtainLocalVideosUseCase, userAuth0Helper);
   }
 
   @Provides @PerActivity
@@ -587,12 +587,12 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  RunSyncAdapterHelper provideRunSyncAdapterHelper(UserApiClient userApiClient) {
-    return new RunSyncAdapterHelper(activity, userApiClient);
+  RunSyncAdapterHelper provideRunSyncAdapterHelper() {
+    return new RunSyncAdapterHelper(activity);
   }
 
   @Provides
-  UserApiClient provideUserApiClient() {
-    return new UserApiClient(activity);
+  UserAuth0Helper provideUserAuth0Helper() {
+    return new UserAuth0Helper(activity);
   }
 }

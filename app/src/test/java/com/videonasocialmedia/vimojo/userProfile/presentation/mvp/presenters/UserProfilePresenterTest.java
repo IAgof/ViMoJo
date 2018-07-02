@@ -1,21 +1,23 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import com.auth0.android.provider.AuthCallback;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -35,8 +37,9 @@ public class UserProfilePresenterTest {
   @Mock Context mockedContext;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
-  @Mock GetAuthToken mockedGetAuthToken;
-  @Mock UserApiClient mockedUserApiClient;
+  @Mock Activity mockedActivity;
+  @Mock UserAuth0Helper mockedUserAuth0Helper;
+  @Mock AuthCallback mockedAuthCallBack;
 
   @Before
   public void injectMocks() {
@@ -76,27 +79,27 @@ public class UserProfilePresenterTest {
 
   @Test
   public void clickUserEmailCallsUserAuthIfEmptyField(){
-    UserProfilePresenter presenter = getUserProfilePresenter();
+    UserProfilePresenter presenterSpy = Mockito.spy(getUserProfilePresenter());
 
-    presenter.onClickEmail(true);
+    presenterSpy.onClickEmail(mockedActivity, true);
 
     if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
-      verify(mockedUserProfileView).navigateToUserAuth0();
+      verify(presenterSpy).performLoginAndSaveAccount(mockedActivity);
   }
 
   @Test
   public void clickUserNameCallsUserAuthIfEmptyField(){
-    UserProfilePresenter presenter = getUserProfilePresenter();
+    UserProfilePresenter presenterSpy = Mockito.spy(getUserProfilePresenter());
 
-    presenter.onClickUsername(true);
+    presenterSpy.onClickUsername(mockedActivity, true);
 
     if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
-      verify(mockedUserProfileView).navigateToUserAuth0();
+      verify(presenterSpy).performLoginAndSaveAccount(mockedActivity);
   }
 
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
     return new UserProfilePresenter(mockedContext, mockedUserProfileView, mockedSharedPreferences,
-            mockedObtainLocalVideosUseCase, mockedGetAuthToken, mockedUserApiClient);
+            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper);
   }
 }

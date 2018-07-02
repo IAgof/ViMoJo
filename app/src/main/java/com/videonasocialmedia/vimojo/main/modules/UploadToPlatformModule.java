@@ -9,6 +9,7 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.Context;
 
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
@@ -41,9 +42,10 @@ public class UploadToPlatformModule {
   UploadToPlatform provideUploadToPlatform(UploadNotification uploadNotification,
                                            VideoApiClient videoApiClient,
                                            UserApiClient userApiClient,
+                                           UserAuth0Helper userAuth0Helper,
                                            UploadRepository uploadRepository) {
     return new UploadToPlatform(context, uploadNotification, videoApiClient, userApiClient,
-        uploadRepository);
+        userAuth0Helper, uploadRepository);
   }
 
   @Provides
@@ -58,7 +60,12 @@ public class UploadToPlatformModule {
 
   @Provides
   UserApiClient providesUserApiClient() {
-    return new UserApiClient(context);
+    return new UserApiClient();
+  }
+
+  @Provides
+  UserAuth0Helper providesUserAuth0Helper() {
+    return new UserAuth0Helper(context);
   }
 
   @Singleton @Provides
