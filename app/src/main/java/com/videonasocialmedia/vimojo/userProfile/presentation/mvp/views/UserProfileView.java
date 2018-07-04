@@ -19,4 +19,5 @@ public interface UserProfileView {
 
   void showError(int stringId);
 
+  void showPreferenceUserPic(String pictureURL);
 }

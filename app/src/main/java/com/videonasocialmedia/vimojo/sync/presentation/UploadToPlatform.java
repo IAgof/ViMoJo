@@ -16,12 +16,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.auth0.android.authentication.storage.CredentialsManagerException;
-import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.auth0.GetAuthToken;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.helper.ProgressRequestBody;
@@ -32,6 +30,7 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 
 import java.io.File;
@@ -57,6 +56,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   private final VideoApiClient videoApiClient;
   private final UserApiClient userApiClient;
   private final UserAuth0Helper userAuth0Helper;
+  private final GetAuthToken getAuthToken;
   private UploadNotification uploadNotification;
   private Call<Video> uploadVideoAsync;
   private UploadRepository uploadRepository;
@@ -68,13 +68,15 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   public UploadToPlatform(Context context, UploadNotification uploadNotification,
                           VideoApiClient videoApiClient, UserApiClient userApiClient,
-                          UserAuth0Helper userAuth0Helper, UploadRepository uploadRepository) {
+                          UserAuth0Helper userAuth0Helper, UploadRepository uploadRepository,
+                          GetAuthToken getAuthToken) {
     this.context = context;
     this.uploadNotification = uploadNotification;
     this.videoApiClient = videoApiClient;
     this.userApiClient = userApiClient;
     this.userAuth0Helper = userAuth0Helper;
     this.uploadRepository = uploadRepository;
+    this.getAuthToken = getAuthToken;
   }
 
   public void addVideoToUpload(VideoUpload videoUpload) throws IOException {
@@ -82,7 +84,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   }
 
   public boolean isBeingSendingToPlatform(VideoUpload videoUpload) {
-    for (VideoUpload videoAddedToUpload: uploadRepository.getAllVideosToUpload()) {
+    for (VideoUpload videoAddedToUpload : uploadRepository.getAllVideosToUpload()) {
       if (videoAddedToUpload.getMediaPath().equals(videoUpload.getMediaPath())) {
         return true;
       }
@@ -93,61 +95,46 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   public void processAsyncUpload(VideoUpload videoUpload) {
     Log.d(LOG_TAG, "processAsyncUpload");
     Log.d(LOG_TAG, "startNotification " + videoUpload.getUuid());
-    userAuth0Helper.getAccessToken(new BaseCallback<Credentials,
-        CredentialsManagerException>() {
-      @Override
-      public void onSuccess(Credentials credentials) {
-        //Get credentials, tokenUser
-        String accesToken = credentials.getAccessToken();
-        try {
-          // UserId
-          String userId = userApiClient.getUserId(accesToken);
-          notificationUploadId = videoUpload.getId();
-          createPendingIntents(videoUpload.getUuid());
-          resetProgressBar();
-          uploadNotification.startInfiniteProgressNotification(notificationUploadId,
-              R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
-              cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
-          // Uploading video
-          uploadVideo(accesToken, userId, videoUpload);
-        } catch (VimojoApiException vimojoApiException) {
-          Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
-          Crashlytics.log("Error process upload vimojoApiException");
-          Crashlytics.logException(vimojoApiException);
-          switch (vimojoApiException.getApiErrorCode()) {
-            case VimojoApiException.UNAUTHORIZED:
-              uploadNotification.errorUnauthorizedUploadingVideos(notificationUploadId);
-              break;
-            case VimojoApiException.NETWORK_ERROR:
-              uploadNotification.errorNetworkNotification(notificationUploadId);
-              videoUpload.setUploading(false);
-              uploadRepository.update(videoUpload);
-              break;
-            default:
-              if (videoUpload.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD) {
-                retryItemUpload(videoUpload);
-              }
+    AuthToken authToken = getAuthToken.getAuthToken(context);
+    try {
+      notificationUploadId = videoUpload.getId();
+      createPendingIntents(videoUpload.getUuid());
+      resetProgressBar();
+      uploadNotification.startInfiniteProgressNotification(notificationUploadId,
+          R.drawable.notification_uploading_small, context.getString(R.string.uploading_video),
+          cancelUploadPendingIntent, pauseUploadPendingIntent, removePendingIntent);
+      // Uploading video
+      Log.d(LOG_TAG, "uploadVideo token: " + authToken.getToken() + " userId: "
+          + authToken.getId());
+      uploadVideo(authToken.getToken(), authToken.getId(), videoUpload);
+    } catch (VimojoApiException vimojoApiException) {
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process upload vimojoApiException");
+      Crashlytics.logException(vimojoApiException);
+      switch (vimojoApiException.getApiErrorCode()) {
+        case VimojoApiException.UNAUTHORIZED:
+          uploadNotification.errorUnauthorizedUploadingVideos(notificationUploadId);
+          break;
+        case VimojoApiException.NETWORK_ERROR:
+          uploadNotification.errorNetworkNotification(notificationUploadId);
+          videoUpload.setUploading(false);
+          uploadRepository.update(videoUpload);
+          break;
+        default:
+          if (videoUpload.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD) {
+            retryItemUpload(videoUpload);
           }
-        } catch (FileNotFoundException fileNotFoundError) {
-          if (BuildConfig.DEBUG) {
-            fileNotFoundError.printStackTrace();
-          }
-          Log.d(LOG_TAG, "File " + videoUpload.getMediaPath()
-              + " trying to upload does not exists!");
-          uploadNotification.errorFileNotFound(notificationUploadId, videoUpload);
-          // (jliarte): 27/02/18 Check this error management
-          removeVideoUpload(videoUpload);
-        }
       }
-
-      @Override
-      public void onFailure(CredentialsManagerException error) {
-        //No credentials were previously saved or they couldn't be refreshed
-        Log.d(LOG_TAG, "processAsyncUpload, getAccessToken onFailure No credentials were " +
-            "previously saved or they couldn't be refreshed");
-        Crashlytics.log("Error processAsyncUpload getAccessToken");
+    } catch (FileNotFoundException fileNotFoundError) {
+      if (BuildConfig.DEBUG) {
+        fileNotFoundError.printStackTrace();
       }
-    });
+      Log.d(LOG_TAG, "File " + videoUpload.getMediaPath()
+          + " trying to upload does not exists!");
+      uploadNotification.errorFileNotFound(notificationUploadId, videoUpload);
+      // (jliarte): 27/02/18 Check this error management
+      removeVideoUpload(videoUpload);
+    }
   }
 
   private void uploadVideo(String token, String userId, VideoUpload videoUpload)
@@ -171,6 +158,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
             context.getString(R.string.upload_video_success), videoUpload.getTitle(),
             true, userId);
       }
+
       @Override
       public void onFailure(Call<Video> call, Throwable t) {
         Log.d(LOG_TAG, "onFailure uploading video ... " + t.getMessage()
@@ -211,7 +199,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     removeUploadIntent.setAction(IntentConstants.ACTION_REMOVE_UPLOAD);
     removePendingIntent = PendingIntent.getBroadcast(
         context, 0, removeUploadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-      }
+  }
 
   private void retryItemUpload(VideoUpload videoUpload) {
     videoUpload.incrementNumTries();
@@ -250,7 +238,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   @Override
   public void onProgressUpdate(int percentage) {
-    if(percentageShowed < percentage && (percentage % 5 == 0)) {
+    if (percentageShowed < percentage && (percentage % 5 == 0)) {
       Log.d(LOG_TAG, "progress " + percentage);
       percentageShowed = percentage;
       uploadNotification.setProgress(notificationUploadId, R.drawable.notification_uploading_small,

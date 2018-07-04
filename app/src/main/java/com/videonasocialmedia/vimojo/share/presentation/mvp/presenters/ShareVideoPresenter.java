@@ -46,6 +46,8 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,6 +94,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private boolean hasBeenProjectExported;
   protected boolean isAppExportingProject;
   private UserAuth0Helper userAuth0Helper;
+  private UserApiClient userApiClient;
 
   @Inject
   public ShareVideoPresenter(
@@ -104,7 +107,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
       GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
       UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
       RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-      UserAuth0Helper userAuth0Helper) {
+      UserAuth0Helper userAuth0Helper, UserApiClient userApiClient) {
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;
@@ -120,6 +123,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.userAuth0Helper = userAuth0Helper;
+    this.userApiClient = userApiClient;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -448,7 +452,16 @@ public class ShareVideoPresenter extends VimojoPresenter {
   }
 
   private void saveAccountManager(UserProfile userProfile, String accessToken) {
-    userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-        accessToken, userProfile.getId());
+    // UserId
+    String userId = null;
+    try {
+      userId = userApiClient.getUserId(accessToken).getId();
+      userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
+          accessToken, userId);
+    } catch (VimojoApiException vimojoApiException) {
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process get UserId vimojoApiException");
+      Crashlytics.logException(vimojoApiException);
+    }
   }
 }

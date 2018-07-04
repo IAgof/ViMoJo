@@ -57,6 +57,8 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,6 +100,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private GetAccount getAccount;
   private ProjectRepository projectRepository;
   private Project currentProject;
+  private UserApiClient userApiClient;
 
   /**
    * Constructor
@@ -123,7 +126,8 @@ public class PreferencesPresenter extends VimojoPresenter
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadRepository uploadRepository, ProjectInstanceCache projectInstanceCache) {
+      UploadRepository uploadRepository, ProjectInstanceCache projectInstanceCache,
+      UserApiClient userApiClient) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -149,8 +153,9 @@ public class PreferencesPresenter extends VimojoPresenter
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
-    this.userAuth0Helper = userAuth0Helper;
     this.uploadRepository = uploadRepository;
+    this.userAuth0Helper = userAuth0Helper;
+    this.userApiClient = userApiClient;
   }
 
   public void updatePresenter(Activity activity) {
@@ -442,7 +447,16 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void saveAccountManager(UserProfile userProfile, String accessToken) {
-    userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-        accessToken, userProfile.getId());
+    // UserId
+    String userId = null;
+    try {
+      userId = userApiClient.getUserId(accessToken).getId();
+      userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
+          accessToken, userId);
+    } catch (VimojoApiException vimojoApiException) {
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process getting UserId vimojoApiException");
+      Crashlytics.logException(vimojoApiException);
+    }
   }
 }

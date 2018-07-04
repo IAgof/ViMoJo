@@ -23,6 +23,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.List;
 
@@ -38,16 +40,19 @@ public class UserProfilePresenter extends VimojoPresenter {
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private final Context context;
   protected final UserAuth0Helper userAuth0Helper;
+  private UserApiClient userApiClient;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                                  obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper) {
+                                  obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
+                              UserApiClient userApiClient) {
     this.context = context;
     this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.userAuth0Helper = userAuth0Helper;
+    this.userApiClient = userApiClient;
   }
 
   public void getInfoVideosRecordedEditedShared() {
@@ -96,25 +101,7 @@ public class UserProfilePresenter extends VimojoPresenter {
 
       @Override
       public void onSuccess(Credentials credentials) {
-        userAuth0Helper.getUserProfile(credentials.getAccessToken(),
-            new BaseCallback<UserProfile, AuthenticationException>() {
-              @Override
-              public void onFailure(AuthenticationException error) {
-                Log.d(LOG_TAG, "Error getAccessToken AuthenticationException "
-                    + error.getMessage());
-                Crashlytics.log("Error getAccessToken AuthenticationException: " + error);
-                // Show error
-                userProfileView.showError(R.string.error);
-              }
-
-              @Override
-              public void onSuccess(UserProfile userProfile) {
-                // Display the user profile
-                Log.d(LOG_TAG, " onSuccess getAccessToken userInfo id " + userProfile.getId());
-                userProfileView.showPreferenceUserName(userProfile.getName());
-                userProfileView.showPreferenceEmail(userProfile.getEmail());
-              }
-            });
+        getUserProfile(credentials.getAccessToken());
       }
     });
 
@@ -175,13 +162,23 @@ public class UserProfilePresenter extends VimojoPresenter {
             Log.d(LOG_TAG, " onSuccess getUserProfile userInfo id " + userProfile.getId());
             userProfileView.showPreferenceUserName(userProfile.getName());
             userProfileView.showPreferenceEmail(userProfile.getEmail());
+            userProfileView.showPreferenceUserPic(userProfile.getPictureURL());
           }
         });
   }
 
   private void saveAccountManager(UserProfile userProfile, String accessToken) {
-    userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-        accessToken, userProfile.getId());
+    // UserId
+    String userId = null;
+    try {
+      userId = userApiClient.getUserId(accessToken).getId();
+      userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
+          accessToken, userId);
+    } catch (VimojoApiException vimojoApiException) {
+      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+      Crashlytics.log("Error process get UserId vimojoApiException");
+      Crashlytics.logException(vimojoApiException);
+    }
   }
 
 }

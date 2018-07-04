@@ -155,7 +155,8 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @Override
   protected void onResume() {
     super.onResume();
-    setUpAndCheckUserThumb();
+    // TODO: 4/7/18 Implement feature updating pic user with auth0. Meanwhile we will use Auth0 pic
+    //setUpAndCheckUserThumb();
     presenter.getInfoVideosRecordedEditedShared();
     presenter.setupUserInfo();
   }
@@ -248,6 +249,19 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @Override
   public void showError(int stringId) {
     Snackbar.make(email, stringId ,Snackbar.LENGTH_LONG).show();
+  }
+
+  @Override
+  public void showPreferenceUserPic(String pictureURL) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        Glide.with(UserProfileActivity.this)
+            .load(pictureURL)
+            .error(R.drawable.activity_user_profile_default_thumb)
+            .into(image_user);
+      }
+    });
   }
 
   @OnClick(R.id.backButton)

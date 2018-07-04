@@ -6,8 +6,11 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 
 
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import retrofit2.Response;
 
@@ -17,6 +20,11 @@ import retrofit2.Response;
  * <p>Handles user details calls.</p>
  */
 public class UserApiClient extends VimojoApiClient {
+
+  @Inject
+  public UserApiClient() {
+
+  }
 
   private String LOG_TAG = UserApiClient.class.getCanonicalName();
 
@@ -43,10 +51,10 @@ public class UserApiClient extends VimojoApiClient {
     return null;
   }
 
-  public String getUserId(String token) throws VimojoApiException {
+  public UserId getUserId(String token) throws VimojoApiException {
     UserService userService = getService(UserService.class, token);
     try {
-      Response<String> response = userService.getUserId(token).execute();
+      Response<UserId> response = userService.getUserId().execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {

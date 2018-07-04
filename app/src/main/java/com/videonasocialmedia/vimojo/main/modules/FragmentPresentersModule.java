@@ -27,6 +27,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermar
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 
 import dagger.Module;
@@ -84,7 +85,7 @@ public class FragmentPresentersModule {
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadRepository uploadRepository) {
+      UploadRepository uploadRepository, UserApiClient userApiClient) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
@@ -95,7 +96,7 @@ public class FragmentPresentersModule {
             updateIntermediateTemporalFilesTransitionsUseCase,
             updateWatermarkPreferenceToProjectUseCase, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache);
+            uploadRepository, projectInstanceCache, userApiClient);
   }
 
   @Provides
@@ -163,7 +164,7 @@ public class FragmentPresentersModule {
 
   @Provides
   UserAuth0Helper providesUserAuth0Helper() {
-    return new UserAuth0Helper(context);
+    return new UserAuth0Helper();
   }
 
 }

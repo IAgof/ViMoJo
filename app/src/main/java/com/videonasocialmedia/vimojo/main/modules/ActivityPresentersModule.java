@@ -104,6 +104,7 @@ import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimA
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import dagger.Module;
 import dagger.Provides;
@@ -308,12 +309,13 @@ public class ActivityPresentersModule {
       ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
       GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
       UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
-      RunSyncAdapterHelper runSyncAdapterHelper, UserAuth0Helper userAuth0Helper) {
+      RunSyncAdapterHelper runSyncAdapterHelper, UserAuth0Helper userAuth0Helper,
+      UserApiClient userApiClient) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase, getAuthToken,
             uploadToPlatform, loggedValidator, runSyncAdapterHelper, projectInstanceCache,
-            userAuth0Helper);
+            userAuth0Helper, userApiClient);
   }
 
   @Provides @PerActivity
@@ -379,9 +381,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          UserAuth0Helper userAuth0Helper) {
+          UserAuth0Helper userAuth0Helper, UserApiClient userApiClient) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, userAuth0Helper);
+        obtainLocalVideosUseCase, userAuth0Helper, userApiClient);
   }
 
   @Provides @PerActivity
@@ -593,6 +595,6 @@ public class ActivityPresentersModule {
 
   @Provides
   UserAuth0Helper provideUserAuth0Helper() {
-    return new UserAuth0Helper(activity);
+    return new UserAuth0Helper();
   }
 }

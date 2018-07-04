@@ -25,6 +25,7 @@ import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.videonasocialmedia.vimojo.auth.AccountConstants;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 
 
 /**
@@ -39,14 +40,14 @@ public class UserAuth0Helper {
   private SecureCredentialsManager manager;
   private Context context;
 
-  public UserAuth0Helper(Context context) {
+  public UserAuth0Helper() {
+    this.context = VimojoApplication.getAppContext();
     account = new Auth0(context);
     //Configure the account in OIDC conformant mode
     account.setOIDCConformant(true);
     authenticator = new AuthenticationAPIClient(account);
     manager = new SecureCredentialsManager(context, authenticator,
         new SharedPreferencesStorage(context));
-    this.context = context;
   }
 
   public void signOut() {
@@ -62,7 +63,7 @@ public class UserAuth0Helper {
     WebAuthProvider.init(account)
         .withScheme("https")
         .withScope("openid profile email")
-        .withAudience(String.format("https://%s/userinfo",auth0Domain))
+        .withAudience(String.format("https://vimojo.auth/api",auth0Domain))
         .start(activity, authCallback);
   }
 
