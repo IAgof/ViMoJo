@@ -70,8 +70,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 119 // 20180620
-            versionName "0.19.4" // 20180620
+            versionCode 121 // 20180627
+            versionName "0.19.6" // 20180627
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -163,8 +163,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 70 // 20180620
-            versionName "0.19.4.fThomsonFoundation" // 20180620
+            versionCode 72 // 20180627
+            versionName "0.19.6.fThomsonFoundation" // 20180627
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -211,8 +211,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 37 // 20180620
-            versionName "0.19.4.fMarketForNews" // 20180620
+            versionCode 39 // 20180627
+            versionName "0.19.6.fMarketForNews" // 20180627
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -261,8 +261,8 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 12 // 20180620
-            versionName "0.19.4.fElConfidencial" // 20180620
+            versionCode 14 // 20180627
+            versionName "0.19.6.fElConfidencial" // 20180627
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -282,6 +282,31 @@ android {
             ext.fabricApiKey = "1442d44814a667b767d05105af9eaf0887fa55bf"
             ext.fabricApiSecret = "0fcdb4c627d49f12bdd91f05aab78cc2df83d19e142221ad4361b4596bd9f5f8"
             manifestPlaceholders = [vimojoAppName: "Vimojo El Confidencial", fabricApiKey: "1442d44814a667b767d05105af9eaf0887fa55bf"]
+        }
+
+        vanitatis {
+            applicationId "com.videonasocialmedia.vimojo.vanitatis"
+            versionCode 1 // 20180627
+            versionName "0.19.6.fElConfidencial" // 20180627
+            resValue "string", "app_out_of_date", "2018-06-30" // 20180522
+            resValue "string", "app_name", "Vimojo Vanitatis"
+            resValue "string", "content_authority", applicationId + '.provider'
+            resValue "string", "account_type", applicationId + ".auth"
+            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+            buildConfigField "boolean", "FEATURE_FTP", "true"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
+            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
+            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
+            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
+            buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+            ext.fabricApiKey = "ba042a668ef1e5a3445c6e91d54df22eb70dbfc9"
+            ext.fabricApiSecret = "b3aa2331c01539f74d9b0167cd8cc4162ebb0004907a676f8c5007f0b003df39"
+            manifestPlaceholders = [vimojoAppName: "Vimojo Vanitatis", fabricApiKey: "ba042a668ef1e5a3445c6e91d54df22eb70dbfc9"]
         }
     }
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")

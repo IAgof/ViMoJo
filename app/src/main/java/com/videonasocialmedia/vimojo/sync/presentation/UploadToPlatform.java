@@ -84,7 +84,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   }
 
   public boolean isBeingSendingToPlatform(VideoUpload videoUpload) {
-    for (VideoUpload videoAddedToUpload : uploadRepository.getAllVideosToUpload()) {
+    for (VideoUpload videoAddedToUpload: uploadRepository.getAllVideosToUpload()) {
       if (videoAddedToUpload.getMediaPath().equals(videoUpload.getMediaPath())) {
         return true;
       }
@@ -146,7 +146,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     ProgressRequestBody fileBody = new ProgressRequestBody(file, MIME_TYPE_VIDEO, this);
     videoUpload.setUploading(true);
     uploadRepository.update(videoUpload);
-    uploadVideoAsync = videoApiClient.uploadVideoAsync(token, videoUpload, fileBody);
+    uploadVideoAsync = videoApiClient.uploadVideoAsyncWithProgress(token, videoUpload, fileBody);
     uploadVideoAsync.enqueue(new Callback<Video>() {
       @Override
       public void onResponse(Call<Video> call, Response<Video> response) {
