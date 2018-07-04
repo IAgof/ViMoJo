@@ -34,7 +34,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAccount;
+import com.videonasocialmedia.vimojo.auth0.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -127,7 +127,7 @@ public class PreferencesPresenter extends VimojoPresenter
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
       UploadRepository uploadRepository, ProjectInstanceCache projectInstanceCache,
-      UserApiClient userApiClient) {
+      UserApiClient userApiClient, GetAccount getAccount) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -156,6 +156,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.uploadRepository = uploadRepository;
     this.userAuth0Helper = userAuth0Helper;
     this.userApiClient = userApiClient;
+    this.getAccount = getAccount;
   }
 
   public void updatePresenter(Activity activity) {
@@ -370,9 +371,7 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void deleteAccount() {
-
     userAuth0Helper.signOut();
-
     ListenableFuture<Account> accountFuture = executeUseCaseCall(new Callable<Account>() {
       @Override
       public Account call() throws Exception {
@@ -385,7 +384,6 @@ public class PreferencesPresenter extends VimojoPresenter
         AccountManager am = AccountManager.get(getContext());
         am.removeAccount(account, null, null);
       }
-
       @Override
       public void onFailure(Throwable t) {
         // (jliarte): 22/01/18 no account present? do nothing

@@ -30,6 +30,11 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 
 /**
  * Created by alvaro on 2/7/18.
+ *
+ * Aux class to unify auth0 configuration.
+ * Get perform login/register, accestToken, sign out and is user logged.
+ * Callback manage in presenters or classes with implement these methods.
+ *
  */
 
 public class UserAuth0Helper {
