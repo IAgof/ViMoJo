@@ -42,6 +42,7 @@ import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 
@@ -103,8 +104,7 @@ public class ShareVideoPresenterTest {
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
-    @Mock Activity mockedActivity;
-    @Mock Credentials mockedCredentials;
+    @Mock UserApiClient mockedUserApiClient;
 
     @Before
     public void injectMocks() {
@@ -136,7 +136,8 @@ public class ShareVideoPresenterTest {
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
                 mockedGetAuthToken, mockedUploadToPlatform, mockedLoggedValidator,
-                mockedRunSyncAdapterHelper, mockedProjectInstanceCache, mockedUserAuth0Helper);
+                mockedRunSyncAdapterHelper, mockedProjectInstanceCache, mockedUserAuth0Helper,
+                mockedUserApiClient);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -408,7 +409,7 @@ public class ShareVideoPresenterTest {
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
             mockedUploadToPlatform, mockedLoggedValidator, mockedRunSyncAdapterHelper,
-            mockedProjectInstanceCache, mockedUserAuth0Helper);
+            mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUserApiClient);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

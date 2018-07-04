@@ -45,7 +45,7 @@ public class UserProfilePresenter extends VimojoPresenter {
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                                  obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
+                              obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
                               UserApiClient userApiClient) {
     this.context = context;
     this.userProfileView = view;

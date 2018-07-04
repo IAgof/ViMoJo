@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class UserProfilePresenterTest {
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
   @Mock Activity mockedActivity;
   @Mock UserAuth0Helper mockedUserAuth0Helper;
-  @Mock AuthCallback mockedAuthCallBack;
+  @Mock UserApiClient mockedUserApiClient;
 
   @Before
   public void injectMocks() {
@@ -100,6 +101,6 @@ public class UserProfilePresenterTest {
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
     return new UserProfilePresenter(mockedContext, mockedUserProfileView, mockedSharedPreferences,
-            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper);
+            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper, mockedUserApiClient);
   }
 }

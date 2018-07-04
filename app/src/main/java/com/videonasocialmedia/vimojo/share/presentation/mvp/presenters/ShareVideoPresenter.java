@@ -80,9 +80,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private SharedPreferences.Editor preferencesEditor;
   private AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase;
   private ExportProjectUseCase exportUseCase;
-  private final GetAuthToken getAuthToken;
   private UploadToPlatform uploadToPlatform;
-  private final LoggedValidator loggedValidator;
   private final RunSyncAdapterHelper runSyncAdapterHelper;
   private final ProjectInstanceCache projectInstanceCache;
   private String videoPath = "";
@@ -117,9 +115,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.exportUseCase = exportProjectUseCase;
     this.obtainNetworksToShareUseCase = obtainNetworksToShareUseCase;
     this.getFtpListUseCase = getFtpListUseCase;
-    this.getAuthToken = getAuthToken;
     this.uploadToPlatform = uploadToPlatform;
-    this.loggedValidator = loggedValidator;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.userAuth0Helper = userAuth0Helper;

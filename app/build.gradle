@@ -287,7 +287,7 @@ android {
         vanitatis {
             applicationId "com.videonasocialmedia.vimojo.vanitatis"
             versionCode 1 // 20180627
-            versionName "0.19.6.fElConfidencial" // 20180627
+            versionName "0.19.6.fVanitatis" // 20180627
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo Vanitatis"
             resValue "string", "content_authority", applicationId + '.provider'
