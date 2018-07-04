@@ -18,7 +18,7 @@ import android.content.pm.PackageManager;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 
-import static com.videonasocialmedia.vimojo.auth.AccountConstants.VIMOJO_ACCOUNT_TYPE;
+import static com.videonasocialmedia.vimojo.auth0.AccountConstants.VIMOJO_ACCOUNT_TYPE;
 
 /**
  * Utility class for getting current Vimojo Android Account.

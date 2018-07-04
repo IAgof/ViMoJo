@@ -21,7 +21,6 @@ import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
@@ -37,7 +36,6 @@ import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.VimojoNetwork;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -102,8 +100,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
       AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
       ExportProjectUseCase exportProjectUseCase,
       ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-      GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
-      UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
+      GetFtpListUseCase getFtpListUseCase,
+      UploadToPlatform uploadToPlatform,
       RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
       UserAuth0Helper userAuth0Helper, UserApiClient userApiClient) {
     this.context = context;

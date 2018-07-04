@@ -24,7 +24,6 @@ import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
-import com.videonasocialmedia.vimojo.auth.AccountConstants;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 
 
@@ -67,7 +66,7 @@ public class UserAuth0Helper {
     //Use the account in the API clients
     WebAuthProvider.init(account)
         .withScheme("https")
-        .withScope("openid profile email")
+        .withScope("openid offline_access profile email")
         .withAudience(String.format("https://vimojo.auth/api",auth0Domain))
         .start(activity, authCallback);
   }

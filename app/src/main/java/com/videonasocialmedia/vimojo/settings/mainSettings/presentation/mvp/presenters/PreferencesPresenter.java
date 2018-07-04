@@ -419,14 +419,14 @@ public class PreferencesPresenter extends VimojoPresenter
           public void onSuccess(@NonNull Credentials credentials) {
             Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
             userAuth0Helper.saveCredentials(credentials);
-            String accessToken = credentials.getAccessToken();
-            getUserProfile(accessToken);
+            //String accessToken = credentials.getAccessToken();
+            getUserProfile(credentials);
           }
         });
   }
 
-  private void getUserProfile(String accessToken) {
-    userAuth0Helper.getUserProfile(accessToken,
+  private void getUserProfile(Credentials credentials) {
+    userAuth0Helper.getUserProfile(credentials.getAccessToken(),
         new BaseCallback<UserProfile, AuthenticationException>() {
           @Override
           public void onFailure(AuthenticationException error) {
@@ -436,7 +436,7 @@ public class PreferencesPresenter extends VimojoPresenter
 
           @Override
           public void onSuccess(UserProfile userProfile) {
-            saveAccountManager(userProfile, accessToken);
+            saveAccountManager(userProfile, credentials);
             // Display the user profile
             Log.d(LOG_TAG, " onSuccess getUserProfile userInfo id " + userProfile.getId());
             preferencesView.setupUserAuthentication(true);
@@ -444,13 +444,13 @@ public class PreferencesPresenter extends VimojoPresenter
         });
   }
 
-  private void saveAccountManager(UserProfile userProfile, String accessToken) {
+  private void saveAccountManager(UserProfile userProfile, Credentials credentials) {
     // UserId
     String userId = null;
     try {
-      userId = userApiClient.getUserId(accessToken).getId();
+      userId = userApiClient.getUserId(credentials.getAccessToken()).getId();
       userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-          accessToken, userId);
+          "fakeToken", userId);
     } catch (VimojoApiException vimojoApiException) {
       Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
       Crashlytics.log("Error process getting UserId vimojoApiException");

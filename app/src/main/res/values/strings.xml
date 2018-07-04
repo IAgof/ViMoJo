@@ -199,6 +199,13 @@
     <!-- Settings Activity -->
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_auth">Register / Sign in></string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_in_register">Register / Sign in</string>
+    <string name="sign_out_title_dialog">Sign Out</string>
+    <string name="sign_out_message_dialog">Sign out now?</string>
+    <string name="accept_sign_out">Yes</string>
+    <string name="cancel_sign_out">No</string>
 
     <!-- Rate Videona -->
     <string name="rateUsDialogTitle">We count on you</string>
@@ -2561,10 +2568,5 @@ and Conditions.\n\n
     <string name="notification_pause">PAUSE</string>
     <string name="notification_cancel">CANCEL</string>
 
-    <string name="com_auth0_client_id">9z2Co0NpTwXNshfSvh0dhyCuwW0S5x4E</string>
-    <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
-
     <string name="vimojo_platform_base_debug">https://beta.viday.co</string>
-
-
 </resources>

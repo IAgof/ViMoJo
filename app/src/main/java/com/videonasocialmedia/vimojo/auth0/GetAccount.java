@@ -11,7 +11,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
 
 import javax.inject.Inject;
 

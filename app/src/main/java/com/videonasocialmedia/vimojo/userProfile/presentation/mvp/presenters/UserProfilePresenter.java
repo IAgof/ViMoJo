@@ -159,7 +159,7 @@ public class UserProfilePresenter extends VimojoPresenter {
           public void onSuccess(UserProfile userProfile) {
             saveAccountManager(userProfile, accessToken);
             // Display the user profile
-            Log.d(LOG_TAG, " onSuccess getUserProfile userInfo id " + userProfile.getId());
+            Log.d(LOG_TAG, " onSuccess getUserProfile accessToken " + accessToken);
             userProfileView.showPreferenceUserName(userProfile.getName());
             userProfileView.showPreferenceEmail(userProfile.getEmail());
             userProfileView.showPreferenceUserPic(userProfile.getPictureURL());
