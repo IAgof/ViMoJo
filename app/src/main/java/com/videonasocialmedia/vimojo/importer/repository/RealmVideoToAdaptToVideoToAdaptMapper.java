@@ -4,7 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoUUIDSpecification;
+import com.videonasocialmedia.vimojo.repository.video.datasource.VideoUUIDSpecification;
 
 import java.util.List;
 

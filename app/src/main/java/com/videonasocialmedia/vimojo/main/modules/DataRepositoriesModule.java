@@ -5,13 +5,13 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRep
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmRepository;
-import com.videonasocialmedia.vimojo.repository.music.MusicRealmRepository;
+import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmRepository;
 import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.repository.project.datasource.ProjectRealmRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRealmRepository;
+import com.videonasocialmedia.vimojo.repository.track.datasource.TrackRealmRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRealmRepository;
+import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import javax.inject.Singleton;

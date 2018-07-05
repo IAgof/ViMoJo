@@ -11,7 +11,7 @@ import android.content.Context;
 
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
+import com.videonasocialmedia.vimojo.repository.upload.datasource.UploadRealmRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
