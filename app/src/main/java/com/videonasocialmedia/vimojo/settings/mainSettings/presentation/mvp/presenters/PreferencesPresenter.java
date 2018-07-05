@@ -58,7 +58,6 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -100,7 +99,6 @@ public class PreferencesPresenter extends VimojoPresenter
   private GetAccount getAccount;
   private ProjectRepository projectRepository;
   private Project currentProject;
-  private UserApiClient userApiClient;
 
   /**
    * Constructor
@@ -127,7 +125,7 @@ public class PreferencesPresenter extends VimojoPresenter
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
       UploadRepository uploadRepository, ProjectInstanceCache projectInstanceCache,
-      UserApiClient userApiClient, GetAccount getAccount) {
+      GetAccount getAccount) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -155,7 +153,6 @@ public class PreferencesPresenter extends VimojoPresenter
     this.projectInstanceCache = projectInstanceCache;
     this.uploadRepository = uploadRepository;
     this.userAuth0Helper = userAuth0Helper;
-    this.userApiClient = userApiClient;
     this.getAccount = getAccount;
   }
 
@@ -372,6 +369,7 @@ public class PreferencesPresenter extends VimojoPresenter
 
   private void deleteAccount() {
     userAuth0Helper.signOut();
+    deletePendingVideosToUpload();
     ListenableFuture<Account> accountFuture = executeUseCaseCall(new Callable<Account>() {
       @Override
       public Account call() throws Exception {
@@ -389,7 +387,6 @@ public class PreferencesPresenter extends VimojoPresenter
         // (jliarte): 22/01/18 no account present? do nothing
       }
     });
-    deletePendingVideosToUpload();
   }
 
   private void deletePendingVideosToUpload() {
@@ -404,7 +401,7 @@ public class PreferencesPresenter extends VimojoPresenter
           @Override
           public void onFailure(@NonNull Dialog dialog) {
             Log.d(LOG_TAG, "Error performLogin onFailure ");
-            preferencesView.showError(R.string.error);
+            preferencesView.showError(R.string.auth0_error_login_failure);
           }
 
           @Override
@@ -412,49 +409,15 @@ public class PreferencesPresenter extends VimojoPresenter
             Log.d(LOG_TAG, "Error performLogin AuthenticationException "
                 + exception.getMessage());
             Crashlytics.log("Error performLogin AuthenticationException: " + exception);
-            preferencesView.showError(R.string.error);
+            preferencesView.showError(R.string.auth0_error_authentication);
           }
 
           @Override
           public void onSuccess(@NonNull Credentials credentials) {
             Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
             userAuth0Helper.saveCredentials(credentials);
-            //String accessToken = credentials.getAccessToken();
-            getUserProfile(credentials);
-          }
-        });
-  }
-
-  private void getUserProfile(Credentials credentials) {
-    userAuth0Helper.getUserProfile(credentials.getAccessToken(),
-        new BaseCallback<UserProfile, AuthenticationException>() {
-          @Override
-          public void onFailure(AuthenticationException error) {
-            Log.d(LOG_TAG, "Error getting user profile info " + error.getMessage());
-            Crashlytics.log("Error getUserProfile AuthenticationException: " + error);
-          }
-
-          @Override
-          public void onSuccess(UserProfile userProfile) {
-            saveAccountManager(userProfile, credentials);
-            // Display the user profile
-            Log.d(LOG_TAG, " onSuccess getUserProfile userInfo id " + userProfile.getId());
             preferencesView.setupUserAuthentication(true);
           }
         });
-  }
-
-  private void saveAccountManager(UserProfile userProfile, Credentials credentials) {
-    // UserId
-    String userId = null;
-    try {
-      userId = userApiClient.getUserId(credentials.getAccessToken()).getId();
-      userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-          "fakeToken", userId);
-    } catch (VimojoApiException vimojoApiException) {
-      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
-      Crashlytics.log("Error process getting UserId vimojoApiException");
-      Crashlytics.logException(vimojoApiException);
-    }
   }
 }

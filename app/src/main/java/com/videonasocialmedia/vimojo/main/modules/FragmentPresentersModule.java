@@ -86,7 +86,7 @@ public class FragmentPresentersModule {
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadRepository uploadRepository, UserApiClient userApiClient, GetAccount getAccount) {
+      UploadRepository uploadRepository, GetAccount getAccount) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
@@ -97,7 +97,7 @@ public class FragmentPresentersModule {
             updateIntermediateTemporalFilesTransitionsUseCase,
             updateWatermarkPreferenceToProjectUseCase, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache, userApiClient, getAccount);
+            uploadRepository, projectInstanceCache, getAccount);
   }
 
   @Provides
@@ -164,8 +164,8 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UserAuth0Helper providesUserAuth0Helper() {
-    return new UserAuth0Helper();
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
+    return new UserAuth0Helper(userApiClient);
   }
 
 }

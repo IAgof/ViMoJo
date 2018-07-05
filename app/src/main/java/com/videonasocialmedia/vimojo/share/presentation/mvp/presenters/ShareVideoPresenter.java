@@ -90,7 +90,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private boolean hasBeenProjectExported;
   protected boolean isAppExportingProject;
   private UserAuth0Helper userAuth0Helper;
-  private UserApiClient userApiClient;
 
   @Inject
   public ShareVideoPresenter(
@@ -103,7 +102,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
       GetFtpListUseCase getFtpListUseCase,
       UploadToPlatform uploadToPlatform,
       RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-      UserAuth0Helper userAuth0Helper, UserApiClient userApiClient) {
+      UserAuth0Helper userAuth0Helper) {
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;
@@ -117,7 +116,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.userAuth0Helper = userAuth0Helper;
-    this.userApiClient = userApiClient;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -403,7 +401,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
           @Override
           public void onFailure(@NonNull Dialog dialog) {
             Log.d(LOG_TAG, "Error performLogin onFailure ");
-            shareVideoViewReference.get().showError("Error performLogin onFailure ");
+            shareVideoViewReference.get()
+                .showError(context.getString(R.string.auth0_error_login_failure));
             Crashlytics.log("Error performLogin onFailure");
           }
 
@@ -411,8 +410,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
           public void onFailure(AuthenticationException exception) {
             Log.d(LOG_TAG, "Error performLogin AuthenticationException "
                 + exception.getMessage());
-            shareVideoViewReference.get().showError("Error performLogin AuthenticationException "
-                + exception.getMessage());
+            shareVideoViewReference.get()
+                .showError(context.getString(R.string.auth0_error_authentication));
             Crashlytics.log("Error performLogin AuthenticationException: " + exception);
           }
 
@@ -420,42 +419,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
           public void onSuccess(@NonNull Credentials credentials) {
             Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
             userAuth0Helper.saveCredentials(credentials);
-            String accessToken = credentials.getAccessToken();
-            getUserProfile(accessToken);
-          }
-        });
-  }
-
-  private void getUserProfile(String accessToken) {
-    userAuth0Helper.getUserProfile(accessToken,
-        new BaseCallback<UserProfile, AuthenticationException>() {
-          @Override
-          public void onFailure(AuthenticationException error) {
-            shareVideoViewReference.get().showError("Error getting user profile info "
-                + error.getMessage());
-            Crashlytics.log("Error getUserProfile AuthenticationException: " + error);
-
-          }
-
-          @Override
-          public void onSuccess(UserProfile userProfile) {
-            saveAccountManager(userProfile, accessToken);
             shareVideoViewReference.get().successLoginAuth0();
           }
         });
-  }
-
-  private void saveAccountManager(UserProfile userProfile, String accessToken) {
-    // UserId
-    String userId = null;
-    try {
-      userId = userApiClient.getUserId(accessToken).getId();
-      userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-          accessToken, userId);
-    } catch (VimojoApiException vimojoApiException) {
-      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
-      Crashlytics.log("Error process get UserId vimojoApiException");
-      Crashlytics.logException(vimojoApiException);
-    }
   }
 }

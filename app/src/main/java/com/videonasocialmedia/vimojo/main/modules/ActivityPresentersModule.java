@@ -305,12 +305,12 @@ public class ActivityPresentersModule {
       ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
       GetFtpListUseCase getFtpListUseCase, UploadToPlatform uploadToPlatform,
       RunSyncAdapterHelper runSyncAdapterHelper,
-      UserAuth0Helper userAuth0Helper, UserApiClient userApiClient) {
+      UserAuth0Helper userAuth0Helper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
             uploadToPlatform, runSyncAdapterHelper, projectInstanceCache,
-            userAuth0Helper, userApiClient);
+            userAuth0Helper);
   }
 
   @Provides @PerActivity
@@ -376,9 +376,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          UserAuth0Helper userAuth0Helper, UserApiClient userApiClient) {
+          UserAuth0Helper userAuth0Helper) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, userAuth0Helper, userApiClient);
+        obtainLocalVideosUseCase, userAuth0Helper);
   }
 
   @Provides
@@ -582,7 +582,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  UserAuth0Helper provideUserAuth0Helper() {
-    return new UserAuth0Helper();
+  UserAuth0Helper provideUserAuth0Helper(UserApiClient userApiClient) {
+    return new UserAuth0Helper(userApiClient);
   }
 }

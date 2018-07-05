@@ -66,8 +66,8 @@ public class UploadToPlatformModule {
   }
 
   @Provides
-  UserAuth0Helper providesUserAuth0Helper() {
-    return new UserAuth0Helper();
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
+    return new UserAuth0Helper(userApiClient);
   }
 
   @Singleton @Provides

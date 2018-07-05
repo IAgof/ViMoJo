@@ -708,4 +708,8 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="notification_pause">PAUSAR</string>
     <string name="notification_cancel">CANCELAR</string>
 
+
+    <string name="auth0_error_authentication">Error de autenticación al iniciar sesión </string>
+    <string name="auth0_error_login_failure">Error al iniciar sesión</string>
+
 </resources>

@@ -40,19 +40,16 @@ public class UserProfilePresenter extends VimojoPresenter {
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private final Context context;
   protected final UserAuth0Helper userAuth0Helper;
-  private UserApiClient userApiClient;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
-                              UserApiClient userApiClient) {
+                              obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper) {
     this.context = context;
     this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.userAuth0Helper = userAuth0Helper;
-    this.userApiClient = userApiClient;
   }
 
   public void getInfoVideosRecordedEditedShared() {
@@ -125,7 +122,7 @@ public class UserProfilePresenter extends VimojoPresenter {
           @Override
           public void onFailure(@NonNull Dialog dialog) {
             Log.d(LOG_TAG, "Error performLogin onFailure ");
-            userProfileView.showError(R.string.error);
+            userProfileView.showError(R.string.auth0_error_login_failure);
           }
 
           @Override
@@ -133,15 +130,14 @@ public class UserProfilePresenter extends VimojoPresenter {
             Log.d(LOG_TAG, "Error performLogin AuthenticationException "
                 + exception.getMessage());
             Crashlytics.log("Error performLogin AuthenticationException: " + exception);
-            userProfileView.showError(R.string.error);
+            userProfileView.showError(R.string.auth0_error_authentication);
           }
 
           @Override
           public void onSuccess(@NonNull Credentials credentials) {
             Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
             userAuth0Helper.saveCredentials(credentials);
-            String accessToken = credentials.getAccessToken();
-            getUserProfile(accessToken);
+            setupUserInfo();
           }
         });
   }
@@ -157,7 +153,6 @@ public class UserProfilePresenter extends VimojoPresenter {
 
           @Override
           public void onSuccess(UserProfile userProfile) {
-            saveAccountManager(userProfile, accessToken);
             // Display the user profile
             Log.d(LOG_TAG, " onSuccess getUserProfile accessToken " + accessToken);
             userProfileView.showPreferenceUserName(userProfile.getName());
@@ -166,19 +161,4 @@ public class UserProfilePresenter extends VimojoPresenter {
           }
         });
   }
-
-  private void saveAccountManager(UserProfile userProfile, String accessToken) {
-    // UserId
-    String userId = null;
-    try {
-      userId = userApiClient.getUserId(accessToken).getId();
-      userAuth0Helper.registerAccount(userProfile.getEmail(), "fakePassword",
-          accessToken, userId);
-    } catch (VimojoApiException vimojoApiException) {
-      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
-      Crashlytics.log("Error process get UserId vimojoApiException");
-      Crashlytics.logException(vimojoApiException);
-    }
-  }
-
 }

@@ -40,7 +40,6 @@ public class UserProfilePresenterTest {
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
   @Mock Activity mockedActivity;
   @Mock UserAuth0Helper mockedUserAuth0Helper;
-  @Mock UserApiClient mockedUserApiClient;
 
   @Before
   public void injectMocks() {
@@ -101,6 +100,6 @@ public class UserProfilePresenterTest {
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
     return new UserProfilePresenter(mockedContext, mockedUserProfileView, mockedSharedPreferences,
-            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper, mockedUserApiClient);
+            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper);
   }
 }
