@@ -4,9 +4,7 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
-import com.videonasocialmedia.vimojo.auth.presentation.view.utils.EmailPatternValidator;
-import com.videonasocialmedia.vimojo.auth.presentation.mvp.views.UserAuthView;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
@@ -18,7 +16,6 @@ import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValida
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
-import com.videonasocialmedia.vimojo.auth.presentation.mvp.presenters.UserAuthPresenter;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
@@ -306,13 +303,14 @@ public class ActivityPresentersModule {
       AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
       ExportProjectUseCase exportProjectUseCase,
       ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-      GetFtpListUseCase getFtpListUseCase, GetAuthToken getAuthToken,
-      UploadToPlatform uploadToPlatform, LoggedValidator loggedValidator,
-      RunSyncAdapterHelper runSyncAdapterHelper) {
+      GetFtpListUseCase getFtpListUseCase, UploadToPlatform uploadToPlatform,
+      RunSyncAdapterHelper runSyncAdapterHelper,
+      UserAuth0Helper userAuth0Helper) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
-            exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase, getAuthToken,
-            uploadToPlatform, loggedValidator, runSyncAdapterHelper, projectInstanceCache);
+            exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
+            uploadToPlatform, runSyncAdapterHelper, projectInstanceCache,
+            userAuth0Helper);
   }
 
   @Provides @PerActivity
@@ -378,16 +376,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          GetAuthToken getAuthToken, UserApiClient userApiClient) {
+          UserAuth0Helper userAuth0Helper) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, getAuthToken, userApiClient);
-  }
-
-  @Provides @PerActivity
-  UserAuthPresenter provideUserAuthPresenter(AuthApiClient authApiClient,
-                                             EmailPatternValidator emailPatternValidator) {
-    return new UserAuthPresenter((UserAuthView) activity, activity,
-            authApiClient, emailPatternValidator);
+        obtainLocalVideosUseCase, userAuth0Helper);
   }
 
   @Provides
@@ -588,5 +579,10 @@ public class ActivityPresentersModule {
   @Provides
   RunSyncAdapterHelper provideRunSyncAdapterHelper() {
     return new RunSyncAdapterHelper(activity);
+  }
+
+  @Provides
+  UserAuth0Helper provideUserAuth0Helper(UserApiClient userApiClient) {
+    return new UserAuth0Helper(userApiClient);
   }
 }

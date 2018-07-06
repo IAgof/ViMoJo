@@ -90,11 +90,12 @@ public class VideoApiClient extends VimojoApiClient {
    *
    * @param authToken valid token to validate call to service
    * @param videoUpload Model for enqueue video uploads to vimojo platform.
+   * @param fileBody ProgressRequestBody to show upload with percentage of progress
    * @return the video upload response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public Call<Video> uploadVideoAsync(String authToken, VideoUpload videoUpload,
-                                      ProgressRequestBody fileBody)
+  public Call<Video> uploadVideoAsyncWithProgress(String authToken, VideoUpload videoUpload,
+                                                  ProgressRequestBody fileBody)
       throws VimojoApiException, FileNotFoundException {
 
     // create upload service client
@@ -102,16 +103,9 @@ public class VideoApiClient extends VimojoApiClient {
 
     File file = new File(videoUpload.getMediaPath());
 
-    //ProgressRequestBody fileBody = new ProgressRequestBody(file, MIME_TYPE_VIDEO, this);
-    //RequestBody requestFile = RequestBody
-      //  .create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
-    String filePath = videoUpload.getMediaPath();
-    String filePathName = filePath.substring(0, filePath.lastIndexOf("/"));
-
-    // MultipartBody.Part is used to send also the actual file name
+   // MultipartBody.Part is used to send also the actual file name
     MultipartBody.Part body =
-       // MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), fileBody);
-        MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, filePathName, fileBody);
+        MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), fileBody);
     // add another part within the multipart request
     RequestBody requestBodyTitle = createPartFromString(videoUpload.getTitle());
     RequestBody requestBodyDescription = createPartFromString(videoUpload.getDescription());

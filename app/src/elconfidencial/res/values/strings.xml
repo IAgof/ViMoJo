@@ -8,4 +8,11 @@
     <string name="vimojo_kit_web">https://vimojo.co/mojokit/?utm_source=elconfidencial_android&amp;utm_medium=app_link</string>
     <string name="vimojo_platform_base">https://elconfidencial.vimojo.co</string>
     <string name="vimojo_platform">"https://elconfidencial.vimojo.co/?utm_source=elconfidencial_android&amp;utm_medium=app_link"</string>
+
+
+    <!-- Auth0 configuration -->
+    <string name="com_auth0_client_id">1D377P3XQUeqZzzQo1YnPaSt6D2p6DML</string>
+    <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
+    <string name="com_auth0_audience">https://elconfidencial.vimojo.auth/api</string>
+
 </resources>

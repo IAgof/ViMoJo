@@ -8,4 +8,10 @@
     <string name="vimojo_kit_web">https://vimojo.co/mojokit/?utm_source=m4n_android&amp;utm_medium=app_link</string>
     <string name="vimojo_platform_base">https://market4news.com</string>
     <string name="vimojo_platform">"https://market4news.com/?utm_source=m4n_android&amp;utm_medium=app_link"</string>
+
+    <!-- Auth0 configuration -->
+    <string name="com_auth0_client_id">2cD3Ta5Gb9ohFUrqbG49462Rl2DaXooN</string>
+    <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
+    <string name="com_auth0_audience">https://market4news.vimojo.auth/api</string>
+
 </resources>

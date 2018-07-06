@@ -1,3 +1,2 @@
-v0.19.4
-- Fixed problems with time line in editor screen.
-- Updated debug flavors platform api_base to beta.viday.co
+v0.20.1
+- Update auth0 client id and audience for all flavors.

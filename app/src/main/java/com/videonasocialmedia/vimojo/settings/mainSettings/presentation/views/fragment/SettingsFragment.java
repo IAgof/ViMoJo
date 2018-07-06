@@ -21,19 +21,17 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-
-import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
-import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
-import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.AboutActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.LegalNoticeActivity;
-import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.PrivacyPolicyActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceActivity;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
+import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -47,8 +45,10 @@ import javax.inject.Inject;
  */
 public class SettingsFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener, PreferencesView {
-    @Inject PreferencesPresenter preferencesPresenter;
 
+    private String LOG_TAG = SettingsFragment.class.getCanonicalName();
+
+    @Inject PreferencesPresenter preferencesPresenter;
     protected PreferenceCategory ftp1Pref;
     // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
     //protected PreferenceCategory ftp2Pref;
@@ -478,8 +478,7 @@ public class SettingsFragment extends PreferenceFragment implements
                 AlertDialog dialog = createSignOutDialog();
                 dialog.show();
             } else {
-                Intent intent = new Intent(context, UserAuthActivity.class);
-                startActivity(intent);
+                preferencesPresenter.performLoginAndSaveAccount(getActivity());
             }
             return true;
         }
