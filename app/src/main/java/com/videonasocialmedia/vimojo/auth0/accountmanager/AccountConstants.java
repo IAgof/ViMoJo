@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.auth;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.auth0.accountmanager;
 
 /**
  * Created by jliarte on 18/01/18.
@@ -21,9 +28,9 @@ public class AccountConstants {
 
   private static String getAccountType() {
     if(BuildConfig.FLAVOR.equals("vimojo")) {
-      return BASE_PACKAGE_NAME + ".main" + ".auth";
+      return BASE_PACKAGE_NAME + ".main" + ".auth0";
     }
-    return BASE_PACKAGE_NAME + "." + BuildConfig.FLAVOR + ".auth";
+    return BASE_PACKAGE_NAME + "." + BuildConfig.FLAVOR + ".auth0";
   }
 
 }

@@ -9,12 +9,14 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.Context;
 
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
+import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
 import javax.inject.Singleton;
@@ -40,10 +42,12 @@ public class UploadToPlatformModule {
   @Provides
   UploadToPlatform provideUploadToPlatform(UploadNotification uploadNotification,
                                            VideoApiClient videoApiClient,
-                                           GetAuthToken getAuthToken,
-                                           UploadRepository uploadRepository) {
-    return new UploadToPlatform(context, uploadNotification, videoApiClient, getAuthToken,
-        uploadRepository);
+                                           UserApiClient userApiClient,
+                                           UserAuth0Helper userAuth0Helper,
+                                           UploadRepository uploadRepository,
+                                           GetUserId getUserId) {
+    return new UploadToPlatform(context, uploadNotification, videoApiClient, userApiClient,
+        userAuth0Helper, uploadRepository, getUserId);
   }
 
   @Provides
@@ -57,8 +61,13 @@ public class UploadToPlatformModule {
   }
 
   @Provides
-  GetAuthToken providesGetAuthToken() {
-    return new GetAuthToken();
+  UserApiClient providesUserApiClient() {
+    return new UserApiClient();
+  }
+
+  @Provides
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
+    return new UserAuth0Helper(userApiClient);
   }
 
   @Singleton @Provides

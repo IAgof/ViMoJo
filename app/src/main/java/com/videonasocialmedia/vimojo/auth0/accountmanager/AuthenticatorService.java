@@ -1,15 +1,21 @@
-package com.videonasocialmedia.vimojo.auth.presentation.view.service;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.auth0.accountmanager;
+
+/**
+ * Created by alvaro on 5/7/18.
+ */
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.videonasocialmedia.vimojo.auth.domain.usecase.AccountAuthenticator;
-
-/**
- * Created by jliarte on 18/01/18.
- */
 
 /**
  * Service for Android Account Authenticator, used to register our own Authenticator with the

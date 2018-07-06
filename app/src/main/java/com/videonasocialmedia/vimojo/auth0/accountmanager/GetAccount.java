@@ -1,10 +1,17 @@
-package com.videonasocialmedia.vimojo.auth.domain.usecase;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.auth0.accountmanager;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.videonasocialmedia.vimojo.auth.util.UserAccountUtil;
+
+import com.videonasocialmedia.vimojo.auth0.utils.UserAccountUtil;
 
 import javax.inject.Inject;
 
@@ -27,7 +34,6 @@ public class GetAccount {
    * @return the current user account stored in Android Account Manager
    */
   public Account getCurrentAccount(Context context) {
-    AccountManager accountManager = AccountManager.get(context);
     Account account = UserAccountUtil.getAccount(context);
     return account;
   }
