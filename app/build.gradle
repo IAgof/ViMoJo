@@ -217,7 +217,7 @@ android {
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.market4news.com/api/v1/", release: "https://market4news.com/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_FTP", "false"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
