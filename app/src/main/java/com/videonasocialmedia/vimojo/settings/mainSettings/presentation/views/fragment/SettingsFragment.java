@@ -479,7 +479,6 @@ public class SettingsFragment extends PreferenceFragment implements
                 dialog.show();
             } else {
                 preferencesPresenter.performLoginAndSaveAccount(getActivity());
-                //navigateTo(UserAuth0Activity.class);
             }
             return true;
         }

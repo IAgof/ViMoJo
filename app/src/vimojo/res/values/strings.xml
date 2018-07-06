@@ -12,5 +12,6 @@
     <!-- Auth0 configuration -->
     <string name="com_auth0_client_id">9z2Co0NpTwXNshfSvh0dhyCuwW0S5x4E</string>
     <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
+    <string name="com_auth0_audience">https://vimojo.auth/api</string>
 
 </resources>
