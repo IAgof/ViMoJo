@@ -21,10 +21,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
-import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -34,7 +32,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth0.GetAccount;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -57,7 +55,6 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -373,14 +370,17 @@ public class PreferencesPresenter extends VimojoPresenter
     ListenableFuture<Account> accountFuture = executeUseCaseCall(new Callable<Account>() {
       @Override
       public Account call() throws Exception {
-        return getAccount.getCurrentAccount(getContext());
+        return getAccount.getCurrentAccount(context);
       }
     });
     Futures.addCallback(accountFuture, new FutureCallback<Account>() {
       @Override
       public void onSuccess(Account account) {
-        AccountManager am = AccountManager.get(getContext());
-        am.removeAccount(account, null, null);
+        AccountManager am = AccountManager.get(context);
+        if (am != null) {
+          Log.d(LOG_TAG, "removeAccount");
+          am.removeAccount(account, null, null);
+        }
       }
       @Override
       public void onFailure(Throwable t) {

@@ -343,8 +343,8 @@
             android:exported="false"
             />
 
-        <service
-            android:name=".auth.presentation.view.service.AuthenticatorService"
+       <service
+            android:name=".auth0.accountmanager.AuthenticatorService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

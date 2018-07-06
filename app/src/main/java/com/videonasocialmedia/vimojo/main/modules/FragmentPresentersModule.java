@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.SwitchPreference;
 
-import com.videonasocialmedia.vimojo.auth0.GetAccount;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;

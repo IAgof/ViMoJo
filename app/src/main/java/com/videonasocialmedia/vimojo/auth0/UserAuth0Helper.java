@@ -26,6 +26,7 @@ import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.AccountConstants;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;

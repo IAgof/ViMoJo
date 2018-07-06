@@ -5,12 +5,13 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.auth0;
+package com.videonasocialmedia.vimojo.auth0.accountmanager;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 
+
+import com.videonasocialmedia.vimojo.auth0.utils.UserAccountUtil;
 
 import javax.inject.Inject;
 
@@ -33,7 +34,6 @@ public class GetAccount {
    * @return the current user account stored in Android Account Manager
    */
   public Account getCurrentAccount(Context context) {
-    AccountManager accountManager = AccountManager.get(context);
     Account account = UserAccountUtil.getAccount(context);
     return account;
   }

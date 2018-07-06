@@ -5,7 +5,7 @@
  * All rights reserved
  */
 
-package com.videonasocialmedia.vimojo.auth0;
+package com.videonasocialmedia.vimojo.auth0.utils;
 
 /**
  * Created by jliarte on 18/01/18.
@@ -18,7 +18,7 @@ import android.content.pm.PackageManager;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 
-import static com.videonasocialmedia.vimojo.auth0.AccountConstants.VIMOJO_ACCOUNT_TYPE;
+import static com.videonasocialmedia.vimojo.auth0.accountmanager.AccountConstants.VIMOJO_ACCOUNT_TYPE;
 
 /**
  * Utility class for getting current Vimojo Android Account.
