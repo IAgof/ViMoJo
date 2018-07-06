@@ -117,8 +117,7 @@ public class UserProfilePresenter extends VimojoPresenter {
   }
 
   protected void performLoginAndSaveAccount(Activity activity) {
-    userAuth0Helper.performLogin(activity, context.getString(R.string.com_auth0_domain),
-        new AuthCallback() {
+    userAuth0Helper.performLogin(activity, new AuthCallback() {
           @Override
           public void onFailure(@NonNull Dialog dialog) {
             Log.d(LOG_TAG, "Error performLogin onFailure ");

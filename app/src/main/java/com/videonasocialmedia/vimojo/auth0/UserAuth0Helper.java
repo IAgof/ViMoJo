@@ -26,6 +26,7 @@ import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.AccountConstants;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
@@ -68,12 +69,14 @@ public class UserAuth0Helper {
     return manager.hasValidCredentials();
   }
 
-  public void performLogin(Activity activity, String auth0Domain, AuthCallback authCallback) {
+  public void performLogin(Activity activity, AuthCallback authCallback) {
+    String domain = context.getString(R.string.com_auth0_domain);
+    String audience = context.getString(R.string.com_auth0_audience);
     //Use the account in the API clients
     WebAuthProvider.init(account)
         .withScheme("https")
         .withScope("openid offline_access profile email")
-        .withAudience(String.format("https://vimojo.auth/api", auth0Domain))
+        .withAudience(String.format(audience.toString(), domain))
         .start(activity, authCallback);
   }
 
