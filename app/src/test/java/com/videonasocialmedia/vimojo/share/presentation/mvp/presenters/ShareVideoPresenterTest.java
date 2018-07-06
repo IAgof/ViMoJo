@@ -15,31 +15,28 @@ import android.text.TextUtils;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
-import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
-
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -60,7 +57,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -83,13 +79,12 @@ public class ShareVideoPresenterTest {
     @Mock private ExportProjectUseCase mockedExportProjectUseCase;
     @Mock private ObtainNetworksToShareUseCase mockedShareNetworksProvider;
     @Mock private GetFtpListUseCase mockedFtpListUseCase;
-    @Mock private GetAuthToken mockedGetAuthToken;
     @Mock private UploadToPlatform mockedUploadToPlatform;
-    @Mock private LoggedValidator mockedLoggedValidator;
     private File mockedStorageDir;
     @Mock SocialNetwork mockedSocialNetwork;
     @Mock private RunSyncAdapterHelper mockedRunSyncAdapterHelper;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
+    @Mock UserAuth0Helper mockedUserAuth0Helper;
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
@@ -123,8 +118,8 @@ public class ShareVideoPresenterTest {
                 mockedShareVideoView, userEventTracker, mockedSharedPreferences,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedGetAuthToken, mockedUploadToPlatform, mockedLoggedValidator,
-                mockedRunSyncAdapterHelper, mockedProjectInstanceCache);
+                mockedUploadToPlatform, mockedRunSyncAdapterHelper, mockedProjectInstanceCache,
+                mockedUserAuth0Helper);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -157,12 +152,12 @@ public class ShareVideoPresenterTest {
     @Test
     public void clickUploadToPlatformNavigateToUserAuthIfUserNotLogged() {
         ShareVideoPresenter spyShareVideoPresenter = spy(getShareVideoPresenter());
+        boolean isUserLogged = false;
+        when(mockedUserAuth0Helper.isLogged()).thenReturn(isUserLogged);
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
         String videoPath = "";
-        doReturn(new AuthToken("", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(false));
 
         spyShareVideoPresenter.clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
@@ -176,12 +171,11 @@ public class ShareVideoPresenterTest {
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
+        boolean isUserLogged = true;
+        when(mockedUserAuth0Helper.isLogged()).thenReturn(isUserLogged);
         String videoPath = "";
         assertThat(currentProject.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(currentProject, is(spyShareVideoPresenter.currentProject));
-        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
-        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         assertThat("Project info product type is empty",
             currentProject.getProjectInfo().getProductTypeList().size(), is(0));
 
@@ -198,12 +192,11 @@ public class ShareVideoPresenterTest {
         boolean isWifiConnected = true;
         boolean acceptUploadVideoMobileNetwork = true;
         boolean isMobileNetworkConnected = true;
+        boolean isUserLogged = true;
+        when(mockedUserAuth0Helper.isLogged()).thenReturn(isUserLogged);
         String videoPath = "";
         assertThat(currentProject.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(currentProject, is(spyShareVideoPresenter.currentProject));
-        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
-        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productTypeList = new ArrayList<>();
         productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
         currentProject.getProjectInfo().setProductTypeList(productTypeList);
@@ -223,12 +216,11 @@ public class ShareVideoPresenterTest {
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
         boolean isMobileNetworkConnected = false;
+        boolean isUserLogged = true;
+        when(mockedUserAuth0Helper.isLogged()).thenReturn(isUserLogged);
         String videoPath = "";
         assertThat(currentProject.getProjectInfo().getProductTypeList().size(), is(0));
         assertThat(currentProject, is(spyShareVideoPresenter.currentProject));
-        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
-        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
         List<String> productTypeList = new ArrayList<>();
         productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
         currentProject.getProjectInfo().setProductTypeList(productTypeList);
@@ -327,9 +319,8 @@ public class ShareVideoPresenterTest {
         boolean isWifiConnected = false;
         boolean acceptUploadVideoMobileNetwork = false;
         boolean isMobileNetworkConnected = false;
-        doReturn(new AuthToken("token", "")).when(mockedGetAuthToken).getAuthToken(any(Context.class));
-        when(mockedLoggedValidator.loggedValidate("token")).thenReturn(true);
-        assertThat("User is logged", spyShareVideoPresenter.isUserLogged(), is(true));
+        boolean isUserLogged = true;
+        when(mockedUserAuth0Helper.isLogged()).thenReturn(isUserLogged);
         List<String> productType = new ArrayList<>();
         productType.add(ProductTypeProvider.Types.NAT_VO.name());
         currentProject.getProjectInfo().setProductTypeList(productType);
@@ -398,9 +389,9 @@ public class ShareVideoPresenterTest {
             mockedShareVideoView, mockedUserEventTracker,
             mockedSharedPreferences, mockedCreateDefaultProjectUseCase,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
-                mockedShareNetworksProvider, mockedFtpListUseCase, mockedGetAuthToken,
-            mockedUploadToPlatform, mockedLoggedValidator, mockedRunSyncAdapterHelper,
-            mockedProjectInstanceCache);
+                mockedShareNetworksProvider, mockedFtpListUseCase,
+            mockedUploadToPlatform, mockedRunSyncAdapterHelper,
+            mockedProjectInstanceCache, mockedUserAuth0Helper);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

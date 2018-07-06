@@ -5,6 +5,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -16,4 +17,7 @@ import retrofit2.http.Path;
 public interface UserService {
   @GET("user/{id}")
   Call<User> getUser(@Path("id") String id);
+
+  @GET("user/getId")
+  Call<UserId> getUserId();
 }

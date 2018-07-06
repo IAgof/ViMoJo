@@ -31,6 +31,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
@@ -215,7 +216,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                   navigateTo(UserProfileActivity.class);
                   return false;
                 case R.id.menu_navview_platform:
-                  navigateToWeb(R.string.vimojo_platform);
+                  int platformId = BuildConfig.DEBUG ? R.string.vimojo_platform_base_debug
+                      : R.string.vimojo_platform;
+                  navigateToWeb(platformId);
                   return false;
                 case R.id.menu_navview_settings:
                   navigateTo(SettingsActivity.class);

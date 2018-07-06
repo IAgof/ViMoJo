@@ -30,8 +30,10 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 25/04/17.
@@ -206,9 +208,18 @@ public class VideoTimeLineAdapterTest {
 
   @Test
   public void finishMovementNotifiesListener() {
-    videoTimeLineAdapter.finishMovement();
+    VideoTimeLineAdapter adapterSpy = Mockito.spy(videoTimeLineAdapter);
+    Video video1 = new Video("some/path", Video.DEFAULT_VOLUME);
+    Video video2 = new Video("other/path", Video.DEFAULT_VOLUME);
+    List<Video> videoList = new ArrayList<>();
+    videoList.add(video1);
+    videoList.add(video2);
+    adapterSpy.updateVideoList(videoList);
+    adapterSpy.onItemMove(0, 1);
 
-    verify(mockedListener).onClipReordered();
+    adapterSpy.finishMovement();
+
+    verify(mockedListener).onClipReordered(0, 1);
   }
 
   @NonNull

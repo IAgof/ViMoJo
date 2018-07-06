@@ -4,7 +4,9 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  * Created by jliarte on 8/02/18.
  */
 
+
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 
 import java.io.IOException;
 
@@ -18,9 +20,13 @@ import retrofit2.Response;
  * <p>Handles user details calls.</p>
  */
 public class UserApiClient extends VimojoApiClient {
+
   @Inject
   public UserApiClient() {
+
   }
+
+  private String LOG_TAG = UserApiClient.class.getCanonicalName();
 
   /**
    * Make a user auth call to get user info
@@ -40,6 +46,22 @@ public class UserApiClient extends VimojoApiClient {
         parseError(response);
       }
     } catch (IOException ioException) {
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    return null;
+  }
+
+  public UserId getUserId(String token) throws VimojoApiException {
+    UserService userService = getService(UserService.class, token);
+    try {
+      Response<UserId> response = userService.getUserId().execute();
+      if (response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
     return null;

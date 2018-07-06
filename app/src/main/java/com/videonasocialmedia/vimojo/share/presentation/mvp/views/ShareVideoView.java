@@ -50,4 +50,6 @@ public interface ShareVideoView {
   void hideShowMoreSocialNetworks();
 
   void showDialogVideoIsBeingSendingToPlatform();
+
+  void successLoginAuth0();
 }
