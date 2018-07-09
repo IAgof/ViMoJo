@@ -1,2 +1,2 @@
-v0.20.1
-- Update auth0 client id and audience for all flavors.
+v0.20.2
+- Improve video time line stability in edit view.

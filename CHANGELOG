@@ -1,3 +1,6 @@
+v0.20.1
+- Update auth0 client id and audience for all flavors.
+
 v0.20.0
 - New register login workflow. Go to web, register or login and came back to application.
 
