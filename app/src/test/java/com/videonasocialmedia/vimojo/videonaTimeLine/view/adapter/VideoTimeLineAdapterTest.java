@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline;
+package com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter;
 
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -10,9 +10,10 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
+import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.helper.VideoTimeLineTouchHelperCallbackAdapterListener;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
+import com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.TimeLineVideoViewHolder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;

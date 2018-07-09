@@ -37,6 +37,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +57,8 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
  * This class it's also the one in charge handling
  * {@link com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer}.
  */
-public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
+public class EditorPresenter extends VimojoPresenter
+        implements PlayStoreBillingDelegate.BillingDelegateView {
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
   private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
   public static final float VOLUME_MUTE = 0f;
@@ -113,11 +115,13 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
-    currentProject = projectInstanceCache.getCurrentProject();
-    updateTheme(currentAppliedTheme);
-    checkFeaturesAvailable();
-    updateDrawerHeaderWithCurrentProject();
-    setupPlayer(hasBeenProjectExported, videoPath);
+    this.executeUseCaseCall(() -> {
+      currentProject = projectInstanceCache.getCurrentProject();
+      updateTheme(currentAppliedTheme);
+      checkFeaturesAvailable();
+      updateDrawerHeaderWithCurrentProject();
+      setupPlayer(hasBeenProjectExported, videoPath);
+    });
   }
 
   public void setupPlayer(boolean hasBeenProjectExported, String videoPath) {
@@ -153,7 +157,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   }
 
   private void checkVimojoPlatform() {
-    if(!BuildConfig.FEATURE_SHOW_LINK_VIMOJO_PLATFORM) {
+    if (!BuildConfig.FEATURE_SHOW_LINK_VIMOJO_PLATFORM) {
       editorActivityView.hideLinkToVimojoPlatform();
     }
   }
@@ -212,21 +216,23 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     preferencesEditor.apply();
   }
 
-  public void obtainVideoFromProject() {
-    getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
-      @Override
-      public void onVideosRetrieved(List<Video> videosRetrieved) {
-        checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
-        List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-        List<Video> videoCopy = new ArrayList<>(checkedVideoList);
-        videonaPlayerView.bindVideoList(videoCopy);
-        //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
-        newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-      }
+  public ListenableFuture<?> obtainVideoFromProject() {
+    return this.executeUseCaseCall(() -> {
+      getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
+        @Override
+        public void onVideosRetrieved(List<Video> videosRetrieved) {
+          checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
+          List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+          List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+          videonaPlayerView.bindVideoList(videoCopy);
+          //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
+          newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
+        }
 
-      @Override
-      public void onNoVideosRetrieved() {
-      }
+        @Override
+        public void onNoVideosRetrieved() {
+        }
+      });
     });
   }
 

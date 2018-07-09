@@ -41,6 +41,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -132,7 +133,10 @@ public class EditPresenterTest {
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
     assertThat(currentProject.getVMComposition().hasVideos(), is(true));
-    verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
+    verify(mockedEditorView).updatePlayerVideoListChanged();
+    // TODO(jliarte): 9/07/18 update this test
+    verify(editPresenter).updatePresenter();
+//    verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
   }
 
   @Test
@@ -156,7 +160,7 @@ public class EditPresenterTest {
     assertThat(currentProject.getMediaTrack().getItems().size(), is(2));
     EditPresenter editPresenter = getEditPresenter();
 
-    editPresenter.finishedMoveItem(fromPosition, toPosition);
+    editPresenter.moveClip(fromPosition, toPosition);
 
     verify(mockedEditorView).updatePlayerVideoListChanged();
   }

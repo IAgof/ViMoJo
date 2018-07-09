@@ -40,5 +40,5 @@ public interface EditActivityView {
 
   void updatePlayerVideoListChanged();
 
-  void updatePlayerAndTimeLineVideoListChanged();
+  void seekToClip(int toPosition);
 }

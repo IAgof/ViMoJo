@@ -1,9 +1,11 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline;
+package com.videonasocialmedia.vimojo.videonaTimeLine.view.customview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,13 +19,15 @@ import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
+import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
+import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.VideoTimeLineAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
+import butterknife.OnTouch;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFormattedTimeHoursMinutesSecond;
@@ -31,7 +35,9 @@ import static com.videonasocialmedia.videonamediaframework.utils.TimeUtils.toFor
 /**
  * Created by jliarte on 28/04/17.
  */
-public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
+public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder
+        implements ItemTouchHelperViewHolder {
+  private static final String LOG_TAG = TimeLineVideoViewHolder.class.getSimpleName();
   private VideoTimeLineAdapter videoTimeLineAdapter;
   private final VideoTimeLineRecyclerViewClickListener videoTimeLineListener;
   @BindView(R.id.timeline_video_thumb)
@@ -137,6 +143,18 @@ public class TimeLineVideoViewHolder extends RecyclerView.ViewHolder implements 
     videoTimeLineListener.onClipLongClicked(adapterPosition);
     return true;
   }
+
+  @OnTouch(R.id.timeline_video_thumb)
+  public boolean onTouch(View viewHolder, MotionEvent event) {
+    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+      int adapterPosition = getAdapterPosition();
+      videoTimeLineAdapter.initMovement(adapterPosition);
+      videoTimeLineListener.onClipClicked(adapterPosition);
+      Log.d(LOG_TAG, "timeline: onTouch - start drag from " + adapterPosition);
+    }
+    return false; // Let the event to be processed further
+  }
+
 
   @Override
   public void onItemSelected() {
