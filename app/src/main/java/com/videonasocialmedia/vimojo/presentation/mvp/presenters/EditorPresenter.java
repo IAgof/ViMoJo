@@ -114,8 +114,8 @@ public class EditorPresenter extends VimojoPresenter
     this.projectInstanceCache = projectInstanceCache;
   }
 
-  public void updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
-    this.executeUseCaseCall(() -> {
+  public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
+    return this.executeUseCaseCall(() -> {
       currentProject = projectInstanceCache.getCurrentProject();
       updateTheme(currentAppliedTheme);
       checkFeaturesAvailable();

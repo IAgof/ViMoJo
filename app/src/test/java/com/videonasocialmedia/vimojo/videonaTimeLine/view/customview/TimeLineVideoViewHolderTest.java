@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter.timeline;
+package com.videonasocialmedia.vimojo.videonaTimeLine.view.customview;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +14,6 @@ import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.helper.ItemTou
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.VideoTimeLineAdapter;
-import com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.TimeLineVideoViewHolder;
 
 import org.junit.Before;
 import org.junit.Test;

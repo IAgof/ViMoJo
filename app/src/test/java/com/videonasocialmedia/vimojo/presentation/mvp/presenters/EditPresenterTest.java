@@ -43,6 +43,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -124,19 +125,18 @@ public class EditPresenterTest {
   }
 
   @Test
-  public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdateTimeLine() throws IllegalItemOnTrack {
+  public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdatesPlayerAndPresenter()
+          throws IllegalItemOnTrack {
     Video video1 = new Video("video/path", 1f);
     MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video1);
-    EditPresenter editPresenter = getEditPresenter();
+    EditPresenter editPresenter = spy(getEditPresenter());
 
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
     assertThat(currentProject.getVMComposition().hasVideos(), is(true));
     verify(mockedEditorView).updatePlayerVideoListChanged();
-    // TODO(jliarte): 9/07/18 update this test
     verify(editPresenter).updatePresenter();
-//    verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
   }
 
   @Test
