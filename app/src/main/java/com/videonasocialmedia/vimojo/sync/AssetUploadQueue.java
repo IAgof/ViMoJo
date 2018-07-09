@@ -14,17 +14,20 @@ package com.videonasocialmedia.vimojo.sync;
 import android.content.Context;
 import android.util.Log;
 
+import com.auth0.android.authentication.storage.CredentialsManagerException;
+import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.moshi.Moshi;
 import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,13 +42,15 @@ public class AssetUploadQueue {
   private final String LOG_TAG = AssetUploadQueue.class.getCanonicalName();
   private final Context context;
   private final AssetApiClient assetApiClient;
-  private final GetAuthToken getAuthToken;
+  private final UserAuth0Helper userAuth0Helper;
+  private final GetUserId getUserId;
 
   public AssetUploadQueue(Context context, AssetApiClient assetApiClient,
-                          GetAuthToken getAuthToken) {
+                          UserAuth0Helper userAuth0Helper, GetUserId getUserId) {
     this.context = context;
     this.assetApiClient = assetApiClient;
-    this.getAuthToken = getAuthToken;
+    this.userAuth0Helper = userAuth0Helper;
+    this.getUserId = getUserId;
     Log.d(LOG_TAG, "Created sync queue...");
   }
 
@@ -78,38 +83,49 @@ public class AssetUploadQueue {
     Log.d(LOG_TAG, "processNextQueueItem");
     Log.d(LOG_TAG, "startNotification");
     AssetUpload element = getQueue().iterator().next();
-    AuthToken authToken = getAuthToken.getAuthToken(context);
-    try {
-      String token = authToken.getToken();
-      // TODO(jliarte): 27/02/18 check what to do with plaform response
-      Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
-      Asset asset = assetApiClient.uploadVideo(token, element);
-      Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
-      removeHeadElement(getQueue());
-      Log.d(LOG_TAG, "finish upload success");
-    } catch (VimojoApiException vimojoApiException) {
-      Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
-      Crashlytics.log("Error process upload vimojoApiException");
-      Crashlytics.logException(vimojoApiException);
-      switch (vimojoApiException.getApiErrorCode()) {
-        case VimojoApiException.UNAUTHORIZED:
-          // TODO: 21/6/18 inform user
-          Log.d(LOG_TAG, "VimojoApiException.UNAUTHORIZED");
-          break;
-        case VimojoApiException.NETWORK_ERROR:
-          Log.d(LOG_TAG, "VimojoApiException.NETWORK_ERROR");
-          // TODO: 21/6/18 inform user
-          break;
-        default:
-          retryItemUpload(element, authToken.getId());
+    userAuth0Helper.getAccessToken(new BaseCallback<Credentials, CredentialsManagerException>() {
+      @Override
+      public void onFailure(CredentialsManagerException error) {
+        //No credentials were previously saved or they couldn't be refreshed
+        Log.d(LOG_TAG, "processAsyncUpload, getAccessToken onFailure No credentials were " +
+            "previously saved or they couldn't be refreshed");
+        Crashlytics.log("Error processAsyncUpload getAccessToken");
       }
-    } catch (FileNotFoundException fileNotFoundError) {
-      if (BuildConfig.DEBUG) {
-        fileNotFoundError.printStackTrace();
+
+      @Override
+      public void onSuccess(Credentials credentials) {
+        try {
+          // TODO(jliarte): 27/02/18 check what to do with plaform response
+          Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
+          Asset asset = assetApiClient.uploadVideo(credentials.getAccessToken(), element);
+          Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
+          removeHeadElement(getQueue());
+          Log.d(LOG_TAG, "finish upload success");
+        } catch (VimojoApiException vimojoApiException) {
+          Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+          Crashlytics.log("Error process upload vimojoApiException");
+          Crashlytics.logException(vimojoApiException);
+          switch (vimojoApiException.getApiErrorCode()) {
+            case VimojoApiException.UNAUTHORIZED:
+              // TODO: 21/6/18 inform user
+              Log.d(LOG_TAG, "VimojoApiException.UNAUTHORIZED");
+              break;
+            case VimojoApiException.NETWORK_ERROR:
+              Log.d(LOG_TAG, "VimojoApiException.NETWORK_ERROR");
+              // TODO: 21/6/18 inform user
+              break;
+            default:
+              retryItemUpload(element, getUserId.getUserId(context).getId());
+          }
+        } catch (FileNotFoundException fileNotFoundError) {
+          if (BuildConfig.DEBUG) {
+            fileNotFoundError.printStackTrace();
+          }
+          Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
+          removeHeadElement(getQueue());
+        }
       }
-      Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
-      removeHeadElement(getQueue());
-    }
+    });
   }
 
 

@@ -26,8 +26,6 @@ import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.File;
