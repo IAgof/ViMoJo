@@ -1,2 +1,2 @@
-v0.20.3
-- Improve video time line stability in edit view.
+v0.20.4
+- Fix debug auth0 audiences and problem with activities and methods that have to run on ui threads
