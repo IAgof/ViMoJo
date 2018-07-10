@@ -41,7 +41,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -123,16 +125,18 @@ public class EditPresenterTest {
   }
 
   @Test
-  public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdateTimeLine() throws IllegalItemOnTrack {
+  public void ifRemoveVideoFromProjectSuccessAndThereAreVideosInProjectUpdatesPlayerAndPresenter()
+          throws IllegalItemOnTrack {
     Video video1 = new Video("video/path", 1f);
     MediaTrack mediaTrack = currentProject.getMediaTrack();
     mediaTrack.insertItem(video1);
-    EditPresenter editPresenter = getEditPresenter();
+    EditPresenter editPresenter = spy(getEditPresenter());
 
     editPresenter.onRemoveMediaItemFromTrackSuccess();
 
     assertThat(currentProject.getVMComposition().hasVideos(), is(true));
-    verify(mockedEditorView).updatePlayerAndTimeLineVideoListChanged();
+    verify(mockedEditorView).updatePlayerVideoListChanged();
+    verify(editPresenter).updatePresenter();
   }
 
   @Test
@@ -156,7 +160,7 @@ public class EditPresenterTest {
     assertThat(currentProject.getMediaTrack().getItems().size(), is(2));
     EditPresenter editPresenter = getEditPresenter();
 
-    editPresenter.finishedMoveItem(fromPosition, toPosition);
+    editPresenter.moveClip(fromPosition, toPosition);
 
     verify(mockedEditorView).updatePlayerVideoListChanged();
   }

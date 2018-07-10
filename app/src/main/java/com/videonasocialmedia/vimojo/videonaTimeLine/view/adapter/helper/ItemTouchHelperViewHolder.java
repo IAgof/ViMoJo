@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.presentation.views.adapter.helper;
+package com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.helper;
 
 /**
  * Notifies a View Holder of relevant callbacks from
