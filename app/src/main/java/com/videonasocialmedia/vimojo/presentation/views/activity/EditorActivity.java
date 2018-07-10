@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
@@ -64,19 +65,19 @@ import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPr
  *
  */
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
-    VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
-
+        VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
   private static String LOG_TAG = EditorActivity.class.getCanonicalName();
-
   private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
   private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
-      "editor_activity_has_been_project_exported";
+          "editor_activity_has_been_project_exported";
   private static final String EDITOR_ACTIVITY_VIDEO_EXPORTED = "editor_activity_video_exported";
 
   @Inject
   UserEventTracker userEventTracker;
   @Inject
   EditorPresenter editorPresenter;
+
+  // UI elements
   @Nullable
   @BindView(R.id.text_dialog)
   EditText editTextDialog;
@@ -94,8 +95,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Nullable
   @BindView(R.id.switch_watermark)
   SwitchCompat switchWatermark;
-  @Nullable @BindView(R.id.videona_player)
+  @Nullable
+  @BindView(R.id.videona_player)
   VideonaPlayerExo videonaPlayer;
+
   private boolean darkThemePurchased = false;
   private boolean watermarkPurchased = false;
   CircleImageView imageProjectThumb;
@@ -105,16 +108,16 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   private boolean isVimojoStoreAvailable = true;
   private CompoundButton.OnCheckedChangeListener watermarkOnCheckedChangeListener =
           new CompoundButton.OnCheckedChangeListener() {
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-      if (isWatermarkAvailable()) {
-        editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
-      } else {
-        switchWatermark.setChecked(true);
-        navigateTo(VimojoStoreActivity.class);
-      }
-    }
-  };
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+              if (isWatermarkAvailable()) {
+                editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
+              } else {
+                switchWatermark.setChecked(true);
+                navigateTo(VimojoStoreActivity.class);
+              }
+            }
+          };
   private CompoundButton.OnCheckedChangeListener themeOnCheckedChangeListener
           = new CompoundButton.OnCheckedChangeListener() {
     @Override
@@ -158,8 +161,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onPause() {
     super.onPause();
-    videonaPlayer.onPause();
     editorPresenter.onPause();
+    videonaPlayer.onPause();
   }
 
   @Override
@@ -172,13 +175,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  protected  void onRestoreInstanceState(Bundle state) {
+  protected void onRestoreInstanceState(Bundle state) {
     super.onRestoreInstanceState(state);
-    if(state != null) {
+    if (state != null) {
       currentPlayerPosition = state.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
-          0);
+              0);
       projectHasBeenExported = state.getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED,
-          false);
+              false);
       videoExportedPath = state.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
     }
   }
@@ -217,7 +220,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                   return false;
                 case R.id.menu_navview_platform:
                   int platformId = BuildConfig.DEBUG ? R.string.vimojo_platform_base_debug
-                      : R.string.vimojo_platform;
+                          : R.string.vimojo_platform;
                   navigateToWeb(platformId);
                   return false;
                 case R.id.menu_navview_settings:
@@ -303,7 +306,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     getLayoutInflater().inflate(layoutToAdd, contentLayoutEditActivity);
   }
 
-  private void navigateToWeb(int url){
+  private void navigateToWeb(int url) {
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(url)));
     startActivity(Intent.createChooser(intent, getString(R.string.choose_browser)));
   }
@@ -350,7 +353,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void setupSwitchThemeAppIntoDrawer() {
     switchTheme = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_theme_dark)
-        .getActionView();
+            .getActionView();
     if (switchTheme != null) {
       boolean themeDarkIsSelected = checkIfThemeDarkIsSelected();
       switchTheme.setOnCheckedChangeListener(null);
@@ -402,9 +405,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void restartActivity(Class clas) {
-    Intent intent = new Intent(this, clas);
-    startActivity(intent);
-    finish();
+    runOnUiThread(() -> {
+      Intent intent = new Intent(this, clas);
+      startActivity(intent);
+      finish();
+    });
   }
 
   @Override
@@ -421,53 +426,67 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void watermarkFeatureAvailable() {
-    setupSwitchWatermarkIntoDrawer();
+    runOnUiThread(() -> {
+      setupSwitchWatermarkIntoDrawer();
+    });
   }
 
   @Override
   public void hideWatermarkSwitch() {
-    Menu menu = navigationView.getMenu();
-    MenuItem target = menu.findItem(R.id.switch_watermark);
-    target.setVisible(false);
+    runOnUiThread(() -> {
+      Menu menu = navigationView.getMenu();
+      MenuItem target = menu.findItem(R.id.switch_watermark);
+      target.setVisible(false);
+    });
   }
 
   @Override
   public void setIconsFeatures() {
-    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
-    updateNavigationIcon(R.id.switch_watermark, R.drawable.activity_editor_drawer_watermark);
+    runOnUiThread(() -> {
+      updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
+      updateNavigationIcon(R.id.switch_watermark, R.drawable.activity_editor_drawer_watermark);
+    });
   }
 
   @Override
   public void setIconsPurchaseInApp() {
-    updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_locked);
-    updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_locked);
+    runOnUiThread(() -> {
+      updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_locked);
+      updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_locked);
+    });
   }
 
   @Override
   public void hideVimojoStoreViews() {
-    Menu menu = navigationView.getMenu();
-    MenuItem target = menu.findItem(R.id.menu_navview_vimojo_store_section);
-    target.setVisible(false);
-    isVimojoStoreAvailable = false;
+    runOnUiThread(() -> {
+      Menu menu = navigationView.getMenu();
+      MenuItem target = menu.findItem(R.id.menu_navview_vimojo_store_section);
+      target.setVisible(false);
+      isVimojoStoreAvailable = false;
+    });
   }
 
   @Override
   public void hideLinkToVimojoPlatform() {
-    Menu menu = navigationView.getMenu();
-    MenuItem target = menu.findItem(R.id.menu_navview_platform);
-    target.setVisible(false);
+    runOnUiThread(() -> {
+      Menu menu = navigationView.getMenu();
+      MenuItem target = menu.findItem(R.id.menu_navview_platform);
+      target.setVisible(false);
+    });
   }
 
   @Override
   public void setHeaderViewCurrentProject(String pathThumbProject, String currentProjectName,
                                           String currentProjectDate) {
-    if (pathThumbProject != null) {
-      updateCurrentProjectThumb(pathThumbProject);
-    } else {
-      updateCurrentProjectDefaultThumb();
-    }
-    projectName.setText(currentProjectName);
-    projectDate.setText(currentProjectDate);
+    runOnUiThread(() -> {
+      if (pathThumbProject != null) {
+        updateCurrentProjectThumb(pathThumbProject);
+      } else {
+        updateCurrentProjectDefaultThumb();
+      }
+      projectName.setText(currentProjectName);
+      projectDate.setText(currentProjectDate);
+    });
   }
 
   @Override
@@ -486,7 +505,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void bindVideoList(List<Video> movieList) {
-    videonaPlayer.bindVideoList(movieList);
+    runOnUiThread(() -> {
+      videonaPlayer.bindVideoList(movieList);
+    });
   }
 
   @Override
@@ -495,7 +516,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void bindVoiceOver(Music voiceOver){
+  public void bindVoiceOver(Music voiceOver) {
     videonaPlayer.setVoiceOver(voiceOver);
   }
 
@@ -532,7 +553,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void seekToClip(int clipPosition) {
-    videonaPlayer.seekToClip(clipPosition);
+    runOnUiThread(() -> {
+      videonaPlayer.seekToClip(clipPosition);
+    });
   }
 
   @Override
@@ -541,16 +564,18 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void updatePlayerVideos() {
-    editorPresenter.obtainVideoFromProject();
+  public ListenableFuture<?> updatePlayerVideos() {
+    return editorPresenter.obtainVideoFromProject();
   }
 
   @Override
   public void initPreviewFromVideo(List<Video> movieList) {
-    videonaPlayer.onPause();
-    videonaPlayer.onShown(this);
-    videonaPlayer.initPreviewLists(movieList);
-    videonaPlayer.initPreview(currentPlayerPosition);
+    runOnUiThread(() -> {
+      videonaPlayer.onPause();
+      videonaPlayer.onShown(this);
+      videonaPlayer.initPreviewLists(movieList);
+      videonaPlayer.initPreview(currentPlayerPosition);
+    });
   }
 
   @Override
@@ -564,10 +589,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     File thumb = new File(path);
     if (thumb.exists()) {
       Glide.with(this)
-          .load(path)
-          .centerCrop()
-          .error(R.drawable.fragment_gallery_no_image)
-          .into(imageProjectThumb);
+              .load(path)
+              .centerCrop()
+              .error(R.drawable.fragment_gallery_no_image)
+              .into(imageProjectThumb);
     }
   }
 
@@ -591,7 +616,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                     return;
                   editorPresenter.updateTitleCurrentProject(textPreference);
                   projectName.setText(textPreference);
-                                }
+                }
                 case DialogInterface.BUTTON_NEGATIVE:
                   break;
               }
@@ -599,11 +624,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
     AlertDialog alertDialog = builder.setCancelable(false)
-        .setTitle(getString(R.string.dialog_title_update_project_title))
-        .setView(dialogView)
-        .setPositiveButton(R.string.positiveButton, dialogClickListener)
-        .setNegativeButton(R.string.negativeButton, dialogClickListener)
-        .setCancelable(false).show();
+            .setTitle(getString(R.string.dialog_title_update_project_title))
+            .setView(dialogView)
+            .setPositiveButton(R.string.positiveButton, dialogClickListener)
+            .setNegativeButton(R.string.negativeButton, dialogClickListener)
+            .setCancelable(false).show();
 
     editTextDialog.requestFocus();
     showKeyboard();
@@ -616,7 +641,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   private void hideKeyboard(View v) {
     InputMethodManager keyboard =
-        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     keyboard.hideSoftInputFromWindow(v.getWindowToken(), 0);
   }
 

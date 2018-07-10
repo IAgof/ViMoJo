@@ -95,7 +95,7 @@ public class TimeLineBugEditPresenterTest {
     int toPosition = 1;
     EditPresenter editPresenter = getEditPresenter();
 
-    editPresenter.finishedMoveItem(fromPosition, toPosition);
+    editPresenter.moveClip(fromPosition, toPosition);
 
     verify(mockedMediaItemReorderer).moveMediaItem(eq(currentProject), eq(fromPosition),
         eq(toPosition), Matchers.any(OnReorderMediaListener.class));

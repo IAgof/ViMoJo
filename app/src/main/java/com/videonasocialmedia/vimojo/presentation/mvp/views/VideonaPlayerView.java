@@ -7,6 +7,7 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.views;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
@@ -44,7 +45,7 @@ public interface VideonaPlayerView {
 
   void pausePreview();
 
-  void updatePlayerVideos();
+  ListenableFuture<?> updatePlayerVideos();
 
   void initPreviewFromVideo(List<Video> movieList);
 
