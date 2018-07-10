@@ -50,26 +50,28 @@ public class BillingManager implements PurchasesUpdatedListener {
   public void initBillingClient(Activity activity,
                                 final BillingConnectionListener billingConnectionListener) {
     this.activity = activity;
-    billingClient = newBuilder(activity).setListener(this).build();
-    billingClient.startConnection(new BillingClientStateListener() {
-      @Override
-      public void onBillingSetupFinished(@BillingResponse int billingResponse) {
-        if (billingResponse == BillingResponse.OK) {
-          isServiceConnected = true;
-          Log.i(LOG_TAG, "onBillingSetupFinished() response: " + billingResponse);
-        } else {
-          Log.w(LOG_TAG, "onBillingSetupFinished() error code: " + billingResponse);
+    activity.runOnUiThread(() -> {
+      billingClient = newBuilder(activity).setListener(this).build();
+      billingClient.startConnection(new BillingClientStateListener() {
+        @Override
+        public void onBillingSetupFinished(@BillingResponse int billingResponse) {
+          if (billingResponse == BillingResponse.OK) {
+            isServiceConnected = true;
+            Log.i(LOG_TAG, "onBillingSetupFinished() response: " + billingResponse);
+          } else {
+            Log.w(LOG_TAG, "onBillingSetupFinished() error code: " + billingResponse);
+          }
+          billingClientResponseCode = billingResponse;
+          billingConnectionListener.billingClientSetupFinished();
         }
-        billingClientResponseCode = billingResponse;
-        billingConnectionListener.billingClientSetupFinished();
-      }
 
-      @Override
-      public void onBillingServiceDisconnected() {
-        Log.w(LOG_TAG, "onBillingServiceDisconnected()");
-        isServiceConnected = false;
-        billingConnectionListener.billingClientSetupFinished();
-      }
+        @Override
+        public void onBillingServiceDisconnected() {
+          Log.w(LOG_TAG, "onBillingServiceDisconnected()");
+          isServiceConnected = false;
+          billingConnectionListener.billingClientSetupFinished();
+        }
+      });
     });
   }
 
@@ -79,18 +81,19 @@ public class BillingManager implements PurchasesUpdatedListener {
         && purchases != null) {
       for (Purchase purchase : purchases) {
         handlePurchase(purchase);
-        if(billingUpdatesPurchaseListener != null)
+        if (billingUpdatesPurchaseListener != null)
           billingUpdatesPurchaseListener.purchasedItem(purchase);
       }
 
     } else if (responseCode == BillingResponse.USER_CANCELED) {
       // Handle an error caused by a user cancelling the purchase flow.
-      if(billingUpdatesPurchaseListener != null)
+      if (billingUpdatesPurchaseListener != null)
         billingUpdatesPurchaseListener.userCanceled();
     } else {
       // Handle any other error codes.
-      if(billingUpdatesPurchaseListener != null)
+      if (billingUpdatesPurchaseListener != null) {
         billingUpdatesPurchaseListener.showError(responseCode);
+      }
     }
   }
 
@@ -108,6 +111,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     return false;
   }
 
+  // TODO(jliarte): 10/07/18 inject activity as param and remove field
   public void startPurchaseFlow(final String skuId, final String billingType,
                                 BillingUpdatesPurchaseListener
                                     billingUpdatesPurchaseListener) {
