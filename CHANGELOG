@@ -1,3 +1,6 @@
+v0.20.3
+- Improve video time line stability in edit view.
+
 v0.20.2
 - Update auth0 login with flavor and main color parameters. Redirect flavors to specific login web.
 - Fix bug uploading video after make login from share screen.

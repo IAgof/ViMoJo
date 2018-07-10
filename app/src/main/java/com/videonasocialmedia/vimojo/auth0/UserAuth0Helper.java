@@ -76,7 +76,9 @@ public class UserAuth0Helper {
 
   public void performLogin(Activity activity, AuthCallback authCallback) {
     String domain = context.getString(R.string.com_auth0_domain);
-    String audience = context.getString(R.string.com_auth0_audience);
+    // TODO: 10/7/18 Study how to overwrite from build.gradle debug these string_debug, platform_base included
+    String audience = BuildConfig.DEBUG ? context.getString(R.string.com_auth0_audience_debug)
+        : context.getString(R.string.com_auth0_audience);
     HashMap<String, Object> extraConfigParams = new HashMap<>();
     extraConfigParams.put(AUTH0_PARAMETER_MAIN_COLOR, String.format("#%06x",
         ContextCompat.getColor(context, R.color.colorAccent) & 0xffffff));
