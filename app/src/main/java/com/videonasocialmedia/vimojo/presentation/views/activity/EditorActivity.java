@@ -161,8 +161,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onPause() {
     super.onPause();
-    videonaPlayer.onPause();
     editorPresenter.onPause();
+    videonaPlayer.onPause();
   }
 
   @Override
