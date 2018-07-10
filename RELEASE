@@ -1,2 +1,3 @@
 v0.20.4
-- Fix debug auth0 audiences and problem with activities and methods that have to run on ui threads
+- Fixed music not playing problem in all edit views
+- Fixed login problems
