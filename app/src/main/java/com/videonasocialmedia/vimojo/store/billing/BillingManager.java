@@ -81,18 +81,19 @@ public class BillingManager implements PurchasesUpdatedListener {
         && purchases != null) {
       for (Purchase purchase : purchases) {
         handlePurchase(purchase);
-        if(billingUpdatesPurchaseListener != null)
+        if (billingUpdatesPurchaseListener != null)
           billingUpdatesPurchaseListener.purchasedItem(purchase);
       }
 
     } else if (responseCode == BillingResponse.USER_CANCELED) {
       // Handle an error caused by a user cancelling the purchase flow.
-      if(billingUpdatesPurchaseListener != null)
+      if (billingUpdatesPurchaseListener != null)
         billingUpdatesPurchaseListener.userCanceled();
     } else {
       // Handle any other error codes.
-      if(billingUpdatesPurchaseListener != null)
+      if (billingUpdatesPurchaseListener != null) {
         billingUpdatesPurchaseListener.showError(responseCode);
+      }
     }
   }
 
