@@ -11,6 +11,9 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
  * Created by alvaro on 21/6/18.
  */
 
+/**
+ * Model class for asset vimojo API calls.
+ */
 public class AssetDto {
   private String name;
   private String type;

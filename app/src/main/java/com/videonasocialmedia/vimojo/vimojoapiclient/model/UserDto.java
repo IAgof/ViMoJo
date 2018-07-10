@@ -7,14 +7,14 @@ import com.google.gson.Gson;
  */
 
 /**
- * Model class for user API calls.
+ * Model class for user vimojo API calls.
  */
-public class User {
+public class UserDto {
   private final String username;
   private final String email;
   private final String _id;
 
-  public User(String username, String email, String _id) {
+  public UserDto(String username, String email, String _id) {
     this.username = username;
     this.email = email;
     this._id = _id;

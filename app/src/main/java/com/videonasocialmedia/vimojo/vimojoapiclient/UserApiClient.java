@@ -5,7 +5,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 
 import java.io.IOException;
@@ -36,10 +36,10 @@ public class UserApiClient extends VimojoApiClient {
    * @return the user response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public User getUser(String authToken, String id) throws VimojoApiException {
+  public UserDto getUser(String authToken, String id) throws VimojoApiException {
     UserService userService = getService(UserService.class, authToken);
     try {
-      Response<User> response = userService.getUser(id).execute();
+      Response<UserDto> response = userService.getUser(id).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {

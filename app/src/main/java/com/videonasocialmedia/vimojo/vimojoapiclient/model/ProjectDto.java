@@ -11,18 +11,17 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
  * Created by alvaro on 21/6/18.
  */
 
-public class Project {
-
+/**
+ * Model class for project vimojo API calls.
+ */
+public class ProjectDto {
   private String id;
   private String title;
   private String date;
 
-  public Project(String id, String title, String date) {
+  public ProjectDto(String id, String title, String date) {
     this.id = id;
     this.title = title;
     this.date = date;
   }
-
-
-
 }

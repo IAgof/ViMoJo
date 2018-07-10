@@ -7,7 +7,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthTokenRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.RegisterRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserDto;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -20,7 +20,7 @@ import retrofit2.http.POST;
 public interface AuthService {
   @POST("user/")
   @Headers("Content-Type: application/json")
-  Call<User> register(@Body RegisterRequest requestBody);
+  Call<UserDto> register(@Body RegisterRequest requestBody);
 
   @POST("login")
   @Headers("Content-Type: application/json")
