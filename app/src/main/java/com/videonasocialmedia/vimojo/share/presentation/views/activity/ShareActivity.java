@@ -326,7 +326,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void pauseVideoPlayerPreview() {
-    pausePreview();
+    runOnUiThread(() -> pausePreview());
   }
 
   @Override
