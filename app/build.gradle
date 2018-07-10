@@ -70,8 +70,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 123 // 20180706
-            versionName "0.20.1" // 20180706
+            versionCode 124 // 20180710
+            versionName "0.20.2" // 20180710
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -163,8 +163,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 74 // 20180706
-            versionName "0.20.1.fThomsonFoundation" // 20180706
+            versionCode 75 // 20180710
+            versionName "0.20.2.fThomsonFoundation" // 20180710
             resValue "string", "app_out_of_date", "2018-06-30"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -211,8 +211,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 41 // 20180706
-            versionName "0.20.1.fMarketForNews" // 20180706
+            versionCode 42 // 20180710
+            versionName "0.20.2.fMarketForNews" // 20180710
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -261,8 +261,8 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 16 // 20180706
-            versionName "0.20.1.fElConfidencial" // 20180706
+            versionCode 17 // 20180710
+            versionName "0.20.2.fElConfidencial" // 20180710
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -286,8 +286,8 @@ android {
 
         vanitatis {
             applicationId "com.videonasocialmedia.vimojo.vanitatis"
-            versionCode 3 // 20180706
-            versionName "0.20.1.fVanitatis" // 20180706
+            versionCode 4 // 20180710
+            versionName "0.20.2.fVanitatis" // 20180710
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo Vanitatis"
             resValue "string", "content_authority", applicationId + '.provider'
