@@ -173,7 +173,9 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Override
   public void setMusicVolume(float volume) {
     //super needed, avoid recursion
-    super.setMusicVolume(volume);
+    runOnUiThread(() -> {
+      super.setMusicVolume(volume);
+    });
   }
 
   @Override

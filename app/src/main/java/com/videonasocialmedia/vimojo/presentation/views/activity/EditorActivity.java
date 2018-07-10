@@ -512,12 +512,16 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void bindMusic(Music music) {
-    videonaPlayer.setMusic(music);
+    runOnUiThread(() -> {
+      videonaPlayer.setMusic(music);
+    });
   }
 
   @Override
   public void bindVoiceOver(Music voiceOver) {
-    videonaPlayer.setVoiceOver(voiceOver);
+    runOnUiThread(() -> {
+      videonaPlayer.setVoiceOver(voiceOver);
+    });
   }
 
   @Override
@@ -538,17 +542,23 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void setMusicVolume(float volume) {
-    videonaPlayer.setMusicVolume(volume);
+    runOnUiThread(() -> {
+      videonaPlayer.setMusicVolume(volume);
+    });
   }
 
   @Override
   public void setVideoFadeTransitionAmongVideos() {
-    videonaPlayer.setVideoTransitionFade();
+    runOnUiThread(() -> {
+      videonaPlayer.setVideoTransitionFade();
+    });
   }
 
   @Override
   public void setAudioFadeTransitionAmongVideos() {
-    videonaPlayer.setAudioTransitionFade();
+    runOnUiThread(() -> {
+      videonaPlayer.setAudioTransitionFade();
+    });
   }
 
   @Override

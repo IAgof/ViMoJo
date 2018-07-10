@@ -2572,4 +2572,5 @@ and Conditions.\n\n
     <string name="auth0_error_login_failure">Error perform login failure</string>
 
     <string name="vimojo_platform_base_debug">https://beta.viday.co</string>
+    <string name="com_auth0_audience_debug">https://vimojo.auth/api</string>
 </resources>
