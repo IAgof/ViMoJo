@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 
@@ -32,6 +31,7 @@ public class WifiMobileNetworkReceiver extends BroadcastReceiver {
     NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     NetworkInfo mobileNetwork = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
     if(wifi.isConnected() || mobileNetwork.isConnected()) {
+      // TODO: 28/6/18 inject RunSyncAdapterHelper to constructor
       RunSyncAdapterHelper runSyncAdapterHelper = new RunSyncAdapterHelper(context);
       runSyncAdapterHelper.runNowSyncAdapter();
     }

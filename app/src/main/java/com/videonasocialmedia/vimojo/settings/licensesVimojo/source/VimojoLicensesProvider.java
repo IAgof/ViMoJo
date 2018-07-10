@@ -63,6 +63,7 @@ public class VimojoLicensesProvider {
     licenseList.add(new LicenseVimojo("Samsung SDK", context.getString(R.string.licenseSamsungSDK)));
     licenseList.add(new LicenseVimojo("Retrofit", context.getString(R.string.licenseRetrofit)));
     licenseList.add(new LicenseVimojo("OkHttp", context.getString(R.string.licenseOkhttp)));
+    licenseList.add(new LicenseVimojo("Auth0", context.getString(R.string.licenseAuth0)));
 
   }
 }

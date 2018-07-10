@@ -1,2 +1,2 @@
-v0.19.3
-- Update urls vimojo platform from vimojo.co/platform to platform.vimojo.co
+v0.20.0
+- New register login workflow. Go to web, register or login and came back to application.

@@ -17,7 +17,6 @@ import java.util.Date;
  */
 
 public class AssetUpload {
-
   private final String projectId;
   private final String mediaPath;
   private String name;
@@ -26,6 +25,8 @@ public class AssetUpload {
   private String date;
   private int numTries;
   public final static int MAX_NUM_TRIES_UPLOAD = 3;
+
+  private boolean isAcceptedUploadMobileNetwork = false;
 
   public AssetUpload(String projectId, Media media) {
     this.projectId = projectId;
@@ -81,8 +82,8 @@ public class AssetUpload {
   }
 
   public boolean isAcceptedUploadMobileNetwork() {
-    // TODO: 21/6/18 Implement mobile network upload politic
-    return false;
+    // TODO: 21/6/18 Implement mobile network upload policy
+    return isAcceptedUploadMobileNetwork;
   }
 
   public String getId() {

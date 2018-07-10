@@ -28,7 +28,6 @@ import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -60,25 +59,28 @@ import butterknife.Optional;
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
         VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
+
+  private String LOG_TAG = ShareActivity.class.getCanonicalName();
+
   private static final int REQUEST_FILL_PROJECT_DETAILS = 54831;
   private static final int REQUEST_USER_AUTH = 54832;
   @Inject ShareVideoPresenter presenter;
+
     @Inject SharedPreferences sharedPreferences;
-
-    @Nullable @BindView(R.id.linear_layout_activity_share)
+  @Nullable @BindView(R.id.linear_layout_activity_share)
     RelativeLayout coordinatorLayout;
-    @Nullable @BindView(R.id.options_to_share_list)
+  @Nullable @BindView(R.id.options_to_share_list)
     RecyclerView optionsToShareList;
-    @Nullable @BindView(R.id.text_dialog)
+  @Nullable @BindView(R.id.text_dialog)
     EditText editTextDialog;
-    @Nullable @BindView(R.id.bottomBar)
+  @Nullable @BindView(R.id.bottomBar)
     BottomBar bottomBar;
-    @BindView(R.id.fab_edit_room)
+  @BindView(R.id.fab_edit_room)
     FloatingActionsMenu fabMenu;
-    @Nullable @BindView(R.id.fab_share_room)
+  @Nullable @BindView(R.id.fab_share_room)
     FloatingActionButton fabShareRoom;
-    private OptionsToShareAdapter optionsShareAdapter;
 
+    private OptionsToShareAdapter optionsShareAdapter;
   private ProgressDialog exportProgressDialog;
   private ProgressDialog checkingUserProgressDialog;
   private AlertDialog exportErrorDialog;
@@ -271,7 +273,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
         switch (which) {
           case DialogInterface.BUTTON_NEUTRAL:
-            navigateToUserAuth();
+            //navigateToUserAuth();
+            presenter.performLoginAndSaveAccount(this);
             break;
         }
       };
@@ -354,6 +357,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       };
       builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
     });
+  }
+
+  @Override
+  public void successLoginAuth0() {
+    onVimojoPlatformClicked();
   }
 
   private void navigateToProjectDetails() {
@@ -447,11 +455,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     public void showProgressDialogVideoExporting() {
       exportProgressDialog.show();
     }
-
-  public void navigateToUserAuth() {
-    Intent intent = new Intent(this, UserAuthActivity.class);
-    startActivityForResult(intent, REQUEST_USER_AUTH);
-  }
 
   @Override
     public void loadExportedVideoPreview(final String mediaPath) {

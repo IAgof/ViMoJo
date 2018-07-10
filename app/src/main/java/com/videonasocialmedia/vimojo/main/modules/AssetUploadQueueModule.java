@@ -9,7 +9,8 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.Context;
 
-import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
+import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
@@ -35,9 +36,9 @@ public class AssetUploadQueueModule {
   }
 
   @Singleton @Provides
-  AssetUploadQueue provideAssetUploadQueue(AssetApiClient assetApiClient,
-                                                GetAuthToken getAuthToken) {
-    return new AssetUploadQueue(context, assetApiClient, getAuthToken);
+  AssetUploadQueue provideAssetUploadQueue(
+          AssetApiClient assetApiClient, UserAuth0Helper userAuth0Helper, GetUserId getUserId) {
+    return new AssetUploadQueue(context, assetApiClient, userAuth0Helper, getUserId);
   }
 
   @Provides

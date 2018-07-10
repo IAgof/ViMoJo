@@ -39,7 +39,7 @@ public class ServiceGenerator {
     HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
     // set your desired log level. Log disabled, problem uploading video files, out of memory
     // problem, comment this line seems to fix the bug.
-    //logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+    // logging.setLevel(HttpLoggingInterceptor.Level.BODY);
     httpClientBuilder.addInterceptor(logging);
     httpClientBuilder.connectTimeout(90, TimeUnit.SECONDS);
     httpClientBuilder.readTimeout(90, TimeUnit.SECONDS);

@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth.presentation.view.activity.UserAuthActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
@@ -37,9 +36,10 @@ import butterknife.OnClick;
 
 public class UserProfileActivity extends VimojoActivity implements UserProfileView {
 
+  private String LOG_TAG = UserProfileActivity.class.getCanonicalName();
+
   @Inject
   UserProfilePresenter presenter;
-
   @BindView(R.id.image_user_profile)
   CircleImageView image_user;
   @BindView(R.id.user_profile_prefession)
@@ -155,7 +155,8 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   @Override
   protected void onResume() {
     super.onResume();
-    setUpAndCheckUserThumb();
+    // TODO: 4/7/18 Implement feature updating pic user with auth0. Meanwhile we will use Auth0 pic
+    //setUpAndCheckUserThumb();
     presenter.getInfoVideosRecordedEditedShared();
     presenter.setupUserInfo();
   }
@@ -251,9 +252,16 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
   }
 
   @Override
-  public void navigateToUserAuth() {
-    Intent intent = new Intent(this, UserAuthActivity.class);
-    startActivity(intent);
+  public void showPreferenceUserPic(String pictureURL) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        Glide.with(UserProfileActivity.this)
+            .load(pictureURL)
+            .error(R.drawable.activity_user_profile_default_thumb)
+            .into(image_user);
+      }
+    });
   }
 
   @OnClick(R.id.backButton)
@@ -263,12 +271,12 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
 
   @OnClick(R.id.user_profile_username)
   public void onClickUsername() {
-    presenter.onClickUsername(isEmptyField(username));
+    presenter.onClickUsername(this, isEmptyField(username));
   }
 
   @OnClick(R.id.user_profile_email)
   public void onClickEmail() {
-    presenter.onClickEmail(isEmptyField(email));
+    presenter.onClickEmail(this, isEmptyField(email));
   }
 
   private boolean isEmptyField(TextView textView) {
