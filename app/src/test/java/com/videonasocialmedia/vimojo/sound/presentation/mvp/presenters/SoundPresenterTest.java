@@ -18,6 +18,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,7 @@ public class SoundPresenterTest {
   @Mock SoundView mockedSoundView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock ProjectInstanceCache mockedProjectInstantCache;
+  @Mock CompositionApiClient mockedCompositionApiClient;
   private Project currentProject;
 
   @Before
@@ -149,7 +151,7 @@ public class SoundPresenterTest {
   @NonNull
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
-        mockedProjectInstantCache);
+        mockedProjectInstantCache, mockedCompositionApiClient);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

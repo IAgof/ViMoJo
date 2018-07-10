@@ -31,7 +31,7 @@ import javax.inject.Inject;
 public class SyncService extends Service {
   private static final String LOG_TAG = SyncService.class.getSimpleName();
   // Storage for an instance of the sync adapter
-  private static SyncAdapter sSyncAdapter = null;
+  private SyncAdapter sSyncAdapter = null;
   // Object to use as a thread-safe lock
   private static final Object sSyncAdapterLock = new Object();
 

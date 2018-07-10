@@ -26,7 +26,10 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +66,9 @@ public class MusicDetailPresenterTest {
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
     @Mock private GetMusicListUseCase mockedGetMusicListUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
+    @Mock AssetUploadQueue mockedAssetUploadQueue;
+    @Mock RunSyncAdapterHelper mockedRunSyncAdapter;
+    @Mock CompositionApiClient mockedCompositionApiClient;
 
     @Mock Music mockedMusic;
 
@@ -221,11 +227,11 @@ public class MusicDetailPresenterTest {
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(mockedMusicDetailView,
-            mockedContext, userEventTracker,
-            mockedGetMediaListFromProjectUseCase, mockedGetAudioFromProject,
-            mockedGetPreferencesTransitionsFromProject, mockedAddAudioUseCase,
-            mockedRemoveAudioUseCase, mockedModifyTrackUseCase, mockedGetMusicListUseCase,
-            mockedProjectInstanceCache);
+                mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
+                mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
+                mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
+                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedAssetUploadQueue,
+                mockedRunSyncAdapter, mockedCompositionApiClient);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

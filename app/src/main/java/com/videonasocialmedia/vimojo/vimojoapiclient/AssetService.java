@@ -7,7 +7,11 @@
 
 package com.videonasocialmedia.vimojo.vimojoapiclient;
 
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
+/**
+ * Created by alvaro on 21/6/18.
+ */
+
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;
 
 import java.util.Map;
 
@@ -21,14 +25,12 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 /**
- * Created by alvaro on 21/6/18.
+ * Class describing asset services in vimojo platform.
  */
-
 public interface AssetService {
-
   @Multipart
   @POST("project/{projectId}/asset")
-  Call<Asset> uploadAsset(
+  Call<AssetDto> addAsset(
       @Path("projectId") String projectId,
       // TODO(jliarte): 8/02/18 check if we can model the request body into a vimojoapiclient.model
       @PartMap() Map<String, RequestBody> partMap,

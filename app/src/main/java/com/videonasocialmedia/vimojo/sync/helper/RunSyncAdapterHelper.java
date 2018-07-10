@@ -31,7 +31,6 @@ import javax.inject.Inject;
  */
 
 public class RunSyncAdapterHelper {
-
   private final String LOG_TAG = this.getClass().getSimpleName();
   private static final long SECONDS_PER_MINUTE = 60L;
   private static final long SYNC_INTERVAL_IN_MINUTES = 1L;

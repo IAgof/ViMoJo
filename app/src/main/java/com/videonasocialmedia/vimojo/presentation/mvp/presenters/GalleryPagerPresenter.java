@@ -135,13 +135,14 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
 
     private void addVideoToProject(List<Video> checkedVideoList) {
         addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, this);
-        for(Video video: checkedVideoList) {
+        for (Video video: checkedVideoList) {
           // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
             AssetUpload assetUpload = new AssetUpload("ElConfiHack", video);
             executeUseCaseCall((Callable<Void>) () -> {
                 try {
                     assetUploadQueue.addAssetToUpload(assetUpload);
-                    Log.d(LOG_TAG, "uploadVideo " + assetUpload.getName());
+                    runSyncAdapterHelper.runNowSyncAdapter();
+                    Log.d(LOG_TAG, "addAsset " + assetUpload.getName());
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                     Log.d(LOG_TAG, ioException.getMessage());
@@ -151,7 +152,6 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
                 return null;
             });
         }
-        runSyncAdapterHelper.runNowSyncAdapter();
         updateCompositionWithPlatform(currentProject);
     }
 

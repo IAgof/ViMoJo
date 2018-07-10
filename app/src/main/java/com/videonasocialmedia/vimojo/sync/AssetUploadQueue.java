@@ -22,7 +22,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth.domain.usecase.GetAuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Asset;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 
@@ -82,9 +82,9 @@ public class AssetUploadQueue {
     try {
       String token = authToken.getToken();
       // TODO(jliarte): 27/02/18 check what to do with plaform response
-      Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
-      Asset asset = assetApiClient.uploadVideo(token, element);
-      Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
+      Log.d(LOG_TAG, "uploading video ... videoApiClient.addAsset");
+      AssetDto assetDto = assetApiClient.addAsset(token, element);
+      Log.d(LOG_TAG, "uploaded video ... videoApiClient.addAsset");
       removeHeadElement(getQueue());
       Log.d(LOG_TAG, "finish upload success");
     } catch (VimojoApiException vimojoApiException) {

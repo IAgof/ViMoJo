@@ -11,14 +11,13 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
  * Created by alvaro on 21/6/18.
  */
 
-public class Asset {
-
+public class AssetDto {
   private String name;
   private String type;
   private String hash;
   private String date;
 
-  public Asset(String name, String type, String hash, String date) {
+  public AssetDto(String name, String type, String hash, String date) {
     this.name = name;
     this.type = type;
     this.hash = hash;
