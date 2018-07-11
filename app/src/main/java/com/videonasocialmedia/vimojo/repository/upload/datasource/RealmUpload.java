@@ -19,7 +19,6 @@ import io.realm.annotations.Required;
  */
 
 public class RealmUpload extends RealmObject {
-
   @PrimaryKey @Required
   public String uuid;
   public int id;
@@ -31,12 +30,11 @@ public class RealmUpload extends RealmObject {
   public String description;
   @Required
   public String productTypeList;
-  protected int numTries;
+  public int numTries;
   public boolean isAcceptedUploadWithMobileNetwork;
   public boolean isUploading;
 
   public RealmUpload() {
-
   }
 
   public RealmUpload(String uuid, int id, String mediaPath, String title, String description,

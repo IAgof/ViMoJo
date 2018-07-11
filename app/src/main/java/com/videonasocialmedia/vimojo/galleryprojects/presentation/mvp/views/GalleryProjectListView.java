@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views;
 
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import java.util.List;
 

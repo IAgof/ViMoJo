@@ -7,9 +7,8 @@
 
 package com.videonasocialmedia.vimojo.vimojoapiclient;
 
-import com.google.gson.Gson;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import java.io.IOException;
 

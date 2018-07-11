@@ -9,7 +9,7 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.model.entities.editor;
+package com.videonasocialmedia.vimojo.cut.domain.model;
 
 import android.support.annotation.NonNull;
 
@@ -21,6 +21,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;

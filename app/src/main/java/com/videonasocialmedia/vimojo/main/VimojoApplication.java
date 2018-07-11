@@ -27,7 +27,8 @@ import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
@@ -36,7 +37,7 @@ import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.main.modules.AssetUploadQueueModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -65,6 +66,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     @Inject ProjectRepository projectRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
     @Inject SharedPreferences sharedPreferences;
+    @Inject SaveCut saveCut;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -221,7 +223,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
                     drawableFadeTransitionVideo);
-            projectRepository.add(project);
+            saveCut.saveCut(project);
             return project;
         } else {
             return projectRepository.getLastModifiedProject();

@@ -12,13 +12,12 @@ import android.util.Log;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import android.util.Log;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
@@ -29,9 +28,6 @@ import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,14 +5,14 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
@@ -28,13 +28,13 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
@@ -337,7 +337,7 @@ public class ActivityPresentersModule {
           CameraSettingsRepository cameraSettingsRepository,
           RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository) {
     return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
-            cameraSettingsRepository, runSyncAdapterHelper, projectRepository,
+            cameraSettingsRepository, runSyncAdapterHelper,
             (ProjectInstanceCache) activity.getApplication());
   }
 
@@ -352,25 +352,25 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository,
-          NewClipImporter newClipImporter, BillingManager billingManager) {
+          NewClipImporter newClipImporter, BillingManager billingManager, SaveCut saveCut) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
             getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             relaunchTranscoderTempBackgroundUseCase, projectRepository, newClipImporter,
-            billingManager, projectInstanceCache);
+            billingManager, projectInstanceCache, saveCut);
   }
 
   @Provides @PerActivity
   GalleryProjectListPresenter provideGalleryProjectListPresenter(
-      ProjectRepository projectRepository, SharedPreferences sharedPreferences,
-      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      DuplicateProjectUseCase duplicateProjectUseCase, DeleteProjectUseCase deleteProjectUseCase,
-      CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase) {
+          ProjectRepository projectRepository, SharedPreferences sharedPreferences,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          DuplicateProjectUseCase duplicateProjectUseCase, DeleteProjectUseCase deleteProjectUseCase,
+          CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase, SaveCut saveCut) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase,
-            (ProjectInstanceCache) activity.getApplication());
+            (ProjectInstanceCache) activity.getApplication(), saveCut);
   }
 
   @Provides @PerActivity
@@ -465,8 +465,8 @@ public class ActivityPresentersModule {
     return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
-  @Provides DuplicateProjectUseCase provideDuplicateProject(ProjectRepository projectRepository) {
-    return new DuplicateProjectUseCase(projectRepository);
+  @Provides DuplicateProjectUseCase provideDuplicateProject() {
+    return new DuplicateProjectUseCase();
   }
 
   @Provides DeleteProjectUseCase provideDeleteProject(ProjectRepository projectRepository,

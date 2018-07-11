@@ -19,7 +19,7 @@ import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;

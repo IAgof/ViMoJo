@@ -18,7 +18,7 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProj
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;

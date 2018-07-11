@@ -15,14 +15,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
@@ -84,6 +85,7 @@ public class EditorPresenterTest {
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock SaveCut mockedSaveCut;
   private Project currentProject;
   private boolean hasBeenProjectExported = false;
   private String videoExportedPath = "videoExportedPath";
@@ -106,7 +108,7 @@ public class EditorPresenterTest {
             mockedRemoveVideoFromProjectUseCase, mockedGetAudioFromProjectUseCase,
             mocekdGetPreferencesTransitionFromProjectUseCase,
             mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache);
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveCut);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
@@ -386,13 +388,13 @@ public class EditorPresenterTest {
   }
 
   private EditorPresenter getEditorPresenter() {
-    EditorPresenter editorPresenter = new EditorPresenter(mockedEditorActivityView, mockedVideonaPlayerView,
-        mockedSharedPreferences, mockedContext,
-        mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
-        mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
-        mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
-        mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-        mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache);
+    EditorPresenter editorPresenter = new EditorPresenter(
+            mockedEditorActivityView, mockedVideonaPlayerView, mockedSharedPreferences,
+            mockedContext, mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
+            mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
+            mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
+            mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveCut);
     editorPresenter.currentProject = currentProject;
     return editorPresenter;
   }

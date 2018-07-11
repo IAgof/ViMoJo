@@ -13,7 +13,7 @@
 //import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 //import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 //import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-//import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+//import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 //import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
 //import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 //import com.videonasocialmedia.vimojo.utils.Constants;

@@ -17,7 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
@@ -96,7 +96,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     // TODO(jliarte): 20/04/18 review this workflow
     // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
     Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
-    presenter.setNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
+    presenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
     //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }

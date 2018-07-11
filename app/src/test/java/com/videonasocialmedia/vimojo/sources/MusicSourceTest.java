@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Before;

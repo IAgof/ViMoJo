@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 

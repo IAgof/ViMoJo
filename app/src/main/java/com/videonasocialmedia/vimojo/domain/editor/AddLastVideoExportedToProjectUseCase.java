@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;

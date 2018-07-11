@@ -9,8 +9,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import java.util.ArrayList;
 import java.util.HashMap;

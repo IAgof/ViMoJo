@@ -13,15 +13,17 @@ import android.util.Size;
 import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.HashMap;
 
@@ -44,11 +46,12 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 /**
  * Created by jliarte on 22/10/16.
  */
-public class InitAppPresenter {
+public class InitAppPresenter extends VimojoPresenter {
   private final Context context;
   private final CameraSettingsRepository cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
-  private final ProjectRepository projectRepository;
+  // TODO(jliarte): 11/07/18 make final if injected
+  private SaveCut saveCut;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
@@ -61,15 +64,15 @@ public class InitAppPresenter {
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
                           CameraSettingsRepository cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper,
-                          ProjectRepository projectRepository,
                           ProjectInstanceCache projectInstanceCache) {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
-    this.projectRepository = projectRepository;
     this.projectInstanceCache = projectInstanceCache;
+    // TODO(jliarte): 11/07/18 inject this
+//    saveCut = new SaveCut(projectInstanceCache, projectRepository);
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -78,8 +81,8 @@ public class InitAppPresenter {
       // TODO(jliarte): 23/04/18 in fact, there will be always a project instance, consider removing
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
               isWatermarkActivated(), drawableFadeTransitionVideo);
-      projectRepository.add(project);
       projectInstanceCache.setCurrentProject(project);
+      saveCut.saveCut(project);
     }
   }
 
@@ -107,7 +110,6 @@ public class InitAppPresenter {
 
   private void checkCamera2ResolutionSupported(Camera2Settings camera2Settings)
           throws CameraAccessException {
-
     String defaultResolution = Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
 
@@ -206,4 +208,5 @@ public class InitAppPresenter {
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
   }
+
 }

@@ -22,12 +22,12 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
-import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +57,7 @@ public class TrimPreviewPresenterTest {
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
+    @Mock CompositionApiClient mockedCompositionApiClient;
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
 
@@ -73,9 +74,10 @@ public class TrimPreviewPresenterTest {
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
-            mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
+        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
+                mockedTrimView, mockedSharedPreferences, userEventTracker,
+                mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
+                mockedProjectInstanceCache, mockedCompositionApiClient);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -194,9 +196,10 @@ public class TrimPreviewPresenterTest {
 
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
-        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView, mockedSharedPreferences,
-            mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
-            mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
+        TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
+                mockedTrimView, mockedSharedPreferences, mockedUserEventTracker,
+                mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
+                mockedProjectInstanceCache, mockedCompositionApiClient);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }

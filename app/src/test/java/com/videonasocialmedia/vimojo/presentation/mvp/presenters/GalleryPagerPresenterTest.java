@@ -17,13 +17,16 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,6 +72,9 @@ public class GalleryPagerPresenterTest {
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
   @Mock private VideoRepository mockedVideoRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock AssetUploadQueue mockedAssetUploadQueue;
+  @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
+  @Mock private CompositionApiClient mockedCompositionApicClient;
   private Project currentProject;
 
   @Before
@@ -195,10 +201,12 @@ public class GalleryPagerPresenterTest {
   }
 
   private GalleryPagerPresenter getGalleryPresenter() {
-    return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
-            mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-            mockedApplyAVTransitionsUseCase, mockedProjectRepository,
-            mockedVideoRepository, mockedSharedPreferences, mockedProjectInstanceCache);
+    return new GalleryPagerPresenter(
+            mockedGalleryPagerView, mockedContext, mockedAddVideoToProjectUseCase,
+            mockedGetVideonaFormatFromCurrentProjectUseCase, mockedApplyAVTransitionsUseCase,
+            mockedProjectRepository, mockedVideoRepository, mockedSharedPreferences,
+            mockedProjectInstanceCache, mockedAssetUploadQueue, mockedRunSyncAdapterHelper,
+            mockedCompositionApicClient);
   }
 
   public void setAProject() {

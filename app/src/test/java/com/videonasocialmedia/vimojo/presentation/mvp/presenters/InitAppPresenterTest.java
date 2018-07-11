@@ -8,9 +8,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -61,9 +59,9 @@ public class InitAppPresenterTest {
   }
 
   private InitAppPresenter getInitAppPresenter() {
-    return new InitAppPresenter(mockedContext, mockedSharedPreferences, mockedUseCase,
-        mockedCameraSettingsRepository, mockedRunSyncAdapterHelper, mockedProjectRepository,
-        mockedProjectInstanceCache);
+    return new InitAppPresenter(
+            mockedContext, mockedSharedPreferences, mockedUseCase, mockedCameraSettingsRepository,
+            mockedRunSyncAdapterHelper, mockedProjectInstanceCache);
   }
 
   public void getAProject() {

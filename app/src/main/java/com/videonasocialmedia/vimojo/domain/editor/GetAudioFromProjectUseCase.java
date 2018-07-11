@@ -1,12 +1,9 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GetMusicFromProjectCallback;
-
-
-import javax.inject.Inject;
 
 /**
  * Created by jliarte on 31/05/16.

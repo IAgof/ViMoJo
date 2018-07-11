@@ -7,7 +7,7 @@
 
 package com.videonasocialmedia.vimojo.vimojoapiclient;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import retrofit2.Call;
 import retrofit2.http.Headers;

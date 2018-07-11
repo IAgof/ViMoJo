@@ -17,14 +17,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
@@ -76,6 +77,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private ProjectRepository projectRepository;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
+  private SaveCut saveCut;
 
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
@@ -93,7 +95,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository, NewClipImporter newClipImporter,
-          BillingManager billingManager, ProjectInstanceCache projectInstanceCache) {
+          BillingManager billingManager, ProjectInstanceCache projectInstanceCache,
+          SaveCut saveCut) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -110,6 +113,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
+    this.saveCut = saveCut;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
@@ -198,8 +202,8 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
                              Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             getPreferenceWaterMark(), drawableFadeTransitionVideo);
-    projectRepository.add(project);
     projectInstanceCache.setCurrentProject(project);
+    saveCut.saveCut(project);
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?

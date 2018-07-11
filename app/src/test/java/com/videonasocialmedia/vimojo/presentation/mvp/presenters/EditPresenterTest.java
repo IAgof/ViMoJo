@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,7 @@ public class EditPresenterTest {
   @Mock ListenableFuture<Video> mockedTranscodingTask;
   @Mock private VideoTranscodingErrorNotifier mockedVideoTranscodingErrorNotifier;
   @Mock ProjectInstanceCache mockedProjectInstantCache;
+  @Mock CompositionApiClient mockedCompositionApiClient;
   private Project currentProject;
 
 
@@ -163,10 +165,10 @@ public class EditPresenterTest {
 
   @NonNull
   public EditPresenter getEditPresenter() {
-    EditPresenter editPresenter = new EditPresenter(mockedEditorView, mockedContext,
-        mockedVideoTranscodingErrorNotifier, mockedUserEventTracker,
-        mockedGetMediaListFromProjectUseCase, mockedVideoRemover, mockedMediaItemReorderer,
-        mockedProjectInstantCache);
+    EditPresenter editPresenter = new EditPresenter(
+            mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
+            mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
+            mockedMediaItemReorderer, mockedProjectInstantCache, mockedCompositionApiClient);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

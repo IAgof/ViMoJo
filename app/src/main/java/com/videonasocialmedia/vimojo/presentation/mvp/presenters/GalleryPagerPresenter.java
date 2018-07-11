@@ -25,7 +25,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
@@ -38,7 +38,6 @@ import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
@@ -209,6 +208,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     }
 
     private String getVideoWidth(Video video) {
+        // TODO(jliarte): 11/07/18 capture error getting info from MMR
         metadataRetriever.setDataSource(video.getMediaPath());
         return metadataRetriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);

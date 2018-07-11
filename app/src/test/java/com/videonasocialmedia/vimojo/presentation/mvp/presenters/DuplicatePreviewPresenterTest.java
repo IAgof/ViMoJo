@@ -10,7 +10,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -19,6 +19,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +49,7 @@ public class DuplicatePreviewPresenterTest {
     @Mock private AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
+    @Mock CompositionApiClient mockedCompositionApiClient;
 
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
@@ -69,9 +71,10 @@ public class DuplicatePreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         DuplicatePreviewPresenter duplicatePreviewPresenter =
-                new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker,
-                    mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,
-                    mockedProjectInstanceCache);
+                new DuplicatePreviewPresenter(
+                        mockedDuplicateView, userEventTracker, mockedAddVideoToProjectUseCase,
+                        mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
+                        mockedCompositionApiClient);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -107,9 +110,10 @@ public class DuplicatePreviewPresenterTest {
 
     @NonNull
     public DuplicatePreviewPresenter getDuplicatePreviewPresenter() {
-        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
-            mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,
-            mockedProjectInstanceCache);
+        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(
+                mockedDuplicateView, mockedUserEventTracker, mockedAddVideoToProjectUseCase,
+                mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
+                mockedCompositionApiClient);
         duplicatePreviewPresenter.currentProject = currentProject;
         return  duplicatePreviewPresenter;
     }

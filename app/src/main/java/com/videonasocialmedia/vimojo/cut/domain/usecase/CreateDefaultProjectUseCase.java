@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.domain.project;
+package com.videonasocialmedia.vimojo.cut.domain.usecase;
 
 /**
  * Created by jliarte on 23/10/16.
@@ -7,7 +7,7 @@ package com.videonasocialmedia.vimojo.domain.project;
 // TODO(jliarte): 20/04/18 delete Drawable dependency
 import android.graphics.drawable.Drawable;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;

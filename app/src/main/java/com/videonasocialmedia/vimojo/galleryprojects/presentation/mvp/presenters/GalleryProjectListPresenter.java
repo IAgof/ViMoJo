@@ -5,14 +5,14 @@ import android.graphics.drawable.Drawable;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
@@ -37,6 +37,7 @@ public class GalleryProjectListPresenter {
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
   private ProjectInstanceCache projectInstanceCache;
+  private SaveCut saveCut;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -46,7 +47,8 @@ public class GalleryProjectListPresenter {
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteProjectUseCase deleteProjectUseCase,
           CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase,
-          ProjectInstanceCache projectInstanceCache) {
+          ProjectInstanceCache projectInstanceCache,
+          SaveCut saveCut) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -55,6 +57,7 @@ public class GalleryProjectListPresenter {
     this.deleteProjectUseCase = deleteProjectUseCase;
     this.checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
     this.projectInstanceCache = projectInstanceCache;
+    this.saveCut = saveCut;
   }
 
   public void init() {
@@ -66,7 +69,9 @@ public class GalleryProjectListPresenter {
   }
 
   public void duplicateProject(Project project) throws IllegalItemOnTrack {
-    duplicateProjectUseCase.duplicate(project);
+    // TODO(jliarte): 11/07/18 move calls to background as they call repos and copy files
+    Project newProject = duplicateProjectUseCase.duplicate(project);
+    saveCut.saveCut(newProject);
   }
 
   public void deleteProject(Project project) {
@@ -90,12 +95,13 @@ public class GalleryProjectListPresenter {
     }
   }
 
-  public void setNewProject(String rootPath, String privatePath,
-                            Drawable drawableFadeTransitionVideo) {
+  public void createNewProject(String rootPath, String privatePath,
+                               Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             isWatermarkActivated(), drawableFadeTransitionVideo);
-    projectRepository.add(project);
     projectInstanceCache.setCurrentProject(project);
+    // TODO(jliarte): 11/07/18 move call to background
+    saveCut.saveCut(project);
   }
 
   private boolean isWatermarkActivated() {

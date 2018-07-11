@@ -1,7 +1,7 @@
-package com.videonasocialmedia.vimojo.galleryprojects.domain;
+package com.videonasocialmedia.vimojo.cut.domain.usecase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
@@ -15,19 +15,15 @@ import javax.inject.Inject;
  */
 
 public class DuplicateProjectUseCase {
-
-  protected ProjectRepository projectRepository;
-
   @Inject
-  public DuplicateProjectUseCase(ProjectRepository projectRepository) {
-    this.projectRepository = projectRepository;
+  public DuplicateProjectUseCase() {
   }
 
-  public void duplicate(Project project) throws IllegalItemOnTrack {
+  public Project duplicate(Project project) throws IllegalItemOnTrack {
     String origPath = project.getProjectPath();
     Project newProject = new Project(project);
     copyFilesToNewProject(origPath, newProject.getProjectPath());
-    projectRepository.add(newProject);
+    return newProject;
   }
 
   private void copyFilesToNewProject(String projectPath, String newProjectPath) {
