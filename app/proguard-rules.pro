@@ -192,7 +192,7 @@
 # For example:
 # -keep class com.yourcompany.realm.** { *; }
 
--keep class com.videonasocialmedia.vimojo.repository.project.datasource.RealmProject
+-keep class com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject
 -keep class com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo
 -keep class com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic
 -keep class com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack

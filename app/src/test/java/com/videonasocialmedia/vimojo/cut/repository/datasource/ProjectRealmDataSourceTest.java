@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.project.datasource;
+package com.videonasocialmedia.vimojo.cut.repository.datasource;
 
 import android.content.Context;
 import android.os.Environment;
@@ -42,7 +42,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Environment.class)
-public class ProjectRealmRepositoryTest {
+public class ProjectRealmDataSourceTest {
   private Realm mockedRealm;
   private File mockedStorageDir;
   @Mock private Context mockedContext;
@@ -81,7 +81,7 @@ public class ProjectRealmRepositoryTest {
   @Ignore
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
-    ProjectRealmRepository repo = new ProjectRealmRepository();
+    ProjectRealmDataSource repo = new ProjectRealmDataSource();
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
@@ -92,7 +92,7 @@ public class ProjectRealmRepositoryTest {
 
   @Test
   public void testConstructorsSetsMappers() {
-    ProjectRealmRepository repo = new ProjectRealmRepository();
+    ProjectRealmDataSource repo = new ProjectRealmDataSource();
 
     assertThat(repo.toRealmProjectMapper, is(notNullValue()));
     assertThat(repo.toProjectMapper, is(notNullValue()));
@@ -104,7 +104,7 @@ public class ProjectRealmRepositoryTest {
 //    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
 //            -1, Profile.ProfileType.pro);
 //    Project project = new Project("Project title", "root/path", profile);
-//    ProjectRealmRepository repo = new ProjectRealmRepository();
+//    ProjectRealmDataSource repo = new ProjectRealmDataSource();
 //    repo.realm = mockedRealm;
 //
 //    repo.add(project);
@@ -116,7 +116,7 @@ public class ProjectRealmRepositoryTest {
 
   @Test
   public void testUpdateResolutionUpdateProject() {
-    ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
     VideoResolution.Resolution videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION;
     Mockito.doNothing().when(repo).update(any(Project.class));
 
@@ -127,7 +127,7 @@ public class ProjectRealmRepositoryTest {
 
   @Test
   public void testUpdateFrameRateUpdateProject() {
-    ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
     VideoFrameRate.FrameRate videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE;
     Mockito.doNothing().when(repo).update(any(Project.class));
 
@@ -138,7 +138,7 @@ public class ProjectRealmRepositoryTest {
 
   @Test
   public void testUpdateQualityUpdateProject() {
-    ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
     VideoQuality.Quality videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY;
     Mockito.doNothing().when(repo).update(any(Project.class));
 
@@ -149,7 +149,7 @@ public class ProjectRealmRepositoryTest {
 
   @Test
   public void testSetWatermarkActivatedUpdateProject() {
-    ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
     Mockito.doNothing().when(repo).update(any(Project.class));
     boolean watermarkActivated = true;
     assert(!currentProject.hasWatermark());
@@ -161,7 +161,7 @@ public class ProjectRealmRepositoryTest {
 
   @Test
   public void testSetProjectInfoUpdateProject() {
-    ProjectRealmRepository repo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
     Mockito.doNothing().when(repo).update(any(Project.class));
     String title = "title";
     String description = "description";

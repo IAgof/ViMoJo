@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.project.datasource.mapper;
+package com.videonasocialmedia.vimojo.cut.repository.datasource.mapper;
 
 import android.content.Context;
 import android.os.Environment;
@@ -16,7 +16,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic;
-import com.videonasocialmedia.vimojo.repository.project.datasource.RealmProject;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject;
 import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
 import com.videonasocialmedia.vimojo.sources.MusicSource;

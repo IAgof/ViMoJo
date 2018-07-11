@@ -6,7 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.datasource.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import org.junit.Before;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 public class AddLastVideoExportedToProjectUseCaseTest {
 
   @Mock
-  ProjectRealmRepository mockedProjectRepository;
+  ProjectRealmDataSource mockedProjectRepository;
   @InjectMocks
   AddLastVideoExportedToProjectUseCase injectedUseCase;
   private Project currentProject;

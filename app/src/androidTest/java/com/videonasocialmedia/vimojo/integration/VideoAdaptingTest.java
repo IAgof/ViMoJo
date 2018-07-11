@@ -23,7 +23,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.datasource.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
@@ -315,7 +315,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
     currentProject.setProjectPath(testPath);
     currentProject.getVMComposition().getMediaTrack().insertItem(video);
-    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmDataSource());
     projectRepo.update(currentProject);
     String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
     int videoPosition = 0;

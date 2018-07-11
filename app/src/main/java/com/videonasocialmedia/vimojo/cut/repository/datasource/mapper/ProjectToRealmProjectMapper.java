@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.project.datasource.mapper;
+package com.videonasocialmedia.vimojo.cut.repository.datasource.mapper;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -8,7 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.datasource.mapper.MusicToRealmMusicMapper;
-import com.videonasocialmedia.vimojo.repository.project.datasource.RealmProject;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.TrackToRealmTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.VideoToRealmVideoMapper;
 

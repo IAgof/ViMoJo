@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.project.datasource;
+package com.videonasocialmedia.vimojo.cut.repository.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -8,8 +8,8 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.project.datasource.mapper.ProjectToRealmProjectMapper;
-import com.videonasocialmedia.vimojo.repository.project.datasource.mapper.RealmProjectToProjectMapper;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.ProjectToRealmProjectMapper;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.RealmProjectToProjectMapper;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -24,11 +24,11 @@ import io.realm.Sort;
  * Created by jliarte on 20/10/16.
  */
 
-public class ProjectRealmRepository implements ProjectRepository {
+public class ProjectRealmDataSource implements ProjectRepository {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
 
-  public ProjectRealmRepository() {
+  public ProjectRealmDataSource() {
     this.toProjectMapper = new RealmProjectToProjectMapper();
     this.toRealmProjectMapper = new ProjectToRealmProjectMapper();
   }
