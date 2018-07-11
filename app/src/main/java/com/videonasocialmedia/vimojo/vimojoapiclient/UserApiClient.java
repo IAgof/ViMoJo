@@ -17,16 +17,12 @@ import retrofit2.Response;
 /**
  * Api client for user service.
  * <p>
- * <p>Handles user details calls.</p>
+ * <p>Handles user vimojo API calls.</p>
  */
 public class UserApiClient extends VimojoApiClient {
-
   @Inject
   public UserApiClient() {
-
   }
-
-  private String LOG_TAG = UserApiClient.class.getCanonicalName();
 
   /**
    * Make a user auth call to get user info

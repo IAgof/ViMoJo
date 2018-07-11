@@ -124,7 +124,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
         ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
             @Override
             public Project call() throws Exception {
-                return compositionApiClient.uploadComposition(currentProject);
+                return compositionApiClient.addComposition(currentProject);
             }
         });
         Futures.addCallback(compositionFuture, new FutureCallback<Project>() {

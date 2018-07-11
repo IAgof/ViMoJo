@@ -62,11 +62,11 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   }
 
   @NonNull
-  private Project mapProject(RealmProject realmProject){
+  private Project mapProject(RealmProject realmProject) {
     ProjectInfo projectInfo = new ProjectInfo(realmProject.title, realmProject.description,
-        realmProject.productTypeList);
+            realmProject.productTypeList);
     Project currentProject = new Project(projectInfo, Constants.PATH_APP,
-        Constants.PATH_APP_ANDROID, mapProfile(realmProject));
+            Constants.PATH_APP_ANDROID, mapProfile(realmProject));
     currentProject.setProjectPath(realmProject.projectPath);
     currentProject.setUuid(realmProject.uuid);
     currentProject.updateDateOfModification(realmProject.lastModification);
@@ -95,7 +95,7 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
   private void setProjectLastVideoExported(Project project, RealmProject realmProject) {
     if (realmProject.dateLastVideoExported != null && realmProject.pathLastVideoExported != null) {
       LastVideoExported lastVideoExported = new LastVideoExported(
-          realmProject.pathLastVideoExported,realmProject.dateLastVideoExported);
+              realmProject.pathLastVideoExported, realmProject.dateLastVideoExported);
       project.setLastVideoExported(lastVideoExported);
     }
   }
@@ -109,10 +109,10 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
           break;
         case INDEX_AUDIO_TRACK_MUSIC:
           project.getAudioTracks().add(INDEX_AUDIO_TRACK_MUSIC,
-              (AudioTrack) toTrackMapper.map(realmTrack));
+                  (AudioTrack) toTrackMapper.map(realmTrack));
         case INDEX_AUDIO_TRACK_VOICE_OVER:
           project.getAudioTracks().add(INDEX_AUDIO_TRACK_VOICE_OVER,
-               (AudioTrack) toTrackMapper.map(realmTrack));
+                  (AudioTrack) toTrackMapper.map(realmTrack));
           break;
       }
     }
@@ -123,10 +123,10 @@ public class RealmProjectToProjectMapper implements Mapper<RealmProject, Project
       try {
         if (isAVoiceOver(realmMusic)) {
           project.getAudioTracks()
-              .get(INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
+                  .get(INDEX_AUDIO_TRACK_VOICE_OVER).insertItem(toMusicMapper.map(realmMusic));
         } else {
           project.getAudioTracks()
-              .get(INDEX_AUDIO_TRACK_MUSIC).insertItem(toMusicMapper.map(realmMusic));
+                  .get(INDEX_AUDIO_TRACK_MUSIC).insertItem(toMusicMapper.map(realmMusic));
         }
       } catch (IllegalItemOnTrack illegalItemOnTrack) {
         illegalItemOnTrack.printStackTrace();

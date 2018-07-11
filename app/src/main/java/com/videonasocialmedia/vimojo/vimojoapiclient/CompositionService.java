@@ -17,8 +17,11 @@ import retrofit2.http.POST;
  * Created by alvaro on 21/6/18.
  */
 
+/**
+ * Class describing cut/composition services.
+ */
 public interface CompositionService {
-
+  // TODO(jliarte): 11/07/18 check if rename
   /**
   @GET("project/{userId}")
   Call<Project> getMyProjects(@Path("userId") String userId);
@@ -30,8 +33,8 @@ public interface CompositionService {
   Call<List<Composition>> getProjectsById(@Path("projectId") String projectId);
   */
 
-  @POST("project")
+  @POST("project/cut")
   @Headers("Content-Type: application/json")
-  Call<Project> uploadComposition(String currentProject);
+  Call<Project> addComposition(String currentProject);
 
 }

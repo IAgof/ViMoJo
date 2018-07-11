@@ -148,7 +148,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
     ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
       @Override
       public Project call() throws Exception {
-        return compositionApiClient.uploadComposition(currentProject);
+        return compositionApiClient.addComposition(currentProject);
       }
     });
     Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
