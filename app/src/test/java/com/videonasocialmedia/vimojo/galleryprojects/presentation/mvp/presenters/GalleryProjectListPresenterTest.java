@@ -10,7 +10,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 
 import org.junit.Before;
@@ -34,7 +34,7 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 public class GalleryProjectListPresenterTest {
 
   @Mock
-  ProjectDataSource mockedProjectRepository;
+  ProjectRepository mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @InjectMocks GalleryProjectListPresenter injectedPresenter;
   @Mock GalleryProjectListView mockedGalleryProjectListView;

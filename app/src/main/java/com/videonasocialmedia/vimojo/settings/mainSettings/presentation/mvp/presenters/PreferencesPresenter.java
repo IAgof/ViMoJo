@@ -39,7 +39,7 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProj
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
@@ -94,7 +94,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private GetAccount getAccount;
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private Project currentProject;
 
   /**
@@ -108,7 +108,7 @@ public class PreferencesPresenter extends VimojoPresenter
   public PreferencesPresenter(
           PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
           Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
-          Preference watermarkPref, ProjectDataSource projectRepository,
+          Preference watermarkPref, ProjectRepository projectRepository,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           UpdateAudioTransitionPreferenceToProjectUseCase

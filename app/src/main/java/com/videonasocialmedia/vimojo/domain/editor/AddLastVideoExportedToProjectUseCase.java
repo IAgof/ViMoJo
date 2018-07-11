@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;
 
@@ -12,10 +12,10 @@ import javax.inject.Inject;
 
 public class AddLastVideoExportedToProjectUseCase {
 
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
 
   @Inject
-  public AddLastVideoExportedToProjectUseCase(ProjectDataSource projectRepository) {
+  public AddLastVideoExportedToProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 
@@ -24,6 +24,7 @@ public class AddLastVideoExportedToProjectUseCase {
     LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported, date);
     currentProject.setLastVideoExported(lastVideoExported);
     currentProject.updateDateOfModification(date);
+    // TODO(jliarte): 11/07/18 this is a use case!
     projectRepository.updateWithDate(currentProject, date);
   }
 

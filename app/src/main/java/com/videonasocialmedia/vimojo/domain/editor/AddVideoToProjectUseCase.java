@@ -18,7 +18,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import javax.inject.Inject;
  */
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
-    protected ProjectDataSource projectRepository;
+    protected ProjectRepository projectRepository;
     private ApplyAVTransitionsUseCase applyAVTransitionsUseCase;
 
     /**
@@ -38,7 +38,7 @@ public class AddVideoToProjectUseCase {
      * @param applyAVTransitionsUseCase
      */
     @Inject public AddVideoToProjectUseCase(
-            ProjectDataSource projectRepository,
+            ProjectRepository projectRepository,
             ApplyAVTransitionsUseCase applyAVTransitionsUseCase) {
         this.projectRepository = projectRepository;
         this.applyAVTransitionsUseCase = applyAVTransitionsUseCase;

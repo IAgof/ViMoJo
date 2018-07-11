@@ -11,7 +11,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class DetailProjectPresenter {
   private final Context context;
   private DetailProjectView detailProjectView;
   private UserEventTracker userEventTracker;
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private Project currentProject;
   private HashMap<Integer, Boolean> productTypeCheckedIdsMap;
@@ -46,7 +46,7 @@ public class DetailProjectPresenter {
   @Inject
   public DetailProjectPresenter(
           Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
-          ProjectDataSource projectRepository, ProjectInstanceCache projectInstanceCache) {
+          ProjectRepository projectRepository, ProjectInstanceCache projectInstanceCache) {
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;
@@ -139,6 +139,7 @@ public class DetailProjectPresenter {
   public void setProjectInfo(String projectTitle, String projectDescription,
                              List<String> projectInfoProductTypeSelected) {
     userEventTracker.trackProjectInfo(currentProject);
+    // TODO(jliarte): 11/07/18 this is a use case!
     projectRepository.setProjectInfo(currentProject, projectTitle, projectDescription,
         getProjectInfoProductTypeSelectedInOrder(projectInfoProductTypeSelected));
   }

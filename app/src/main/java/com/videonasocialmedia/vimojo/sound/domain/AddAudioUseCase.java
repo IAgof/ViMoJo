@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;
 
@@ -17,12 +17,12 @@ import javax.inject.Inject;
 
 public class AddAudioUseCase {
 
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private final int SECOND_POSITION = 2;
   private final int FIRST_POSITION = 1;
 
   @Inject
-  public AddAudioUseCase(ProjectDataSource projectRepository) {
+  public AddAudioUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 

@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -31,7 +31,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   private Project currentProject;
   @Mock
-  ProjectDataSource mockedProjectRepository;
+  ProjectRepository mockedProjectRepository;
 
   @Before
   public void setUp() throws Exception {

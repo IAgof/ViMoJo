@@ -20,7 +20,7 @@ import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  */
 public class NewClipImporter {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private final VideoDataSource videoRepository;
   protected VideoToAdaptDataSource videoToAdaptRepository;
   private AdaptVideoToFormatUseCase adaptVideoToFormatUseCase;
@@ -59,7 +59,7 @@ public class NewClipImporter {
           AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectDataSource projectRepository, VideoDataSource videoRepository,
+          ProjectRepository projectRepository, VideoDataSource videoRepository,
           VideoToAdaptDataSource videoToAdaptRepository, AssetUploadQueue assetUploadQueue,
           RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;

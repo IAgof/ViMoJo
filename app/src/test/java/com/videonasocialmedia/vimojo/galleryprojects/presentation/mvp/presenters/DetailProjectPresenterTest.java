@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Deta
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
@@ -36,7 +36,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class DetailProjectPresenterTest {
 
   @Mock
-  ProjectDataSource mockedProjectRepo;
+  ProjectRepository mockedProjectRepo;
   @Mock DetailProjectView mockedDetailProjectView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock Context mockedContext;

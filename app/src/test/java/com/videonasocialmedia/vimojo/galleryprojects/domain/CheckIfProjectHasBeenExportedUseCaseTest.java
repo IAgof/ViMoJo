@@ -8,7 +8,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import org.junit.Before;
@@ -31,7 +31,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 public class CheckIfProjectHasBeenExportedUseCaseTest {
 
   @Mock
-  ProjectDataSource mockedProjectRepository;
+  ProjectRepository mockedProjectRepository;
   @InjectMocks
   CheckIfProjectHasBeenExportedUseCase injectedUseCase;
   @Mock

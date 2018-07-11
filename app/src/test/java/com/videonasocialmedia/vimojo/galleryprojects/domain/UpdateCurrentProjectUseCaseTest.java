@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 public class UpdateCurrentProjectUseCaseTest {
 
   @Mock
-  ProjectDataSource mockedProjectRepository;
+  ProjectRepository mockedProjectRepository;
   @InjectMocks
   UpdateCurrentProjectUseCase injectedUseCase;
   private Project currentProject;

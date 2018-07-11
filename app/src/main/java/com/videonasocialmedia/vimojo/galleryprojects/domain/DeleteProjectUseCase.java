@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
@@ -23,13 +23,13 @@ import javax.inject.Inject;
 
 public class DeleteProjectUseCase {
 
-  protected ProjectDataSource projectRepository;
+  protected ProjectRepository projectRepository;
   protected VideoDataSource videoRepository;
   protected MusicDataSource musicRepository;
   protected TrackDataSource trackRepository;
 
   @Inject
-  public DeleteProjectUseCase(ProjectDataSource projectRepository, VideoDataSource videoRepository,
+  public DeleteProjectUseCase(ProjectRepository projectRepository, VideoDataSource videoRepository,
                               MusicDataSource musicRepository, TrackDataSource trackRepository){
     this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;

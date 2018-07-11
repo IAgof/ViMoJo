@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseC
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class InitAppPresenterTest {
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Context mockedContext;
   @Mock
-  ProjectDataSource mockedProjectRepository;
+  ProjectRepository mockedProjectRepository;
   @Mock
   CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;

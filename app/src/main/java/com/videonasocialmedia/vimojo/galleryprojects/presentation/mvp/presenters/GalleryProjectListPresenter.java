@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 
@@ -29,7 +29,7 @@ import javax.inject.Inject;
  */
 public class GalleryProjectListPresenter {
 
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private SharedPreferences sharedPreferences;
   private DuplicateProjectUseCase duplicateProjectUseCase;
@@ -42,7 +42,7 @@ public class GalleryProjectListPresenter {
   @Inject
   public GalleryProjectListPresenter(
           GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
-          ProjectDataSource projectRepository,
+          ProjectRepository projectRepository,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteProjectUseCase deleteProjectUseCase,
@@ -64,7 +64,8 @@ public class GalleryProjectListPresenter {
     updateProjectList();
   }
 
-  public List<Project> loadListProjects() {
+  public List<Project> loadProjectList() {
+    // TODO(jliarte): 11/07/18 this is a use case!
     return projectRepository.getListProjectsByLastModificationDescending();
   }
 
@@ -80,6 +81,7 @@ public class GalleryProjectListPresenter {
   }
 
   private void updateCurrentProjectInstance() {
+    // TODO(jliarte): 11/07/18 this is a use case!
     Project lastModifiedProject = projectRepository.getLastModifiedProject();
     if (lastModifiedProject != null) {
       projectInstanceCache.setCurrentProject(lastModifiedProject);
@@ -87,7 +89,7 @@ public class GalleryProjectListPresenter {
   }
 
   public void updateProjectList() {
-    List<Project> projectList = loadListProjects();
+    List<Project> projectList = loadProjectList();
     if (projectList != null && projectList.size() > 0) {
       galleryProjectListView.showProjectList(projectList);
     } else {

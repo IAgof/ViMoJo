@@ -13,7 +13,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +39,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AddVideoToProjectUseCaseTest {
-  @Mock
-  ProjectRealmDataSource mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock OnLaunchAVTransitionTempFileListener mockedLaunchAVTransitionTempFileListener;
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @Mock ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;

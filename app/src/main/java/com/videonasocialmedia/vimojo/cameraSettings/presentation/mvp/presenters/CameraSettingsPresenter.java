@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.Camer
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class CameraSettingsPresenter {
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
   private CameraSettingsDataSource cameraSettingsRepository;
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private CameraSettings cameraSettings;
 
@@ -51,7 +51,7 @@ public class CameraSettingsPresenter {
   public CameraSettingsPresenter(
           CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
           GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
-          CameraSettingsDataSource cameraSettingsRepository, ProjectDataSource projectRepository,
+          CameraSettingsDataSource cameraSettingsRepository, ProjectRepository projectRepository,
           ProjectInstanceCache projectInstanceCache) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
@@ -164,6 +164,7 @@ public class CameraSettingsPresenter {
     userEventTracker.trackChangeResolution(resolution);
     VideoResolution.Resolution videoResolution = videoResolutionValues.get(resolutionSelectedId);
     if (videoResolution == null) { videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION; }
+    // TODO(jliarte): 11/07/18 this is a use case!
     projectRepository.updateResolution(currentProject, videoResolution);
   }
 
@@ -174,6 +175,7 @@ public class CameraSettingsPresenter {
     if (videoFrameRate == null) { videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
+    // TODO(jliarte): 11/07/18 this is a use case!
     projectRepository.updateFrameRate(currentProject, videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
   }
@@ -185,6 +187,7 @@ public class CameraSettingsPresenter {
     if (videoQuality == null) { videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
+    // TODO(jliarte): 11/07/18 this is a use case!
     projectRepository.updateQuality(currentProject, videoQuality);
     userEventTracker.trackChangeQuality(quality);
   }

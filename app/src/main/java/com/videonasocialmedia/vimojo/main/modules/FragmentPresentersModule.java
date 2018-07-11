@@ -17,7 +17,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -76,7 +76,7 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-          ProjectDataSource projectRepository,
+          ProjectRepository projectRepository,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           UpdateAudioTransitionPreferenceToProjectUseCase
@@ -115,13 +115,13 @@ public class FragmentPresentersModule {
 
   @Provides
   UpdateAudioTransitionPreferenceToProjectUseCase provideUpdateAudioTransitionPreference(
-      ProjectDataSource projectRepository) {
+      ProjectRepository projectRepository) {
     return new UpdateAudioTransitionPreferenceToProjectUseCase(projectRepository);
   }
 
   @Provides
   UpdateVideoTransitionPreferenceToProjectUseCase provideUpdateVideoTransitionPreference(
-      ProjectDataSource projectRepository) {
+      ProjectRepository projectRepository) {
     return new UpdateVideoTransitionPreferenceToProjectUseCase(projectRepository);
   }
 
@@ -132,7 +132,7 @@ public class FragmentPresentersModule {
 
   @Provides
   UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkPreference(
-          ProjectDataSource projectRepository) {
+          ProjectRepository projectRepository) {
     return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
@@ -143,7 +143,7 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectDataSource
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectRepository
                                                                        projectRepository) {
     return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
@@ -153,7 +153,7 @@ public class FragmentPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideosUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
-          ProjectDataSource projectRepository,
+          ProjectRepository projectRepository,
           VideoDataSource videoRepository, VideoToAdaptDataSource videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase,
           AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,

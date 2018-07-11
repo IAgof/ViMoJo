@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 
 import javax.inject.Inject;
@@ -21,14 +21,14 @@ import javax.inject.Inject;
 public class RemoveAudioUseCase {
 
   private Project currentProject;
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private TrackDataSource trackRepository;
   private MusicDataSource musicRepository;
   private final int FIRST_POSITION = 1;
   private final int RESET_POSITION = 0;
 
   @Inject
-  public RemoveAudioUseCase(ProjectDataSource projectRepository, TrackDataSource trackRepository,
+  public RemoveAudioUseCase(ProjectRepository projectRepository, TrackDataSource trackRepository,
                             MusicDataSource musicRepository) {
     this.projectRepository = projectRepository;
     this.trackRepository = trackRepository;

@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.domain;
 
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 /**
  * Created by alvaro on 10/01/17.
@@ -9,9 +9,9 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 public class UpdateAudioTransitionPreferenceToProjectUseCase {
 
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
 
-  public UpdateAudioTransitionPreferenceToProjectUseCase(ProjectDataSource projectRepository) {
+  public UpdateAudioTransitionPreferenceToProjectUseCase(ProjectRepository projectRepository) {
     this.projectRepository = projectRepository;
   }
 

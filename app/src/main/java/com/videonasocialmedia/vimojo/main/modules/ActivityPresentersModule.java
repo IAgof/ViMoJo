@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
@@ -227,7 +227,7 @@ public class ActivityPresentersModule {
   CameraSettingsPresenter provideCameraSettingPresenter(
           UserEventTracker userEventTracker,
           GetCameraSettingsMapperSupportedListUseCase getCameraSettingsMapperSupportedListUseCase,
-          CameraSettingsDataSource cameraSettingsRepository, ProjectDataSource projectRepository) {
+          CameraSettingsDataSource cameraSettingsRepository, ProjectRepository projectRepository) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
         getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository, projectRepository,
             projectInstanceCache);
@@ -260,7 +260,7 @@ public class ActivityPresentersModule {
       AddVideoToProjectUseCase addVideoToProjectUseCase,
       GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
       ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-      ProjectDataSource projectRepository,
+      ProjectRepository projectRepository,
       SharedPreferences sharedPreferences, VideoDataSource videoRepository,
       AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
       CompositionApiClient compositionApiClient) {
@@ -335,7 +335,7 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsDataSource cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectDataSource projectRepository) {
+          RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository) {
     return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
             cameraSettingsRepository, runSyncAdapterHelper,
             (ProjectInstanceCache) activity.getApplication());
@@ -351,7 +351,7 @@ public class ActivityPresentersModule {
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectDataSource projectRepository,
+          ProjectRepository projectRepository,
           NewClipImporter newClipImporter, BillingManager billingManager, SaveCut saveCut) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
@@ -363,7 +363,7 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   GalleryProjectListPresenter provideGalleryProjectListPresenter(
-          ProjectDataSource projectRepository, SharedPreferences sharedPreferences,
+          ProjectRepository projectRepository, SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase, DeleteProjectUseCase deleteProjectUseCase,
           CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase, SaveCut saveCut) {
@@ -375,7 +375,7 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   DetailProjectPresenter provideDetailProjectPresenter(
-          UserEventTracker userEventTracker, ProjectDataSource projectRepository) {
+          UserEventTracker userEventTracker, ProjectRepository projectRepository) {
     return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
         userEventTracker, projectRepository, projectInstanceCache);
   }
@@ -399,13 +399,13 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  ReorderMediaItemUseCase provideMusicReorderer(ProjectDataSource projectRepository) {
+  ReorderMediaItemUseCase provideMusicReorderer(ProjectRepository projectRepository) {
     return new ReorderMediaItemUseCase(projectRepository);
   }
 
   @Provides
   AddVideoToProjectUseCase provideVideoAdder(
-          ProjectDataSource projectRepository,
+          ProjectRepository projectRepository,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
     return new AddVideoToProjectUseCase(projectRepository, launchTranscoderAddAVTransitionUseCase);
   }
@@ -456,12 +456,12 @@ public class ActivityPresentersModule {
   }
 
   @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
-          ProjectDataSource projectRepository) {
+          ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
   }
 
   @Provides
-  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkProject(ProjectDataSource projectRepository) {
+  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkProject(ProjectRepository projectRepository) {
     return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
@@ -469,7 +469,7 @@ public class ActivityPresentersModule {
     return new DuplicateProjectUseCase();
   }
 
-  @Provides DeleteProjectUseCase provideDeleteProject(ProjectDataSource projectRepository,
+  @Provides DeleteProjectUseCase provideDeleteProject(ProjectRepository projectRepository,
                                                       VideoDataSource videoRepository,
                                                       MusicDataSource musicRepository,
                                                       TrackDataSource trackRepository) {
@@ -501,7 +501,7 @@ public class ActivityPresentersModule {
   }
 
   @Provides GetVideoFormatFromCurrentProjectUseCase
-      provideVideoFormatFromCurrentProjectUseCase(ProjectDataSource projectRepository) {
+      provideVideoFormatFromCurrentProjectUseCase(ProjectRepository projectRepository) {
     return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
 
@@ -521,7 +521,7 @@ public class ActivityPresentersModule {
     return new ExportProjectUseCase(videoToAdaptRepository);
   }
 
-  @Provides ModifyTrackUseCase providesModifyTrackUseCase(ProjectDataSource projectRepository) {
+  @Provides ModifyTrackUseCase providesModifyTrackUseCase(ProjectRepository projectRepository) {
     return new ModifyTrackUseCase(projectRepository);
   }
 
@@ -530,12 +530,12 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  AddAudioUseCase providesAddAudioUseCase(ProjectDataSource projectRepository) {
+  AddAudioUseCase providesAddAudioUseCase(ProjectRepository projectRepository) {
     return new AddAudioUseCase(projectRepository);
   }
 
   @Provides
-  RemoveAudioUseCase providesRemoveAudioUseCase(ProjectDataSource projectRepository, TrackDataSource
+  RemoveAudioUseCase providesRemoveAudioUseCase(ProjectRepository projectRepository, TrackDataSource
       trackRepository, MusicDataSource musicRepository){
     return new RemoveAudioUseCase(projectRepository, trackRepository, musicRepository);
   }
@@ -558,7 +558,7 @@ public class ActivityPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectDataSource projectRepository,
+          ProjectRepository projectRepository,
           VideoDataSource videoRepository, VideoToAdaptDataSource videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
           AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,

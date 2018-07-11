@@ -31,7 +31,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -74,7 +74,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
   private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
   private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
-  private ProjectDataSource projectRepository;
+  private ProjectRepository projectRepository;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private SaveCut saveCut;
@@ -94,7 +94,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectDataSource projectRepository, NewClipImporter newClipImporter,
+          ProjectRepository projectRepository, NewClipImporter newClipImporter,
           BillingManager billingManager, ProjectInstanceCache projectInstanceCache,
           SaveCut saveCut) {
     this.editorActivityView = editorActivityView;
@@ -343,6 +343,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     }
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
+      // TODO(jliarte): 11/07/18 this is a use case!
       projectRepository.setWatermarkActivated(currentProject, isChecked);
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
@@ -418,6 +419,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   public void updateTitleCurrentProject(String title) {
     ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
+    // TODO(jliarte): 11/07/18 this is a use case!
     projectRepository.setProjectInfo(currentProject, projectInfo.getTitle(), projectInfo.getDescription(),
         projectInfo.getProductTypeList());
   }

@@ -8,7 +8,7 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSo
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 import com.videonasocialmedia.vimojo.repository.track.datasource.TrackRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmDataSource;
@@ -25,8 +25,8 @@ import dagger.Provides;
 @Module
 public class DataRepositoriesModule {
   @Singleton @Provides
-  ProjectDataSource provideDefaultProjectRepository() {
-    return new ProjectRealmDataSource();
+  ProjectRepository provideDefaultProjectRepository(ProjectRealmDataSource projectRealmRepository) {
+    return new ProjectRepository(projectRealmRepository);
   }
 
   @Singleton @Provides

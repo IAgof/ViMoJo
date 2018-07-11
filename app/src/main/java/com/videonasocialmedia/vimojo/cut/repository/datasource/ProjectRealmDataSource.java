@@ -1,5 +1,9 @@
 package com.videonasocialmedia.vimojo.cut.repository.datasource;
 
+/**
+ * Created by jliarte on 20/10/16.
+ */
+
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -7,7 +11,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.ProjectToRealmProjectMapper;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.RealmProjectToProjectMapper;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -16,18 +20,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
- * Created by jliarte on 20/10/16.
+ * Realm DataSource for projects. Provide local persistance of Projects using Realm
+ * via {@link RealmProject} class.
  */
-
-public class ProjectRealmDataSource implements ProjectDataSource {
+public class ProjectRealmDataSource implements DataSource<Project> {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
 
+  @Inject
   public ProjectRealmDataSource() {
     this.toProjectMapper = new RealmProjectToProjectMapper();
     this.toRealmProjectMapper = new ProjectToRealmProjectMapper();
@@ -63,7 +70,6 @@ public class ProjectRealmDataSource implements ProjectDataSource {
     });
   }
 
-  @Override
   public void updateWithDate(final Project item, String date) {
     Realm realm = Realm.getDefaultInstance();
     realm.executeTransaction(new Realm.Transaction() {
@@ -97,7 +103,6 @@ public class ProjectRealmDataSource implements ProjectDataSource {
     return null;
   }
 
-  @Override
   public Project getLastModifiedProject() {
     // TODO(jliarte): 6/07/17 fix No space left on device
     Realm realm = Realm.getDefaultInstance();
@@ -116,7 +121,6 @@ public class ProjectRealmDataSource implements ProjectDataSource {
     return toProjectMapper.map(realm.copyFromRealm(currentRealmProject));
   }
 
-  @Override
   public List<Project> getListProjectsByLastModificationDescending() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmProject> allRealmProjects = realm.where(RealmProject.class).findAll()
@@ -128,31 +132,31 @@ public class ProjectRealmDataSource implements ProjectDataSource {
     return projectList;
   }
 
-  @Override
+  // TODO(jliarte): 11/07/18 this is a use case!
   public void updateResolution(Project project, VideoResolution.Resolution videoResolution) {
     project.getProfile().setResolution(videoResolution);
     update(project);
   }
 
-  @Override
+  // TODO(jliarte): 11/07/18 this is a use case!
   public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
     project.getProfile().setFrameRate(videoFrameRate);
     update(project);
   }
 
-  @Override
+  // TODO(jliarte): 11/07/18 this is a use case!
   public void updateQuality(Project project, VideoQuality.Quality videoQuality) {
     project.getProfile().setQuality(videoQuality);
     update(project);
   }
 
-  @Override
+  // TODO(jliarte): 11/07/18 this is a use case!
   public void setWatermarkActivated(Project project, boolean watermarkActivated) {
     project.setWatermarkActivated(watermarkActivated);
     update(project);
   }
 
-  @Override
+  // TODO(jliarte): 11/07/18 this is a use case!
   public void setProjectInfo(Project project, String projectTitle, String projectDescription,
                              List<String> productTypesListSelected) {
     ProjectInfo projectInfo = project.getProjectInfo();

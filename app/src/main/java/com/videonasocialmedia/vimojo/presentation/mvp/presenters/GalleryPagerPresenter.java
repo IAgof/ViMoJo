@@ -31,7 +31,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
@@ -73,7 +73,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     private final ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
-    private final ProjectDataSource projectRepository;
+    private final ProjectRepository projectRepository;
     private final AssetUploadQueue assetUploadQueue;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
     private final CompositionApiClient compositionApiClient;
@@ -86,7 +86,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-            ProjectDataSource projectRepository,
+            ProjectRepository projectRepository,
             VideoDataSource videoRepository, SharedPreferences preferences,
             ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
             RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
@@ -232,6 +232,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
             if (resolutionForWidth != null) {
+                // TODO(jliarte): 11/07/18 this is a use case!
                 projectRepository.updateResolution(currentProject, resolutionForWidth);
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,

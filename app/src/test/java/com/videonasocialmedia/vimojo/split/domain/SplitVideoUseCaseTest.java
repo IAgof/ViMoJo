@@ -10,7 +10,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 
 import org.junit.Before;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.verify;
 @PrepareForTest({Log.class})
 public class SplitVideoUseCaseTest {
   @Mock
-  ProjectDataSource mockedProjectRepository;
+  ProjectRepository mockedProjectRepository;
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
   @Mock private OnSplitVideoListener mockedSpliListener;
   @Mock private VideoDataSource videoRepository;
