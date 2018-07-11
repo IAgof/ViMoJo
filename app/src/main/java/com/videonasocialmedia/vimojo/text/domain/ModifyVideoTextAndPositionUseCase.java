@@ -15,10 +15,10 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -33,9 +33,9 @@ import javax.inject.Inject;
  */
 public class ModifyVideoTextAndPositionUseCase {
   private static final String LOG_TAG = ModifyVideoTextAndPositionUseCase.class.getSimpleName();
-  private final VideoRepository videoRepository;
+  private final VideoDataSource videoRepository;
   private final RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-  private final VideoToAdaptRepository videoToAdaptRepository;
+  private final VideoToAdaptDataSource videoToAdaptRepository;
   // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
   private final TextToDrawable drawableGenerator =
       new TextToDrawable(VimojoApplication.getAppContext());
@@ -49,9 +49,9 @@ public class ModifyVideoTextAndPositionUseCase {
    * @param videoToAdaptRepository the video to adapt repository
    */
   @Inject public ModifyVideoTextAndPositionUseCase(
-          VideoRepository videoRepository,
+          VideoDataSource videoRepository,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoToAdaptRepository videoToAdaptRepository) {
+          VideoToAdaptDataSource videoToAdaptRepository) {
     this.videoRepository = videoRepository;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.videoToAdaptRepository = videoToAdaptRepository;

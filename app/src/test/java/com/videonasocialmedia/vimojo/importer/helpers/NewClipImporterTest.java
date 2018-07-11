@@ -14,12 +14,12 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -59,12 +59,15 @@ public class NewClipImporterTest {
     @Mock AdaptVideoToFormatUseCase mockedAdaptVideoToFormatUseCase;
     private File mockedStorageDir;
     @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
-    @Mock VideoToAdaptRepository mockedVideoToAdaptRepository;
+    @Mock
+    VideoToAdaptDataSource mockedVideoToAdaptRepository;
     private NewClipImporter newClipImporter;
     @Mock ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
     @Mock RelaunchTranscoderTempBackgroundUseCase mockedRelaunchTranscoderTempBackgroundUseCase;
-    @Mock VideoRepository mockedVideoRepository;
-    @Mock ProjectRepository mockedProjectRepository;
+    @Mock
+    VideoDataSource mockedVideoRepository;
+    @Mock
+    ProjectDataSource mockedProjectRepository;
     @Mock AssetUploadQueue mockedAssetUploadQueue;
     @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
     @Mock CompositionApiClient mockedCompositionApiClient;

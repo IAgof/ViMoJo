@@ -662,7 +662,7 @@ public class VimojoMigration implements RealmMigration {
      *   public boolean isAcceptedUploadWithMobileNetwork;
      *   public boolean isUploading;
      */
-    // Migrate from version 11 to 12, 20180607. Added UploadRepository
+    // Migrate from version 11 to 12, 20180607. Added UploadDataSource
     if(oldVersion == 12) {
       RealmObjectSchema realmUploadTable = schema.get("RealmUpload");
       if (schema.get("RealmUpload") == null) {

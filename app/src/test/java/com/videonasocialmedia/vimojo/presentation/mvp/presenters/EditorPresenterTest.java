@@ -27,7 +27,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -83,7 +83,8 @@ public class EditorPresenterTest {
   @Mock NewClipImporter mockedNewClipImporter;
   @Mock BillingManager mockedBillingManager;
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock SaveCut mockedSaveCut;
   private Project currentProject;

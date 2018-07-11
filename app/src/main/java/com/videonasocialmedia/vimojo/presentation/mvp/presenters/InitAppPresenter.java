@@ -12,12 +12,11 @@ import android.util.Size;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
@@ -48,7 +47,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
  */
 public class InitAppPresenter extends VimojoPresenter {
   private final Context context;
-  private final CameraSettingsRepository cameraSettingsRepository;
+  private final CameraSettingsDataSource cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
   // TODO(jliarte): 11/07/18 make final if injected
   private SaveCut saveCut;
@@ -62,7 +61,7 @@ public class InitAppPresenter extends VimojoPresenter {
   @Inject
   public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                          CameraSettingsRepository cameraSettingsRepository,
+                          CameraSettingsDataSource cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper,
                           ProjectInstanceCache projectInstanceCache) {
     this.context = context;

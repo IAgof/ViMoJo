@@ -39,8 +39,8 @@ import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProj
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
@@ -70,7 +70,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
   private final BillingManager billingManager;
   private UserAuth0Helper userAuth0Helper;
-  private final UploadRepository uploadRepository;
+  private final UploadDataSource uploadRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private PlayStoreBillingDelegate playStoreBillingDelegate;
   private Context context;
@@ -94,7 +94,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private GetAccount getAccount;
-  private ProjectRepository projectRepository;
+  private ProjectDataSource projectRepository;
   private Project currentProject;
 
   /**
@@ -106,23 +106,23 @@ public class PreferencesPresenter extends VimojoPresenter
    * @param userAuth0Helper
    */
   public PreferencesPresenter(
-      PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
-      Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
-      Preference watermarkPref, ProjectRepository projectRepository,
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      UpdateAudioTransitionPreferenceToProjectUseCase
+          PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
+          Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
+          Preference watermarkPref, ProjectDataSource projectRepository,
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          UpdateAudioTransitionPreferenceToProjectUseCase
           updateAudioTransitionPreferenceToProjectUseCase,
-      UpdateVideoTransitionPreferenceToProjectUseCase
+          UpdateVideoTransitionPreferenceToProjectUseCase
           updateVideoTransitionPreferenceToProjectUseCase,
-      UpdateIntermediateTemporalFilesTransitionsUseCase
+          UpdateIntermediateTemporalFilesTransitionsUseCase
           updateIntermediateTemporalFilesTransitionsUseCase,
-      UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadRepository uploadRepository, ProjectInstanceCache projectInstanceCache,
-      GetAccount getAccount) {
+          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+          UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
+          GetAccount getAccount) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;

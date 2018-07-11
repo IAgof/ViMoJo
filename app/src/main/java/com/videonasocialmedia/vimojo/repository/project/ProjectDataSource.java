@@ -8,14 +8,14 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.Repository;
+import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
 
 import java.util.List;
 
 /**
- * Repository for saving Projects (will be renamed to Cuts!!)
+ * DataSource for saving Projects (will be renamed to Cuts!!)
  */
-public interface ProjectRepository extends Repository<Project> {
+public interface ProjectDataSource extends DataSource<Project> {
   // TODO(jliarte): 11/07/18 rename to CutRepository
   void updateWithDate(Project item, String date);
 

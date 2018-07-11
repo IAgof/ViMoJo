@@ -3,13 +3,13 @@ package com.videonasocialmedia.vimojo.cameraSettings.repository;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.repository.Repository;
+import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
 
 /**
  * Created by alvaro on 14/11/17.
  */
 
-public interface CameraSettingsRepository extends Repository<CameraSettings> {
+public interface CameraSettingsDataSource extends DataSource<CameraSettings> {
 
   void update(CameraSettings item);
 

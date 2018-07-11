@@ -17,8 +17,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 
 import java.util.ArrayList;
 
@@ -28,8 +28,8 @@ import javax.inject.Inject;
  * This class is used to removed videos from the project.
  */
 public class RemoveVideoFromProjectUseCase {
-    protected ProjectRepository projectRepository;
-    protected VideoRepository videoRepository;
+    protected ProjectDataSource projectRepository;
+    protected VideoDataSource videoRepository;
 
     /**
      * Default Constructor.
@@ -37,8 +37,8 @@ public class RemoveVideoFromProjectUseCase {
      * @param projectRepository the project repository.
      * @param videoRepository the video repository.
      */
-    @Inject public RemoveVideoFromProjectUseCase(ProjectRepository projectRepository,
-                                                 VideoRepository videoRepository) {
+    @Inject public RemoveVideoFromProjectUseCase(ProjectDataSource projectRepository,
+                                                 VideoDataSource videoRepository) {
         this.projectRepository = projectRepository;
         this.videoRepository = videoRepository;
     }

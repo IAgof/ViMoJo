@@ -5,7 +5,7 @@ package com.videonasocialmedia.vimojo.cut.domain.usecase;
  */
 
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import javax.inject.Inject;
 
@@ -13,10 +13,10 @@ import javax.inject.Inject;
  * Use Case for saving a Cut
  */
 public class SaveCut {
-  private final ProjectRepository projectRepository;
+  private final ProjectDataSource projectRepository;
 
   @Inject
-  public SaveCut(ProjectRepository projectRepository) {
+  public SaveCut(ProjectDataSource projectRepository) {
     // TODO(jliarte): 11/07/18 should project repo also manage instance cache? as in memory datasource?
     this.projectRepository = projectRepository;
   }

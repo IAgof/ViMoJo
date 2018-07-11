@@ -7,7 +7,7 @@
 
 package com.videonasocialmedia.vimojo.main.modules;
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 
@@ -24,7 +24,7 @@ public class MockedVimojoApplicationModule extends VimojoApplicationModule {
   }
 
   @Override
-  ProfileRepository provideProfileRepository(CameraSettingsRepository cameraSettingsRepository) {
+  ProfileRepository provideProfileRepository(CameraSettingsDataSource cameraSettingsRepository) {
     return mock(ProfileRepository.class);
   }
 

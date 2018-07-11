@@ -9,11 +9,11 @@ import static org.junit.Assert.assertThat;
  * Created by alvaro on 12/04/17.
  */
 
-public class MusicRealmRepositoryTest {
+public class MusicRealmDataSourceTest {
 
   @Test
   public void testMusicRealmRepositoryConstructorSetsMappers() {
-    MusicRealmRepository repo = new MusicRealmRepository();
+    MusicRealmDataSource repo = new MusicRealmDataSource();
 
     assertThat(repo.toMusicMapper, notNullValue());
     assertThat(repo.toRealmMusicMapper, notNullValue());

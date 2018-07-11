@@ -8,7 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 
@@ -34,7 +34,8 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdaptVideoToFormatUseCaseTest {
-  @Mock VideoToAdaptRepository videoToAdaptRepository;
+  @Mock
+  VideoToAdaptDataSource videoToAdaptRepository;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
 

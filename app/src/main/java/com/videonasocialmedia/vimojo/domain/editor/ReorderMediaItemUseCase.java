@@ -8,7 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import javax.inject.Inject;
 
@@ -17,14 +17,14 @@ import javax.inject.Inject;
  */
 public class ReorderMediaItemUseCase {
     private final static String TAG = ReorderMediaItemUseCase.class.getCanonicalName();
-    protected ProjectRepository projectRepository;
+    protected ProjectDataSource projectRepository;
 
   /**
    * Default constructor with project repository argument.
    *
    * @param projectRepository the project repository.
    */
-  @Inject public ReorderMediaItemUseCase(ProjectRepository projectRepository) {
+  @Inject public ReorderMediaItemUseCase(ProjectDataSource projectRepository) {
         this.projectRepository = projectRepository;
     }
 

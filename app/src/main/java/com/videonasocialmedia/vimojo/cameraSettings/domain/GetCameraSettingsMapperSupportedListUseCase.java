@@ -8,7 +8,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingValue;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class GetCameraSettingsMapperSupportedListUseCase {
   @Inject
   public GetCameraSettingsMapperSupportedListUseCase(Context context,
                                                      Project currentProject,
-                                                     CameraSettingsRepository cameraSettingsRepository) {
+                                                     CameraSettingsDataSource cameraSettingsRepository) {
     this.context = context;
     cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.currentProject = currentProject;

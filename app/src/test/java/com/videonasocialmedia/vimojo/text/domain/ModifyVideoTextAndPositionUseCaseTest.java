@@ -13,9 +13,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
 import org.junit.Before;
@@ -45,8 +45,10 @@ import static org.mockito.Mockito.verify;
 public class ModifyVideoTextAndPositionUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
-  @Mock VideoRepository mockedVideoRepository;
-  @Mock VideoToAdaptRepository mockedVideoToAdaptRepository;
+  @Mock
+  VideoDataSource mockedVideoRepository;
+  @Mock
+  VideoToAdaptDataSource mockedVideoToAdaptRepository;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @InjectMocks ModifyVideoTextAndPositionUseCase injectedUseCase;
   private Project currentProject;

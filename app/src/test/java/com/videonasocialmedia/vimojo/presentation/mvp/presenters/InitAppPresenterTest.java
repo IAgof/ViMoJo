@@ -7,12 +7,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 
 import org.junit.Before;
@@ -35,8 +35,10 @@ public class InitAppPresenterTest {
   @Mock CreateDefaultProjectUseCase mockedUseCase;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Context mockedContext;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
+  @Mock
+  CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;

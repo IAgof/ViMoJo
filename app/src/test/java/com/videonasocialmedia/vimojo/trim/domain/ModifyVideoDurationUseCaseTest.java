@@ -14,9 +14,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 
 import org.junit.Before;
@@ -57,11 +57,12 @@ public class ModifyVideoDurationUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
   @Mock TranscoderHelper mockedTranscoderHelper;
-  @Mock VideoRepository mockedVideoRepository;
+  @Mock
+  VideoDataSource mockedVideoRepository;
   @Mock ListenableFuture mockedFuture;
   @InjectMocks ModifyVideoDurationUseCase injectedUseCase;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
-  @Mock private VideoToAdaptRepository mockedVideoToAdaptRepository;
+  @Mock private VideoToAdaptDataSource mockedVideoToAdaptRepository;
   private Project currentProject;
 
   @Before

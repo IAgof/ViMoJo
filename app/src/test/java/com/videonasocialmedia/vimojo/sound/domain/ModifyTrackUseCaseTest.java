@@ -11,8 +11,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +34,10 @@ import static org.mockito.Mockito.verify;
 public class ModifyTrackUseCaseTest {
 
   @InjectMocks ModifyTrackUseCase injectedUseCase;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock TrackRepository mockedTrackRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
+  @Mock
+  TrackDataSource mockedTrackRepository;
   private Project currentProject;
 
   @Before

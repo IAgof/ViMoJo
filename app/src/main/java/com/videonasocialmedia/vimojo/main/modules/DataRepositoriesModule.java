@@ -1,18 +1,18 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmDataSource;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmRepository;
-import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmRepository;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.datasource.TrackRealmRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
-import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
+import com.videonasocialmedia.vimojo.repository.track.datasource.TrackRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 
 import javax.inject.Singleton;
 
@@ -25,33 +25,33 @@ import dagger.Provides;
 @Module
 public class DataRepositoriesModule {
   @Singleton @Provides
-  ProjectRepository provideDefaultProjectRepository() {
+  ProjectDataSource provideDefaultProjectRepository() {
     return new ProjectRealmDataSource();
   }
 
   @Singleton @Provides
-  VideoRepository provideDefaultVideoRepository() {
-    return new VideoRealmRepository();
+  VideoDataSource provideDefaultVideoRepository() {
+    return new VideoRealmDataSource();
   }
 
   @Singleton @Provides
-  TrackRepository provideDefaultTrackRepository(){
-    return new TrackRealmRepository();
+  TrackDataSource provideDefaultTrackRepository(){
+    return new TrackRealmDataSource();
   }
 
   @Singleton @Provides
-  MusicRepository provideDefaultMusicRepository(){
-    return new MusicRealmRepository();
+  MusicDataSource provideDefaultMusicRepository(){
+    return new MusicRealmDataSource();
   }
 
   @Singleton @Provides
-  VideoToAdaptRepository provideDefaultVideoToAdaptRepository() {
-    return new VideoToAdaptRealmRepository();
+  VideoToAdaptDataSource provideDefaultVideoToAdaptRepository() {
+    return new VideoToAdaptRealmDataSource();
   }
 
   @Singleton @Provides
-  CameraSettingsRepository provideDefaultCameraRepository() {
-    return new CameraSettingsRealmRepository();
+  CameraSettingsDataSource provideDefaultCameraRepository() {
+    return new CameraSettingsRealmDataSource();
   }
 
 }

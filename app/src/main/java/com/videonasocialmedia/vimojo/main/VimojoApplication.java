@@ -38,7 +38,7 @@ import com.videonasocialmedia.vimojo.main.modules.AssetUploadQueueModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -63,7 +63,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
      */
     private Project currentProject;
 
-    @Inject ProjectRepository projectRepository;
+    @Inject
+    ProjectDataSource projectRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
     @Inject SharedPreferences sharedPreferences;
     @Inject SaveCut saveCut;

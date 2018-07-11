@@ -12,7 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(RobolectricTestRunner.class)
 public class ReorderMediaItemUseCaseTest {
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
   @InjectMocks ReorderMediaItemUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
   private Project currentProject;

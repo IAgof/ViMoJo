@@ -22,7 +22,6 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE;
@@ -39,7 +38,7 @@ import static org.mockito.Matchers.any;
  * Created by alvaro on 16/11/17.
  */
 
-public class CameraSettingsRealmRepositoryTest {
+public class CameraSettingsRealmDataSourceTest {
 
   @Before
   public void init() {
@@ -48,7 +47,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void cameraSettingsRealmRepositoryConstructorSetsMappers() {
-    CameraSettingsRealmRepository repository = new CameraSettingsRealmRepository();
+    CameraSettingsRealmDataSource repository = new CameraSettingsRealmDataSource();
 
     assertThat(repository.toCameraSettingsMapper, notNullValue());
     assertThat(repository.toRealmCameraMapper, notNullValue());
@@ -56,7 +55,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setResolutionUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     String resolution = CAMERA_SETTING_RESOLUTION_1080;
     Mockito.doNothing().when(repo).update(any(CameraSettings.class));
@@ -69,7 +68,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setQualityUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     String quality = CAMERA_SETTING_QUALITY_50;
     Mockito.doNothing().when(repo).update(any(CameraSettings.class));
@@ -82,7 +81,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setFrameRateUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     String frameRate = CAMERA_SETTING_FRAME_RATE_24;
     Mockito.doNothing().when(repo).update(any(CameraSettings.class));
@@ -95,7 +94,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setInterfaceSelectedUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     String interfaceSelected = Constants.CAMERA_SETTING_INTERFACE_BASIC;
     Mockito.doNothing().when(repo).update(any(CameraSettings.class));
@@ -108,7 +107,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setFrameRateSupportedValuesUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     boolean frameRate24Supported = true;
     boolean frameRate25Supported = true;
@@ -136,7 +135,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setResolutionSupportedValuesUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     boolean resolutionBack720Supported = true;
     boolean resolutionBack1080Supported = true;
@@ -173,7 +172,7 @@ public class CameraSettingsRealmRepositoryTest {
 
   @Test
   public void setCameraIdSelectedUpdateCameraSettings() {
-    CameraSettingsRepository repo = Mockito.spy(new CameraSettingsRealmRepository());
+    CameraSettingsDataSource repo = Mockito.spy(new CameraSettingsRealmDataSource());
     CameraSettings cameraSettings = getCameraSettings();
     int cameraIdSelected = Constants.FRONT_CAMERA_ID;
     Mockito.doNothing().when(repo).update(any(CameraSettings.class));

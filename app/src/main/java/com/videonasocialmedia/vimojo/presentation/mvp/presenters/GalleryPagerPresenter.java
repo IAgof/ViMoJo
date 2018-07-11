@@ -31,8 +31,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -65,7 +65,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     protected Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
-    private final VideoRepository videoRepository;
+    private final VideoDataSource videoRepository;
     private final ProjectInstanceCache projectInstanceCache;
     private boolean differentVideoFormat;
 
@@ -73,7 +73,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     private final ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
-    private final ProjectRepository projectRepository;
+    private final ProjectDataSource projectRepository;
     private final AssetUploadQueue assetUploadQueue;
     private final RunSyncAdapterHelper runSyncAdapterHelper;
     private final CompositionApiClient compositionApiClient;
@@ -82,14 +82,14 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
      * Constructor.
      */
     @Inject public GalleryPagerPresenter(
-        GalleryPagerView galleryPagerView, Context context,
-        AddVideoToProjectUseCase addVideoToProjectUseCase,
-        GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-        ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-        ProjectRepository projectRepository,
-        VideoRepository videoRepository, SharedPreferences preferences,
-        ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
-        RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
+            GalleryPagerView galleryPagerView, Context context,
+            AddVideoToProjectUseCase addVideoToProjectUseCase,
+            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+            ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
+            ProjectDataSource projectRepository,
+            VideoDataSource videoRepository, SharedPreferences preferences,
+            ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
+            RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;

@@ -24,7 +24,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -71,7 +71,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private static final String LOG_TAG = RecordCamera2Presenter.class.getCanonicalName();
   private final Context context;
   private final ProjectInstanceCache projectInstanceCache;
-  private CameraSettingsRepository cameraSettingsRepository;
+  private CameraSettingsDataSource cameraSettingsRepository;
   private CameraSettings cameraSettings;
   private SharedPreferences sharedPreferences;
   protected UserEventTracker userEventTracker;
@@ -105,7 +105,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
           Context context, RecordCamera2View recordView, UserEventTracker userEventTracker,
           SharedPreferences sharedPreferences, AddVideoToProjectUseCase addVideoToProjectUseCase,
           NewClipImporter newClipImporter, Camera2Wrapper camera,
-          CameraSettingsRepository cameraSettingsRepository,
+          CameraSettingsDataSource cameraSettingsRepository,
           ProjectInstanceCache projectInstanceCache) {
     this.context = context;
     this.recordView = recordView;

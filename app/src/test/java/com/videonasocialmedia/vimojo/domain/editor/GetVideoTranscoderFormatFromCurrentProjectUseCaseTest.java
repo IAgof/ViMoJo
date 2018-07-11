@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,7 +30,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   private Project currentProject;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
 
   @Before
   public void setUp() throws Exception {

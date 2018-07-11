@@ -10,11 +10,11 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -52,9 +52,11 @@ public class CameraSettingsPresenterTest {
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
-  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock
+  CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private MixpanelAPI mockedMixpanelAPI;
   private Project currentProject;

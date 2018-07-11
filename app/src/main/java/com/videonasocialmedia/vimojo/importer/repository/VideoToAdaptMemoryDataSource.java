@@ -4,7 +4,6 @@ import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.repository.Specification;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
  * Created by jliarte on 24/07/17.
  */
 
-public class VideoToAdaptMemoryRepository implements VideoToAdaptRepository {
+public class VideoToAdaptMemoryDataSource implements VideoToAdaptDataSource {
   private HashMap<String, VideoToAdapt> videoListToAdaptAndPosition = new HashMap<>();
 
   @Override

@@ -27,7 +27,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
@@ -50,7 +50,8 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
-    @Inject ProjectRepository projectRepository;
+    @Inject
+    ProjectDataSource projectRepository;
     @Inject SharedPreferences sharedPreferences;
 
     public SystemComponent getSystemComponent() {

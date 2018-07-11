@@ -24,7 +24,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.helper.ProgressRequestBody;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
@@ -33,7 +33,6 @@ import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
 
@@ -50,7 +49,7 @@ import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MIME_TY
 
 /**
  * Class to unify video uploads to platform.
- * List of videos to uploads managed with UploadRepository
+ * List of videos to uploads managed with UploadDataSource
  * Add video to upload, process async upload.
  * User can pause, cancel, remove upload
  */
@@ -63,7 +62,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   private final GetUserId getUserId;
   private UploadNotification uploadNotification;
   private Call<Video> uploadVideoAsync;
-  private UploadRepository uploadRepository;
+  private UploadDataSource uploadRepository;
   private int notificationUploadId;
   private PendingIntent cancelUploadPendingIntent;
   private PendingIntent pauseUploadPendingIntent;
@@ -72,7 +71,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
 
   public UploadToPlatform(Context context, UploadNotification uploadNotification,
                           VideoApiClient videoApiClient, UserApiClient userApiClient,
-                          UserAuth0Helper userAuth0Helper, UploadRepository uploadRepository,
+                          UserAuth0Helper userAuth0Helper, UploadDataSource uploadRepository,
                           GetUserId getUserId) {
     this.context = context;
     this.uploadNotification = uploadNotification;

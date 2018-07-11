@@ -15,12 +15,12 @@ import io.realm.RealmResults;
  * Created by alvaro on 14/11/17.
  */
 
-public class CameraSettingsRealmRepository implements CameraSettingsRepository {
+public class CameraSettingsRealmDataSource implements CameraSettingsDataSource {
 
   protected Mapper<RealmCameraSettings, CameraSettings> toCameraSettingsMapper;
   protected Mapper<CameraSettings, RealmCameraSettings> toRealmCameraMapper;
 
-  public CameraSettingsRealmRepository() {
+  public CameraSettingsRealmDataSource() {
     this.toCameraSettingsMapper = new RealmCameraSettingsToCameraSettingsMapper();
     this.toRealmCameraMapper = new CameraSettingsToRealmCameraSettingsMapper();
   }

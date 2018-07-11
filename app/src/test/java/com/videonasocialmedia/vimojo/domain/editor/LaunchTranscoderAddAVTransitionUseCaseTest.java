@@ -17,8 +17,8 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -51,12 +51,15 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
 
   private final VideonaFormat videonaFormat = new VideonaFormat();
 
-  @Mock VideoRepository mockVideoRepository;
+  @Mock
+  VideoDataSource mockVideoRepository;
   @Mock Video mockedVideo;
   @Mock Project mockedProject;
   @Mock private ApplyAVTransitionsUseCase.AVTransitionsApplierListener mockedAVTransitionsApplierListener;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock VideoRepository mockedVideoRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
+  @Mock
+  VideoDataSource mockedVideoRepository;
 
   private Project currentProject;
 

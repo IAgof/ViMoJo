@@ -13,10 +13,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -37,8 +37,8 @@ public class ModifyVideoDurationUseCase {
   static final int AUTOTRIM_MS_RANGE = 10;
   private final String TAG = ModifyVideoDurationUseCase.class.getName();
 
-  VideoRepository videoRepository;
-  VideoToAdaptRepository videoToAdaptRepository;
+  VideoDataSource videoRepository;
+  VideoToAdaptDataSource videoToAdaptRepository;
   private final TextToDrawable drawableGenerator =
           new TextToDrawable(VimojoApplication.getAppContext());
   private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
@@ -51,8 +51,8 @@ public class ModifyVideoDurationUseCase {
    * @param videoRepository the video repository.
    * @param videoToAdaptRepository the video to adapt repository.
    */
-  @Inject public ModifyVideoDurationUseCase(VideoRepository videoRepository,
-                                            VideoToAdaptRepository videoToAdaptRepository) {
+  @Inject public ModifyVideoDurationUseCase(VideoDataSource videoRepository,
+                                            VideoToAdaptDataSource videoToAdaptRepository) {
     this.videoRepository = videoRepository;
     this.videoToAdaptRepository = videoToAdaptRepository;
   }

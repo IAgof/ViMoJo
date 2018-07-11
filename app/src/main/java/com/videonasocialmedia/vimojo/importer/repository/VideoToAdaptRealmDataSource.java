@@ -3,8 +3,8 @@ package com.videonasocialmedia.vimojo.importer.repository;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +16,16 @@ import io.realm.RealmResults;
  * Created by jliarte on 24/07/17.
  */
 
-public class VideoToAdaptRealmRepository implements VideoToAdaptRepository {
+public class VideoToAdaptRealmDataSource implements VideoToAdaptDataSource {
   protected Mapper<RealmVideoToAdapt, VideoToAdapt> toVideoToAdaptMapper;
   protected Mapper<VideoToAdapt, RealmVideoToAdapt> toRealmVideoToAdaptMapper;
-  private VideoToAdaptMemoryRepository cache;
+  private VideoToAdaptMemoryDataSource cache;
 
-  public VideoToAdaptRealmRepository() {
-    VideoRepository videoRepository = new VideoRealmRepository();
+  public VideoToAdaptRealmDataSource() {
+    VideoDataSource videoRepository = new VideoRealmDataSource();
     this.toVideoToAdaptMapper = new RealmVideoToAdaptToVideoToAdaptMapper(videoRepository);
     this.toRealmVideoToAdaptMapper = new VideoToAdaptToRealmVideoToAdaptMapper();
-    this.cache = new VideoToAdaptMemoryRepository();
+    this.cache = new VideoToAdaptMemoryDataSource();
   }
 
   @Override

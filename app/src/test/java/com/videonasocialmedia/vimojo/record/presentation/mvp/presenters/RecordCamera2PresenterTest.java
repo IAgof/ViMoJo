@@ -21,7 +21,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -31,7 +31,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -97,9 +97,10 @@ public class RecordCamera2PresenterTest {
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
   @Mock private Activity mockedActivity;
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
-  @Mock private VideoRepository mockedVideoRepository;
+  @Mock private VideoDataSource mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
-  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock
+  CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
 

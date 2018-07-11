@@ -11,9 +11,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +35,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class RemoveAudioUseCaseTest {
 
   @Mock OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock TrackRepository mockedTrackRepository;
-  @Mock MusicRepository mockedMusicRepository;
+  @Mock
+  ProjectDataSource mockedProjectRepository;
+  @Mock
+  TrackDataSource mockedTrackRepository;
+  @Mock
+  MusicDataSource mockedMusicRepository;
   private Project currentProject;
 
   @Before

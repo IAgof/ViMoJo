@@ -20,7 +20,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.tape2.ObjectQueue;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -51,7 +51,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   private boolean isMobileNetworkConnected;
   private UploadToPlatform uploadToPlatform;
   private AssetUploadQueue assetUploadQueue;
-  private UploadRepository uploadRepository;
+  private UploadDataSource uploadRepository;
 
   /**
    * Set up the sync adapter
@@ -59,7 +59,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   public SyncAdapter(Context context, boolean autoInitialize,
                      UploadToPlatform uploadToPlatform,
                      AssetUploadQueue assetUploadQueue,
-                     UploadRepository uploadRepository) {
+                     UploadDataSource uploadRepository) {
     super(context, autoInitialize);
         /*
          * If your app uses a content resolver, get an instance of it

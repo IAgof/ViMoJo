@@ -17,11 +17,11 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -41,9 +41,9 @@ import javax.annotation.Nullable;
  */
 public class NewClipImporter {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
-  private ProjectRepository projectRepository;
-  private final VideoRepository videoRepository;
-  protected VideoToAdaptRepository videoToAdaptRepository;
+  private ProjectDataSource projectRepository;
+  private final VideoDataSource videoRepository;
+  protected VideoToAdaptDataSource videoToAdaptRepository;
   private AdaptVideoToFormatUseCase adaptVideoToFormatUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
@@ -55,13 +55,13 @@ public class NewClipImporter {
   private CompositionApiClient compositionApiClient;
 
   public NewClipImporter(
-      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-      AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
-      ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      ProjectRepository projectRepository, VideoRepository videoRepository,
-      VideoToAdaptRepository videoToAdaptRepository, AssetUploadQueue assetUploadQueue,
-      RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
+          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          ProjectDataSource projectRepository, VideoDataSource videoRepository,
+          VideoToAdaptDataSource videoToAdaptRepository, AssetUploadQueue assetUploadQueue,
+          RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;

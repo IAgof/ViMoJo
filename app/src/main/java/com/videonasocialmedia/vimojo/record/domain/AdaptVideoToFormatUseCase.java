@@ -8,9 +8,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.IOException;
@@ -25,12 +25,12 @@ public class AdaptVideoToFormatUseCase {
   private static final int MAX_NUM_TRIES_ADAPTING_VIDEO = 3;
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
-  private VideoToAdaptRepository videoToAdaptRepository;
-  private VideoRepository videoRepository;
+  private VideoToAdaptDataSource videoToAdaptRepository;
+  private VideoDataSource videoRepository;
   private WeakReference<AdaptListener> adaptListener;
 
-  public AdaptVideoToFormatUseCase(VideoToAdaptRepository videoToAdaptRepository,
-                                   VideoRepository videoRepository) {
+  public AdaptVideoToFormatUseCase(VideoToAdaptDataSource videoToAdaptRepository,
+                                   VideoDataSource videoRepository) {
     this.videoToAdaptRepository = videoToAdaptRepository;
     this.videoRepository = videoRepository;
   }

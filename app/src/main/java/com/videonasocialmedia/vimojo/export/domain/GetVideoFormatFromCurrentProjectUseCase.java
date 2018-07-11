@@ -6,7 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 /**
@@ -14,9 +14,9 @@ import com.videonasocialmedia.vimojo.utils.Constants;
  */
 public class GetVideoFormatFromCurrentProjectUseCase {
 
-    private final ProjectRepository projectRepository;
+    private final ProjectDataSource projectRepository;
 
-    public GetVideoFormatFromCurrentProjectUseCase(ProjectRepository projectRepository) {
+    public GetVideoFormatFromCurrentProjectUseCase(ProjectDataSource projectRepository) {
         this.projectRepository = projectRepository;
     }
 

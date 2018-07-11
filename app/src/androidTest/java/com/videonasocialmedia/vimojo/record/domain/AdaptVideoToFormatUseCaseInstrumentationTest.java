@@ -5,12 +5,12 @@ import android.support.test.runner.AndroidJUnit4;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.integration.AssetManagerAndroidTest;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,15 +34,15 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(AndroidJUnit4.class)
 public class AdaptVideoToFormatUseCaseInstrumentationTest extends AssetManagerAndroidTest {
-  private VideoToAdaptRepository videoToAdaptRepo;
+  private VideoToAdaptDataSource videoToAdaptRepo;
   private String testPath;
-  @Mock private VideoRepository videoRepository;
+  @Mock private VideoDataSource videoRepository;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
   private Project currentProject;
 
   @Before
   public void setUp() {
-    videoToAdaptRepo = new VideoToAdaptMemoryRepository();
+    videoToAdaptRepo = new VideoToAdaptMemoryDataSource();
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
     MockitoAnnotations.initMocks(this);

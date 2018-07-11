@@ -12,7 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.io.IOException;
 public class RelaunchTranscoderTempBackgroundUseCase {
   private static final String LOG_TAG = RelaunchTranscoderTempBackgroundUseCase.class
           .getSimpleName();
-  private final VideoRepository videoRepository;
+  private final VideoDataSource videoRepository;
   private final TextToDrawable drawableGenerator =
           new TextToDrawable(VimojoApplication.getAppContext());
   private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
@@ -34,7 +34,7 @@ public class RelaunchTranscoderTempBackgroundUseCase {
   private final Project currentProject;
 
   public RelaunchTranscoderTempBackgroundUseCase(Project project,
-                                                 VideoRepository videoRepository) {
+                                                 VideoDataSource videoRepository) {
     this.videoRepository = videoRepository;
     this.currentProject = project;
   }

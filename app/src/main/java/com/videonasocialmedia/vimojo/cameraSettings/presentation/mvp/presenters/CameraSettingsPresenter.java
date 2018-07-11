@@ -9,10 +9,10 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.HashMap;
@@ -32,8 +32,8 @@ public class CameraSettingsPresenter {
   private final CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
-  private CameraSettingsRepository cameraSettingsRepository;
-  private ProjectRepository projectRepository;
+  private CameraSettingsDataSource cameraSettingsRepository;
+  private ProjectDataSource projectRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private CameraSettings cameraSettings;
 
@@ -51,7 +51,7 @@ public class CameraSettingsPresenter {
   public CameraSettingsPresenter(
           CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
           GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
-          CameraSettingsRepository cameraSettingsRepository, ProjectRepository projectRepository,
+          CameraSettingsDataSource cameraSettingsRepository, ProjectDataSource projectRepository,
           ProjectInstanceCache projectInstanceCache) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;

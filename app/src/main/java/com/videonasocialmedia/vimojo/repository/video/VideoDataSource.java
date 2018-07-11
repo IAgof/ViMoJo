@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.repository.Repository;
+import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Alejandro on 21/10/16.
  */
 
-public interface VideoRepository extends Repository<Video>{
+public interface VideoDataSource extends DataSource<Video> {
   void update(Video item, RealmProject realmProject);
 
   List<Video> getAllVideos();

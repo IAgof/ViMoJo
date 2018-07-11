@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepositoryFromCameraSettings;
@@ -28,7 +28,7 @@ public class VimojoApplicationModule {
 
   @Provides
   ProfileRepository provideProfileRepository(
-          CameraSettingsRepository cameraSettingsRepository) {
+          CameraSettingsDataSource cameraSettingsRepository) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
   }
 

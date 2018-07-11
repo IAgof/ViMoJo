@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.repository.music.datasource;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.repository.music.datasource.mapper.MusicToRealmMusicMapper;
 import com.videonasocialmedia.vimojo.repository.music.datasource.mapper.RealmMusicToMusicMapper;
 
@@ -17,12 +17,12 @@ import io.realm.RealmResults;
  * Created by alvaro on 12/04/17.
  */
 
-public class MusicRealmRepository implements MusicRepository {
+public class MusicRealmDataSource implements MusicDataSource {
 
   protected Mapper<RealmMusic, Music> toMusicMapper;
   protected Mapper<Music, RealmMusic> toRealmMusicMapper;
 
-  public MusicRealmRepository(){
+  public MusicRealmDataSource(){
     this.toMusicMapper = new RealmMusicToMusicMapper();
     this.toRealmMusicMapper = new MusicToRealmMusicMapper();
   }

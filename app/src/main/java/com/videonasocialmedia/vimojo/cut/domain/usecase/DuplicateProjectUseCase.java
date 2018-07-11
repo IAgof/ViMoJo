@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.cut.domain.usecase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;

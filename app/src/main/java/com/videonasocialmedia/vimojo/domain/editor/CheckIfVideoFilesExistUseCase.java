@@ -12,7 +12,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class CheckIfVideoFilesExistUseCase implements OnVideosRetrieved,
         OnRemoveMediaFinishedListener {
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-    private ProjectRepository projectRepository;
+    private ProjectDataSource projectRepository;
     private Project currentProject;
 
     @Inject

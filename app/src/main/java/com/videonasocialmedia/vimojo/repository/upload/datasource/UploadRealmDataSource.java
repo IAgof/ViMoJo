@@ -10,7 +10,7 @@ package com.videonasocialmedia.vimojo.repository.upload.datasource;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.upload.datasource.mapper.RealmUploadToUploadMapper;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.repository.upload.datasource.mapper.VideoUploadToRealmUploadMapper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 
@@ -25,12 +25,12 @@ import io.realm.RealmResults;
  * Created by alvaro on 6/6/18.
  */
 
-public class UploadRealmRepository implements UploadRepository {
+public class UploadRealmDataSource implements UploadDataSource {
 
   protected Mapper<RealmUpload, VideoUpload> toVideoUploadMapper;
   protected Mapper<VideoUpload, RealmUpload> toRealmUploadMapper;
 
-  public UploadRealmRepository() {
+  public UploadRealmDataSource() {
     this.toVideoUploadMapper = new RealmUploadToUploadMapper();
     this.toRealmUploadMapper = new VideoUploadToRealmUploadMapper();
   }

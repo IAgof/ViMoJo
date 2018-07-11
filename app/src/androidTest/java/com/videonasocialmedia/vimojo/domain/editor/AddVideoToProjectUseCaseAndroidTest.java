@@ -14,7 +14,7 @@ import android.test.AndroidTestCase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import org.junit.Before;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
  */
 public class AddVideoToProjectUseCaseAndroidTest extends AndroidTestCase {
     @Mock private ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
-    @Mock private ProjectRepository mockedProjectRepository;
+    @Mock private ProjectDataSource mockedProjectRepository;
     AddVideoToProjectUseCase useCase;
     OnAddMediaFinishedListener listener;
 

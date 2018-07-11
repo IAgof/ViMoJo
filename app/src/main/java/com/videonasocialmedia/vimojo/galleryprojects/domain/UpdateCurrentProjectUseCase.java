@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import javax.inject.Inject;
@@ -12,10 +12,10 @@ import javax.inject.Inject;
 
 public class UpdateCurrentProjectUseCase {
 
-  protected ProjectRepository projectRepository;
+  protected ProjectDataSource projectRepository;
 
   @Inject
-  public UpdateCurrentProjectUseCase(ProjectRepository projectRepository) {
+  public UpdateCurrentProjectUseCase(ProjectDataSource projectRepository) {
     this.projectRepository = projectRepository;
   }
 

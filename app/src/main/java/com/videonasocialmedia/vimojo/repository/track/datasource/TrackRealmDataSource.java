@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.RealmTrackToTrackMapper;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.TrackToRealmTrackMapper;
 
 import java.util.ArrayList;
@@ -20,11 +20,11 @@ import io.realm.RealmResults;
  * Created by alvaro on 10/04/17.
  */
 
-public class TrackRealmRepository implements TrackRepository {
+public class TrackRealmDataSource implements TrackDataSource {
   protected Mapper<RealmTrack, Track> toTrackMapper;
   protected Mapper<Track, RealmTrack> toRealmTrackMapper;
 
-  public TrackRealmRepository() {
+  public TrackRealmDataSource() {
     this.toTrackMapper = new RealmTrackToTrackMapper();
     this.toRealmTrackMapper = new TrackToRealmTrackMapper();
   }

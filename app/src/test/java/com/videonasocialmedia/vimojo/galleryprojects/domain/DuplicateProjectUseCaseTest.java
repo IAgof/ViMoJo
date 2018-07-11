@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,7 +30,7 @@ import java.util.List;
 public class DuplicateProjectUseCaseTest {
 
   @Mock
-  ProjectRepository mockedProjectRepository;
+  ProjectDataSource mockedProjectRepository;
   @InjectMocks
   DuplicateProjectUseCase injectedUseCase;
   private Project currentProject;

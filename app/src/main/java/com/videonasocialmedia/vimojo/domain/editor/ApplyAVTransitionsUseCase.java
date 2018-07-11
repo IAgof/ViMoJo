@@ -11,7 +11,7 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.lang.ref.WeakReference;
@@ -26,12 +26,12 @@ public class ApplyAVTransitionsUseCase {
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
       mediaTranscoder);
-  protected VideoRepository videoRepository;
+  protected VideoDataSource videoRepository;
   private Project currentProject;
   private WeakReference<AVTransitionsApplierListener> applierListener;
 
   public ApplyAVTransitionsUseCase(Project project,
-                                   VideoRepository videoRepository) {
+                                   VideoDataSource videoRepository) {
     this.currentProject = project;
     this.videoRepository = videoRepository;
   }

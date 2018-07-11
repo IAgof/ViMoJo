@@ -7,7 +7,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.ProjectToRealmProjectMapper;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.RealmProjectToProjectMapper;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -24,7 +24,7 @@ import io.realm.Sort;
  * Created by jliarte on 20/10/16.
  */
 
-public class ProjectRealmDataSource implements ProjectRepository {
+public class ProjectRealmDataSource implements ProjectDataSource {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
 

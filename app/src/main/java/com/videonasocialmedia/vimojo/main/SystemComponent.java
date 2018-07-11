@@ -2,18 +2,18 @@ package com.videonasocialmedia.vimojo.main;
 
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.main.modules.AssetUploadQueueModule;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadBroadcastReceiver;
 import com.videonasocialmedia.vimojo.sync.presentation.SyncService;
@@ -32,17 +32,17 @@ import dagger.Component;
         TrackerModule.class, UploadToPlatformModule.class,
         AssetUploadQueueModule.class})
 public interface SystemComponent {
-  ProjectRepository getProjectRepository();
-  VideoRepository getVideoRepository();
-  VideoToAdaptRepository getVideoToAdaptRepository();
-  TrackRepository getTrackRepository();
-  MusicRepository getMusicRepository();
-  UploadRepository getUploadRepository();
+  ProjectDataSource getProjectRepository();
+  VideoDataSource getVideoRepository();
+  VideoToAdaptDataSource getVideoToAdaptRepository();
+  TrackDataSource getTrackRepository();
+  MusicDataSource getMusicRepository();
+  UploadDataSource getUploadRepository();
   UserEventTracker getUserEventTracker();
   UploadToPlatform getUploadToPlatform();
   AssetUploadQueue getAssetUploadQueue();
   SharedPreferences getSharedPreferences();
-  CameraSettingsRepository getCameraRepository();
+  CameraSettingsDataSource getCameraRepository();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
   void inject(UploadBroadcastReceiver uploadBroadcastReceiver);

@@ -7,8 +7,6 @@
 
 package com.videonasocialmedia.vimojo.repository.upload.datasource;
 
-import com.videonasocialmedia.vimojo.repository.upload.datasource.UploadRealmRepository;
-
 import org.junit.Test;
 
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -18,10 +16,10 @@ import static org.junit.Assert.assertThat;
  * Created by alvaro on 6/6/18.
  */
 
-public class VideoUploadRealmRepositoryTest {
+public class VideoUploadRealmDataSourceTest {
   @Test
   public void testUploadRealmRepositoryConstructorSetsMappers() {
-    UploadRealmRepository repo = new UploadRealmRepository();
+    UploadRealmDataSource repo = new UploadRealmDataSource();
 
     assertThat(repo.toRealmUploadMapper, notNullValue());
     assertThat(repo.toVideoUploadMapper, notNullValue());

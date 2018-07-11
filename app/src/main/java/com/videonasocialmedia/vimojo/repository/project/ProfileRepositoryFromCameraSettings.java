@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.HashMap;
@@ -40,12 +40,12 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   public static final VideoQuality.Quality DEFAULT_VIDEO_QUALITY = VideoQuality.Quality.LOW;
   public static final VideoFrameRate.FrameRate DEFAULT_VIDEO_FRAME_RATE = VideoFrameRate
           .FrameRate.FPS30;
-  private final CameraSettingsRepository cameraSettingsRepository;
+  private final CameraSettingsDataSource cameraSettingsRepository;
   private HashMap<String, VideoQuality.Quality> videoQualityMap;
   private HashMap<String, VideoFrameRate.FrameRate> frameRateMap;
   private HashMap<String, VideoResolution.Resolution> resolutionMap;
 
-  public ProfileRepositoryFromCameraSettings(CameraSettingsRepository cameraSettingsRepository) {
+  public ProfileRepositoryFromCameraSettings(CameraSettingsDataSource cameraSettingsRepository) {
     this.cameraSettingsRepository = cameraSettingsRepository;
     if (this.cameraSettingsRepository.getCameraSettings() == null) {
       createDefaultCameraSettings();

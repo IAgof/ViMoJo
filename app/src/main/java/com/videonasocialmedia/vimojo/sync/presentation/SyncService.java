@@ -18,7 +18,7 @@ import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 
 import javax.inject.Inject;
@@ -37,7 +37,8 @@ public class SyncService extends Service {
 
   @Inject UploadToPlatform uploadToPlatform;
   @Inject AssetUploadQueue assetUploadQueue;
-  @Inject UploadRepository uploadRepository;
+  @Inject
+  UploadDataSource uploadRepository;
 
   /*
    * Instantiate the sync adapter object.

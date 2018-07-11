@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 
@@ -29,7 +29,7 @@ import javax.inject.Inject;
  */
 public class GalleryProjectListPresenter {
 
-  private ProjectRepository projectRepository;
+  private ProjectDataSource projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private SharedPreferences sharedPreferences;
   private DuplicateProjectUseCase duplicateProjectUseCase;
@@ -42,7 +42,7 @@ public class GalleryProjectListPresenter {
   @Inject
   public GalleryProjectListPresenter(
           GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
-          ProjectRepository projectRepository,
+          ProjectDataSource projectRepository,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteProjectUseCase deleteProjectUseCase,

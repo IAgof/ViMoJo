@@ -12,14 +12,14 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
@@ -76,20 +76,20 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-      ProjectRepository projectRepository,
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      UpdateAudioTransitionPreferenceToProjectUseCase
+          ProjectDataSource projectRepository,
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-      UpdateVideoTransitionPreferenceToProjectUseCase
+          UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-      UpdateIntermediateTemporalFilesTransitionsUseCase
+          UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-      UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadRepository uploadRepository, GetAccount getAccount) {
+          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+          UploadDataSource uploadRepository, GetAccount getAccount) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
@@ -115,13 +115,13 @@ public class FragmentPresentersModule {
 
   @Provides
   UpdateAudioTransitionPreferenceToProjectUseCase provideUpdateAudioTransitionPreference(
-      ProjectRepository projectRepository) {
+      ProjectDataSource projectRepository) {
     return new UpdateAudioTransitionPreferenceToProjectUseCase(projectRepository);
   }
 
   @Provides
   UpdateVideoTransitionPreferenceToProjectUseCase provideUpdateVideoTransitionPreference(
-      ProjectRepository projectRepository) {
+      ProjectDataSource projectRepository) {
     return new UpdateVideoTransitionPreferenceToProjectUseCase(projectRepository);
   }
 
@@ -132,32 +132,32 @@ public class FragmentPresentersModule {
 
   @Provides
   UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkPreference(
-          ProjectRepository projectRepository) {
+          ProjectDataSource projectRepository) {
     return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
   @Provides
   RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(
-          VideoRepository videoRepository) {
+          VideoDataSource videoRepository) {
     return new RelaunchTranscoderTempBackgroundUseCase(currentProject, videoRepository);
   }
 
   @Provides
-  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectRepository
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectDataSource
                                                                        projectRepository) {
     return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
 
   @Provides
   NewClipImporter clipImporterProvider(
-      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-      AdaptVideoToFormatUseCase adaptVideosUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
-      ProjectRepository projectRepository,
-      VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
-      ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase,
-      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
-      CompositionApiClient compositionApiClient) {
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          AdaptVideoToFormatUseCase adaptVideosUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
+          ProjectDataSource projectRepository,
+          VideoDataSource videoRepository, VideoToAdaptDataSource videoToAdaptRepository,
+          ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase,
+          AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
+          CompositionApiClient compositionApiClient) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
             launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase,
             projectRepository, videoRepository, videoToAdaptRepository, assetUploadQueue,

@@ -3,15 +3,15 @@ package com.videonasocialmedia.vimojo.sound.domain;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.project.ProjectDataSource;
 
 /**
  * Created by alvaro on 10/04/17.
  */
 
 public class ModifyTrackUseCase {
-  ProjectRepository projectRepository;
-  public ModifyTrackUseCase(ProjectRepository projectRepository) {
+  ProjectDataSource projectRepository;
+  public ModifyTrackUseCase(ProjectDataSource projectRepository) {
     this.projectRepository = projectRepository;
   }
 

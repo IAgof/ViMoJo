@@ -12,8 +12,8 @@ import android.content.Context;
 import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.upload.datasource.UploadRealmRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.datasource.UploadRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
@@ -44,7 +44,7 @@ public class UploadToPlatformModule {
                                            VideoApiClient videoApiClient,
                                            UserApiClient userApiClient,
                                            UserAuth0Helper userAuth0Helper,
-                                           UploadRepository uploadRepository,
+                                           UploadDataSource uploadRepository,
                                            GetUserId getUserId) {
     return new UploadToPlatform(context, uploadNotification, videoApiClient, userApiClient,
         userAuth0Helper, uploadRepository, getUserId);
@@ -71,7 +71,7 @@ public class UploadToPlatformModule {
   }
 
   @Singleton @Provides
-  UploadRepository providesUploadRepository() {
-    return new UploadRealmRepository();
+  UploadDataSource providesUploadRepository() {
+    return new UploadRealmDataSource();
   }
 }

@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -33,13 +33,13 @@ public class SplitVideoUseCase {
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     Video endVideo;
-    private VideoRepository videoRepository;
+    private VideoDataSource videoRepository;
     private Project currentProject;
 
     @Inject
     public SplitVideoUseCase(AddVideoToProjectUseCase addVideoToProjectUseCase,
                              ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-                             VideoRepository videoRepository) {
+                             VideoDataSource videoRepository) {
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.videoRepository = videoRepository;

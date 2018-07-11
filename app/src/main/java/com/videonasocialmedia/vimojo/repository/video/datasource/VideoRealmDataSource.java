@@ -6,7 +6,7 @@ import com.videonasocialmedia.vimojo.repository.RealmSpecification;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject;
 import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.RealmVideoToVideoMapper;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
 import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.VideoToRealmVideoMapper;
 
 import java.util.ArrayList;
@@ -19,11 +19,11 @@ import io.realm.RealmResults;
  * Created by Alejandro on 21/10/16.
  */
 
-public class VideoRealmRepository implements VideoRepository {
+public class VideoRealmDataSource implements VideoDataSource {
   protected Mapper<RealmVideo, Video> toVideoMapper;
   protected Mapper<Video, RealmVideo> toRealmVideoMapper;
 
-  public VideoRealmRepository() {
+  public VideoRealmDataSource() {
     this.toVideoMapper = new RealmVideoToVideoMapper();
     this.toRealmVideoMapper = new VideoToRealmVideoMapper();
   }
