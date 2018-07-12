@@ -80,16 +80,12 @@
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_editor_timeline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_below="@+id/edit_tools_cardview"
-            android:layout_marginBottom="@dimen/bb_height"
-            android:scrollbars="horizontal" />
+    <com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.VideonaTimeLine
+        android:id="@+id/videona_time_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/edit_tools_cardview"
+        android:layout_marginTop="16dp" />
 
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar"

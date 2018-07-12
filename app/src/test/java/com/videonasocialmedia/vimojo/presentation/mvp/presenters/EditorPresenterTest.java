@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -50,6 +52,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 
@@ -132,10 +136,20 @@ public class EditorPresenterTest {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = false;
 
-    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-        currentAppliedTheme);
+    Futures.addCallback(spyEditorPresenter
+                    .updatePresenter(hasBeenProjectExported, videoExportedPath, currentAppliedTheme),
+            new FutureCallback<Object>() {
+              @Override
+              public void onSuccess(@Nullable Object result) {
+                verify(spyEditorPresenter).initPreviewFromProject();
+              }
 
-    verify(spyEditorPresenter).initPreviewFromProject();
+              @Override
+              public void onFailure(Throwable t) {
+                assert false;
+              }
+            });
+
   }
 
   @Test
@@ -143,23 +157,41 @@ public class EditorPresenterTest {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = true;
 
-    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-        currentAppliedTheme);
+    Futures.addCallback(spyEditorPresenter
+                    .updatePresenter(hasBeenProjectExported, videoExportedPath, currentAppliedTheme),
+            new FutureCallback<Object>() {
+              @Override
+              public void onSuccess(@Nullable Object result) {
+                verify(spyEditorPresenter).initPreviewFromVideoExported(videoExportedPath);
+              }
 
-    verify(spyEditorPresenter).initPreviewFromVideoExported(videoExportedPath);
+              @Override
+              public void onFailure(Throwable t) {
+                assert false;
+              }
+            });
   }
 
   @Test
-  public void initPreviewFromProjectCallsGetMediaListFromProjectUseCase() throws IllegalItemOnTrack {
+  public void obtainVideosCallsGetMediaListFromProjectUseCase() throws IllegalItemOnTrack {
     Video video = new Video("somePath", Video.DEFAULT_VOLUME);
     currentProject.getMediaTrack().insertItem(video);
     Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject();
+    Futures.addCallback(editorPresenter.obtainVideoFromProject(), new FutureCallback<Object>() {
+              @Override
+              public void onSuccess(@Nullable Object result) {
+                verify(mockedGetMediaListFromProjectUseCase)
+                        .getMediaListFromProject(any(Project.class), any(OnVideosRetrieved.class));
 
-    verify(mockedGetMediaListFromProjectUseCase)
-        .getMediaListFromProject(any(Project.class), any(OnVideosRetrieved.class));
+              }
+
+              @Override
+              public void onFailure(Throwable t) {
+                assert false;
+              }
+            });
   }
 
   @Test
@@ -190,20 +222,25 @@ public class EditorPresenterTest {
     mediaTrack.insertItem(video);
     Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(),
         Matchers.is(true));
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        ((OnVideosRetrieved)invocation.getArguments()[1]).onVideosRetrieved(videoList);
-        return null;
-      }
+    doAnswer(invocation -> {
+      ((OnVideosRetrieved)invocation.getArguments()[1]).onVideosRetrieved(videoList);
+      return null;
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(Project.class),
         any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
 
-    editorPresenter.initPreviewFromProject();
+    Futures.addCallback(editorPresenter.obtainVideoFromProject(), new FutureCallback<Object>() {
+              @Override
+              public void onSuccess(@Nullable Object result) {
+                verify(mockedVideonaPlayerView).bindVideoList(any());
+                verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(currentProject);
+              }
 
-    verify(mockedVideonaPlayerView).bindVideoList(any());
-    verify(mockedNewClipImporter).relaunchUnfinishedAdaptTasks(currentProject);
+              @Override
+              public void onFailure(Throwable t) {
+                assert false;
+              }
+            });
   }
 
   @Test

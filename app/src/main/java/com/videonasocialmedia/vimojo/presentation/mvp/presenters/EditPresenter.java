@@ -32,6 +32,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -94,38 +96,40 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
         currentProject.addListener(this);
     }
 
-    public void updatePresenter() {
+    public ListenableFuture<?> updatePresenter() {
         // TODO: 21/2/18 Study if is necessary repeat use case, running also in father,
-        // EditorActivity. Tried ListenableFuture and make synchronus call to wait until finish and
-        // after this method get result of get medialist, problems with UI thread.
-        setCurrentProject();
-        getMediaListFromProjectUseCase.getMediaListFromProject(currentProject,
-                new OnVideosRetrieved() {
-            @Override
-            public void onVideosRetrieved(List<Video> videosRetrieved) {
-                int sizeOriginalVideoList = videosRetrieved.size();
-                List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
+        // TODO(jliarte): 9/07/18 implement this
+//        editActivityView.showLoading();
+        return this.executeUseCaseCall(() -> {
+            setCurrentProject();
+            getMediaListFromProjectUseCase.getMediaListFromProject(currentProject,
+                    new OnVideosRetrieved() {
+                        @Override
+                        public void onVideosRetrieved(List<Video> videosRetrieved) {
+                            int sizeOriginalVideoList = videosRetrieved.size();
+                            List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
 
-                List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+                            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
 
-                if (sizeOriginalVideoList > checkedVideoList.size()) {
-                    editActivityView.showDialogMediasNotFound();
-                }
-                editActivityView.enableEditActions();
-                editActivityView.enableBottomBar();
-                editActivityView.enableFabText(true);
-                editActivityView.updateVideoList(videoCopy);
-                videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
-                    checkedVideoList, videoTranscodingErrorNotifier);
-            }
+                            if (sizeOriginalVideoList > checkedVideoList.size()) {
+                                editActivityView.showDialogMediasNotFound();
+                            }
+                            editActivityView.enableEditActions();
+                            editActivityView.enableBottomBar();
+                            editActivityView.enableFabText(true);
+                            editActivityView.updateVideoList(videoCopy);
+                            videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
+                                    checkedVideoList, videoTranscodingErrorNotifier);
+                        }
 
-            @Override
-            public void onNoVideosRetrieved() {
-                editActivityView.disableEditActions();
-                editActivityView.disableBottomBar();
-                editActivityView.enableFabText(false);
-                editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
-            }
+                        @Override
+                        public void onNoVideosRetrieved() {
+                            editActivityView.disableEditActions();
+                            editActivityView.disableBottomBar();
+                            editActivityView.enableFabText(false);
+                            editActivityView.changeAlphaBottomBar(Constants.ALPHA_DISABLED_BOTTOM_BAR);
+                        }
+                    });
         });
     }
 
@@ -144,8 +148,9 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
         return sharedPreferences.getString(ConfigPreferences.RESOLUTION, "1280x720");
     }
 
-    public void finishedMoveItem(int fromPosition, int toPosition) {
-        if( fromPosition == toPosition ) {
+    public void moveClip(int fromPosition, int toPosition) {
+        if (fromPosition == toPosition) {
+            editActivityView.seekToClip(toPosition);
             return;
         }
         reorderMediaItemUseCase.moveMediaItem(currentProject, fromPosition, toPosition, new OnReorderMediaListener() {
@@ -200,7 +205,7 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
     // TODO(jliarte): 23/04/18 move/remove?
     @Override
     public void onRemoveMediaItemFromTrackError() {
-        //TODO modify error message
+        // TODO modify error message
         editActivityView.showError(R.string.addMediaItemToTrackError);
     }
 
@@ -209,7 +214,8 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
     public void onRemoveMediaItemFromTrackSuccess() {
         updateCompositionWithPlatform(currentProject);
         if (currentProject.getVMComposition().hasVideos()) {
-            editActivityView.updatePlayerAndTimeLineVideoListChanged();
+            editActivityView.updatePlayerVideoListChanged();
+            updatePresenter();
         } else {
             editActivityView.goToRecordOrGallery();
         }
@@ -239,7 +245,8 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                     @Override
                     public void onRemoveMediaItemFromTrackSuccess() {
                         if (currentProject.getVMComposition().hasVideos()) {
-                            editActivityView.updatePlayerAndTimeLineVideoListChanged();
+                            editActivityView.updatePlayerVideoListChanged();
+                            updatePresenter();
                         } else {
                             editActivityView.goToRecordOrGallery();
                         }
