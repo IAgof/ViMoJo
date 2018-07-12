@@ -1,10 +1,10 @@
-package com.videonasocialmedia.vimojo.cut.domain.usecase;
+package com.videonasocialmedia.vimojo.composition.domain.usecase;
 
 /**
  * Created by jliarte on 11/07/18.
  */
 
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 
 import javax.inject.Inject;

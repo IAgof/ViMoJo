@@ -8,7 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;

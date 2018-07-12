@@ -2,7 +2,7 @@ package com.videonasocialmedia.vimojo.repository.video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmProject;
 
 import java.util.List;
 

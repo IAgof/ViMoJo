@@ -4,7 +4,7 @@ package com.videonasocialmedia.vimojo.main;
  * Created by jliarte on 20/04/18.
  */
 
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 /**
  * This interface is used to abstract current Project instance storing and handling from the Application

@@ -3,8 +3,8 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmDataSource;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.CompositionApiDataSource;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSource;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;

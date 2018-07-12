@@ -9,7 +9,7 @@
  * Álvaro Martínez Marco
  * Danny R. Fonseca Arboleda
  */
-package com.videonasocialmedia.vimojo.cut.domain.model;
+package com.videonasocialmedia.vimojo.composition.domain.model;
 
 import android.support.annotation.NonNull;
 

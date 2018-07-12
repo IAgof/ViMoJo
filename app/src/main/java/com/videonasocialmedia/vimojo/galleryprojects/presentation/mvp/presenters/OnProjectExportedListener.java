@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 /**
  * Created by alvaro on 20/12/16.

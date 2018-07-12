@@ -1,11 +1,11 @@
-package com.videonasocialmedia.vimojo.cut.repository.datasource.mapper;
+package com.videonasocialmedia.vimojo.composition.repository.datasource.mapper;
 
 // TODO(jliarte): 11/07/18 remove this dependency
 import android.text.TextUtils;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.KarumiMapper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;

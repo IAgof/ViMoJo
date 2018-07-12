@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.domain;
 
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 import javax.inject.Inject;
 

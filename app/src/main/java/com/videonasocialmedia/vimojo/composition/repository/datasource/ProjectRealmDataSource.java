@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.cut.repository.datasource;
+package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 /**
  * Created by jliarte on 20/10/16.
@@ -7,13 +7,13 @@ package com.videonasocialmedia.vimojo.cut.repository.datasource;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.ProjectToRealmProjectMapper;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.RealmProjectToProjectMapper;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.mapper.ProjectToRealmProjectMapper;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.mapper.RealmProjectToProjectMapper;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import java.util.ArrayList;

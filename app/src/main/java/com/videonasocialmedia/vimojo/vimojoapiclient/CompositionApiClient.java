@@ -12,7 +12,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 
 import java.io.IOException;

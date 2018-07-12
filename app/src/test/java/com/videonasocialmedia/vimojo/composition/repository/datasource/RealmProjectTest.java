@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.cut.repository.datasource;
+package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;

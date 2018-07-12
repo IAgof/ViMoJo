@@ -19,7 +19,7 @@ import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
-import static com.videonasocialmedia.vimojo.cut.domain.model.Project.INTERMEDIATE_FILES;
+import static com.videonasocialmedia.vimojo.composition.domain.model.Project.INTERMEDIATE_FILES;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 /**

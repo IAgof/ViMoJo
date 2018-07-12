@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.cut.repository.datasource.mapper;
+package com.videonasocialmedia.vimojo.composition.repository.datasource.mapper;
 
 import android.support.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -15,7 +15,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.music.datasource.mapper.RealmMusicToMusicMapper;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmProject;
 import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;

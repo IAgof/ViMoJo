@@ -7,7 +7,7 @@
 
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.cut.repository.datasource;
+package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 /**
  * Created by jliarte on 12/07/18.
@@ -7,8 +7,8 @@ package com.videonasocialmedia.vimojo.cut.repository.datasource;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
-import com.videonasocialmedia.vimojo.cut.repository.datasource.mapper.CompositionToCompositionDtoMapper;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.mapper.CompositionToCompositionDtoMapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;

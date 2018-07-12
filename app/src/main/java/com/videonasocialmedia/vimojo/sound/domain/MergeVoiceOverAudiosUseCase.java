@@ -8,7 +8,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 import java.io.File;
 import java.util.ArrayList;
