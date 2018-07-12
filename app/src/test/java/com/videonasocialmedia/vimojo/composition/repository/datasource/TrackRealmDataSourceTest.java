@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.track.datasource;
+package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 import org.junit.Test;
 
@@ -10,7 +10,6 @@ import static org.junit.Assert.assertThat;
  */
 
 public class TrackRealmDataSourceTest {
-
   @Test
   public void testTrackRealmRepositoryConstructorSetsMappers() {
     TrackRealmDataSource repo = new TrackRealmDataSource();

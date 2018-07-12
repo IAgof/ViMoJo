@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.track.datasource;
+package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -8,7 +8,6 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class RealmTrack extends RealmObject {
-
   @PrimaryKey
   public String uuid;
   public int id;
@@ -16,8 +15,7 @@ public class RealmTrack extends RealmObject {
   public boolean mute;
   public int position;
 
-  public RealmTrack(){
-
+  public RealmTrack() {
   }
 
   public RealmTrack(int id){

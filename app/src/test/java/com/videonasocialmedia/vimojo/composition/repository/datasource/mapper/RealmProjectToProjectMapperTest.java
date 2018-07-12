@@ -17,7 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmProject;
-import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
 

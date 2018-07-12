@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.track.datasource;
 
 
-import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmTrack;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;

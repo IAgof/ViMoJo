@@ -45,29 +45,26 @@ public class ProjectToRealmProjectMapper implements Mapper<Project, RealmProject
       realmProject.videos.add(toRealmVideoMapper.map((Video) video));
     }
 
-    if(project.hasMusic()) {
+    realmProject.tracks.add(toRealmTrackMapper.map(project.getMediaTrack()));
+    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC)));
+
+    if (project.hasMusic()) {
       for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems()) {
         realmProject.musics.add(toRealmMusicMapper.map((Music) music));
       }
     }
 
-    if(project.hasVoiceOver()) {
+    if (project.hasVoiceOver()) {
       for (Media music : project.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)
           .getItems()) {
         realmProject.musics.add(toRealmMusicMapper.map((Music) music));
       }
-    }
-
-    realmProject.tracks.add(toRealmTrackMapper.map(project.getMediaTrack()));
-    realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
-          .get(Constants.INDEX_AUDIO_TRACK_MUSIC)));
-
-    if(project.hasVoiceOver()) {
       realmProject.tracks.add(toRealmTrackMapper.map(project.getAudioTracks()
-          .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
+              .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
     }
 
-    if(projectInfo.getProductTypeList().size() > 0) {
+    if (projectInfo.getProductTypeList().size() > 0) {
       for(String productType: projectInfo.getProductTypeList()) {
         realmProject.productTypeList.add(productType);
       }

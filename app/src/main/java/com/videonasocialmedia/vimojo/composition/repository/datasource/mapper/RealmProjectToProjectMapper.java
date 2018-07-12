@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.music.datasource.mapper.RealmMusicToMusicMapper;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmProject;
-import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
 import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.RealmVideoToVideoMapper;

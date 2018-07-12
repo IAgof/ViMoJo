@@ -1,8 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.track.datasource.mapper;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
-import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.TrackToRealmTrackMapper;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmTrack;
 
 import org.junit.Test;
 

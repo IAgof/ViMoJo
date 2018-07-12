@@ -5,7 +5,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.repository.Mapper;
-import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmTrack;
 
 /**
  * Created by alvaro on 10/04/17.

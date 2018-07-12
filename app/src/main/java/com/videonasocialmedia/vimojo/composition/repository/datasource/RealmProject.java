@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 import com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic;
-import com.videonasocialmedia.vimojo.repository.track.datasource.RealmTrack;
 import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
 
 import io.realm.RealmList;
