@@ -13,6 +13,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -26,6 +30,9 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGal
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -86,9 +93,11 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void showProjectList(List<Project> projectList) {
-    projectAdapter.setProjectList(projectList);
-    projectAdapter.notifyDataSetChanged();
-    this.projectList.setAdapter(projectAdapter);
+    runOnUiThread(() -> {
+      projectAdapter.setProjectList(projectList);
+      projectAdapter.notifyDataSetChanged();
+      this.projectList.setAdapter(projectAdapter);
+    });
   }
 
   @Override
@@ -109,12 +118,20 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   @Override
   public void onDuplicateProject(Project project) {
     try {
-      presenter.duplicateProject(project);
-      presenter.updateProjectList();
+      Futures.addCallback(presenter.duplicateProject(project), new FutureCallback<Void>() {
+        @Override
+        public void onSuccess(@javax.annotation.Nullable Void result) {
+          presenter.updateProjectList();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+          t.printStackTrace();
+        }
+      });
     } catch (IllegalItemOnTrack illegalItemOnTrack) {
       illegalItemOnTrack.printStackTrace();
     }
-
   }
 
   @Override

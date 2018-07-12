@@ -158,7 +158,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
         ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
             @Override
             public Project call() throws Exception {
-                return compositionApiClient.addComposition(currentProject);
+                return compositionApiClient.updateComposition(currentProject);
             }
         });
         Futures.addCallback(compositionFuture, new FutureCallback<Project>() {

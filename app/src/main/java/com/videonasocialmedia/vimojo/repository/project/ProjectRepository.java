@@ -4,10 +4,13 @@ package com.videonasocialmedia.vimojo.repository.project;
  * Created by jliarte on 20/10/16.
  */
 
+import android.util.Log;
+
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
@@ -18,21 +21,31 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Repository for providing Projects via repository pattern (will be renamed to Cuts!!)
- *   TODO(jliarte): 11/07/18 rename to CutRepository
+ * Repository for providing Projects via repository pattern (will be renamed to Productions!!)
+ *   TODO(jliarte): 11/07/18 rename to ProductionRepository
+ *
+ * <p>This class handles saving and retrieving Projects from different data sources and merge
+ * Projects provided by them for returning results.</p>
  */
 public class ProjectRepository extends VimojoRepository<Project> {
-  // TODO(jliarte): 11/07/18 change to ProjectRealmDataSource?
+  private static final String LOG_TAG = ProjectRepository.class.getSimpleName();
   private final ProjectRealmDataSource projectRealmDataSource;
+  private final CompositionApiDataSource compositionApiDataSource;
+
 
   @Inject
-  public ProjectRepository(ProjectRealmDataSource projectRealmDataSource) {
+  public ProjectRepository(ProjectRealmDataSource projectRealmDataSource,
+                           CompositionApiDataSource compositionApiDataSource) {
     this.projectRealmDataSource = projectRealmDataSource;
+    this.compositionApiDataSource = compositionApiDataSource;
   }
 
   @Override
   public void add(Project item) {
+    Log.d(LOG_TAG, "ProjectRepo.add project " + item);
     this.projectRealmDataSource.add(item);
+    // TODO(jliarte): 12/07/18 get success/error on API add and reflect it in local data sources? - sync status/date
+    this.compositionApiDataSource.add(item);
   }
 
   @Override

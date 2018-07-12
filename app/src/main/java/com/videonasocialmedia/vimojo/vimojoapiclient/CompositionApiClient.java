@@ -13,8 +13,11 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import retrofit2.Response;
 
@@ -24,16 +27,20 @@ import retrofit2.Response;
  * <p>Handles composition/cut vimojo API calls.</p>
  */
 public class CompositionApiClient extends VimojoApiClient {
+  @Inject public CompositionApiClient() {
+  }
   // TODO(jliarte): 11/07/18 check if rename
 
-  public Project addComposition(Project currentProject) throws VimojoApiException {
+  public CompositionDto addComposition(CompositionDto compositionDto, String accessToken) throws VimojoApiException {
    // Gson gson = new Gson();
    // String projectJson = gson.toJson(currentProject);
 
-    CompositionService compositionService = getService(CompositionService.class);
-    //Project requestBody = currentProject;
+    CompositionService compositionService = getService(CompositionService.class, accessToken);
     try {
-      Response<Project> response = compositionService.addComposition("hola").execute();
+      // TODO(jliarte): 11/07/18 set cut dto project, owner is set in backend
+      //                         set from Project (new entity)
+      String projectId = "defaultProject";
+      Response<CompositionDto> response = compositionService.addComposition(projectId, compositionDto).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {
@@ -45,6 +52,11 @@ public class CompositionApiClient extends VimojoApiClient {
       }
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
+    return null;
+  }
+
+  // TODO(jliarte): 11/07/18 implement this
+  public Project updateComposition(Project currentProject) {
     return null;
   }
 }

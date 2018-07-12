@@ -31,6 +31,8 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
+import javax.inject.Inject;
+
 
 /**
  * Created by alvaro on 2/7/18.
@@ -49,10 +51,11 @@ public class UserAuth0Helper {
   private Context context;
   private final UserApiClient userApiClient;
 
+  @Inject
   public UserAuth0Helper(UserApiClient userApiClient) {
     this.context = VimojoApplication.getAppContext();
     account = new Auth0(context);
-    //Configure the account in OIDC conformant mode
+    // Configure the account in OIDC conformant mode
     account.setOIDCConformant(true);
     authenticator = new AuthenticationAPIClient(account);
     manager = new SecureCredentialsManager(context, authenticator,
@@ -69,7 +72,7 @@ public class UserAuth0Helper {
   }
 
   public void performLogin(Activity activity, String auth0Domain, AuthCallback authCallback) {
-    //Use the account in the API clients
+    // Use the account in the API clients
     WebAuthProvider.init(account)
         .withScheme("https")
         .withScope("openid offline_access profile email")

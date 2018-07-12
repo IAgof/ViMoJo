@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.cut.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.cut.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
@@ -12,7 +13,9 @@ import static org.mockito.Mockito.mock;
  */
 public class MockedDataRepositoriesModule extends DataRepositoriesModule {
   @Override
-  ProjectRepository provideDefaultProjectRepository(ProjectRealmDataSource projectRealmRepository) {
+  ProjectRepository provideDefaultProjectRepository(
+          ProjectRealmDataSource projectRealmRepository,
+          CompositionApiDataSource compositionApiDataSource) {
     return mock(ProjectRepository.class);
   }
 

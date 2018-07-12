@@ -7,11 +7,13 @@
 
 package com.videonasocialmedia.vimojo.vimojoapiclient;
 
-import com.videonasocialmedia.vimojo.cut.domain.model.Project;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Created by alvaro on 21/6/18.
@@ -33,8 +35,8 @@ public interface CompositionService {
   Call<List<Composition>> getProjectsById(@Path("projectId") String projectId);
   */
 
-  @POST("project/cut")
+  @POST("project/{projectId}/composition")
   @Headers("Content-Type: application/json")
-  Call<Project> addComposition(String currentProject);
+  Call<CompositionDto> addComposition(@Path("projectId") String projectId, @Body CompositionDto compositionDto);
 
 }

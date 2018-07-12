@@ -29,7 +29,6 @@ import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MULTIPA
  * <p>Handles video upload calls.</p>
  */
 public class VideoApiClient extends VimojoApiClient {
-
   public static final String VIDEO_API_KEY_TITLE = "title";
   public static final String VIDEO_API_KEY_DESCRIPTION = "description";
   public static final String VIDEO_API_KEY_PRODUCT_TYPE = "productType";

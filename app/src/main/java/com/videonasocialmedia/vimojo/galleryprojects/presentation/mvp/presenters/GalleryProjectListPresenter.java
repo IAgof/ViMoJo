@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenter
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
@@ -18,6 +19,7 @@ import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActi
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 
 import java.util.List;
@@ -27,7 +29,7 @@ import javax.inject.Inject;
 /**
  * Created by ruth on 13/09/16.
  */
-public class GalleryProjectListPresenter {
+public class GalleryProjectListPresenter extends VimojoPresenter {
 
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
@@ -69,10 +71,14 @@ public class GalleryProjectListPresenter {
     return projectRepository.getListProjectsByLastModificationDescending();
   }
 
-  public void duplicateProject(Project project) throws IllegalItemOnTrack {
+  public ListenableFuture<Void> duplicateProject(Project project) throws IllegalItemOnTrack {
     // TODO(jliarte): 11/07/18 move calls to background as they call repos and copy files
     Project newProject = duplicateProjectUseCase.duplicate(project);
-    saveCut.saveCut(newProject);
+    // TODO(jliarte): 11/07/18 change to runnable
+    return executeUseCaseCall(() -> {
+      saveCut.saveCut(newProject);
+      return null;
+    });
   }
 
   public void deleteProject(Project project) {
