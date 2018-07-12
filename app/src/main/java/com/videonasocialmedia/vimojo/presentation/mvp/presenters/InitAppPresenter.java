@@ -13,7 +13,7 @@ import android.util.Size;
 import com.videonasocialmedia.camera.utils.Camera2Settings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
-import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.cut.domain.model.Project;
@@ -50,7 +50,7 @@ public class InitAppPresenter extends VimojoPresenter {
   private final CameraSettingsDataSource cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
   // TODO(jliarte): 11/07/18 make final if injected
-  private SaveCut saveCut;
+  private SaveComposition saveComposition;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
@@ -71,7 +71,7 @@ public class InitAppPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     // TODO(jliarte): 11/07/18 inject this
-//    saveCut = new SaveCut(projectInstanceCache, projectRepository);
+//    saveComposition = new SaveComposition(projectInstanceCache, projectRepository);
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -81,7 +81,7 @@ public class InitAppPresenter extends VimojoPresenter {
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
               isWatermarkActivated(), drawableFadeTransitionVideo);
       projectInstanceCache.setCurrentProject(project);
-      saveCut.saveCut(project);
+      saveComposition.saveComposition(project);
     }
   }
 

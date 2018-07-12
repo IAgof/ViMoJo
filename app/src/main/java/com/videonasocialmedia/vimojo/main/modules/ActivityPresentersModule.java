@@ -6,7 +6,7 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
-import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -352,13 +352,13 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository,
-          NewClipImporter newClipImporter, BillingManager billingManager, SaveCut saveCut) {
+          NewClipImporter newClipImporter, BillingManager billingManager, SaveComposition saveComposition) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
             getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             relaunchTranscoderTempBackgroundUseCase, projectRepository, newClipImporter,
-            billingManager, projectInstanceCache, saveCut);
+            billingManager, projectInstanceCache, saveComposition);
   }
 
   @Provides @PerActivity
@@ -366,11 +366,11 @@ public class ActivityPresentersModule {
           ProjectRepository projectRepository, SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase, DeleteProjectUseCase deleteProjectUseCase,
-          CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase, SaveCut saveCut) {
+          CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase, SaveComposition saveComposition) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase,
-            (ProjectInstanceCache) activity.getApplication(), saveCut);
+            (ProjectInstanceCache) activity.getApplication(), saveComposition);
   }
 
   @Provides @PerActivity

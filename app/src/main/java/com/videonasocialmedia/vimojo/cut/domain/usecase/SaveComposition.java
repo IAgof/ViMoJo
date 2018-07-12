@@ -10,18 +10,18 @@ import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import javax.inject.Inject;
 
 /**
- * Use Case for saving a Cut
+ * Use Case for saving a {@link Project} into repository.
  */
-public class SaveCut {
+public class SaveComposition {
   private final ProjectRepository projectRepository;
 
   @Inject
-  public SaveCut(ProjectRepository projectRepository) {
+  public SaveComposition(ProjectRepository projectRepository) {
     // TODO(jliarte): 11/07/18 should project repo also manage instance cache? as in memory datasource?
     this.projectRepository = projectRepository;
   }
 
-  public void saveCut(Project project) {
+  public void saveComposition(Project project) {
     projectRepository.add(project);
   }
 }

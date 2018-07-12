@@ -28,7 +28,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
@@ -67,7 +67,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     ProjectRepository projectRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
     @Inject SharedPreferences sharedPreferences;
-    @Inject SaveCut saveCut;
+    @Inject
+    SaveComposition saveComposition;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -224,7 +225,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
                     drawableFadeTransitionVideo);
-            saveCut.saveCut(project);
+            saveComposition.saveComposition(project);
             return project;
         } else {
             return projectRepository.getLastModifiedProject();

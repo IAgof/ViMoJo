@@ -17,7 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -77,7 +77,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
   private ProjectRepository projectRepository;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-  private SaveCut saveCut;
+  private SaveComposition saveComposition;
 
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
@@ -96,7 +96,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository, NewClipImporter newClipImporter,
           BillingManager billingManager, ProjectInstanceCache projectInstanceCache,
-          SaveCut saveCut) {
+          SaveComposition saveComposition) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -113,7 +113,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
-    this.saveCut = saveCut;
+    this.saveComposition = saveComposition;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
@@ -203,7 +203,7 @@ public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegate
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             getPreferenceWaterMark(), drawableFadeTransitionVideo);
     projectInstanceCache.setCurrentProject(project);
-    saveCut.saveCut(project);
+    saveComposition.saveComposition(project);
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?

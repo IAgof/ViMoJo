@@ -7,7 +7,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveCut;
+import com.videonasocialmedia.vimojo.cut.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.cut.domain.usecase.DuplicateProjectUseCase;
@@ -39,7 +39,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
   private ProjectInstanceCache projectInstanceCache;
-  private SaveCut saveCut;
+  private SaveComposition saveComposition;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -50,7 +50,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
           DeleteProjectUseCase deleteProjectUseCase,
           CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase,
           ProjectInstanceCache projectInstanceCache,
-          SaveCut saveCut) {
+          SaveComposition saveComposition) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -59,7 +59,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.deleteProjectUseCase = deleteProjectUseCase;
     this.checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
     this.projectInstanceCache = projectInstanceCache;
-    this.saveCut = saveCut;
+    this.saveComposition = saveComposition;
   }
 
   public void init() {
@@ -76,7 +76,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     Project newProject = duplicateProjectUseCase.duplicate(project);
     // TODO(jliarte): 11/07/18 change to runnable
     return executeUseCaseCall(() -> {
-      saveCut.saveCut(newProject);
+      saveComposition.saveComposition(newProject);
       return null;
     });
   }
@@ -109,7 +109,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
             isWatermarkActivated(), drawableFadeTransitionVideo);
     projectInstanceCache.setCurrentProject(project);
     // TODO(jliarte): 11/07/18 move call to background
-    saveCut.saveCut(project);
+    saveComposition.saveComposition(project);
   }
 
   private boolean isWatermarkActivated() {
