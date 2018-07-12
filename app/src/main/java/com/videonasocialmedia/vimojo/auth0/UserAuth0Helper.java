@@ -12,6 +12,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.auth0.android.Auth0;
@@ -26,12 +27,14 @@ import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.AccountConstants;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
+import java.util.HashMap;
 
 /**
  * Created by alvaro on 2/7/18.
@@ -44,6 +47,8 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 public class UserAuth0Helper {
 
   private String LOG_TAG = UserAuth0Helper.class.getCanonicalName();
+  private final String AUTH0_PARAMETER_MAIN_COLOR = "main_color";
+  private final String AUTH0_PARAMETER_FLAVOUR = "flavour";
   private Auth0 account;
   private AuthenticationAPIClient authenticator;
   private SecureCredentialsManager manager;
@@ -71,12 +76,19 @@ public class UserAuth0Helper {
 
   public void performLogin(Activity activity, AuthCallback authCallback) {
     String domain = context.getString(R.string.com_auth0_domain);
-    String audience = context.getString(R.string.com_auth0_audience);
+    // TODO: 10/7/18 Study how to overwrite from build.gradle debug these string_debug, platform_base included
+    String audience = BuildConfig.DEBUG ? context.getString(R.string.com_auth0_audience_debug)
+        : context.getString(R.string.com_auth0_audience);
+    HashMap<String, Object> extraConfigParams = new HashMap<>();
+    extraConfigParams.put(AUTH0_PARAMETER_MAIN_COLOR, String.format("#%06x",
+        ContextCompat.getColor(context, R.color.colorAccent) & 0xffffff));
+    extraConfigParams.put(AUTH0_PARAMETER_FLAVOUR, BuildConfig.FLAVOR);
     //Use the account in the API clients
     WebAuthProvider.init(account)
         .withScheme("https")
         .withScope("openid offline_access profile email")
         .withAudience(String.format(audience.toString(), domain))
+        .withParameters(extraConfigParams)
         .start(activity, authCallback);
   }
 

@@ -28,4 +28,9 @@ public class VimojoPresenter {
     return executorPool.submit(callable);
   }
 
+  protected final ListenableFuture<?> executeUseCaseCall(Runnable runnable) {
+    return executorPool.submit(runnable);
+  }
+
+
 }

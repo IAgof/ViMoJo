@@ -18,7 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.presentation.views.adapter.helper.ItemTouchHelperViewHolder;
+import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MediaListTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
@@ -30,15 +30,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
-import static com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder.VIEWHOLDER_RADIUS;
-import static com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder.VIEWHOLDER_MARGIN;
+import static com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.TimeLineVideoViewHolder.VIEWHOLDER_RADIUS;
+import static com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.TimeLineVideoViewHolder.VIEWHOLDER_MARGIN;
 
 /**
  * Created by alvaro on 7/03/17.
  */
 
-public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTimeLineAdapter.MediaViewHolder> {
-
+public class MediaListTimeLineAdapter
+        extends RecyclerView.Adapter<MediaListTimeLineAdapter.MediaViewHolder> {
   private final int trackId;
   private MediaListTimeLineRecyclerViewClickListener mediaListTimeLineListener;
   private Context context;
@@ -83,7 +83,7 @@ public class MediaListTimeLineAdapter extends RecyclerView.Adapter<MediaListTime
 
   private void drawMediaThumbnail(ImageView thumbnailView, Media currentMedia) {
     if (currentMedia instanceof Video) {
-      // TODO(jliarte): 27/10/17 duplicate code with @com.videonasocialmedia.vimojo.presentation.views.adapter.timeline.TimeLineVideoViewHolder
+      // TODO(jliarte): 27/10/17 duplicate code with @com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.TimeLineVideoViewHolder
       BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
       Video currentVideo = (Video) currentMedia;
       FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(
