@@ -10,7 +10,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 
 import javax.inject.Inject;
 

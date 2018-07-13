@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.track;
+package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;

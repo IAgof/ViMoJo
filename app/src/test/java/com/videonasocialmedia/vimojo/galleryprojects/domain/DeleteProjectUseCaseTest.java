@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
