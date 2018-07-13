@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.project;
+package com.videonasocialmedia.vimojo.composition.repository;
 
 /**
  * Created by jliarte on 20/10/16.

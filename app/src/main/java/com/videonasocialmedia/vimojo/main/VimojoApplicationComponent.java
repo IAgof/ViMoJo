@@ -6,7 +6,7 @@ package com.videonasocialmedia.vimojo.main;
 
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 
 import javax.inject.Singleton;
 
