@@ -193,7 +193,7 @@
 # -keep class com.yourcompany.realm.** { *; }
 
 -keep class com.videonasocialmedia.vimojo.cut.repository.datasource.RealmProject
--keep class com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo
+-keep class com.videonasocialmedia.vimojo.asset.repository.datasource.RealmVideo
 -keep class com.videonasocialmedia.vimojo.repository.music.datasource.RealmMusic
 -keep class com.videonasocialmedia.vimojo.composition.repository.datasource.RealmTrack
 -keep class com.videonasocialmedia.vimojo.repository.upload.datasource.RealmUpload

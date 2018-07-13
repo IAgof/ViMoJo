@@ -1,7 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.video.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
-import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.RealmVideo;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;

@@ -1,13 +1,12 @@
-package com.videonasocialmedia.vimojo.repository.video.datasource;
+package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.RealmSpecification;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.RealmProject;
-import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.RealmVideoToVideoMapper;
-import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
-import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.VideoToRealmVideoMapper;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.RealmVideoToVideoMapper;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.VideoToRealmVideoMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +28,11 @@ public class VideoRealmDataSource implements VideoDataSource {
   }
 
   @Override
-  public List<Video> getAllVideos(){
+  public List<Video> getAllVideos() {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmVideo> realmResults = realm.where(RealmVideo.class).findAll();
     List<Video> videoList = new ArrayList<>();
-    for(RealmVideo realmVideo: realmResults){
+    for(RealmVideo realmVideo: realmResults) {
       videoList.add(toVideoMapper.map(realm.copyFromRealm(realmVideo)));
     }
     return videoList;

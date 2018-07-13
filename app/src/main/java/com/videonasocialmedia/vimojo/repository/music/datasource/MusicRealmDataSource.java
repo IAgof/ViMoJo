@@ -18,11 +18,10 @@ import io.realm.RealmResults;
  */
 
 public class MusicRealmDataSource implements MusicDataSource {
-
   protected Mapper<RealmMusic, Music> toMusicMapper;
   protected Mapper<Music, RealmMusic> toRealmMusicMapper;
 
-  public MusicRealmDataSource(){
+  public MusicRealmDataSource() {
     this.toMusicMapper = new RealmMusicToMusicMapper();
     this.toRealmMusicMapper = new MusicToRealmMusicMapper();
   }
@@ -84,7 +83,7 @@ public class MusicRealmDataSource implements MusicDataSource {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmMusic> realmResults = realm.where(RealmMusic.class).findAll();
     List<Music> musicList = new ArrayList<>();
-    for(RealmMusic realmMusic: realmResults){
+    for(RealmMusic realmMusic: realmResults) {
       musicList.add(toMusicMapper.map(realm.copyFromRealm(realmMusic)));
     }
     return musicList;

@@ -1,9 +1,8 @@
-package com.videonasocialmedia.vimojo.repository.video.datasource.mapper;
+package com.videonasocialmedia.vimojo.asset.repository.datasource.mapper;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
-import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
-import com.videonasocialmedia.vimojo.repository.video.datasource.mapper.RealmVideoToVideoMapper;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.RealmVideo;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import org.junit.Test;

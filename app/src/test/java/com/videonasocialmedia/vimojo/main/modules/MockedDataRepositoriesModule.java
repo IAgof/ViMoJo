@@ -4,7 +4,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDat
 import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 
 import static org.mockito.Mockito.mock;
 

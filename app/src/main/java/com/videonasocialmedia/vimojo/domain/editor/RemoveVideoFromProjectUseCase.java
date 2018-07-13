@@ -18,7 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 
 import java.util.ArrayList;
 

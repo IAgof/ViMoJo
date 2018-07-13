@@ -3,8 +3,8 @@ package com.videonasocialmedia.vimojo.importer.repository;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.video.datasource.VideoRealmDataSource;
-import com.videonasocialmedia.vimojo.repository.video.VideoDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 
 import java.util.ArrayList;
 import java.util.List;

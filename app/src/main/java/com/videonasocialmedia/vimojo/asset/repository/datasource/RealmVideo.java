@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.video.datasource;
+package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.video;
+package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.datasource.DataSource;

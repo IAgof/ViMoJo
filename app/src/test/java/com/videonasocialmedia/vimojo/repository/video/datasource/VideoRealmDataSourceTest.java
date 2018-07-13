@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.repository.video.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
 
 import org.junit.Assert;
 import org.junit.Test;

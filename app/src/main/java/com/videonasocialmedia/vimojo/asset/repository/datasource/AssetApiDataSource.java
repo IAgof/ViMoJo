@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.repository.asset.datasource;
+package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;

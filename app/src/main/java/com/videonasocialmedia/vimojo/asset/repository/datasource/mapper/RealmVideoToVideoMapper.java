@@ -1,8 +1,8 @@
-package com.videonasocialmedia.vimojo.repository.video.datasource.mapper;
+package com.videonasocialmedia.vimojo.asset.repository.datasource.mapper;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
-import com.videonasocialmedia.vimojo.repository.video.datasource.RealmVideo;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.RealmVideo;
 
 /**
  * Created by Alejandro on 21/10/16.
