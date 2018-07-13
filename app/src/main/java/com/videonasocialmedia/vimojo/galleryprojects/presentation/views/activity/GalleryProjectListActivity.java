@@ -123,6 +123,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
         @Override
         public void onFailure(Throwable t) {
           t.printStackTrace();
+          presenter.updateProjectList(); // TODO(jliarte): 13/07/18 needed? presenter.onErrorDuplicating -> show error msg!
         }
       });
     } catch (IllegalItemOnTrack illegalItemOnTrack) {

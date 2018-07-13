@@ -63,7 +63,7 @@ public class TrackRealmDataSource implements TrackDataSource {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
     List<Track> trackList = new ArrayList<>();
-    for(RealmTrack realmTrack: realmResults){
+    for (RealmTrack realmTrack: realmResults) {
       trackList.add(toTrackMapper.map(realm.copyFromRealm(realmTrack)));
     }
     return trackList;
@@ -80,8 +80,8 @@ public class TrackRealmDataSource implements TrackDataSource {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
     MediaTrack mediaTrack = null;
-    for(RealmTrack realmTrack: realmResults){
-      if(realmTrack.id == Constants.INDEX_MEDIA_TRACK){
+    for (RealmTrack realmTrack: realmResults) {
+      if(realmTrack.id == Constants.INDEX_MEDIA_TRACK) {
         mediaTrack = (MediaTrack) toTrackMapper.map(realmTrack);
         break;
       }
@@ -94,8 +94,8 @@ public class TrackRealmDataSource implements TrackDataSource {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
     AudioTrack musicTrack = null;
-    for(RealmTrack realmTrack: realmResults){
-      if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_MUSIC){
+    for (RealmTrack realmTrack: realmResults) {
+      if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_MUSIC) {
         musicTrack = (AudioTrack) toTrackMapper.map(realmTrack);
         break;
       }
@@ -108,8 +108,8 @@ public class TrackRealmDataSource implements TrackDataSource {
     Realm realm = Realm.getDefaultInstance();
     RealmResults<RealmTrack> realmResults = realm.where(RealmTrack.class).findAll();
     AudioTrack voiceOverTrack = null;
-    for(RealmTrack realmTrack: realmResults){
-      if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
+    for (RealmTrack realmTrack: realmResults) {
+      if(realmTrack.id == Constants.INDEX_AUDIO_TRACK_VOICE_OVER) {
         voiceOverTrack = (AudioTrack) toTrackMapper.map(realmTrack);
         break;
       }

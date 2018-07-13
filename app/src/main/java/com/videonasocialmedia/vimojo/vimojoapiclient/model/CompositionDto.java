@@ -6,7 +6,9 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Model class for Composition vimojo API calls.
@@ -28,9 +30,14 @@ public class CompositionDto {
   @SerializedName("poster") public String poster;
   @SerializedName("project") public String projectId;
   @SerializedName("date") public Date date;
+  @SerializedName("tracks") public List<TrackDto> tracks;
   @SerializedName("creation_date") public Date creation_date;
   @SerializedName("modification_date") public Date modification_date;
   @SerializedName("created_by") public String ownerId;
+
+  public CompositionDto() {
+    this.tracks = new ArrayList<>();
+  }
 
   public String getId() {
     return id;
@@ -108,7 +115,8 @@ public class CompositionDto {
     return ownerId;
   }
 
-  @Override public String toString() {
+  @Override
+  public String toString() {
     return "CompositionDto{"
             + "id='"
             + id

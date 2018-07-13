@@ -1,8 +1,13 @@
 package com.videonasocialmedia.vimojo.composition.repository.datasource.mapper;
 
-// TODO(jliarte): 11/07/18 remove this dependency
+/**
+ * Created by jliarte on 11/07/18.
+ */
+
+// TODO(jliarte): 11/07/18 remove this dependency?
 import android.text.TextUtils;
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -12,11 +17,15 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 
 import java.util.Date;
 
-/**
- * Created by jliarte on 11/07/18.
- */
+import javax.inject.Inject;
 
+/**
+ * Class to provide model conversions between {@link Project} and {@link CompositionDto}
+ */
 public class CompositionToCompositionDtoMapper extends KarumiMapper<Project, CompositionDto> {
+  // TODO(jliarte): 13/07/18 maybe inject?
+  TrackToTrackDtoMapper trackToTrackDtoMapper = new TrackToTrackDtoMapper();
+
   @Override
   public CompositionDto map(Project project) {
     VMComposition vmComposition = project.getVMComposition();
@@ -37,6 +46,15 @@ public class CompositionToCompositionDtoMapper extends KarumiMapper<Project, Com
     compositionDto.projectId = "defaultProject";
     compositionDto.date = new Date();
     // TODO(jliarte): 11/07/18 retrieve last updated from realm into Project
+
+    compositionDto.tracks.add(trackToTrackDtoMapper.map(project.getMediaTrack()));
+    compositionDto.tracks.add(trackToTrackDtoMapper.map(project.getAudioTracks()
+            .get(Constants.INDEX_AUDIO_TRACK_MUSIC)));
+    if (project.hasVoiceOver()) {
+      compositionDto.tracks.add(trackToTrackDtoMapper.map(project.getAudioTracks()
+              .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER)));
+    }
+
     return compositionDto;
   }
 
