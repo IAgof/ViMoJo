@@ -1,3 +1,7 @@
+v0.20.4
+- Fixed music not playing problem in all edit views
+- Fixed login problems
+
 v0.20.3
 - Improve video time line stability in edit view.
 
