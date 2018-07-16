@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -56,7 +57,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -88,6 +88,7 @@ public class ShareVideoPresenterTest {
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
+    @Mock FFmpeg mockedFFmpeg;
 
     @Before
     public void injectMocks() {
@@ -292,9 +293,9 @@ public class ShareVideoPresenterTest {
         boolean hasBeenProjectExported = false;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
 
-        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork);
+        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork, mockedFFmpeg);
 
-        verify(spyShareVideoPresenter).startExport(anyNetwork);
+        verify(spyShareVideoPresenter).startExport(anyNetwork, mockedFFmpeg);
     }
 
     @Test
@@ -305,7 +306,7 @@ public class ShareVideoPresenterTest {
         String videoExportedPath = "";
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
 
-        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork);
+        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork, mockedFFmpeg);
 
         verify(spyShareVideoPresenter).processNetworkClicked(anyNetwork, videoExportedPath);
     }
@@ -327,7 +328,8 @@ public class ShareVideoPresenterTest {
         assertThat("Project info product type is not empty",
             currentProject.getProjectInfo().getProductTypeList().size(), is(1));
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork,
+            mockedFFmpeg);
 
         verify(spyShareVideoPresenter).clickUploadToPlatform(isWifiConnected,
             acceptUploadVideoMobileNetwork, isMobileNetworkConnected, videoExportedPath);
@@ -338,10 +340,10 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         boolean hasBeenProjectExported = true;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
-        FtpNetwork ftpNetworkSelected = any(FtpNetwork.class);
+        FtpNetwork ftpNetworkSelected = null;
         String videoExportedPath = "";
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeFtp);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeFtp, mockedFFmpeg);
 
         verify(mockedShareVideoView).createDialogToInsertNameProject(ftpNetworkSelected,
             videoExportedPath);
@@ -357,7 +359,8 @@ public class ShareVideoPresenterTest {
         when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
         String videoExportedPath = "";
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork,
+            mockedFFmpeg);
 
         verify(mockedShareVideoView).shareVideo(videoExportedPath, mockedSocialNetwork);
     }
@@ -370,7 +373,8 @@ public class ShareVideoPresenterTest {
         when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
         String videoExportedPath = "";
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork,
+            mockedFFmpeg);
 
         verify(mockedShareVideoView).showIntentOtherNetwork(videoExportedPath);
     }
