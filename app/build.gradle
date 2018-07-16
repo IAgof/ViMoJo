@@ -479,6 +479,7 @@ dependencies {
     implementation 'com.google.guava:guava:19.0'
     implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
     implementation 'com.auth0.android:auth0:1.13.0'
+    implementation 'com.writingminds:FFmpegAndroid:0.3.2'
 }
 
 // Ensure the no-op dependency is always used in JVM tests.

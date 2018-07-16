@@ -13,11 +13,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
-import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -44,8 +43,6 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.io.File;
 import java.io.IOException;
@@ -199,8 +196,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
       @Override
       public void onExportError(int error, Exception exception) {
         Crashlytics.log("Error exporting: " + error);
+        Crashlytics.logException(exception);
         if (shareVideoViewReference.get() != null) {
-          shareVideoViewReference.get().showVideoExportError(error, exception);
+          shareVideoViewReference.get().showVideoExportError(error);
           isAppExportingProject = false;
         }
       }
@@ -229,7 +227,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
           isAppExportingProject = false;
         }
       }
-    });
+    }, FFmpeg.getInstance(context));
   }
 
   protected void clickUploadToPlatform(boolean isWifiConnected,

@@ -481,10 +481,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showVideoExportError(int cause, Exception exception) {
+  public void showVideoExportError(int cause) {
     exportProgressDialog.dismiss();
     showVideoExportErrorDialog(cause);
-    Crashlytics.logException(exception);
   }
 
   @Override
