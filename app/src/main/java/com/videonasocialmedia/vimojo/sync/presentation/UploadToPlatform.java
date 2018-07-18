@@ -34,7 +34,7 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoDto;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +61,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   private final UserAuth0Helper userAuth0Helper;
   private final GetUserId getUserId;
   private UploadNotification uploadNotification;
-  private Call<Video> uploadVideoAsync;
+  private Call<VideoDto> uploadVideoAsync;
   private UploadDataSource uploadRepository;
   private int notificationUploadId;
   private PendingIntent cancelUploadPendingIntent;
@@ -164,9 +164,9 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
     videoUpload.setUploading(true);
     uploadRepository.update(videoUpload);
     uploadVideoAsync = videoApiClient.uploadVideoAsyncWithProgress(token, videoUpload, fileBody);
-    uploadVideoAsync.enqueue(new Callback<Video>() {
+    uploadVideoAsync.enqueue(new Callback<VideoDto>() {
       @Override
-      public void onResponse(Call<Video> call, Response<Video> response) {
+      public void onResponse(Call<VideoDto> call, Response<VideoDto> response) {
         Log.d(LOG_TAG, "onResponse uploaded video ... videoApiClient.uploadVideo");
         removeVideoUpload(videoUpload);
         Log.d(LOG_TAG, "finishNotification success");
@@ -177,7 +177,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
       }
 
       @Override
-      public void onFailure(Call<Video> call, Throwable t) {
+      public void onFailure(Call<VideoDto> call, Throwable t) {
         Log.d(LOG_TAG, "onFailure uploading video ... " + t.getMessage()
             + " cause " + t.getCause());
         if (!call.isCanceled()) {
