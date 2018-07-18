@@ -14,9 +14,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -113,31 +110,19 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void onDuplicateProject(Project project) {
-    try {
-      Futures.addCallback(presenter.duplicateProject(project), new FutureCallback<Void>() {
-        @Override
-        public void onSuccess(@javax.annotation.Nullable Void result) {
-          presenter.updateProjectList();
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-          t.printStackTrace();
-          presenter.updateProjectList(); // TODO(jliarte): 13/07/18 needed? presenter.onErrorDuplicating -> show error msg!
-        }
-      });
-    } catch (IllegalItemOnTrack illegalItemOnTrack) {
-      illegalItemOnTrack.printStackTrace();
-    }
+    presenter.duplicateProject(project);
   }
 
   @Override
   public void onDeleteProject(final Project project) {
+    showDeleteConfirmDialog(project);
+  }
 
+  private void showDeleteConfirmDialog(Project project) {
     final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
-        if(which == DialogInterface.BUTTON_POSITIVE) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
             presenter.deleteProject(project);
             presenter.updateProjectList();
         }
@@ -148,7 +133,6 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     builder.setMessage(R.string.dialog_project_remove_message)
         .setPositiveButton(R.string.dialog_project_remove_accept, dialogClickListener)
         .setNegativeButton(R.string.dialog_project_remove_cancel, dialogClickListener).show();
-
   }
 
   @Override

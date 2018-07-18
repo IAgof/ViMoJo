@@ -2,7 +2,10 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenter
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -23,14 +26,16 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * Created by ruth on 13/09/16.
  */
 public class GalleryProjectListPresenter extends VimojoPresenter {
-
+  private static final String LOG_TAG = GalleryProjectListPresenter.class.getSimpleName();
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private SharedPreferences sharedPreferences;
@@ -71,14 +76,29 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     return projectRepository.getListProjectsByLastModificationDescending();
   }
 
-  public ListenableFuture<Void> duplicateProject(Project project) throws IllegalItemOnTrack {
+  public void duplicateProject(Project project) {
     // TODO(jliarte): 11/07/18 move calls to background as they call repos and copy files
-    Project newProject = duplicateProjectUseCase.duplicate(project);
-    // TODO(jliarte): 11/07/18 change to runnable
-    return executeUseCaseCall(() -> {
-      saveComposition.saveComposition(newProject);
-      return null;
-    });
+    try {
+      Project newProject = duplicateProjectUseCase.duplicate(project);
+      // TODO(jliarte): 11/07/18 change to runnable
+      Futures.addCallback(executeUseCaseCall(() -> {
+        saveComposition.saveComposition(newProject);
+      }), new FutureCallback<Object>() {
+        @Override
+        public void onSuccess(@Nullable Object result) {
+          updateProjectList();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+          t.printStackTrace();
+          updateProjectList(); // TODO(jliarte): 13/07/18 needed? presenter.onErrorDuplicating -> show error msg!
+        }
+      });
+    } catch (IllegalItemOnTrack illegalItemOnTrack) {
+      Log.d(LOG_TAG, "Error duplicating project");
+      illegalItemOnTrack.printStackTrace();
+    }
   }
 
   public void deleteProject(Project project) {

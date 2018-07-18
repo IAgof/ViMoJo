@@ -6,10 +6,17 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Model class for Track vimojo API calls.
  */
 public class TrackDto {
+  public TrackDto() {
+    this.mediaItems = new ArrayList<MediaDto>();
+  }
+
   @SerializedName("_id") public String id;
   @SerializedName("uuid") public String uuid;
   @SerializedName("trackId") public int trackId;
@@ -17,6 +24,7 @@ public class TrackDto {
   @SerializedName("mute") public boolean mute;
   @SerializedName("position") public int position;
   @SerializedName("compositionId") public int compositionId;
+  @SerializedName("medias") public List<MediaDto> mediaItems;
 
   public String getId() {
     return id;
@@ -69,6 +77,9 @@ public class TrackDto {
             + '\''
             + ", compositionId='"
             + compositionId
+            + '\''
+            + ", mediaItems='"
+            + mediaItems
             +
             '}';
   }

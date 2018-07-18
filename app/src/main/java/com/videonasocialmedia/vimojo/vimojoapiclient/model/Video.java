@@ -13,6 +13,7 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 
 /**
  * Model class for video API calls.
+ * // TODO(jliarte): 13/07/18 rename to VideoDto
  */
 public class Video {
     String owner;

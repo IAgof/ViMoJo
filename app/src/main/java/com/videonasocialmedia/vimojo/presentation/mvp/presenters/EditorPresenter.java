@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
@@ -198,16 +201,31 @@ public class EditorPresenter extends VimojoPresenter
   public void resetCurrentProject(String rootPath, String privatePath,
                                   Drawable drawableFadeTransitionVideo) {
     clearProjectDataFromSharedPreferences();
-    setNewProject(rootPath, privatePath, drawableFadeTransitionVideo);
-    editorActivityView.goToRecordOrGalleryScreen();
+    Futures.addCallback(setNewProject(rootPath, privatePath, drawableFadeTransitionVideo),
+            new FutureCallback<Object>() {
+              @Override
+              public void onSuccess(@Nullable Object result) {
+                editorActivityView.goToRecordOrGalleryScreen();
+              }
+
+              @Override
+              public void onFailure(Throwable t) {
+                // TODO(jliarte): 18/07/18 handle error saving?
+                editorActivityView.goToRecordOrGalleryScreen();
+              }
+            });
   }
 
-  private void setNewProject(String rootPath, String privatePath,
-                             Drawable drawableFadeTransitionVideo) {
+  private ListenableFuture<Object> setNewProject(String rootPath, String privatePath,
+                                                 Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             getPreferenceWaterMark(), drawableFadeTransitionVideo);
     projectInstanceCache.setCurrentProject(project);
-    saveComposition.saveComposition(project);
+    // TODO(jliarte): 11/07/18 change to runnable
+    return executeUseCaseCall(() -> {
+      saveComposition.saveComposition(project);
+      return null;
+    });
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
