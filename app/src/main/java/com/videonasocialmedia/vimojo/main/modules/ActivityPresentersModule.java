@@ -4,9 +4,12 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -19,7 +22,6 @@ import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
@@ -159,15 +161,14 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   VoiceOverRecordPresenter provideVoiceOverRecordPresenter(
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-      UserEventTracker userEventTracker, AssetUploadQueue assetUploadQueue,
-      RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+          UserEventTracker userEventTracker, UpdateComposition updateComposition) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache,
-            assetUploadQueue, runSyncAdapterHelper, compositionApiClient);
+            updateComposition);
   }
 
   @Provides @PerActivity
@@ -178,13 +179,11 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-          AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
-          CompositionApiClient compositionApiClient) {
+          UpdateComposition updateComposition) {
     return new MusicDetailPresenter((MusicDetailView) activity, activity, userEventTracker,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
-            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, assetUploadQueue,
-            runSyncAdapterHelper, compositionApiClient);
+            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition);
   }
 
   @Provides @PerActivity
@@ -192,17 +191,18 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase,
-                                     CompositionApiClient compositionApiClient) {
+                                     UpdateComposition updateComposition, RemoveMedia removeMedia) {
     return new EditPresenter((EditActivity) activity, activity, (EditActivity) activity,
             userEventTracker, getMediaListFromProjectUseCase, removeVideosFromProjectUseCase,
-            reorderMediaItemUseCase, projectInstanceCache, compositionApiClient);
+            reorderMediaItemUseCase, projectInstanceCache, updateComposition,
+            removeMedia);
   }
 
   @Provides @PerActivity
   SoundPresenter provideSoundPresenter(
-          ModifyTrackUseCase modifyTrackUseCase, CompositionApiClient compositionApiClient) {
+          ModifyTrackUseCase modifyTrackUseCase, UpdateComposition updateComposition) {
     return new SoundPresenter((SoundActivity) activity, modifyTrackUseCase, projectInstanceCache,
-        compositionApiClient);
+            updateComposition);
   }
 
   @Provides @PerActivity
@@ -248,26 +248,23 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   DuplicatePreviewPresenter provideDuplicatePresenter(
           UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase, CompositionApiClient
-          compositionApiClient) {
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          UpdateComposition updateComposition) {
     return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
             addVideoToProjectUseCase, getMediaListFromProjectUseCase, projectInstanceCache,
-        compositionApiClient);
+            updateComposition);
   }
 
   @Provides @PerActivity
   GalleryPagerPresenter provideGalleryPagerPresenter(
-      AddVideoToProjectUseCase addVideoToProjectUseCase,
-      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-      ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-      ProjectRepository projectRepository,
-      SharedPreferences sharedPreferences, VideoDataSource videoRepository,
-      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
-      CompositionApiClient compositionApiClient) {
+          AddVideoToProjectUseCase addVideoToProjectUseCase,
+          ApplyAVTransitionsUseCase applyAVTransitionsUseCase, ProjectRepository projectRepository,
+          SharedPreferences sharedPreferences, VideoDataSource videoRepository,
+          UpdateComposition updateComposition) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
-            getVideonaFormatFromCurrentProjectUseCase, applyAVTransitionsUseCase,
+            applyAVTransitionsUseCase,
             projectRepository, videoRepository, sharedPreferences, projectInstanceCache,
-            assetUploadQueue, runSyncAdapterHelper, compositionApiClient);
+            updateComposition);
   }
 
  /* @Provides @PerActivity
@@ -286,31 +283,32 @@ public class ActivityPresentersModule {
   RecordCamera2Presenter provideRecordCamera2Presenter(
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
-          NewClipImporter newClipImporter, CameraSettingsDataSource cameraSettingsRepository) {
+          NewClipImporter newClipImporter, CameraSettingsDataSource cameraSettingsRepository,
+          UpdateComposition updateComposition) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
             sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
-            cameraSettingsRepository, projectInstanceCache);
+            cameraSettingsRepository, projectInstanceCache, updateComposition);
   }
 
   @Provides @PerActivity
   SplitPreviewPresenter provideSplitPresenter(
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase, CompositionApiClient
-          compositionApiClient) {
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          UpdateComposition updateComposition) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker,
             splitVideoUseCase, getMediaListFromProjectUseCase, projectInstanceCache,
-        compositionApiClient);
+            updateComposition);
   }
 
   @Provides @PerActivity
   TrimPreviewPresenter provideTrimPresenter(
           SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          ModifyVideoDurationUseCase modifyVideoDurationUseCase, CompositionApiClient
-              compositionApiClient) {
+          ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+          UpdateComposition updateComposition) {
     return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
-        projectInstanceCache, compositionApiClient);
+        projectInstanceCache, updateComposition);
   }
 
   @Provides @PerActivity
@@ -335,7 +333,7 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsDataSource cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository) {
+          RunSyncAdapterHelper runSyncAdapterHelper) {
     return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
             cameraSettingsRepository, runSyncAdapterHelper,
             (ProjectInstanceCache) activity.getApplication());
@@ -351,14 +349,15 @@ public class ActivityPresentersModule {
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository,
-          NewClipImporter newClipImporter, BillingManager billingManager, SaveComposition saveComposition) {
+          ProjectRepository projectRepository, NewClipImporter newClipImporter,
+          BillingManager billingManager, SaveComposition saveComposition,
+          UpdateComposition updateComposition, RemoveMedia removeMedia) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
             getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             relaunchTranscoderTempBackgroundUseCase, projectRepository, newClipImporter,
-            billingManager, projectInstanceCache, saveComposition);
+            billingManager, projectInstanceCache, saveComposition, updateComposition, removeMedia);
   }
 
   @Provides @PerActivity
@@ -396,11 +395,6 @@ public class ActivityPresentersModule {
           UserAuth0Helper userAuth0Helper) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
         obtainLocalVideosUseCase, userAuth0Helper);
-  }
-
-  @Provides
-  ReorderMediaItemUseCase provideMusicReorderer(ProjectRepository projectRepository) {
-    return new ReorderMediaItemUseCase(projectRepository);
   }
 
   @Provides
@@ -507,8 +501,8 @@ public class ActivityPresentersModule {
 
   @Provides
   AdaptVideoToFormatUseCase provideAdaptVideoRecordedToVideoFormatUseCase(
-          VideoToAdaptDataSource videoToAdaptRepository, VideoDataSource videoRepository) {
-    return new AdaptVideoToFormatUseCase(videoToAdaptRepository, videoRepository);
+          VideoToAdaptDataSource videoToAdaptRepository, MediaRepository mediaRepository) {
+    return new AdaptVideoToFormatUseCase(videoToAdaptRepository, mediaRepository);
   }
 
   @Provides RelaunchTranscoderTempBackgroundUseCase
@@ -530,17 +524,6 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  AddAudioUseCase providesAddAudioUseCase(ProjectRepository projectRepository) {
-    return new AddAudioUseCase(projectRepository);
-  }
-
-  @Provides
-  RemoveAudioUseCase providesRemoveAudioUseCase(ProjectRepository projectRepository, TrackDataSource
-      trackRepository, MusicDataSource musicRepository){
-    return new RemoveAudioUseCase(projectRepository, trackRepository, musicRepository);
-  }
-
-  @Provides
   Camera2Wrapper provideCamera2wrapper(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           GetCameraSettingsUseCase getCameraSettingsUseCase) {
@@ -557,16 +540,12 @@ public class ActivityPresentersModule {
   NewClipImporter provideClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository,
           VideoDataSource videoRepository, VideoToAdaptDataSource videoToAdaptRepository,
-          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
-          AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
-          CompositionApiClient compositionApiClient) {
+          ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase,
             adaptVideoToFormatUseCase, launchTranscoderAddAVTransitionUseCase,
-            relaunchTranscoderTempBackgroundUseCase, projectRepository, videoRepository,
-            videoToAdaptRepository, assetUploadQueue, runSyncAdapterHelper, compositionApiClient);
+            videoRepository,
+            videoToAdaptRepository);
   }
 
   @Provides BillingManager provideBillingManager() {
@@ -593,11 +572,6 @@ public class ActivityPresentersModule {
 
   @Provides GetFtpListUseCase provideGetFtpListUseCase() {
     return new GetFtpListUseCase();
-  }
-
-  @Provides
-  RunSyncAdapterHelper provideRunSyncAdapterHelper() {
-    return new RunSyncAdapterHelper(activity);
   }
 
   @Provides

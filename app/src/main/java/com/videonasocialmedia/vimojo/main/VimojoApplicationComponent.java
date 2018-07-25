@@ -6,7 +6,6 @@ package com.videonasocialmedia.vimojo.main;
 
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 
 import javax.inject.Singleton;
 
@@ -17,7 +16,5 @@ import dagger.Component;
  */
 @Singleton @Component(modules = { VimojoApplicationModule.class, DataRepositoriesModule.class})
 public interface VimojoApplicationComponent {
-  ProjectRepository getProjectRepository();
-
   void inject(VimojoApplication vimojoApplication);
 }

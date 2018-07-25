@@ -203,7 +203,7 @@ public class GalleryPagerPresenterTest {
   private GalleryPagerPresenter getGalleryPresenter() {
     return new GalleryPagerPresenter(
             mockedGalleryPagerView, mockedContext, mockedAddVideoToProjectUseCase,
-            mockedGetVideonaFormatFromCurrentProjectUseCase, mockedApplyAVTransitionsUseCase,
+            mockedApplyAVTransitionsUseCase,
             mockedProjectRepository, mockedVideoRepository, mockedSharedPreferences,
             mockedProjectInstanceCache, mockedAssetUploadQueue, mockedRunSyncAdapterHelper,
             mockedCompositionApicClient);

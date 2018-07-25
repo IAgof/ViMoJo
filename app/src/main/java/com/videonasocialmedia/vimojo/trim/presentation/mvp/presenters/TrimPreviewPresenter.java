@@ -8,14 +8,11 @@
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.widget.RadioButton;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -27,13 +24,10 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
@@ -44,9 +38,6 @@ import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR
  */
 public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRetrieved,
     ElementChangedListener {
-    /**
-     * LOG_TAG
-     */
     private final String LOG_TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
 
@@ -64,7 +55,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private int videoToTrimIndex;
-    private CompositionApiClient compositionApiClient;
+    private UpdateComposition updateComposition;
 
     @Inject
     public TrimPreviewPresenter(
@@ -72,14 +63,14 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
             UserEventTracker userEventTracker,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-            ProjectInstanceCache projectInstanceCache, CompositionApiClient compositionApiClient) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
-        this.compositionApiClient = compositionApiClient;
+        this.updateComposition = updateComposition;
     }
 
     public void init(int videoToTrimIndex) {
@@ -113,34 +104,14 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
     }
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-
         modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
             currentProject);
         trackVideoTrimmed();
-        updateCompositionWithPlatform(currentProject);
+        // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     }
 
-    private void updateCompositionWithPlatform(Project currentProject) {
-        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
-            @Override
-            public Project call() throws Exception {
-                return compositionApiClient.updateComposition(currentProject);
-            }
-        });
-        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
-            @Override
-            public void onSuccess(@Nullable Project result) {
-                Log.d(LOG_TAG, "Success uploading composition to server ");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
-            }
-        });
-    }
-
-    public void trackVideoTrimmed() {
+    void trackVideoTrimmed() {
         userEventTracker.trackClipTrimmed(currentProject);
     }
 
@@ -207,7 +178,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
         updateRadioButtonAccordingTheme(radioButtonHigh);
     }
 
-    public void updateViewsAccordingTheme() {
+    void updateViewsAccordingTheme() {
         if (isThemeDarkActivated()) {
             trimView.updateViewToThemeDark();
         } else {
@@ -215,7 +186,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
         }
     }
 
-    public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
+    private void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
         if (isThemeDarkActivated()) {
             trimView.updateRadioButtonToThemeDark(buttonNoSelected);
         } else {
@@ -228,6 +199,3 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
 }
-
-
-

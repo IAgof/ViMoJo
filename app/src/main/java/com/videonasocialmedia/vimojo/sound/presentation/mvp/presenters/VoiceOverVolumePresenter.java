@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 import android.content.Context;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
@@ -115,7 +116,7 @@ public class VoiceOverVolumePresenter implements OnVideosRetrieved {
                 .get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0),
             INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
                 @Override
-                public void onRemoveMediaItemFromTrackSuccess() {
+                public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 
                 }
 

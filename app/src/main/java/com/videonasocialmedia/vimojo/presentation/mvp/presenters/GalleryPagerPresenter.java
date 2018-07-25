@@ -16,14 +16,10 @@ import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
@@ -33,33 +29,22 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
-import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * This class is used for adding new videos to the project.
  */
-public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMediaFinishedListener,
-    OnRemoveMediaFinishedListener
-//        , OnLaunchAVTransitionTempFileListener
-//        , TranscoderHelperListener
-{
+public class GalleryPagerPresenter extends VimojoPresenter
+        implements OnRemoveMediaFinishedListener {
     private final String LOG_TAG = "GalleryPagerPresenter";
 
     private final SharedPreferences preferences;
-    private final GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private final AddVideoToProjectUseCase addVideoToProjectUseCase;
     private final GalleryPagerView galleryPagerView;
     protected Project currentProject;
@@ -69,14 +54,11 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     private final ProjectInstanceCache projectInstanceCache;
     private boolean differentVideoFormat;
 
-    private VideonaFormat videoFormat;
     private final ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
     private final ProjectRepository projectRepository;
-    private final AssetUploadQueue assetUploadQueue;
-    private final RunSyncAdapterHelper runSyncAdapterHelper;
-    private final CompositionApiClient compositionApiClient;
+    private final UpdateComposition updateComposition;
 
     /**
      * Constructor.
@@ -84,16 +66,13 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     @Inject public GalleryPagerPresenter(
             GalleryPagerView galleryPagerView, Context context,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
-            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
             ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
             ProjectRepository projectRepository,
             VideoDataSource videoRepository, SharedPreferences preferences,
-            ProjectInstanceCache projectInstanceCache, AssetUploadQueue assetUploadQueue,
-            RunSyncAdapterHelper runSyncAdapterHelper, CompositionApiClient compositionApiClient) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
         this.projectRepository = projectRepository;
         this.videoRepository = videoRepository;
@@ -101,16 +80,14 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
         // TODO(jliarte): 23/04/18 inject this dependency? maybe abstracting from android with an interface
         metadataRetriever = new MediaMetadataRetriever();
         this.projectInstanceCache = projectInstanceCache;
-        this.assetUploadQueue = assetUploadQueue;
-        this.runSyncAdapterHelper = runSyncAdapterHelper;
-        this.compositionApiClient = compositionApiClient;
+        this.updateComposition = updateComposition;
     }
 
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
     }
 
-    public void loadVideoListToProject(List<Video> videoList) {
+    public void addVideoListToProject(List<Video> videoList) {
         try {
             List<Video> checkedVideoList =
                     filterVideosWithResolutionDifferentFromProjectResolution(videoList);
@@ -133,44 +110,23 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     }
 
     private void addVideoToProject(List<Video> checkedVideoList) {
-        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, this);
-        for (Video video: checkedVideoList) {
-          // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
-            AssetUpload assetUpload = new AssetUpload("ElConfiHack", video);
-            executeUseCaseCall((Callable<Void>) () -> {
-                try {
-                    assetUploadQueue.addAssetToUpload(assetUpload);
-                    runSyncAdapterHelper.runNowSyncAdapter();
-                    Log.d(LOG_TAG, "addAsset " + assetUpload.getName());
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                    Log.d(LOG_TAG, ioException.getMessage());
-                    Crashlytics.log("Error adding video to upload");
-                    Crashlytics.logException(ioException);
+        // TODO(jliarte): 18/07/18 extract repo call outside this UC and replace in all other invocations!!
+        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, new OnAddMediaFinishedListener() {
+            @Override
+            public void onAddMediaItemToTrackSuccess(Media video) {
+                // TODO(jliarte): 18/07/18 check if this UC call should be inside if
+                // TODO(jliarte): 18/07/18 should update project or add new media to project?
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+                if (!differentVideoFormat) {
+                    galleryPagerView.navigate();
                 }
-                return null;
-            });
-        }
-        updateCompositionWithPlatform(currentProject);
-    }
-
-    private void updateCompositionWithPlatform(Project currentProject) {
-        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
-            @Override
-            public Project call() throws Exception {
-                return compositionApiClient.updateComposition(currentProject);
-            }
-        });
-        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
-            @Override
-            public void onSuccess(@Nullable Project result) {
-                Log.d(LOG_TAG, "Success uploading composition to server ");
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
+            public void onAddMediaItemToTrackError() {
+                // TODO(jliarte): 18/07/18 handle this error - show message!!
             }
+
         });
     }
 
@@ -277,24 +233,7 @@ public class GalleryPagerPresenter extends VimojoPresenter implements OnAddMedia
     }
 
     @Override
-    public void onRemoveMediaItemFromTrackSuccess() {
-    }
-
-    @Override
-    public void onAddMediaItemToTrackError() {
-    }
-
-    /*
-
-    ÑAPA
-
-     */
-
-    @Override
-    public void onAddMediaItemToTrackSuccess(Media video) {
-        if (!differentVideoFormat) {
-            galleryPagerView.navigate();
-        }
+    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
     }
 
 }

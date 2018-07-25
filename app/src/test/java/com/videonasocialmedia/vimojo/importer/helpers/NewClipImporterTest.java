@@ -94,9 +94,8 @@ public class NewClipImporterTest {
         newClipImporter = new NewClipImporter(
                 mockedGetVideoFormatFromCurrentProjectUseCase, mockedAdaptVideoToFormatUseCase,
                 mockedLaunchTranscoderAddAVTransitionUseCase,
-                mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-                mockedVideoRepository, mockedVideoToAdaptRepository,
-                mockedAssetUploadQueue, mockedRunSyncAdapterHelper, mockedCompositionApiClient);
+                mockedVideoRepository, mockedVideoToAdaptRepository
+        );
     }
 
     @Test

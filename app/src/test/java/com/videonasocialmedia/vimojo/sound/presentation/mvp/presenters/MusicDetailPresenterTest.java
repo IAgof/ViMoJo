@@ -161,7 +161,7 @@ public class MusicDetailPresenterTest {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 OnRemoveMediaFinishedListener listener = invocation.getArgument(3);
-                listener.onRemoveMediaItemFromTrackSuccess();
+                listener.onRemoveMediaItemFromTrackSuccess(removedMedias);
                 return null;
             }
         }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(music),
@@ -231,7 +231,7 @@ public class MusicDetailPresenterTest {
                 mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
                 mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
                 mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedAssetUploadQueue,
-                mockedRunSyncAdapter, mockedCompositionApiClient);
+                mockedRunSyncAdapter, mockedCompositionApiClient, updateComposition);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

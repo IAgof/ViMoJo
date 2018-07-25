@@ -15,14 +15,15 @@ import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRe
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
 import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
+import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 /**
- * Repository for providing Projects via repository pattern (will be renamed to Productions!!)
- *   TODO(jliarte): 11/07/18 rename to ProductionRepository
+ * Repository for providing Projects via repository pattern (will be renamed to Compositions!!)
+ *   TODO(jliarte): 11/07/18 rename to CompositionRepository
  *
  * <p>This class handles saving and retrieving Projects from different data sources and merge
  * Projects provided by them for returning results.</p>
@@ -31,7 +32,6 @@ public class ProjectRepository extends VimojoRepository<Project> {
   private static final String LOG_TAG = ProjectRepository.class.getSimpleName();
   private final ProjectRealmDataSource projectRealmDataSource;
   private final CompositionApiDataSource compositionApiDataSource;
-
 
   @Inject
   public ProjectRepository(ProjectRealmDataSource projectRealmDataSource,
@@ -44,18 +44,21 @@ public class ProjectRepository extends VimojoRepository<Project> {
   public void add(Project item) {
     Log.d(LOG_TAG, "ProjectRepo.add project " + item);
     this.projectRealmDataSource.add(item);
+    // TODO(jliarte): 18/07/18 feature toggle this
     // TODO(jliarte): 12/07/18 get success/error on API add and reflect it in local data sources? - sync status/date
     this.compositionApiDataSource.add(item);
   }
 
   @Override
   public void add(Iterable<Project> items) {
+    // TODO(jliarte): 18/07/18 foreach item call this.add
     this.projectRealmDataSource.add(items);
   }
 
   @Override
   public void update(Project item) {
     this.projectRealmDataSource.update(item);
+    this.compositionApiDataSource.update(item);
   }
 
   /**
@@ -74,6 +77,11 @@ public class ProjectRepository extends VimojoRepository<Project> {
   @Override
   public List<Project> query(Specification specification) {
     return this.projectRealmDataSource.query(specification);
+  }
+
+  @Override
+  public Project getById(String id)  {
+    return this.projectRealmDataSource.getById(id);
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!

@@ -151,7 +151,7 @@ public class SoundPresenterTest {
   @NonNull
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
-        mockedProjectInstantCache, mockedCompositionApiClient);
+        mockedProjectInstantCache, mockedCompositionApiClient, updateComposition);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

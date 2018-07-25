@@ -12,7 +12,6 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
  */
 
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 
 import java.io.IOException;
@@ -31,16 +30,19 @@ public class CompositionApiClient extends VimojoApiClient {
   }
   // TODO(jliarte): 11/07/18 check if rename
 
-  public CompositionDto addComposition(CompositionDto compositionDto, String accessToken) throws VimojoApiException {
-   // Gson gson = new Gson();
-   // String projectJson = gson.toJson(currentProject);
+  private CompositionService getCompositionService(String accessToken) {
+    return getService(CompositionService.class, accessToken);
+  }
 
-    CompositionService compositionService = getService(CompositionService.class, accessToken);
+  public CompositionDto addComposition(CompositionDto compositionDto, String accessToken)
+          throws VimojoApiException {
+    CompositionService compositionService = getCompositionService(accessToken);
     try {
-      // TODO(jliarte): 11/07/18 set cut dto project, owner is set in backend
+      // TODO(jliarte): 11/07/18 set composition dto project, owner is set in backend
       //                         set from Project (new entity)
       String projectId = "defaultProject";
-      Response<CompositionDto> response = compositionService.addComposition(projectId, compositionDto).execute();
+      Response<CompositionDto> response =
+              compositionService.addComposition(projectId, compositionDto).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {
@@ -52,11 +54,30 @@ public class CompositionApiClient extends VimojoApiClient {
       }
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
-    return null;
+    return null; // TODO(jliarte): 18/07/18 we should either return a compositionDto or throw an exception!
   }
 
-  // TODO(jliarte): 11/07/18 implement this
-  public Project updateComposition(Project currentProject) {
-    return null;
+  public CompositionDto updateComposition(CompositionDto compositionDto, String accessToken)
+          throws VimojoApiException {
+    CompositionService compositionService = getCompositionService(accessToken);
+    try {
+      // TODO(jliarte): 11/07/18 set composition dto project, owner is set in backend
+      //                         set from Project (new entity)
+      String projectId = "defaultProject";
+      Response<CompositionDto> response = compositionService
+              .updateComposition(projectId, compositionDto.getUuid(), compositionDto).execute();
+      if (response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException ioException) {
+      if (BuildConfig.DEBUG) {
+        ioException.printStackTrace();
+      }
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    return null; // TODO(jliarte): 18/07/18 we should either return a compositionDto or throw an exception!
+
   }
 }

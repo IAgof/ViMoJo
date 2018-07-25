@@ -10,6 +10,8 @@ import com.videonasocialmedia.vimojo.repository.music.datasource.mapper.RealmMus
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -21,6 +23,7 @@ public class MusicRealmDataSource implements MusicDataSource {
   protected Mapper<RealmMusic, Music> toMusicMapper;
   protected Mapper<Music, RealmMusic> toRealmMusicMapper;
 
+  @Inject
   public MusicRealmDataSource() {
     this.toMusicMapper = new RealmMusicToMusicMapper();
     this.toRealmMusicMapper = new MusicToRealmMusicMapper();
@@ -65,6 +68,14 @@ public class MusicRealmDataSource implements MusicDataSource {
   @Override
   public List<Music> query(Specification specification) {
     return null;
+  }
+
+  @Override
+  public Music getById(String id) {
+    Realm realm = Realm.getDefaultInstance();
+    RealmMusic result = realm.where(RealmMusic.class).
+            equalTo("uuid", id).findFirst();
+    return toMusicMapper.map(result);
   }
 
   @Override

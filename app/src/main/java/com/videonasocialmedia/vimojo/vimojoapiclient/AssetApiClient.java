@@ -15,8 +15,8 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -50,41 +52,47 @@ public class AssetApiClient extends VimojoApiClient {
   private static final String ASSET_API_KEY_HASH = "hash";
   private static final String ASSET_API_KEY_DATE = "date";
 
+  @Inject
+  public AssetApiClient() {
+  }
+
   /**
    * Make a upload video call to send video to platform
    *
-   * @param authToken   valid token to validate call to service
-   * @param assetUpload Model for enqueue video uploads to vimojo platform.
+   * @param accessToken valid token to validate call to service
+   * @param asset       Model for enqueue video uploads to vimojo platform.
    * @return the video upload response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public AssetDto addAsset(String authToken, AssetUpload assetUpload)
-      throws VimojoApiException, FileNotFoundException {
-
+  public AssetDto addAsset(String accessToken, Asset asset)
+          throws VimojoApiException, FileNotFoundException {
+    // TODO(jliarte): 23/07/18 handle hash exists
     // create upload service client
-    AssetService assetService = getService(AssetService.class, authToken);
+    AssetService assetService = getAssetService(accessToken);
 
-    File file = new File(assetUpload.getMediaPath());
+    File file = new File(asset.getMediaPath());
     RequestBody requestFile = RequestBody
-        .create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
+            .create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
 
     // MultipartBody.Part is used to send also the actual file name
     MultipartBody.Part body =
-        MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
+            MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
     // add another part within the multipart request
-    RequestBody requestBodyName = createPartFromString(assetUpload.getName());
-    RequestBody requestBodyType = createPartFromString(assetUpload.getType());
-    RequestBody requestBodyHash = createPartFromString(assetUpload.getHash());
-    RequestBody requestBodyDate = createPartFromString(assetUpload.getDate());
+    RequestBody requestBodyName = createPartFromString(asset.getName());
+    RequestBody requestBodyType = createPartFromString(asset.getType());
+    RequestBody requestBodyHash = createPartFromString(asset.getHash());
+    RequestBody requestBodyDate = createPartFromString(asset.getDate());
 
     HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
     requestBodyHashMap.put(ASSET_API_KEY_NAME, requestBodyName);
     requestBodyHashMap.put(ASSET_API_KEY_TYPE, requestBodyType);
     requestBodyHashMap.put(ASSET_API_KEY_HASH, requestBodyHash);
     requestBodyHashMap.put(ASSET_API_KEY_DATE, requestBodyDate);
-    Call<AssetDto> assetUploadTask = assetService.addAsset(assetUpload.getId(),
-        requestBodyHashMap, body);
+    Call<AssetDto> assetUploadTask = assetService.addAsset(asset.getId(),
+            requestBodyHashMap, body);
     try {
+      // TODO(jliarte): 18/07/18 check if asset with hash **** is already present in backend
+      // else
       Response<AssetDto> response = assetUploadTask.execute();
       if (response.isSuccessful()) {
         return response.body();
@@ -104,14 +112,14 @@ public class AssetApiClient extends VimojoApiClient {
     if (descriptionString == null)
       return RequestBody.create(MultipartBody.FORM, "");
     return RequestBody.create(
-        MultipartBody.FORM, descriptionString);
+            MultipartBody.FORM, descriptionString);
   }
 
   // TODO(jliarte): 10/07/18 return AssetDto
-  public void getProjectAssets(String authToken, String folderDownloadPath)
-      throws VimojoApiException {
+  public void getProjectAssets(String accessToken, String folderDownloadPath)
+          throws VimojoApiException {
     // create upload service client
-    AssetService assetService = getService(AssetService.class, authToken);
+    AssetService assetService = getAssetService(accessToken);
 
     Call<List<AssetDto>> response = assetService.getProjectAssets();
     response.enqueue(new Callback<List<AssetDto>>() {
@@ -124,8 +132,8 @@ public class AssetApiClient extends VimojoApiClient {
       @Override
       public void onResponse(Call<List<AssetDto>> call, Response<List<AssetDto>> response) {
         List<AssetDto> assetList = response.body();
-        for (AssetDto assetDto: assetList) {
-          donwloadAssetFile(authToken, folderDownloadPath, assetDto);
+        for (AssetDto assetDto : assetList) {
+          donwloadAssetFile(accessToken, folderDownloadPath, assetDto);
         }
         // TODO: 9/7/18 Notify download completed
       }
@@ -133,9 +141,9 @@ public class AssetApiClient extends VimojoApiClient {
 
   }
 
-  private void donwloadAssetFile(String authToken, String folderDownloadPath, AssetDto assetDto) {
+  private void donwloadAssetFile(String accessToken, String folderDownloadPath, AssetDto assetDto) {
     // create upload service client
-    AssetService assetService = getService(AssetService.class, authToken);
+    AssetService assetService = getAssetService(accessToken);
 
     Call<ResponseBody> response = assetService.downloadAssetFile(folderDownloadPath, assetDto);
     response.enqueue(new Callback<ResponseBody>() {
@@ -143,6 +151,7 @@ public class AssetApiClient extends VimojoApiClient {
       public void onFailure(Call<ResponseBody> call, Throwable t) {
         Log.d(LOG_TAG, "onFailure asset service download asset");
       }
+
       @Override
       public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
         if (response.isSuccessful()) {
@@ -151,7 +160,7 @@ public class AssetApiClient extends VimojoApiClient {
           Thread thread = new Thread(() -> {
             boolean writtenToDisk = writeResponseBodyToDisk(response.body(), filePath);
             Log.d(LOG_TAG, "file download was a success? " + writtenToDisk + " - "
-                + filePath);
+                    + filePath);
           });
           thread.start();
         } else {
@@ -200,4 +209,21 @@ public class AssetApiClient extends VimojoApiClient {
     }
   }
 
+  public AssetDto get(String id, String accessToken) throws VimojoApiException {
+    try {
+      Response<AssetDto> response = getAssetService(accessToken).get(id).execute();
+      if (response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException e) {
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    throw new VimojoApiException(); // TODO(jliarte): 19/07/18 default unknown error - check when this path is reached
+  }
+
+  private AssetService getAssetService(String accessToken) {
+    return getService(AssetService.class, accessToken);
+  }
 }

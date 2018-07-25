@@ -74,7 +74,7 @@ public class DuplicatePreviewPresenterTest {
                 new DuplicatePreviewPresenter(
                         mockedDuplicateView, userEventTracker, mockedAddVideoToProjectUseCase,
                         mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                        mockedCompositionApiClient);
+                        mockedCompositionApiClient, updateComposition);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -113,7 +113,7 @@ public class DuplicatePreviewPresenterTest {
         DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(
                 mockedDuplicateView, mockedUserEventTracker, mockedAddVideoToProjectUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                mockedCompositionApiClient);
+                mockedCompositionApiClient, updateComposition);
         duplicatePreviewPresenter.currentProject = currentProject;
         return  duplicatePreviewPresenter;
     }

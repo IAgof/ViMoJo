@@ -62,5 +62,6 @@ class VimojoApiClient {
         throw new VimojoApiException(httpCode, apiErrorCode);
       }
     }
+    throw new VimojoApiException(); // (jliarte): 18/07/18 default: unknown error
   }
 }

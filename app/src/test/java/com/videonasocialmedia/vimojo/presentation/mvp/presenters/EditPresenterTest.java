@@ -172,7 +172,7 @@ public class EditPresenterTest {
     EditPresenter editPresenter = new EditPresenter(
             mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
-            mockedMediaItemReorderer, mockedProjectInstantCache, mockedCompositionApiClient);
+            mockedMediaItemReorderer, mockedProjectInstantCache, updateComposition, removeMedia);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

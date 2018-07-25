@@ -47,6 +47,11 @@ public class VideoToAdaptMemoryDataSource implements VideoToAdaptDataSource {
   }
 
   @Override
+  public VideoToAdapt getById(String id) {
+    return getByMediaPath(id);
+  }
+
+  @Override
   public int getItemCount() {
     return videoListToAdaptAndPosition.size();
   }

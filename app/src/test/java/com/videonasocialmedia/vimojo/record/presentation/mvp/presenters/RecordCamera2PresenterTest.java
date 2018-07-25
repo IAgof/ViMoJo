@@ -369,7 +369,7 @@ public class RecordCamera2PresenterTest {
     RecordCamera2Presenter recordCamera2Presenter = new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedCameraSettingsRepository, mockedProjectInstanceCache);
+            mockedCameraSettingsRepository, mockedProjectInstanceCache, updateComposition);
     recordCamera2Presenter.currentProject = currentProject;
     return recordCamera2Presenter;
   }

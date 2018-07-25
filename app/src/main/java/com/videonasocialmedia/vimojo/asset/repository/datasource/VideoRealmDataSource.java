@@ -11,6 +11,8 @@ import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.VideoToR
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -22,6 +24,7 @@ public class VideoRealmDataSource implements VideoDataSource {
   protected Mapper<RealmVideo, Video> toVideoMapper;
   protected Mapper<Video, RealmVideo> toRealmVideoMapper;
 
+  @Inject
   public VideoRealmDataSource() {
     this.toVideoMapper = new RealmVideoToVideoMapper();
     this.toRealmVideoMapper = new VideoToRealmVideoMapper();
@@ -124,6 +127,14 @@ public class VideoRealmDataSource implements VideoDataSource {
     realm.close();
 
     return videos;
+  }
+
+  @Override
+  public Video getById(String id) {
+    Realm realm = Realm.getDefaultInstance();
+    RealmVideo result = realm.where(RealmVideo.class).
+            equalTo("uuid", id).findFirst();
+    return toVideoMapper.map(result);
   }
 
 }

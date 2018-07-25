@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import com.videonasocialmedia.camera.camera2.Camera2ExposureTimeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -25,6 +24,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -39,6 +39,7 @@ import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -62,13 +63,17 @@ import static com.videonasocialmedia.vimojo.record.presentation.views.activity.R
  *  Created by alvaro on 16/01/17.
  */
 
-public class RecordCamera2Presenter implements Camera2WrapperListener {
+public class RecordCamera2Presenter extends VimojoPresenter implements Camera2WrapperListener {
+  // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
+  private static final String LOG_TAG = RecordCamera2Presenter.class.getCanonicalName();
   private static final int NORMALIZE_PICOMETER_VALUE = 108;
   private static final double MAX_AMPLITUDE_VALUE_PICOMETER = 32768;
   private static final int SLEEP_TIME_MILLIS_WAITING_FOR_NEXT_VALUE = 100;
-  public static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
-  // TODO:(alvaro.martinez) 26/01/17  ADD TRACKING TO RECORD ACTIVITY. Update from RecordActivity
-  private static final String LOG_TAG = RecordCamera2Presenter.class.getCanonicalName();
+  private static final int PREVIEW_RECORD_PICOMETER_SCALE_CORRECTION_RATIO = 2;
+  private long ONE_KB = 1024;
+  private long ONE_MB = ONE_KB * 1024;
+  private long ONE_GB = ONE_MB * 1024;
+  private int audioGain = 100;
   private final Context context;
   private final ProjectInstanceCache projectInstanceCache;
   private CameraSettingsDataSource cameraSettingsRepository;
@@ -82,14 +87,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   protected Project currentProject;
   private Camera2Wrapper camera;
 
-  private VideonaFormat videoFormat;
   private boolean isFrontCameraSelected = false;
 
-  private long ONE_KB = 1024;
-  private long ONE_MB = ONE_KB * 1024;
-  private long ONE_GB = ONE_MB * 1024;
   private PicometerSamplingLoopThread picometerSamplingLoopThread;
-  private int audioGain = 100;
   private Handler picometerRecordingUpdaterHandler = new Handler();
   private Runnable updatePicometerRecordingTask = new Runnable() {
     @Override
@@ -100,13 +100,14 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private boolean flashEnabled = false;
   // TODO:(alvaro.martinez) 14/11/17 get data from realm camera repository
   private boolean cameraProSelected = false;
+  private UpdateComposition updateComposition;
 
   public RecordCamera2Presenter(
           Context context, RecordCamera2View recordView, UserEventTracker userEventTracker,
           SharedPreferences sharedPreferences, AddVideoToProjectUseCase addVideoToProjectUseCase,
           NewClipImporter newClipImporter, Camera2Wrapper camera,
           CameraSettingsDataSource cameraSettingsRepository,
-          ProjectInstanceCache projectInstanceCache) {
+          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
@@ -118,6 +119,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 //    camera = new Camera2Wrapper(context, DEFAULT_CAMERA_ID, textureView, directorySaveVideos,
 //        getVideoFormatFromCurrentProjectUseCase.getVideoRecordedFormatFromCurrentProjectUseCase());
     this.camera = camera;
+    this.updateComposition = updateComposition;
     this.camera.setCameraListener(this);
     this.newClipImporter = newClipImporter;
   }
@@ -137,7 +139,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public void initViews() {
     cameraSettings = cameraSettingsRepository.getCameraSettings();
-    if(cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
+    if (cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
       isFrontCameraSelected = true;
     }
     checkCameraInterface(cameraSettings);
@@ -152,7 +154,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   private void checkCameraInterface(CameraSettings cameraSettings) {
-    if(cameraSettings.getInterfaceSelected()
+    if (cameraSettings.getInterfaceSelected()
             .equals(Constants.CAMERA_SETTING_INTERFACE_PRO)) {
       cameraProSelected = true;
     }
@@ -161,7 +163,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   private void checkSwitchCameraAvailable(CameraSettings cameraSettings) {
     ResolutionSetting resolutionSetting = cameraSettings.getResolutionSetting();
     String resolution = resolutionSetting.getResolution();
-    if(isBackCameraResolutionSupportedInFrontCamera(resolutionSetting, resolution)) {
+    if (isBackCameraResolutionSupportedInFrontCamera(resolutionSetting, resolution)) {
       recordView.setSwitchCameraSupported(true);
     } else {
       recordView.setSwitchCameraSupported(false);
@@ -427,7 +429,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
               @Override
               public void onAddMediaItemToTrackSuccess(Media media) {
-                // TODO(jliarte): 31/08/17 should we do anything here?
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
               }
             });
   }
@@ -532,19 +534,19 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     Integer resolutionId = resolutionSetting.getBackCameraResolutionIdsMap().get(resolution);
     switch (resolutionId){
       case CAMERA_SETTING_RESOLUTION_720_BACK_ID:
-        if(resolutionSetting.getResolutionsSupportedMap()
+        if (resolutionSetting.getResolutionsSupportedMap()
             .get(CAMERA_SETTING_RESOLUTION_720_FRONT_ID)) {
           return true;
         }
         break;
       case CAMERA_SETTING_RESOLUTION_1080_BACK_ID:
-        if(resolutionSetting.getResolutionsSupportedMap()
+        if (resolutionSetting.getResolutionsSupportedMap()
             .get(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID)) {
           return true;
         }
         break;
       case CAMERA_SETTING_RESOLUTION_2160_BACK_ID:
-        if(resolutionSetting.getResolutionsSupportedMap()
+        if (resolutionSetting.getResolutionsSupportedMap()
             .get(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID)) {
           return true;
         }
@@ -689,7 +691,7 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
 
   public Constants.BATTERY_STATUS getBatteryStatus(int batteryStatus, int batteryPercent) {
     Constants.BATTERY_STATUS status;
-    if(batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
+    if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING)
       status = Constants.BATTERY_STATUS.CHARGING;
     else
       status = getStatusNotCharging(batteryPercent);

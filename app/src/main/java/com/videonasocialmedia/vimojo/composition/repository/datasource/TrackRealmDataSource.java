@@ -138,4 +138,12 @@ public class TrackRealmDataSource implements TrackDataSource {
   public List<Track> query(Specification specification) {
     return null;
   }
+
+  @Override
+  public Track getById(String id) {
+    Realm realm = Realm.getDefaultInstance();
+    RealmTrack result = realm.where(RealmTrack.class).
+            equalTo("uuid", id).findFirst();
+    return toTrackMapper.map(result);
+  }
 }

@@ -8,9 +8,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
+
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -19,20 +19,13 @@ import javax.inject.Inject;
  */
 
 public class RemoveAudioUseCase {
-
   private Project currentProject;
-  private ProjectRepository projectRepository;
   private TrackDataSource trackRepository;
-  private MusicDataSource musicRepository;
   private final int FIRST_POSITION = 1;
   private final int RESET_POSITION = 0;
 
   @Inject
-  public RemoveAudioUseCase(ProjectRepository projectRepository, TrackDataSource trackRepository,
-                            MusicDataSource musicRepository) {
-    this.projectRepository = projectRepository;
-    this.trackRepository = trackRepository;
-    this.musicRepository = musicRepository;
+  public RemoveAudioUseCase() {
   }
 
   // Remove audio only delete track if it is not music track.
@@ -43,11 +36,10 @@ public class RemoveAudioUseCase {
     updateTrackPosition(audioTrack, trackIndex);
     removeMusicInTrack(music, listener, audioTrack);
     updateTrackDefaultValues(audioTrack);
-    if(audioTrack.getItems().size() == 0
-        && audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER){
+    if (audioTrack.getItems().size() == 0
+        && audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER) {
       currentProject.getAudioTracks().remove(audioTrack);
     }
-    updateProject();
   }
 
   // TODO:(alvaro.martinez) 19/06/17 delete this when vimojo support multiple audio items.
@@ -59,9 +51,9 @@ public class RemoveAudioUseCase {
   private void updateTrackPosition(Track audioTrack, int trackIndex) {
     audioTrack.setPosition(RESET_POSITION);
     trackRepository.update(audioTrack);
-    switch (trackIndex){
+    switch (trackIndex) {
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
-        if(currentProject.hasVoiceOver()) {
+        if (currentProject.hasVoiceOver()) {
           Track voiceOverTrack = currentProject.getAudioTracks()
               .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
           voiceOverTrack.setPosition(FIRST_POSITION);
@@ -69,7 +61,7 @@ public class RemoveAudioUseCase {
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        if(currentProject.hasMusic()){
+        if (currentProject.hasMusic()) {
           Track musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
           musicTrack.setPosition(FIRST_POSITION);
           trackRepository.update(musicTrack);
@@ -80,12 +72,11 @@ public class RemoveAudioUseCase {
 
   private void removeMusicInTrack(Music music, OnRemoveMediaFinishedListener listener,
                                   Track audioTrack) {
-    for(Media audio: audioTrack.getItems()){
+    for (Media audio: audioTrack.getItems()) {
       if (audio.equals(music)) {
         try {
           audioTrack.deleteItem(audio);
-          musicRepository.remove((Music) audio);
-          listener.onRemoveMediaItemFromTrackSuccess();
+          listener.onRemoveMediaItemFromTrackSuccess(Collections.singletonList(audio));
         } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
           listener.onRemoveMediaItemFromTrackError();
         }
@@ -93,7 +84,4 @@ public class RemoveAudioUseCase {
     }
   }
 
-  private void updateProject() {
-    projectRepository.update(currentProject);
-  }
 }

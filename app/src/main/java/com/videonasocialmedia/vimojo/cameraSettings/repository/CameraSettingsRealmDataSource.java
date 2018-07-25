@@ -16,7 +16,6 @@ import io.realm.RealmResults;
  */
 
 public class CameraSettingsRealmDataSource implements CameraSettingsDataSource {
-
   protected Mapper<RealmCameraSettings, CameraSettings> toCameraSettingsMapper;
   protected Mapper<CameraSettings, RealmCameraSettings> toRealmCameraMapper;
 
@@ -120,6 +119,11 @@ public class CameraSettingsRealmDataSource implements CameraSettingsDataSource {
 
   @Override
   public List<CameraSettings> query(Specification specification) {
+    return null;
+  }
+
+  @Override
+  public CameraSettings getById(String id) {
     return null;
   }
 }

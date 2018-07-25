@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by jliarte on 12/01/18.
  */
 
-public class VimojoApiError {
+public class VimojoApiError extends Throwable {
   @SerializedName("code") private String code;
   @SerializedName("error") private String error;
   @SerializedName("status") private String status = "";

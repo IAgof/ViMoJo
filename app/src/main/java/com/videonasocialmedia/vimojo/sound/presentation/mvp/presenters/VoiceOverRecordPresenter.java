@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -16,6 +15,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -27,22 +27,16 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
-import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import omrecorder.AudioChunk;
@@ -78,9 +72,10 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
   private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper =
       new TranscoderHelper(drawableGenerator, mediaTranscoder);
-  private final AssetUploadQueue assetUploadQueue;
-  private final RunSyncAdapterHelper runSyncAdapterHelper;
-  private CompositionApiClient compositionApiClient;
+//  private final AssetUploadQueue assetUploadQueue;
+//  private final RunSyncAdapterHelper runSyncAdapterHelper;
+//  private CompositionApiClient compositionApiClient;
+  private UpdateComposition updateComposition;
 
   @Inject
   public VoiceOverRecordPresenter(
@@ -89,8 +84,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
       UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
-      AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
-      CompositionApiClient compositionApiClient) {
+      UpdateComposition updateComposition) {
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -100,9 +94,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
     this.removeAudioUseCase = removeAudioUseCase;
     this.userEventTracker = userEventTracker;
     this.projectInstanceCache = projectInstanceCache;
-    this.assetUploadQueue = assetUploadQueue;
-    this.runSyncAdapterHelper = runSyncAdapterHelper;
-    this.compositionApiClient = compositionApiClient;
+    this.updateComposition = updateComposition;
   }
 
   public void updatePresenter() {
@@ -260,8 +252,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
           @Override
           public void onAddMediaItemToTrackSuccess(Media media) {
             trackVoiceOverVideo();
-            addAssetToUpload(voiceOver);
-            updateCompositionWithPlatform(currentProject);
+            executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
             voiceOverRecordView
                 .navigateToVoiceOverVolumeActivity(voiceOver.getMediaPath());
           }
@@ -274,50 +265,12 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
         });
   }
 
-  private void updateCompositionWithPlatform(Project currentProject) {
-    ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
-      @Override
-      public Project call() throws Exception {
-        return compositionApiClient.updateComposition(currentProject);
-      }
-    });
-    Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
-      @Override
-      public void onSuccess(@Nullable Project result) {
-        Log.d(LOG_TAG, "Success uploading composition to server ");
-      }
-
-      @Override
-      public void onFailure(Throwable t) {
-        Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
-      }
-    });
-  }
-
-  private void addAssetToUpload(Media media) {
-    // TODO: 21/6/18 Get projectId, currentCompositin.getProjectId()
-    AssetUpload assetUpload = new AssetUpload("ElConfiHack", media);
-    executeUseCaseCall((Callable<Void>) () -> {
-      try {
-        assetUploadQueue.addAssetToUpload(assetUpload);
-        Log.d(LOG_TAG, "uploadVideo " + assetUpload.getName());
-      } catch (IOException ioException) {
-        ioException.printStackTrace();
-        Log.d(LOG_TAG, ioException.getMessage());
-        Crashlytics.log("Error adding video to upload");
-        Crashlytics.logException(ioException);
-      }
-      return null;
-    });
-    runSyncAdapterHelper.runNowSyncAdapter();
-  }
-
   protected void deletePreviousVoiceOver() {
     removeAudioUseCase.removeMusic(currentProject, (Music) currentProject.getAudioTracks()
             .get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0),
         INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
           @Override
-          public void onRemoveMediaItemFromTrackSuccess() {
+          public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 
           }
 

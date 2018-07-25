@@ -29,10 +29,6 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.pres
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
-import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
-
 
 import dagger.Module;
 import dagger.Provides;
@@ -43,7 +39,6 @@ import dagger.Provides;
 
 @Module
 public class FragmentPresentersModule {
-
   private final ProjectInstanceCache projectInstanceCache;
   private Activity activity;
   private SwitchPreference transitionAudioPref;
@@ -151,17 +146,12 @@ public class FragmentPresentersModule {
   @Provides
   NewClipImporter clipImporterProvider(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoToFormatUseCase adaptVideosUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
-          ProjectRepository projectRepository,
-          VideoDataSource videoRepository, VideoToAdaptDataSource videoToAdaptRepository,
-          ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase,
-          AssetUploadQueue assetUploadQueue, RunSyncAdapterHelper runSyncAdapterHelper,
-          CompositionApiClient compositionApiClient) {
+          AdaptVideoToFormatUseCase adaptVideosUseCase, VideoDataSource videoRepository,
+          VideoToAdaptDataSource videoToAdaptRepository,
+          ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
-            launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase,
-            projectRepository, videoRepository, videoToAdaptRepository, assetUploadQueue,
-            runSyncAdapterHelper, compositionApiClient);
+            launchAVTranscoderAddAVTransitionUseCase, videoRepository, videoToAdaptRepository
+    );
   }
 
   @Provides

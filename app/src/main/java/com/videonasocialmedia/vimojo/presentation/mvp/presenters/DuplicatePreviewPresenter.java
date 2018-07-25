@@ -7,14 +7,9 @@
 
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.util.Log;
-
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -25,13 +20,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
@@ -52,7 +44,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
     private Video videoToEdit;
     protected Project currentProject;
     private int videoIndexOnTrack;
-    private CompositionApiClient compositionApiClient;
+    private UpdateComposition updateComposition;
 
     /**
      * Get media list from project use case
@@ -61,13 +53,14 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
             DuplicateView duplicateView, UserEventTracker userEventTracker,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache, CompositionApiClient compositionApiClient) {
+            ProjectInstanceCache projectInstanceCache,
+            UpdateComposition updateComposition) {
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
-        this.compositionApiClient = compositionApiClient;
+        this.updateComposition = updateComposition;
     }
 
     public void init(int videoIndexOnTrack) {
@@ -115,12 +108,13 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
 
                     @Override
                     public void onAddMediaItemToTrackSuccess(Media media) {
-
+                        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
                     }
                 });
         }
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
-        updateCompositionWithPlatform(currentProject);
+        // TODO(jliarte): 18/07/18 deleteme
+//        updateCompositionWithPlatform(currentProject);
 
     }
     @Override
@@ -132,25 +126,6 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
         return new Video(videoToEdit);
     }
 
-    private void updateCompositionWithPlatform(Project currentProject) {
-        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
-            @Override
-            public Project call() throws Exception {
-                return compositionApiClient.updateComposition(currentProject);
-            }
-        });
-        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
-            @Override
-            public void onSuccess(@Nullable Project result) {
-                Log.d(LOG_TAG, "Success uploading composition to server ");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d(LOG_TAG, "Error uploading composition to server " + t.getMessage());
-            }
-        });
-    }
 }
 
 

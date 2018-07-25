@@ -17,8 +17,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 
 import java.util.List;
 
@@ -46,18 +46,14 @@ public class AddVideoToProjectUseCase {
 
     public void addVideoToTrack(Project currentProject, String videoPath) {
         Video videoToAdd = new Video(videoPath, Video.DEFAULT_VOLUME);
-        addVideoToTrack(currentProject, videoToAdd);
-        checkIfVideoNeedAVTransitionTempFile(videoToAdd, currentProject);
-    }
-
-    private void addVideoToTrack(Project currentProject, Video video) {
         try {
             Track mediaTrack = currentProject.getMediaTrack();
-            mediaTrack.insertItem(video);
-            projectRepository.update(currentProject);
+            mediaTrack.insertItem(videoToAdd);
+//            projectRepository.update(currentProject);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
         }
+        checkIfVideoNeedAVTransitionTempFile(videoToAdd, currentProject);
     }
 
     public void addVideoToProjectAtPosition(Project currentProject, Video video, int position,
@@ -76,13 +72,11 @@ public class AddVideoToProjectUseCase {
     public void addVideoListToTrack(Project currentProject, List<Video> videoList,
                                     OnAddMediaFinishedListener listener) {
         try {
-
             Track mediaTrack = currentProject.getMediaTrack();
             for (Video video : videoList) {
                 mediaTrack.insertItem(video);
                 checkIfVideoNeedAVTransitionTempFile(video, currentProject);
             }
-            projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(null);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();

@@ -19,7 +19,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -63,17 +65,20 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
  */
 public class EditorPresenter extends VimojoPresenter
         implements PlayStoreBillingDelegate.BillingDelegateView {
-  private final PlayStoreBillingDelegate playStoreBillingDelegate;
-  private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
   public static final float VOLUME_MUTE = 0f;
+  private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
+  private final PlayStoreBillingDelegate playStoreBillingDelegate;
+  private final String THEME_DARK = "dark";
+  private final String THEME_LIGHT = "light";
+  private final BillingManager billingManager;
 
   private EditorActivityView editorActivityView;
   private VideonaPlayerView videonaPlayerView;
   private SharedPreferences sharedPreferences;
+  private SharedPreferences.Editor preferencesEditor;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   protected Project currentProject;
-  private SharedPreferences.Editor preferencesEditor;
   private Context context;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
   private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
@@ -83,11 +88,9 @@ public class EditorPresenter extends VimojoPresenter
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private SaveComposition saveComposition;
-
-  private final String THEME_DARK = "dark";
-  private final String THEME_LIGHT = "light";
-  private final BillingManager billingManager;
   private ProjectInstanceCache projectInstanceCache;
+  private UpdateComposition updateComposition;
+  private RemoveMedia removeMedia;
 
   @Inject
   public EditorPresenter(
@@ -101,7 +104,8 @@ public class EditorPresenter extends VimojoPresenter
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           ProjectRepository projectRepository, NewClipImporter newClipImporter,
           BillingManager billingManager, ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition) {
+          SaveComposition saveComposition, UpdateComposition updateComposition,
+          RemoveMedia removeMedia) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -119,6 +123,8 @@ public class EditorPresenter extends VimojoPresenter
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
+    this.updateComposition = updateComposition;
+    this.removeMedia = removeMedia;
   }
 
   public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
@@ -281,8 +287,9 @@ public class EditorPresenter extends VimojoPresenter
         removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
             mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
               @Override
-              public void onRemoveMediaItemFromTrackSuccess() {
-
+              public void onRemoveMediaItemFromTrackSuccess(List<Media> mediaList) {
+                executeUseCaseCall(() -> removeMedia.removeMedias(mediaList));
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
               }
 
               @Override

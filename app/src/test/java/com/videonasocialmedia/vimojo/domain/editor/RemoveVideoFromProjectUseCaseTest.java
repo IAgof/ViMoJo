@@ -81,7 +81,7 @@ public class RemoveVideoFromProjectUseCaseTest {
       }
 
       @Override
-      public void onRemoveMediaItemFromTrackSuccess() {
+      public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 
       }
     };

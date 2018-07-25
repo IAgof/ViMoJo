@@ -103,6 +103,14 @@ public class ProjectRealmDataSource implements DataSource<Project> {
     return null;
   }
 
+  @Override
+  public Project getById(String id) {
+    Realm realm = Realm.getDefaultInstance();
+    RealmProject result = realm.where(RealmProject.class).
+            equalTo("uuid", id).findFirst();
+    return toProjectMapper.map(result);
+  }
+
   public Project getLastModifiedProject() {
     // TODO(jliarte): 6/07/17 fix No space left on device
     Realm realm = Realm.getDefaultInstance();

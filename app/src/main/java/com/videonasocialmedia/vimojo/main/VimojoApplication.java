@@ -34,7 +34,6 @@ import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
-import com.videonasocialmedia.vimojo.main.modules.AssetUploadQueueModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -110,8 +109,6 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
                 .uploadToPlatformModule(getUploadToPlatformModule())
-                .assetUploadQueueModule(getAssetUploadQueueModule())
-//                .activityPresentersModule(getActivityPresentersModule())
                 .build();
     }
 
@@ -129,10 +126,6 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
 
     private UploadToPlatformModule getUploadToPlatformModule() {
         return new UploadToPlatformModule(this);
-    }
-
-    private AssetUploadQueueModule getAssetUploadQueueModule() {
-        return new AssetUploadQueueModule(this);
     }
 
     private ActivityPresentersModule getActivityPresentersModule() {

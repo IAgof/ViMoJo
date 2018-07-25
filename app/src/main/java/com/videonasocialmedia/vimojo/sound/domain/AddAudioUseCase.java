@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 
 import javax.inject.Inject;
 
@@ -16,21 +15,18 @@ import javax.inject.Inject;
  */
 
 public class AddAudioUseCase {
-
-  private ProjectRepository projectRepository;
   private final int SECOND_POSITION = 2;
   private final int FIRST_POSITION = 1;
 
   @Inject
-  public AddAudioUseCase(ProjectRepository projectRepository) {
-    this.projectRepository = projectRepository;
+  public AddAudioUseCase() {
   }
 
-  public void addMusic(Project currentProject, Music music, int trackIndex, OnAddMediaFinishedListener listener) {
+  public void addMusic(Project currentProject, Music music, int trackIndex,
+                       OnAddMediaFinishedListener listener) {
     Track audioTrack = createOrGetTrackFromProject(currentProject, trackIndex);
     updateTrack(currentProject, audioTrack, trackIndex, music);
     addMusicToTrack(music, listener, audioTrack);
-    updateProject(currentProject);
   }
 
 
@@ -38,8 +34,8 @@ public class AddAudioUseCase {
     //Trick to manage correct index in AudioTracks arrayList. VMComposition always will have at
     // least one audio track, musicTrack with index INDEX_AUDIO_TRACK_MUSIC. It it would be exist
     // voice overTrack will be in next position in index
-    if(currentProject.getAudioTracks().size() == 0) {
-      if(trackIndex == Constants.INDEX_AUDIO_TRACK_MUSIC){
+    if (currentProject.getAudioTracks().size() == 0) {
+      if (trackIndex == Constants.INDEX_AUDIO_TRACK_MUSIC){
         AudioTrack audioTrack = new AudioTrack(trackIndex);
         currentProject.getAudioTracks().add(0, audioTrack);
         return audioTrack;
@@ -50,7 +46,7 @@ public class AddAudioUseCase {
         return audioTrack;
       }
     }
-    if(trackIndex != Constants.INDEX_AUDIO_TRACK_MUSIC){
+    if (trackIndex != Constants.INDEX_AUDIO_TRACK_MUSIC){
       AudioTrack audioTrack = new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
       currentProject.getAudioTracks().add(1, audioTrack);
     }
@@ -72,24 +68,20 @@ public class AddAudioUseCase {
     }
   }
 
-  private void updateProject(Project currentProject) {
-    projectRepository.update(currentProject);
-  }
-
   private int getTrackPositionByUserInteraction(Project currentProject, Track audioTrack,
                                                 int trackIndex) {
-    if(audioTrack.getPosition()!=0){
+    if (audioTrack.getPosition()!=0){
       return audioTrack.getPosition();
     }
     switch (trackIndex){
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
-        if(currentProject.hasVoiceOver()){
+        if (currentProject.hasVoiceOver()){
           return SECOND_POSITION;
         } else {
           return FIRST_POSITION;
         }
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        if(currentProject.hasMusic()){
+        if (currentProject.hasMusic()){
           return SECOND_POSITION;
         } else {
           return FIRST_POSITION;

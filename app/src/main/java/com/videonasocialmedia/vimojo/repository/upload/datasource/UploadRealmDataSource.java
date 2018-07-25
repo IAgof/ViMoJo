@@ -26,7 +26,6 @@ import io.realm.RealmResults;
  */
 
 public class UploadRealmDataSource implements UploadDataSource {
-
   protected Mapper<RealmUpload, VideoUpload> toVideoUploadMapper;
   protected Mapper<VideoUpload, RealmUpload> toRealmUploadMapper;
 
@@ -126,5 +125,13 @@ public class UploadRealmDataSource implements UploadDataSource {
   @Override
   public List<VideoUpload> query(Specification specification) {
     return null;
+  }
+
+  @Override
+  public VideoUpload getById(String id) {
+    Realm realm = Realm.getDefaultInstance();
+    RealmUpload result = realm.where(RealmUpload.class).
+            equalTo("uuid", id).findFirst();
+    return toVideoUploadMapper.map(result);
   }
 }

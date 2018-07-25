@@ -20,11 +20,11 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.tape2.ObjectQueue;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetUpload;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +121,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     // QUEUE asset model
-    ObjectQueue<AssetUpload> queue = assetUploadQueue.getQueue();
+    ObjectQueue<Asset> queue = assetUploadQueue.getQueue();
     if (!queue.isEmpty()) {
       try {
         while (assetUploadQueue.getQueue().iterator().hasNext()) {

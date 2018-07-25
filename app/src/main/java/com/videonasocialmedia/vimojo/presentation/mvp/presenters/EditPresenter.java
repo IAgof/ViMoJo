@@ -21,6 +21,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
@@ -36,18 +38,17 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 public class EditPresenter extends VimojoPresenter implements OnAddMediaFinishedListener,
-    OnRemoveMediaFinishedListener, ElementChangedListener {
+        ElementChangedListener {
+    private static final String LOG_TAG = EditPresenter.class.getSimpleName();
     private final String TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
     protected Project currentProject;
@@ -67,18 +68,19 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
     private EditActivityView editActivityView;
     private final VideoTranscodingErrorNotifier videoTranscodingErrorNotifier;
     protected UserEventTracker userEventTracker;
-    private CompositionApiClient compositionApiClient;
+    private UpdateComposition updateComposition;
+    private RemoveMedia removeMedia;
 
     @Inject
-    public EditPresenter(EditActivityView editActivityView,
-                         Context context,
-                         VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
-                         UserEventTracker userEventTracker,
-                         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-                         RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-                         ReorderMediaItemUseCase reorderMediaItemUseCase,
-                         ProjectInstanceCache projectInstanceCache,
-                         CompositionApiClient compositionApiClient) {
+    public EditPresenter(
+            EditActivityView editActivityView, Context context,
+            VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
+            UserEventTracker userEventTracker,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+            ReorderMediaItemUseCase reorderMediaItemUseCase,
+            ProjectInstanceCache projectInstanceCache,
+            UpdateComposition updateComposition, RemoveMedia removeMedia) {
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
@@ -87,10 +89,11 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
         this.reorderMediaItemUseCase = reorderMediaItemUseCase;
         this.userEventTracker = userEventTracker;
         this.projectInstanceCache = projectInstanceCache;
-        this.compositionApiClient = compositionApiClient;
+        this.updateComposition = updateComposition;
+        this.removeMedia = removeMedia;
     }
 
-    public void addElementChangedListener() {
+    private void addElementChangedListener() {
         currentProject.addListener(this);
     }
 
@@ -157,7 +160,9 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                 // If everything was right the UI is already updated since the user did the
                 // reordering over the "model view"
                 userEventTracker.trackClipsReordered(currentProject);
-                updateCompositionWithPlatform(currentProject);
+                // TODO(jliarte): 18/07/18 deleteme
+//                updateCompositionWithPlatform(currentProject);
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
                 editActivityView.updatePlayerVideoListChanged();
             }
 
@@ -166,26 +171,6 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                 //The reordering went wrong so we ask the project for the actual video list
                 Log.d(TAG, "timeline:  error reordering!!");
                 editActivityView.updatePlayerVideoListChanged();
-            }
-        });
-    }
-
-    private void updateCompositionWithPlatform(Project currentProject) {
-        ListenableFuture<Project> compositionFuture = executeUseCaseCall(new Callable<Project>() {
-            @Override
-            public Project call() throws Exception {
-                return compositionApiClient.updateComposition(currentProject);
-            }
-        });
-        Futures.addCallback(compositionFuture, new FutureCallback<Project>() {
-            @Override
-            public void onSuccess(@Nullable Project result) {
-                Log.d(TAG, "Success uploading composition to server ");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d(TAG, "Error uploading composition to server " + t.getMessage());
             }
         });
     }
@@ -200,25 +185,6 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
     public void onAddMediaItemToTrackSuccess(Media media) {
     }
 
-    // TODO(jliarte): 23/04/18 move/remove?
-    @Override
-    public void onRemoveMediaItemFromTrackError() {
-        // TODO modify error message
-        editActivityView.showError(R.string.addMediaItemToTrackError);
-    }
-
-    // TODO(jliarte): 23/04/18 move/remove
-    @Override
-    public void onRemoveMediaItemFromTrackSuccess() {
-        updateCompositionWithPlatform(currentProject);
-        if (currentProject.getVMComposition().hasVideos()) {
-            editActivityView.updatePlayerVideoListChanged();
-            updatePresenter();
-        } else {
-            editActivityView.goToRecordOrGallery();
-        }
-    }
-
     private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoList) {
         List<Video> checkedVideoList = new ArrayList<>();
         for (int index = 0; index < videoList.size(); index++) {
@@ -228,7 +194,17 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
                 removeVideoFromProjectUseCase.removeMediaItemsFromProject(
-                        currentProject, mediaToDeleteFromProject, this);
+                        currentProject, mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+                            @Override
+                            public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+                                onMediaRemoved(removedMedias);
+                            }
+
+                            @Override
+                            public void onRemoveMediaItemFromTrackError() {
+                                onMediaRemovedError();
+                            }
+                        });
                 Log.e(TAG, video.getMediaPath() + " not found!! deleting from project");
             } else {
                 checkedVideoList.add(video);
@@ -237,25 +213,53 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
         return checkedVideoList;
     }
 
+    private void onMediaRemoved(List<Media> removedMedias) {
+        ListenableFuture<?> future = Futures.allAsList(
+                executeUseCaseCall(() -> removeMedia.removeMedias(removedMedias)),
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject)));
+        Futures.addCallback(future,
+                new FutureCallback<Object>() {
+            @Override
+            public void onSuccess(@Nullable Object result) {
+                onProjectUpdated();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(LOG_TAG, "error removing medias and updating project from onMediaRemoved", t);
+                onProjectUpdated();
+            }
+        });
+    }
+
+    private void onProjectUpdated() {
+        if (currentProject.getVMComposition().hasVideos()) {
+            editActivityView.updatePlayerVideoListChanged();
+            updatePresenter();
+        } else {
+            editActivityView.goToRecordOrGallery();
+        }
+    }
+
     public void removeVideoFromProject(int selectedVideoRemove) {
         removeVideoFromProjectUseCase.removeMediaItemFromProject(currentProject,
             selectedVideoRemove, new OnRemoveMediaFinishedListener() {
                     @Override
-                    public void onRemoveMediaItemFromTrackSuccess() {
-                        if (currentProject.getVMComposition().hasVideos()) {
-                            editActivityView.updatePlayerVideoListChanged();
-                            updatePresenter();
-                        } else {
-                            editActivityView.goToRecordOrGallery();
-                        }
+                    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+                        onMediaRemoved(removedMedias);
                     }
 
                     @Override
                     public void onRemoveMediaItemFromTrackError() {
-                        //TODO modify error message
-                        editActivityView.showError(R.string.addMediaItemToTrackError);
+                        // TODO(jliarte): 18/07/18 if a list of medias has been passed to UC and just one fails, we reach here and project is not updated!
+                        onMediaRemovedError();
                     }
                 });
+    }
+
+    private void onMediaRemovedError() {
+        //TODO modify error message
+        editActivityView.showError(R.string.addMediaItemToTrackError);
     }
 
     @Override

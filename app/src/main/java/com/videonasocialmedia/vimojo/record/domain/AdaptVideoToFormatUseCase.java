@@ -7,10 +7,10 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.IOException;
@@ -26,13 +26,13 @@ public class AdaptVideoToFormatUseCase {
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
   private VideoToAdaptDataSource videoToAdaptRepository;
-  private VideoDataSource videoRepository;
+  private MediaRepository mediaRepository;
   private WeakReference<AdaptListener> adaptListener;
 
   public AdaptVideoToFormatUseCase(VideoToAdaptDataSource videoToAdaptRepository,
-                                   VideoDataSource videoRepository) {
+                                   MediaRepository mediaRepository) {
     this.videoToAdaptRepository = videoToAdaptRepository;
-    this.videoRepository = videoRepository;
+    this.mediaRepository = mediaRepository;
   }
 
   public void adaptVideo(Project currentProject, final VideoToAdapt videoToAdapt, final VideonaFormat videoFormat,
@@ -78,8 +78,9 @@ public class AdaptVideoToFormatUseCase {
       video.setTranscodingTask(null);
       video.resetTempPath();
       video.notifyChanges();
-      // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
-      videoRepository.update(video);
+      // TODO(jliarte): 19/07/18 extract this repo call from UC
+      // (jliarte): 18/07/18 this should be enough to update video and asset in backend through corresponding api data source
+      mediaRepository.update(video); // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
       notifySuccess(video);
     }
     private void notifySuccess(Video video) {

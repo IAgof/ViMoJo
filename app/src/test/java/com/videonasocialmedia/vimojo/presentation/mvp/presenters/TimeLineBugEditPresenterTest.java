@@ -73,7 +73,7 @@ public class TimeLineBugEditPresenterTest {
     EditPresenter editPresenter = new EditPresenter(
             mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
-            mockedMediaItemReorderer, mockedProjectInstanceCache, mockedCompositionApiClient);
+            mockedMediaItemReorderer, mockedProjectInstanceCache, updateComposition, removeMedia);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

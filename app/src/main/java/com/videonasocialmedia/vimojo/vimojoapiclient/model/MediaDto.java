@@ -10,6 +10,8 @@ import com.google.gson.annotations.SerializedName;
  * Model class for Media vimojo API calls.
  */
 public class MediaDto {
+  public static final String MEDIA_TYPE_VIDEO = "video";
+  public static final String MEDIA_TYPE_MUSIC = "music";
   @SerializedName("_id") public String id;
   @SerializedName("uuid") public String uuid;
   @SerializedName("trackId") public String trackId;
@@ -26,6 +28,10 @@ public class MediaDto {
   @SerializedName("stopTime") public int stopTime;
   @SerializedName("videoError") public String videoError;
   @SerializedName("transcodeFinished") public boolean transcodeFinished = true;
+  @SerializedName("assetId") public String assetId;
+  @SerializedName("creation_date") public String creationDate;
+  @SerializedName("modification_date") public String modificationDate;
+  @SerializedName("created_by") public String createdBy;
 
   public String getId() {
     return id;
@@ -91,6 +97,21 @@ public class MediaDto {
     return transcodeFinished;
   }
 
+  public String getAssetId() {
+    return assetId;
+  }
+
+  public String getCreationDate() {
+    return creationDate;
+  }
+
+  public String getModificationDate() {
+    return modificationDate;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
   @Override
   public String toString() {
@@ -142,6 +163,18 @@ public class MediaDto {
             + '\''
             + ", transcodeFinished='"
             + transcodeFinished
+            + '\''
+            + ", assetId='"
+            + assetId
+            + '\''
+            + ", creationDate='"
+            + creationDate
+            + '\''
+            + ", modificationDate='"
+            + modificationDate
+            + '\''
+            + ", createdBy='"
+            + createdBy
             +
             '}';
   }

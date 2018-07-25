@@ -88,6 +88,14 @@ public class VideoToAdaptRealmDataSource implements VideoToAdaptDataSource {
   }
 
   @Override
+  public VideoToAdapt getById(String id) {
+    Realm realm = Realm.getDefaultInstance();
+    RealmVideoToAdapt result = realm.where(RealmVideoToAdapt.class).
+            equalTo("uuid", id).findFirst();
+    return toVideoToAdaptMapper.map(result);
+  }
+
+  @Override
   public int getItemCount() {
     Realm realm = Realm.getDefaultInstance();
     return realm.where(RealmVideoToAdapt.class).findAll().size();

@@ -26,4 +26,6 @@ public interface DataSource<T> {
   void remove(Specification specification);
 
   List<T> query(Specification specification);
+
+  T getById(String id);
 }

@@ -26,6 +26,11 @@ public class VimojoApplicationModule {
     vimojoApplication = application;
   }
 
+  @Provides @Singleton
+  Context provideContext() {
+    return vimojoApplication.getApplicationContext();
+  }
+
   @Provides
   ProfileRepository provideProfileRepository(
           CameraSettingsDataSource cameraSettingsRepository) {

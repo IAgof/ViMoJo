@@ -38,7 +38,7 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
   }
 
   private void mapVideoFields(Video video, MediaDto mediaDto) {
-    mediaDto.mediaType = "video";
+    mediaDto.mediaType = MediaDto.MEDIA_TYPE_VIDEO;
     mediaDto.id = video.getUuid();
     mediaDto.uuid = video.getUuid();
     mediaDto.tempPath = video.getTempPath();
@@ -51,7 +51,7 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
   }
 
   private void mapMusicFields(Music music, MediaDto mediaDto) {
-    mediaDto.mediaType = "music";
+    mediaDto.mediaType = MediaDto.MEDIA_TYPE_MUSIC;
     mediaDto.id = music.getUuid();
     mediaDto.uuid = music.getUuid();
     // TODO(jliarte): 13/07/18 implement music specific mapping
@@ -59,6 +59,44 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
 
   @Override
   public Media reverseMap(MediaDto value) {
-    return null;
+    Media media;
+    switch (value.getMediaType()) {
+      case MediaDto.MEDIA_TYPE_VIDEO:
+        media = new Video(value.getMediaPath(), value.getVolume());
+        media.setUuid(value.getUuid());
+        ((Video) media).tempPath = value.getTempPath();
+        media.setPosition(value.getPosition());
+        ((Video) media).setClipText(value.getClipText());
+        ((Video) media).setClipTextPosition(value.getClipTextPosition());
+        ((Video) media).setTrimmedVideo(value.isTrimmed());
+        media.setStartTime(value.getStartTime());
+        media.setStopTime(value.getStopTime());
+        ((Video) media).setVideoError(value.getVideoError());
+        ((Video) media).setTranscodingTempFileFinished(value.isTranscodeFinished());
+        return media;
+      case MediaDto.MEDIA_TYPE_MUSIC:
+        // TODO(jliarte): 23/07/18 map music items
+//        media = new Music(value.getMediaPath(), value.volume, value.getDuration());
+//        media.setUuid(value.getUuid());
+//        music.setMusicTitle(value.title);
+//        music.setMusicAuthor(value.author);
+//        music.setIconResourceId(value.iconResourceId);
+        return null;
+      default:
+        // TODO(jliarte): 23/07/18 will we have default case?
+        media = new Media() {
+          @Override
+          public void setIdentifier(int identifier) {
+            this.setUuid(String.valueOf(identifier));
+          }
+
+          @Override
+          public void createIdentifier() {
+            this.getUuid();
+          }
+        };
+        media.setUuid(value.getUuid());
+        return media;
+    }
   }
 }

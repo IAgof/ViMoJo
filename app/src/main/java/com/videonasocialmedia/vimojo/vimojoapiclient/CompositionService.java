@@ -13,6 +13,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -37,6 +38,12 @@ public interface CompositionService {
 
   @POST("project/{projectId}/composition")
   @Headers("Content-Type: application/json")
-  Call<CompositionDto> addComposition(@Path("projectId") String projectId, @Body CompositionDto compositionDto);
+  Call<CompositionDto> addComposition(@Path("projectId") String projectId,
+                                      @Body CompositionDto compositionDto);
 
+  @PUT("project/{projectId}/composition/{compositionId}")
+  @Headers("Content-Type: application/json")
+  Call<CompositionDto> updateComposition(@Path("projectId") String projectId,
+                                         @Path("projectId") String compositionId,
+                                         @Body CompositionDto compositionDto);
 }

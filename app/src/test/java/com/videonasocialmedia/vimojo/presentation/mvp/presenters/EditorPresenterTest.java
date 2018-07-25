@@ -114,7 +114,7 @@ public class EditorPresenterTest {
             mockedRemoveVideoFromProjectUseCase, mockedGetAudioFromProjectUseCase,
             mocekdGetPreferencesTransitionFromProjectUseCase,
             mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveComposition);
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveComposition, updateComposition, removeMedia);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
@@ -433,7 +433,7 @@ public class EditorPresenterTest {
             mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
             mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
             mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveComposition);
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveComposition, updateComposition, removeMedia);
     editorPresenter.currentProject = currentProject;
     return editorPresenter;
   }
