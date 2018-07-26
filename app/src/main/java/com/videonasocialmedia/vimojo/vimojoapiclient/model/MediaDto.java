@@ -29,6 +29,7 @@ public class MediaDto {
   @SerializedName("videoError") public String videoError;
   @SerializedName("transcodeFinished") public boolean transcodeFinished = true;
   @SerializedName("assetId") public String assetId;
+  @SerializedName("asset") public AssetDto asset;
   @SerializedName("creation_date") public String creationDate;
   @SerializedName("modification_date") public String modificationDate;
   @SerializedName("created_by") public String createdBy;
@@ -101,6 +102,10 @@ public class MediaDto {
     return assetId;
   }
 
+  public AssetDto getAsset() {
+    return asset;
+  }
+
   public String getCreationDate() {
     return creationDate;
   }
@@ -166,6 +171,9 @@ public class MediaDto {
             + '\''
             + ", assetId='"
             + assetId
+            + '\''
+            + ", asset='"
+            + asset
             + '\''
             + ", creationDate='"
             + creationDate

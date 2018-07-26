@@ -25,7 +25,7 @@ public class AssetDto {
   @SerializedName("filename") public String filename;
   @SerializedName("mimetype") public String mimetype;
   @SerializedName("uri") public String uri;
-  @SerializedName("project") public String projectId;
+  @SerializedName("projectId") public String projectId;
   @SerializedName("date") public String date;
   @SerializedName("creation_date") public String creationDate;
   @SerializedName("modification_date") public String modificationDate;

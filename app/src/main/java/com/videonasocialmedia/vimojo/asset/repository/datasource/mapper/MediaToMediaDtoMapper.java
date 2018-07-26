@@ -9,6 +9,7 @@ import android.util.Log;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.repository.KarumiMapper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
 
@@ -17,6 +18,7 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
  */
 public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
   private static final String LOG_TAG = MediaToMediaDtoMapper.class.getSimpleName();
+  AssetToAssetDtoMapper assetMapper = new AssetToAssetDtoMapper();
 
   @Override
   public MediaDto map(Media media) {
@@ -26,7 +28,7 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
     mediaDto.volume = media.getVolume();
     mediaDto.startTime = media.getStartTime();
     mediaDto.stopTime = media.getStopTime();
-
+    mapMediaAsset(media, mediaDto);
     if (media.getClass().equals(Video.class)) {
       mapVideoFields((Video) media, mediaDto);
     } else if (media.getClass().equals(Music.class)) {
@@ -35,6 +37,11 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
       Log.e(LOG_TAG, "Unsupported type of media!");
     }
     return mediaDto;
+  }
+
+  private void mapMediaAsset(Media media, MediaDto mediaDto) {
+    // TODO(jliarte): 25/07/18 get project id
+    mediaDto.asset = assetMapper.map(new Asset("confihack", media));
   }
 
   private void mapVideoFields(Video video, MediaDto mediaDto) {
