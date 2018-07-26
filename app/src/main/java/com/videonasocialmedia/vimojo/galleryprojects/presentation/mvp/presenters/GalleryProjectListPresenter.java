@@ -6,12 +6,11 @@ import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
@@ -26,7 +25,6 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 
 import java.util.List;
-import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -42,9 +40,9 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private DuplicateProjectUseCase duplicateProjectUseCase;
   private DeleteProjectUseCase deleteProjectUseCase;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
-  private CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCaseUseCase;
   private ProjectInstanceCache projectInstanceCache;
   private SaveComposition saveComposition;
+  private UpdateComposition updateComposition;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -53,18 +51,17 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteProjectUseCase deleteProjectUseCase,
-          CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase,
           ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition) {
+          SaveComposition saveComposition, UpdateComposition updateComposition) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.duplicateProjectUseCase = duplicateProjectUseCase;
     this.deleteProjectUseCase = deleteProjectUseCase;
-    this.checkIfProjectHasBeenExportedUseCaseUseCase = checkIfProjectHasBeenExportedUseCase;
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
+    this.updateComposition = updateComposition;
   }
 
   public void init() {
@@ -138,14 +135,14 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
 
   public void goToEdit(Project project) {
     projectInstanceCache.setCurrentProject(project);
-    projectRepository.update(project);
-    galleryProjectListView.navigateTo(EditActivity.class);
+    executeUseCaseCall(() -> updateComposition.updateComposition(project));
+    galleryProjectListView.navigateTo(EditActivity.class); // TODO(jliarte): 26/07/18 should chain with update? I think not, as projectInstanceCache has been updated
   }
 
   public void goToShare(Project project) {
     projectInstanceCache.setCurrentProject(project);
-    projectRepository.update(project);
-    galleryProjectListView.navigateTo(ShareActivity.class);
+    executeUseCaseCall(() -> updateComposition.updateComposition(project));
+    galleryProjectListView.navigateTo(ShareActivity.class); // TODO(jliarte): 26/07/18 should chain with update? I think not, as projectInstanceCache has been updated
   }
 
   public void goToDetailProject(Project project) {

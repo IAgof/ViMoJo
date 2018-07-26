@@ -364,12 +364,13 @@ public class ActivityPresentersModule {
   GalleryProjectListPresenter provideGalleryProjectListPresenter(
           ProjectRepository projectRepository, SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          DuplicateProjectUseCase duplicateProjectUseCase, DeleteProjectUseCase deleteProjectUseCase,
-          CheckIfProjectHasBeenExportedUseCase checkIfProjectHasBeenExportedUseCase, SaveComposition saveComposition) {
+          DuplicateProjectUseCase duplicateProjectUseCase,
+          DeleteProjectUseCase deleteProjectUseCase, SaveComposition saveComposition,
+          UpdateComposition updateComposition) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
-            deleteProjectUseCase, checkIfProjectHasBeenExportedUseCase,
-            (ProjectInstanceCache) activity.getApplication(), saveComposition);
+            deleteProjectUseCase,
+            (ProjectInstanceCache) activity.getApplication(), saveComposition, updateComposition);
   }
 
   @Provides @PerActivity
