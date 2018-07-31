@@ -140,8 +140,7 @@
         </activity>
 
 
-        <activity android:name=".record.presentation.views.activity.RecordCamera2Activity"
-                  android:screenOrientation="sensorLandscape">
+        <activity android:name=".record.presentation.views.activity.RecordCamera2Activity">
             <intent-filter>
                 <action android:name="android.media.action.VIDEO_CAPTURE"/>
                 <category android:name="android.intent.category.DEFAULT"/>

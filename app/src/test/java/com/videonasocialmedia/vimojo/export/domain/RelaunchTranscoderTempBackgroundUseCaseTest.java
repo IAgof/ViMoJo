@@ -16,7 +16,6 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
@@ -175,7 +174,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
     currentProject = new Project(projectInfo, "/path", "private/path",
-            new Profile(VideoResolution.Resolution.HD720,
+            new Profile(VideoResolution.Resolution.H_720P,
                     VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

@@ -35,6 +35,7 @@ import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.customview.CustomManualFocusView;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -1848,17 +1849,33 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     @Override
     public void onOrientationChanged(int orientation) {
       checkShowRotateDeviceImage(orientation);
-      if (orientation > 85 && orientation < 95) {
-        if (orientationHaveChanged) {
-          Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          orientationHaveChanged = false;
-          restartPreview();
+      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        if (orientation > 255 && orientation < 5) {
+          if (orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = false;
+            restartPreview();
+          }
+        } else if (orientation > 175 && orientation < 185) {
+          if (!orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = true;
+            restartPreview();
+          }
         }
-      } else if (orientation > 265 && orientation < 275) {
-        if (!orientationHaveChanged) {
-          Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          orientationHaveChanged = true;
-          restartPreview();
+      } else {
+        if (orientation > 85 && orientation < 95) {
+          if (orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = false;
+            restartPreview();
+          }
+        } else if (orientation > 265 && orientation < 275) {
+          if (!orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = true;
+            restartPreview();
+          }
         }
       }
     }
@@ -1875,23 +1892,51 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
 
     private void checkShowRotateDeviceImage(int orientation) {
-      if (( orientation > 345 || orientation < 15 ) && orientation != -1) {
-        rotateDeviceHint.setRotation(270);
-        rotateDeviceHint.setRotationX(0);
-        rotateDeviceHint.setVisibility(View.VISIBLE);
-        if (!isRecording) {
-          recordButton.setEnabled(false);
-        }
-      } else if (orientation > 165 && orientation < 195) {
-        rotateDeviceHint.setRotation(-270);
-        rotateDeviceHint.setRotationX(180);
-        rotateDeviceHint.setVisibility(View.VISIBLE);
-        if (!isRecording) {
-          recordButton.setEnabled(false);
+      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        if ((orientation > 75 && orientation < 105) && orientation != -1) {
+          rotateDeviceHint.setRotation(90);
+          rotateDeviceHint.setRotationX(0);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else if (orientation > 245 && orientation < 285) {
+          rotateDeviceHint.setRotation(-90);
+          rotateDeviceHint.setRotationX(180);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else if (orientation > 165 && orientation < 195) {
+          rotateDeviceHint.setRotation(-270);
+          rotateDeviceHint.setRotationX(180);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else {
+          rotateDeviceHint.setVisibility(View.GONE);
+          recordButton.setEnabled(true);
         }
       } else {
-        rotateDeviceHint.setVisibility(View.GONE);
-        recordButton.setEnabled(true);
+        if ((orientation > 345 || orientation < 15) && orientation != -1) {
+          rotateDeviceHint.setRotation(270);
+          rotateDeviceHint.setRotationX(0);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else if (orientation > 165 && orientation < 195) {
+          rotateDeviceHint.setRotation(-270);
+          rotateDeviceHint.setRotationX(180);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else {
+          rotateDeviceHint.setVisibility(View.GONE);
+          recordButton.setEnabled(true);
+        }
       }
     }
   }

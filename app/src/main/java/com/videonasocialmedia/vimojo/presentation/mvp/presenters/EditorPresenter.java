@@ -201,7 +201,8 @@ public class EditorPresenter extends VimojoPresenter
   private void setNewProject(String rootPath, String privatePath,
                              Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            getPreferenceWaterMark(), drawableFadeTransitionVideo);
+            getPreferenceWaterMark(), drawableFadeTransitionVideo,
+            BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectRepository.add(project);
     projectInstanceCache.setCurrentProject(project);
   }

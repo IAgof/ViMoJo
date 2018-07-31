@@ -27,7 +27,8 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -77,17 +78,16 @@ public class InitAppPresenter {
     if (projectInstanceCache.getCurrentProject() == null) {
       // TODO(jliarte): 23/04/18 in fact, there will be always a project instance, consider removing
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-              isWatermarkActivated(), drawableFadeTransitionVideo);
+              isWatermarkActivated(), drawableFadeTransitionVideo,
+              BuildConfig.FEATURE_VERTICAL_VIDEOS);
       projectRepository.add(project);
       projectInstanceCache.setCurrentProject(project);
     }
   }
 
   public boolean isWatermarkActivated() {
-    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
-      return true;
-    }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
+    return BuildConfig.FEATURE_FORCE_WATERMARK
+        || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
   public void checkCamera2FrameRateAndResolutionSupported() {
@@ -145,7 +145,8 @@ public class InitAppPresenter {
     }
 
     if(!resolutionBack1080pSupported){
-      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
+      defaultResolution = BuildConfig.FEATURE_VERTICAL_VIDEOS ? CAMERA_SETTING_RESOLUTION_V_720
+          : CAMERA_SETTING_RESOLUTION_H_720;
       //resolutionBack1080pSupported = true;
     }
 

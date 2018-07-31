@@ -214,7 +214,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
-                    drawableFadeTransitionVideo);
+                    drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
             projectRepository.add(project);
             return project;
         } else {

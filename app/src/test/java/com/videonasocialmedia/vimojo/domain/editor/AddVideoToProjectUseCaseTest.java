@@ -15,7 +15,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -160,7 +159,7 @@ public class AddVideoToProjectUseCaseTest {
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
     currentProject = new Project(projectInfo, "/path", "private/path",
-        new Profile(VideoResolution.Resolution.HD720,
+        new Profile(VideoResolution.Resolution.H_720P,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

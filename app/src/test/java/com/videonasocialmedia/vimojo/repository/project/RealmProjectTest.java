@@ -9,8 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.UUID;
-
 import io.realm.RealmObject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +31,7 @@ public class RealmProjectTest {
     RealmProject realmProject = new RealmProject();
     realmProject.title = "Project title";
     realmProject.projectPath = "root/path";
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    realmProject.resolution = VideoResolution.Resolution.H_720P.name();
     realmProject.quality = VideoQuality.Quality.GOOD.name();
     realmProject.uuid = "123456";
     realmProject.lastModification = "Date";
@@ -41,7 +39,7 @@ public class RealmProjectTest {
 
     assertThat(realmProject.title, is("Project title"));
     assertThat(realmProject.projectPath, is("root/path"));
-    assertThat(realmProject.resolution, is(VideoResolution.Resolution.HD720.name()));
+    assertThat(realmProject.resolution, is(VideoResolution.Resolution.H_720P.name()));
     assertThat(realmProject.quality, is(VideoQuality.Quality.GOOD.name()));
     assertThat(realmProject.uuid, is("123456"));
     assertThat(realmProject.lastModification, is("Date"));

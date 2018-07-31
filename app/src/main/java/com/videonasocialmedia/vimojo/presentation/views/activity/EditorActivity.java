@@ -149,6 +149,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onStart();
     videonaPlayer.setListener(this);
     videonaPlayer.onShown(this);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      videonaPlayer.setAspectRatioVerticalVideos();
+    }
   }
 
   @Override

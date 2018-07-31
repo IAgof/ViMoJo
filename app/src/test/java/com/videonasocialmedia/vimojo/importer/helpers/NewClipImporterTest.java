@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -101,7 +102,7 @@ public class NewClipImporterTest {
             .thenReturn(videonaFormat);
 
         injectedNewClipImporter.adaptVideoToVideonaFormat(currentProject, video, position,
-            cameraRotation, retries);
+            cameraRotation, retries, BuildConfig.FEATURE_VERTICAL_VIDEOS);
 
         Mockito.verify(mockedAdaptVideoToFormatUseCase).adaptVideo(eq(currentProject),
             any(VideoToAdapt.class), eq(videonaFormat),
@@ -131,12 +132,12 @@ public class NewClipImporterTest {
 
         Mockito.verify(newClipImporterSpy).adaptVideoToVideonaFormat(currentProject, video, position,
                 cameraRotation,
-                ++retries);
+                ++retries, BuildConfig.FEATURE_VERTICAL_VIDEOS);
         assertThat(videosToAdapt.get(0).getVideo().getIdentifier(), is(video.getIdentifier()));
     }
 
     private void getAProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

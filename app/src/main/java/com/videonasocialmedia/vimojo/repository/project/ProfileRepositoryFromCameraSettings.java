@@ -57,12 +57,18 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
 
   private void setupResolutionMap() {
     resolutionMap = new HashMap<>();
-    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720,
-            VideoResolution.Resolution.HD720);
-    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080,
-            VideoResolution.Resolution.HD1080);
-    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160,
-            VideoResolution.Resolution.HD4K);
+    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720,
+            VideoResolution.Resolution.H_720P);
+    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_1080,
+            VideoResolution.Resolution.H_1080P);
+    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_2160,
+            VideoResolution.Resolution.H_4K);
+    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720,
+        VideoResolution.Resolution.V_720P);
+    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_1080,
+        VideoResolution.Resolution.V_1080P);
+    resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_2160,
+        VideoResolution.Resolution.V_4K);
   }
 
   private void setupFrameRateMap() {
@@ -108,8 +114,8 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   }
 
   @Override
-  public Profile getCurrentProfile() {
-    Profile currentProfileInstance = buildProfileFromCameraSettings();
+  public Profile getCurrentProfile(boolean isVerticalMode) {
+    Profile currentProfileInstance = buildProfileFromCameraSettings(isVerticalMode);
     return currentProfileInstance;
   }
 
@@ -123,15 +129,15 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
    * composition to have the same settings than the composition profile.
    * This is the reason why here we build composition profile from stored camera settings
    */
-  private Profile buildProfileFromCameraSettings() {
-    VideoResolution.Resolution resolution = getResolutionFromSettings();
+  private Profile buildProfileFromCameraSettings(boolean isVerticalMode) {
+    VideoResolution.Resolution resolution = getResolutionFromSettings(isVerticalMode);
     VideoQuality.Quality quality = getQualityFromSettings();
     VideoFrameRate.FrameRate frameRate = getFrameRateFromSettings();
     // TODO(jliarte): 28/11/17 check if we have to ask repo for it
     return new Profile(resolution, quality, frameRate);
   }
 
-  private VideoResolution.Resolution getResolutionFromSettings() {
+  private VideoResolution.Resolution getResolutionFromSettings(boolean isVerticalMode) {
     ResolutionSetting resolutionSetting = cameraSettingsRepository.getCameraSettings()
             .getResolutionSetting();
     VideoResolution.Resolution resolution = resolutionMap.get(resolutionSetting.getResolution());
@@ -140,9 +146,11 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
     } else {
       // default 1080p. We suppose that 720p is the minimum supported, 1080p not is always presented if all phones, eg. Videona MotoG.
       if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
-        return VideoResolution.Resolution.HD1080;
+        return isVerticalMode ? VideoResolution.Resolution.V_1080P
+            : VideoResolution.Resolution.H_1080P;
       } else {
-        return VideoResolution.Resolution.HD720;
+        return isVerticalMode ? VideoResolution.Resolution.V_720P
+            : VideoResolution.Resolution.H_720P;
       }
     }
   }

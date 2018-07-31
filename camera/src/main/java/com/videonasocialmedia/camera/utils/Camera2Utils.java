@@ -52,14 +52,14 @@ public class Camera2Utils {
     int h = aspectRatio.getHeight();
     double ratio = (double) h / w;
     for (Size option : choices) {
-      /*if (option.getHeight() == option.getWidth() * h / w &&
+      if (option.getHeight() == option.getWidth() * h / w &&
           option.getWidth() >= width && option.getHeight() >= height) {
         bigEnough.add(option);
-      }*/
-      double optionRatio = (double) option.getHeight() / option.getWidth();
+      }
+     /* double optionRatio = (double) option.getHeight() / option.getWidth();
       if (ratio == optionRatio) {
         bigEnough.add(option);
-      }
+      } */
     }
 
     // Pick the smallest of those, assuming we found any

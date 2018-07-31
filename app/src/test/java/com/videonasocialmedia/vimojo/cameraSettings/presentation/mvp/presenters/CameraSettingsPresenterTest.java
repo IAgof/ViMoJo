@@ -101,7 +101,7 @@ public class CameraSettingsPresenterTest {
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
     verify(mockedCameraSettingsRepository).setResolutionSetting(cameraSettings, "720p");
-    verify(mockedProjectRepository).updateResolution(currentProject, VideoResolution.Resolution.HD720);
+    verify(mockedProjectRepository).updateResolution(currentProject, VideoResolution.Resolution.H_720P);
     verify(mockedUserEventTracker).trackChangeResolution("720p");
   }
 
@@ -166,7 +166,7 @@ public class CameraSettingsPresenterTest {
   }
 
   public void setAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_1080P,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
