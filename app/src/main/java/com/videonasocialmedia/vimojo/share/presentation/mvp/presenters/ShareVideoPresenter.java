@@ -150,7 +150,11 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
   public void obtainNetworksToShare() {
     if (BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {
-      socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+      if (BuildConfig.FLAVOR.equals("vishow")) {
+        socialNetworkList = obtainNetworksToShareUseCase.obtainVishowNetworks();
+      } else {
+        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+      }
     } else {
       shareVideoViewReference.get().hideShowMoreSocialNetworks();
     }
@@ -392,6 +396,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   }
 
   public void cancelExportation() {
+    Log.d(LOG_TAG, "cancelExportation ");
     exportUseCase.cancelExport();
   }
 
