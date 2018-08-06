@@ -45,10 +45,11 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private HashMap<String, VideoFrameRate.FrameRate> frameRateMap;
   private HashMap<String, VideoResolution.Resolution> resolutionMap;
 
-  public ProfileRepositoryFromCameraSettings(CameraSettingsRepository cameraSettingsRepository) {
+  public ProfileRepositoryFromCameraSettings(CameraSettingsRepository cameraSettingsRepository,
+                                             int defaultCameraIdSelected) {
     this.cameraSettingsRepository = cameraSettingsRepository;
     if (this.cameraSettingsRepository.getCameraSettings() == null) {
-      createDefaultCameraSettings();
+      createDefaultCameraSettings(defaultCameraIdSelected);
     }
     setupVideoQualityMap();
     setupFrameRateMap();
@@ -86,7 +87,7 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   }
 
   // TODO(jliarte): 29/11/17 seems not to be responsibility of this repo, check for suitable class
-  private void createDefaultCameraSettings() {
+  private void createDefaultCameraSettings(int defaultCameraIdSelected) {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, false);
@@ -107,9 +108,8 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
 
     String quality = Constants.DEFAULT_CAMERA_SETTING_QUALITY;
     String interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-    int cameraIdSelected = Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
     CameraSettings defaultCameraSettings = new CameraSettings(resolutionSetting,
-            frameRateSetting, quality, interfaceSelected, cameraIdSelected);
+            frameRateSetting, quality, interfaceSelected, defaultCameraIdSelected);
     cameraSettingsRepository.createCameraSetting(defaultCameraSettings);
   }
 

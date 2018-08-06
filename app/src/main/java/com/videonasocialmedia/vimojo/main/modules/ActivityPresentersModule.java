@@ -116,9 +116,10 @@ public class ActivityPresentersModule {
   private final Project currentProject;
   private final ProjectInstanceCache projectInstanceCache;
   private AutoFitTextureView textureView;
- // private GLCameraView cameraView = null;
+  // private GLCameraView cameraView = null;
   private String directorySaveVideos;
   private long freeStorage;
+  private int defaultCameraIdSelected;
 
   public ActivityPresentersModule(VimojoActivity vimojoActivity) {
     this.activity = vimojoActivity;
@@ -135,13 +136,15 @@ public class ActivityPresentersModule {
 
   public ActivityPresentersModule(RecordCamera2Activity activity,
                                   String directorySaveVideos,
-                                  AutoFitTextureView textureView, long freeStorage) {
+                                  AutoFitTextureView textureView,
+                                  long freeStorage, int defaultCameraIdSelected) {
     this.activity = activity;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
     this.freeStorage = freeStorage;
     this.currentProject = ((VimojoApplication)this.activity.getApplication()).getCurrentProject();
     this.projectInstanceCache = (ProjectInstanceCache) this.activity.getApplication();
+    this.defaultCameraIdSelected = defaultCameraIdSelected;
   }
 
   @Provides @PerActivity
@@ -557,7 +560,7 @@ public class ActivityPresentersModule {
 
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsRepository cameraSettingsRepository) {
-    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
+    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository, defaultCameraIdSelected);
   }
 
   @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {

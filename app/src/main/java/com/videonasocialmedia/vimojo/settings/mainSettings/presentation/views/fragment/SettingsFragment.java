@@ -165,7 +165,7 @@ public class SettingsFragment extends PreferenceFragment implements
         listView.addFooterView(footer, null, false);
 
         TextView footerText = (TextView)viewRoot.findViewById(R.id.footerText);
-        String text = getString(R.string.vimojo) + " v" + BuildConfig.VERSION_NAME + "\n" +
+        String text = getString(R.string.flavor_name) + " v" + BuildConfig.VERSION_NAME + "\n" +
                 getString(R.string.madeIn);
         footerText.setText(text);
 

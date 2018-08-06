@@ -29,4 +29,6 @@
     <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
     <string name="com_auth0_audience">https://elconfidencial.vimojo.auth/api</string>
 
+    <string name="flavor_name">Vanitatis</string>
+
 </resources>

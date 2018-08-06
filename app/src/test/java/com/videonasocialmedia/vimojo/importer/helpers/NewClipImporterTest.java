@@ -102,7 +102,7 @@ public class NewClipImporterTest {
             .thenReturn(videonaFormat);
 
         injectedNewClipImporter.adaptVideoToVideonaFormat(currentProject, video, position,
-            cameraRotation, retries, BuildConfig.FEATURE_VERTICAL_VIDEOS);
+            cameraRotation, retries);
 
         Mockito.verify(mockedAdaptVideoToFormatUseCase).adaptVideo(eq(currentProject),
             any(VideoToAdapt.class), eq(videonaFormat),
@@ -131,8 +131,7 @@ public class NewClipImporterTest {
         newClipImporterSpy.relaunchUnfinishedAdaptTasks(currentProject);
 
         Mockito.verify(newClipImporterSpy).adaptVideoToVideonaFormat(currentProject, video, position,
-                cameraRotation,
-                ++retries, BuildConfig.FEATURE_VERTICAL_VIDEOS);
+                cameraRotation, ++retries);
         assertThat(videosToAdapt.get(0).getVideo().getIdentifier(), is(video.getIdentifier()));
     }
 
