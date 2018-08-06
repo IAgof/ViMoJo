@@ -358,7 +358,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
-    setupSlideSeekBar();
 //    configChronometer(); // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     configShowThumbAndNumberClips();
 
@@ -375,8 +374,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onResume() {
     super.onResume();
     initOrientationHelper();
-    presenter.updatePresenter();
     presenter.initViews();
+    presenter.updatePresenter();
     hideSystemUi();
     registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
     registerReceiver(jackConnectorReceiver,new IntentFilter(Intent.ACTION_HEADSET_PLUG));
@@ -1615,6 +1614,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void enableExposureTimeSeekBar() {
+    setupSlideSeekBar();
     if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
       exposureTimeSeekBarVertical.setEnabled(true);
     } else {

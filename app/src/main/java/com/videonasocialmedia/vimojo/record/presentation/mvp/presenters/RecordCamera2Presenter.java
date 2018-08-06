@@ -143,6 +143,11 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void initViews() {
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      recordView.screenOrientationPortrait();
+    } else {
+      recordView.screenOrientationLandscape();
+    }
     cameraSettings = cameraSettingsRepository.getCameraSettings();
     if(cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
       isFrontCameraSelected = true;
@@ -157,11 +162,6 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.showSettingsCameraView();
     recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-      recordView.screenOrientationPortrait();
-    } else {
-      recordView.screenOrientationLandscape();
-    }
   }
 
   private String getAdaptedResolutionValueName(String resolutionSettingValue) {
