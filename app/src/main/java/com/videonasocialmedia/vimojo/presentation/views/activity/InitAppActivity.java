@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
@@ -124,8 +125,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
-        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        if (BuildConfig.FEATURE_SHOW_ADS) {
+            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+            // Vishow Admob app ID: ca-app-pub-4533929990381933~3090744535
+            MobileAds.initialize(this, "ca-app-pub-4533929990381933~3090744535");
+            //MobileAds.initialize(this, "ca-app-pub-4533929990381933~3090744535");
+        }
     }
 
     private boolean isBetaAppOutOfDate() {
@@ -436,6 +441,16 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             mixpanel.getPeople().showGivenNotification(notification, this);
             mixpanel.getPeople().trackNotificationSeen(notification);
         }
+    }
+
+    @Override
+    public void screenOrientationPortrait() {
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    public void screenOrientationLandscape() {
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     /**

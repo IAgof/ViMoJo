@@ -294,6 +294,9 @@
     <string name="title_watermark_section">Añadir marca de agua</string>
     <string name="title_watermark_preference">Marca de agua</string>
 
+    <!-- More apps -->
+    <string name="title_more_apps_section">Más aplicaciones</string>
+
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>
     <string name="moreInformation">Más información</string>

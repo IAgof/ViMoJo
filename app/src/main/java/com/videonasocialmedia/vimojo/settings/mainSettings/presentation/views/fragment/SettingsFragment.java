@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -54,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment implements
     //protected PreferenceCategory ftp2Pref;
     protected PreferenceCategory transitionCategory;
     protected PreferenceCategory watermarkPrefCategory;
+    protected PreferenceCategory moreAppsPrefCategory;
     protected PreferenceCategory authPrefCategory;
     protected SwitchPreference transitionsVideoPref;
     protected SwitchPreference transitionsAudioPref;
@@ -315,6 +317,34 @@ public class SettingsFragment extends PreferenceFragment implements
         }
     }
 
+    @Override
+    public void showMoreAppsSection() {
+        Preference appVideonaPref = findPreference(ConfigPreferences.APP_VIDEONA);
+        appVideonaPref.setOnPreferenceClickListener(preference -> {
+            navigateToURL(context.getString(R.string.app_videona_campaign_link));
+            return true;
+        });
+        Preference appKamaradaPref = findPreference(ConfigPreferences.APP_KAMARADA);
+        appKamaradaPref.setOnPreferenceClickListener(preference -> {
+            navigateToURL(context.getString(R.string.app_kamarada_campaign_link));
+            return true;
+        });
+        Preference appVimojoPref = findPreference(ConfigPreferences.APP_VIMOJO);
+        appVimojoPref.setOnPreferenceClickListener(preference -> {
+            navigateToURL(context.getString(R.string.app_vimojo_campaign_link));
+            return true;
+        });
+    }
+
+    @Override
+    public void hideMoreAppsSection() {
+        moreAppsPrefCategory = (PreferenceCategory)
+            findPreference(getString(R.string.title_more_apps_section));
+        if (moreAppsPrefCategory != null) {
+            getPreferenceScreen().removePreference(moreAppsPrefCategory);
+        }
+    }
+
     private AlertDialog createSignOutDialog() {
         DialogInterface.OnClickListener signOutListener = new DialogInterface.OnClickListener() {
             @Override
@@ -447,6 +477,12 @@ public class SettingsFragment extends PreferenceFragment implements
                 return true;
             }
         });
+    }
+
+    private void navigateToURL(String url) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     private void setupAboutUs() {

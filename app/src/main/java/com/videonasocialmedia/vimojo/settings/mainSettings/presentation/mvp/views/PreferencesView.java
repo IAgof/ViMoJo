@@ -77,4 +77,8 @@ public interface PreferencesView {
     void setupUserAuthentication(boolean userLoggedIn);
 
   void hideRegisterLoginView();
+
+    void showMoreAppsSection();
+
+    void hideMoreAppsSection();
 }

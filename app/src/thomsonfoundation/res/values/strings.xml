@@ -5,6 +5,49 @@
     <string name="activity_music_title_jazzy_frenchy">Jazz music featuring acoustic guitar, double bass, accordion and vibes</string>
     <string name="activity_music_title_acoustic_breeze">Acoustic music with a soft and mellow mood featuring folk guitar and cello</string>
 
+    <string name="licenseMusic">
+
+        GOING HIGHER\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            https://www.bensound.com/royalty-free-music/track/going-higher\n\n
+
+        UKELELE\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            http://www.bensound.com/royalty-free-music/track/ukulele\n\n
+
+        JAZZY-FRENCHY\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            https://www.bensound.com/royalty-free-music/track/jazzy-frenchy\n\n
+
+        ACOUSTIC BREEZE\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            http://www.bensound.com/index.php?route=product/search&amp;search=ACOUSTIC%20BREEZE\n\n
+   </string>
+
     <string name="vimojo_kit_web">https://vimojo.co/mojokit/?utm_source=thomsonfoundation_android&amp;utm_medium=app_link</string>
     <string name="vimojo_platform_base">https://platform.vimojo.co</string>
     <string name="vimojo_platform">"https://platform.vimojo.co/?utm_source=vimojo_android&amp;utm_medium=app_link"</string>

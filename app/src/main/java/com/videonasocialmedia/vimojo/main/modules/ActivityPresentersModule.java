@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
@@ -319,9 +320,9 @@ public class ActivityPresentersModule {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsRepository cameraSettingsRepository,
           RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository) {
-    return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
-            cameraSettingsRepository, runSyncAdapterHelper, projectRepository,
-            (ProjectInstanceCache) activity.getApplication());
+    return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
+            createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
+            projectRepository, (ProjectInstanceCache) activity.getApplication());
   }
 
   @Provides @PerActivity

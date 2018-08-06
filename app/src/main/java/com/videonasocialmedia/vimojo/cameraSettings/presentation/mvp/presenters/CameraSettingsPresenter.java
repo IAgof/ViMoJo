@@ -69,6 +69,11 @@ public class CameraSettingsPresenter {
 
   public void updatePresenter() {
     this.currentProject = projectInstanceCache.getCurrentProject();
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      cameraSettingsListView.screenOrientationPortrait();
+    } else {
+      cameraSettingsListView.screenOrientationLandscape();
+    }
   }
 
   private void setupProInterfaceMappers() {

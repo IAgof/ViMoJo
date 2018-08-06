@@ -112,8 +112,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
-  private NativeExpressAdView mAdView;
-  private VideoController mVideoController;
+  private AdView adView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -194,35 +193,41 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       adsCardView.setVisibility(View.GONE);
     } else {
       // Native Admob
-      mAdView = (NativeExpressAdView) DialogView.findViewById(R.id.adView);
-      // Set its video options.
-      mAdView.setVideoOptions(new VideoOptions.Builder()
-          .setStartMuted(true)
-          .build());
-      // The VideoController can be used to get lifecycle events and info about an ad's video
-      // asset. One will always be returned by getVideoController, even if the ad has no video
-      // asset.
-      mVideoController = mAdView.getVideoController();
-      mVideoController.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
-        @Override
-        public void onVideoEnd() {
-          Log.d(LOG_TAG, "Video playback is finished.");
-          super.onVideoEnd();
-        }
-      });
-      // Set an AdListener for the AdView, so the Activity can take action when an ad has finished
-      // loading.
-      mAdView.setAdListener(new AdListener() {
+      adView = (AdView) DialogView.findViewById(R.id.adView);
+      adView.loadAd(new AdRequest.Builder().build());
+      adView.setAdListener(new AdListener() {
         @Override
         public void onAdLoaded() {
-          if (mVideoController.hasVideoContent()) {
-            Log.d(LOG_TAG, "Received an ad that contains a video asset.");
-          } else {
-            Log.d(LOG_TAG, "Received an ad that does not contain a video asset.");
-          }
+          // Code to be executed when an ad finishes loading.
+          Log.d(LOG_TAG, "onAdLoaded");
+        }
+
+        @Override
+        public void onAdFailedToLoad(int errorCode) {
+          // Code to be executed when an ad request fails.
+          Log.d(LOG_TAG, "onAdFailedToLoad errorCode " + errorCode);
+        }
+
+        @Override
+        public void onAdOpened() {
+          // Code to be executed when an ad opens an overlay that
+          // covers the screen.
+          Log.d(LOG_TAG, "onAdOpened");
+        }
+
+        @Override
+        public void onAdLeftApplication() {
+          // Code to be executed when the user has left the app.
+          Log.d(LOG_TAG, "onAdLeftApplication");
+        }
+
+        @Override
+        public void onAdClosed() {
+          // Code to be executed when when the user is about to return
+          // to the app after tapping on an ad.
+          Log.d(LOG_TAG, "onAdClosed");
         }
       });
-      mAdView.loadAd(new AdRequest.Builder().build());
     }
     exportDialog.setCancelable(false);
     exportDialog.setCanceledOnTouchOutside(false);

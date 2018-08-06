@@ -232,4 +232,8 @@ public interface RecordCamera2View {
     void showGridModeCrosses();
 
     void showGridModeFibonacci();
+
+    void screenOrientationPortrait();
+
+    void screenOrientationLandscape();
 }

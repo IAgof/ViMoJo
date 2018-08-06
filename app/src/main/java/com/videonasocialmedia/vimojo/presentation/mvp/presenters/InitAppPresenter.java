@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRep
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -47,6 +48,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
  */
 public class InitAppPresenter {
   private final Context context;
+  private final InitAppView initAppView;
   private final CameraSettingsRepository cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private final ProjectRepository projectRepository;
@@ -58,13 +60,15 @@ public class InitAppPresenter {
 
 
   @Inject
-  public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
+  public InitAppPresenter(Context context, InitAppView initAppView,
+                          SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
                           CameraSettingsRepository cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper,
                           ProjectRepository projectRepository,
                           ProjectInstanceCache projectInstanceCache) {
     this.context = context;
+    this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
@@ -206,5 +210,10 @@ public class InitAppPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      initAppView.screenOrientationPortrait();
+    } else {
+      initAppView.screenOrientationLandscape();
+    }
   }
 }

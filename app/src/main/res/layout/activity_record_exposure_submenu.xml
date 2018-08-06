@@ -1,50 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/manual_exposure_submenu"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/manual_exposure_submenu"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_above="@+id/settings_bar_cardview"
+    android:layout_gravity="center"
     android:layout_centerInParent="true"
-    android:layout_gravity="center_horizontal"
     android:layout_marginBottom="4dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="4dp"
     android:backgroundTint="@color/colorGreyTransparent"
     android:visibility="invisible"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:background="@drawable/record_activity_rounded_layout_bg"
         android:padding="2dp"
-        android:layout_marginRight="2dp">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/icon_iso"
             android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center_horizontal|center"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
             android:layout_margin="8dp"
             android:background="#00ffffff"
             android:gravity="center"
             android:src="@drawable/activity_record_ic_iso"
             />
-    </LinearLayout>
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/iso_submenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/settings_bar_cardview"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/record_activity_rounded_layout_bg"
-        android:orientation="horizontal"
-        tools:showIn="@layout/activity_record_camera2"
-        android:layout_marginRight="10dp"
-        >
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/iso_submenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/record_activity_rounded_layout_bg"
+            android:orientation="vertical"
+            tools:showIn="@layout/activity_record_camera2"
+            >
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -52,13 +50,13 @@
         android:layout_height="match_parent"
         android:background="@drawable/record_activity_rounded_layout_bg"
         android:padding="2dp"
-        android:layout_marginRight="2dp">
+        android:layout_gravity="center"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/exposure_time_seekBar_icon"
-            android:layout_width="30dp"
+            android:layout_width="32dp"
             android:layout_height="30dp"
-            android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:background="#00ffffff"
             android:paddingLeft="4dp"
@@ -67,15 +65,15 @@
             android:text="100%"/>
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/manual_exposure_time_seekbar"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
         android:padding="4dp"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:orientation="vertical"
         tools:showIn="@layout/activity_record_camera2"
         android:background="@drawable/record_activity_rounded_layout_bg"
         >
@@ -84,14 +82,14 @@
             android:id="@+id/exposure_time_seekBar_text_min"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center"
-            android:layout_marginLeft="2dp"
+            android:layout_centerInParent="true"
+            android:layout_alignTop="@+id/exposure_time_seekbar_wrapper_vertical"
             android:background="#00ffffff"
             android:text="max"
             android:textColor="@color/colorWhite"
             android:textSize="8sp"/>
 
-        <SeekBar
+        <!-- <SeekBar
             android:id="@+id/exposure_time_seekbar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -102,18 +100,37 @@
             android:minHeight="16dp"
             android:minWidth="100dp"
             android:progressTint="@color/colorWhite"
-            android:secondaryProgressTint="@color/colorWhite"/>
+            android:secondaryProgressTint="@color/colorWhite"/> -->
+
+        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+            android:id="@+id/exposure_time_seekbar_wrapper_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="132dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp">
+
+            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                android:id="@+id/exposure_time_seekbar_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:progressTint="@color/colorWhite"
+                android:splitTrack="false"
+                android:thumbTint="@color/colorWhite"
+                app:seekBarRotation="CW270"/> <!-- Rotation: CW90 or CW270 -->
+        </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
         <TextView
             android:id="@+id/exposure_time_seekBar_text_max"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_centerInParent="true"
+            android:layout_alignBottom="@+id/exposure_time_seekbar_wrapper_vertical"
             android:background="#00ffffff"
             android:text="min"
             android:textColor="@color/colorWhite"
             android:textSize="8sp"
             tools:visibility="visible"/>
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

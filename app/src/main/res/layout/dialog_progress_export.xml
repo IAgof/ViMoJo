@@ -44,15 +44,16 @@
             android:id="@+id/adsLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <com.google.android.gms.ads.NativeExpressAdView
+            <com.google.android.gms.ads.AdView
                 android:id="@+id/adView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
                 ads:adSize="180x180"
-                ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
-            </com.google.android.gms.ads.NativeExpressAdView>
+                ads:adUnitId="ca-app-pub-4533929990381933/1063346996">
+            </com.google.android.gms.ads.AdView>
+            <!--  Id testing ca-app-pub-3940256099942544/6300978111 -->
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
