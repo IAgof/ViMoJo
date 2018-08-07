@@ -9,12 +9,17 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 
+import java.util.List;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by alvaro on 21/6/18.
@@ -46,4 +51,9 @@ public interface CompositionService {
   Call<CompositionDto> updateComposition(@Path("projectId") String projectId,
                                          @Path("projectId") String compositionId,
                                          @Body CompositionDto compositionDto);
+
+  @GET("project/{projectId}/composition")
+  @Headers("Content-Type: application/json")
+  Call<List<CompositionDto>> getAll(@Path("projectId") String projectId,
+                                    @QueryMap Map<String, Object> compositionFilter);
 }

@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
@@ -366,11 +367,12 @@ public class ActivityPresentersModule {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteProjectUseCase deleteProjectUseCase, SaveComposition saveComposition,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, GetCompositions getCompositions) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteProjectUseCase,
-            (ProjectInstanceCache) activity.getApplication(), saveComposition, updateComposition);
+            (ProjectInstanceCache) activity.getApplication(), saveComposition, updateComposition,
+            getCompositions);
   }
 
   @Provides @PerActivity

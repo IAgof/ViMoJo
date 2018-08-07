@@ -94,7 +94,10 @@ public class ProjectRepository extends VimojoRepository<Project> {
   }
 
   public List<Project> getListProjectsByLastModificationDescending() {
-    return projectRealmDataSource.getListProjectsByLastModificationDescending();
+    List<Project> realmProjects = projectRealmDataSource
+            .getListProjectsByLastModificationDescending();
+    List<Project> apiCompositions = compositionApiDataSource.getListProjectsByLastModificationDescending(); // TODO(jliarte): 27/07/18 change to query by specification?
+    return realmProjects;
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!

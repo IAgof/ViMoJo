@@ -22,6 +22,8 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.TrackDto;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -150,4 +152,18 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
     return null;
   }
 
+  public List<Project> getListProjectsByLastModificationDescending() {
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      List<CompositionDto> compositions = this.compositionApiClient
+              .getAll(accessToken);
+      return (List<Project>) mapper.reverseMap(compositions);
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
+    }
+    return Collections.emptyList();
+  }
 }

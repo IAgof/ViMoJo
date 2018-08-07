@@ -12,8 +12,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.EditText;
 
+import com.victor.loading.book.BookLoading;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -38,6 +40,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Inject GalleryProjectListPresenter presenter;
 
+  @BindView(R.id.bookloading_view)
+  BookLoading loadingView;
   @BindView(R.id.recycler_gallery_project)
   RecyclerView projectList;
   @Nullable
@@ -82,6 +86,22 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
     intent.putExtra(Constants.VIDEO_TO_SHARE_PATH, videoToSharePath);
     startActivity(intent);
+  }
+
+  @Override
+  public void showLoading() {
+    projectList.setVisibility(View.GONE);
+    loadingView.start();
+    loadingView.setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideLoading() {
+    runOnUiThread(() -> {
+      loadingView.stop();
+      loadingView.setVisibility(View.GONE);
+      projectList.setVisibility(View.VISIBLE);
+    });
   }
 
   @Override
