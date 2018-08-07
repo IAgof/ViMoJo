@@ -162,6 +162,9 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
     recordView.showSettingsCameraView();
     recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
+    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+      recordView.hideTutorials();
+    }
   }
 
   private String getAdaptedResolutionValueName(String resolutionSettingValue) {

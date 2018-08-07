@@ -236,4 +236,6 @@ public interface RecordCamera2View {
     void screenOrientationPortrait();
 
     void screenOrientationLandscape();
+
+    void hideTutorials();
 }

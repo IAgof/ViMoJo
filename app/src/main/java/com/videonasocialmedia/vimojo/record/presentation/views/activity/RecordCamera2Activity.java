@@ -1603,6 +1603,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void hideTutorials() {
+    tutorial.setVisibility(View.GONE);
+  }
+
+  @Override
   public void setupManualExposureTime(int minimumExposureCompensation) {
     this.minExposureTime = presenter.getMinimunExposureTime();
   }

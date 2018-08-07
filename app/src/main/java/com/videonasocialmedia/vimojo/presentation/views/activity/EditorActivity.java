@@ -444,6 +444,15 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
+  public void hideTutorialViews() {
+    runOnUiThread(() -> {
+      Menu menu = navigationView.getMenu();
+      MenuItem target = menu.findItem(R.id.menu_navview_tutorial);
+      target.setVisible(false);
+    });
+  }
+
+  @Override
   public void setIconsFeatures() {
     runOnUiThread(() -> {
       updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
