@@ -76,6 +76,11 @@
     <string name="export_apply_watermark_resource_error">Error applying watermark, resource not found</string>
     <string name="export_join_videos_error">Error joining the videos</string>
     <string name="export_wait_for_transcoding_error">Error adapting yur videos</string>
+    <string name="share_continue">Continue</string>
+    <string name="share_cancel">Cancel</string>
+    <string name="share_instagram_duration_warning">Your project duration is greater than 15
+        seconds, Instagram will trim your video. Do you want to continue?. If not, do not forget to
+        save video in gallery</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>
@@ -2524,5 +2529,6 @@ and Conditions.\n\n
 
     <string name="vimojo_platform_base_debug">https://beta.viday.co</string>
     <string name="com_auth0_audience_debug">https://vimojo.auth/api</string>
+
 
 </resources>

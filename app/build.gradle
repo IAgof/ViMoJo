@@ -326,7 +326,7 @@ android {
 
         vishow {
             applicationId "com.videonasocialmedia.vimojo.vishow"
-            versionCode 1 // 20180806 // v1 Beta for Google Play
+            versionCode 2 // 20180806 // v1 Beta for Google Play
             versionName "0.20.5.fVishow" // 20180710
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vishow"

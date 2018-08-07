@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinatorLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -24,11 +23,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:background="@color/colorTransparent"
                 android:text="@string/title_camera_settings_activity"
-                android:textSize="@dimen/text_big"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"/>
+                android:textSize="@dimen/text_big" />
 
             <Button
                 android:id="@+id/camera_setting_ok"
@@ -38,20 +37,28 @@
                 android:background="@color/colorTransparent"
                 android:text="@string/ok"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="@dimen/text_big"
-                />
+                android:textSize="@dimen/text_big" />
 
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/camera_setting_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="horizontal"
-            tools:listitem="@layout/camera_settings_list_view_holder">
 
-        </android.support.v7.widget.RecyclerView>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/camera_setting_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:scrollbars="horizontal"
+                    tools:listitem="@layout/camera_settings_list_view_holder">
+
+                </android.support.v7.widget.RecyclerView>
+            </RelativeLayout>
 
     </LinearLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

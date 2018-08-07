@@ -442,6 +442,28 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     onVimojoPlatformClicked();
   }
 
+  @Override
+  public void showDialogInstagramStoriesDuration() {
+    runOnUiThread(() -> {
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+      builder.setMessage(getResources().getString(R.string.share_instagram_duration_warning));
+      final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+        switch (which) {
+          case DialogInterface.BUTTON_POSITIVE:
+            presenter.exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
+            break;
+          case DialogInterface.BUTTON_NEGATIVE:
+            break;
+        }
+      };
+      builder.setCancelable(false).setNegativeButton(getString(R.string.share_cancel),
+          dialogClickListener);
+      builder.setCancelable(false).setPositiveButton(getString(R.string.share_continue),
+          dialogClickListener);
+      builder.show();
+    });
+  }
+
   private void navigateToProjectDetails() {
     Intent intent = new Intent(this, DetailProjectActivity.class);
     startActivityForResult(intent, REQUEST_FILL_PROJECT_DETAILS);

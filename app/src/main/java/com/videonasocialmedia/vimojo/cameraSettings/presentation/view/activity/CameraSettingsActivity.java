@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,12 +70,12 @@ public class CameraSettingsActivity extends VimojoActivity implements
     adapter.setCameraSettingsListClickListener(this);
     RecyclerView.LayoutManager layoutManager;
     if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-      layoutManager = new GridLayoutManager(this,
-          NUM_COLUMNS_GRID_RECYCLER_VERTICAL, orientation, false);
+      layoutManager = new LinearLayoutManager(this, orientation, false);
     } else {
       layoutManager = new GridLayoutManager(this,
           NUM_COLUMNS_GRID_RECYCLER, orientation, false);
     }
+    recyclerCameraSettingsList.addItemDecoration(new DividerItemDecoration(this, orientation));
     recyclerCameraSettingsList.setLayoutManager(layoutManager);
     recyclerCameraSettingsList.setAdapter(adapter);
   }
