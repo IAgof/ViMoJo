@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
@@ -25,6 +26,7 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -43,6 +45,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private ProjectInstanceCache projectInstanceCache;
   private SaveComposition saveComposition;
   private UpdateComposition updateComposition;
+  private GetCompositions getCompositions;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -50,9 +53,9 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
           ProjectRepository projectRepository,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
-          DeleteProjectUseCase deleteProjectUseCase,
-          ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition, UpdateComposition updateComposition) {
+          DeleteProjectUseCase deleteProjectUseCase, ProjectInstanceCache projectInstanceCache,
+          SaveComposition saveComposition, UpdateComposition updateComposition,
+          GetCompositions getCompositions) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -62,15 +65,11 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
     this.updateComposition = updateComposition;
+    this.getCompositions = getCompositions;
   }
 
   public void init() {
     updateProjectList();
-  }
-
-  public List<Project> loadProjectList() {
-    // TODO(jliarte): 11/07/18 this is a use case!
-    return projectRepository.getListProjectsByLastModificationDescending();
   }
 
   public void duplicateProject(Project project) {
@@ -112,12 +111,26 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   }
 
   public void updateProjectList() {
-    List<Project> projectList = loadProjectList();
-    if (projectList != null && projectList.size() > 0) {
-      galleryProjectListView.showProjectList(projectList);
-    } else {
-      galleryProjectListView.createDefaultProject();
-    }
+    galleryProjectListView.showLoading();
+    Futures.addCallback(
+            executeUseCaseCall(() -> getCompositions.getListProjectsByLastModificationDescending()),
+            new FutureCallback<List<Project>>() {
+              @Override
+              public void onSuccess(@Nullable List<Project> projectList) {
+                galleryProjectListView.hideLoading();
+                if (projectList != null && projectList.size() > 0) {
+                  galleryProjectListView.showProjectList(projectList);
+                } else {
+                  galleryProjectListView.createDefaultProject();
+                }
+              }
+
+              @Override
+              public void onFailure(Throwable t) {
+                // TODO(jliarte): 7/08/18 review this case
+                galleryProjectListView.createDefaultProject();
+              }
+            });
   }
 
   public void createNewProject(String rootPath, String privatePath,

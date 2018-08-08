@@ -367,12 +367,8 @@ public class PreferencesPresenter extends VimojoPresenter
   private void deleteAccount() {
     userAuth0Helper.signOut();
     deletePendingVideosToUpload();
-    ListenableFuture<Account> accountFuture = executeUseCaseCall(new Callable<Account>() {
-      @Override
-      public Account call() throws Exception {
-        return getAccount.getCurrentAccount(context);
-      }
-    });
+    ListenableFuture<Account> accountFuture =
+            executeUseCaseCall(() -> getAccount.getCurrentAccount(context));
     Futures.addCallback(accountFuture, new FutureCallback<Account>() {
       @Override
       public void onSuccess(Account account) {
