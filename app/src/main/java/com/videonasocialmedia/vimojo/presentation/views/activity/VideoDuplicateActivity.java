@@ -45,6 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
@@ -106,7 +107,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         super.onResume();
         videonaPlayer.onShown(this);
         if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos();
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
         presenter.updatePresenter();
     }

@@ -145,4 +145,6 @@ public class Constants {
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP = FRONT_CAMERA_ID;
 
   public static final String BASE_PACKAGE_NAME = "com.videonasocialmedia.vimojo";
+
+  public static final int DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE = 260;
 }

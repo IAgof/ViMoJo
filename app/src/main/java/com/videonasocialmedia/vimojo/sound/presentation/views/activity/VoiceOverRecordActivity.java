@@ -35,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
+
 /**
  * Created by ruth on 14/09/16.
  */
@@ -99,7 +101,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
         if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos();
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 

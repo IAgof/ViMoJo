@@ -37,6 +37,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
+
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
     SeekBar.OnSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
@@ -94,7 +96,7 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         }
         presenter.updatePresenter(musicPath);
         if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos();
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
