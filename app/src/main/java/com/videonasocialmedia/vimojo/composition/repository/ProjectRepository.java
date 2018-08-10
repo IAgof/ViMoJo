@@ -99,7 +99,8 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   private Project returnLastModified(Project realmProject, Project apiComposition) {
     // TODO(jliarte): 10/08/18 should we update the other copy?
-    List<Project> projects = Collections.singletonList(realmProject);
+    ArrayList<Project> projects = new ArrayList<>(2);
+    projects.add(realmProject);
     projects.add(apiComposition);
     return Collections.max(projects, dateComparatorDescending);
   }
