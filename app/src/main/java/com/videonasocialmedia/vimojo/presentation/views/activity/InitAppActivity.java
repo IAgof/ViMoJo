@@ -127,9 +127,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
         if (BuildConfig.FEATURE_SHOW_ADS) {
             // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-            // Vishow Admob app ID: ca-app-pub-4533929990381933~3090744535
-            MobileAds.initialize(this, "ca-app-pub-4533929990381933~3090744535");
-            //MobileAds.initialize(this, "ca-app-pub-4533929990381933~3090744535");
+            MobileAds.initialize(this, getString(R.string.admob_app_id));
         }
     }
 

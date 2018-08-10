@@ -59,4 +59,14 @@
 
     <string name="flavor_name">Market 4 News</string>
 
+    <string name="app_videona">Videona</string>
+    <string name="app_videona_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.videona&amp;referrer=utm_source%3DVideona%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+    <string name="app_kamarada">Kamarada</string>
+    <string name="app_kamarada_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.kamarada&amp;referrer=utm_source%3DKamarada%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+    <string name="app_vimojo">Vimojo</string>
+    <string name="app_vimojo_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.vimojo.main&amp;referrer=utm_source%3DVimojo%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+
+    <string name="admob_app_id">ca-app-pub-4533929990381933~3090744535</string>
+    <string name="admob_banner_ad_unit_id">ca-app-pub-4533929990381933/1063346996</string>
+
 </resources>
