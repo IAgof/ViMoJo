@@ -23,6 +23,7 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
@@ -74,6 +75,7 @@ public class Project implements ElementChangedListener {
     private int duration;
 
   private ProjectInfo projectInfo;
+  private DataPersistanceType dataPersistanceType;
 
     /**
      * Constructor of minimum number of parameters. This is the Default constructor.
@@ -303,4 +305,13 @@ public class Project implements ElementChangedListener {
   public String getProjectId() {
     return projectId;
   }
+
+  public DataPersistanceType getDataPersistanceType() {
+    return dataPersistanceType;
+  }
+
+  public void setDataPersistanceType(DataPersistanceType dataPersistanceType) {
+    this.dataPersistanceType = dataPersistanceType;
+  }
+
 }

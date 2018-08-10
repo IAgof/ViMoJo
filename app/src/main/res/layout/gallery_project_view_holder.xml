@@ -28,17 +28,31 @@
         android:orientation="horizontal"
         android:layout_margin="8dp">
 
-
-        <ImageView
-            android:id="@+id/project_image"
-            android:layout_width="0dp"
+        <RelativeLayout
             android:layout_height="match_parent"
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:scaleType="fitXY"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
-            android:padding="4dp"
-            tools:src="@drawable/fragment_gallery_no_image"/>
+            android:padding="4dp">
+
+            <ImageView
+                android:id="@+id/project_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@drawable/fragment_gallery_no_image"/>
+
+            <ImageView
+                android:id="@+id/cloud_project"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.7"
+                android:visibility="invisible"
+                android:src="@drawable/ic_cloud_queue_white_24dp"/>
+
+        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="0dp"

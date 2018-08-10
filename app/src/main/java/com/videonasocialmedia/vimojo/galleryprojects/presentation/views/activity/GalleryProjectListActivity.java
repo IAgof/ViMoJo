@@ -90,9 +90,11 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void showLoading() {
-    projectList.setVisibility(View.GONE);
-    loadingView.start();
-    loadingView.setVisibility(View.VISIBLE);
+    runOnUiThread(() -> {
+      projectList.setVisibility(View.GONE);
+      loadingView.start();
+      loadingView.setVisibility(View.VISIBLE);
+    });
   }
 
   @Override

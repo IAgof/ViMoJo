@@ -49,11 +49,17 @@ public interface CompositionService {
   @PUT("project/{projectId}/composition/{compositionId}")
   @Headers("Content-Type: application/json")
   Call<CompositionDto> updateComposition(@Path("projectId") String projectId,
-                                         @Path("projectId") String compositionId,
+                                         @Path("compositionId") String compositionId,
                                          @Body CompositionDto compositionDto);
 
   @GET("project/{projectId}/composition")
   @Headers("Content-Type: application/json")
   Call<List<CompositionDto>> getAll(@Path("projectId") String projectId,
                                     @QueryMap Map<String, Object> compositionFilter);
+
+  @GET("project/{projectId}/composition/{compositionId}")
+  @Headers("Content-Type: application/json")
+  Call<CompositionDto> get(@Path("projectId") String projectId,
+                           @Path("compositionId") String compositionId,
+                           @QueryMap Map<String, Object> query);
 }

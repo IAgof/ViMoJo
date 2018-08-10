@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionQuery;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public class CompositionApiClient extends VimojoApiClient {
 
   public List<CompositionDto> getAll(String accessToken) throws VimojoApiException {
     CompositionQuery query = CompositionQuery.Builder.create()
-            .withOrderBy("modification_date", false).build();
+            .withOrderBy("modification_date", false).withCascade(true).build();
     return getAll(query, accessToken);
   }
 
@@ -111,5 +112,28 @@ public class CompositionApiClient extends VimojoApiClient {
       throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
     }
     return Collections.emptyList(); // TODO(jliarte): 18/07/18 we should either return a list of compositionDto or throw an exception!
+  }
+
+  public CompositionDto get(String id, String accessToken) throws VimojoApiException {
+    CompositionService compositionService = getCompositionService(accessToken);
+    try {
+      // TODO(jliarte): 11/07/18 set composition dto project
+      String projectId = "defaultProject";
+      Map<String, Object> query = new HashMap<>();
+      query.put("cascade", "true"); // TODO(jliarte): 8/08/18 extract param?
+      Response<CompositionDto> response = compositionService
+              .get(projectId, id, query).execute();
+      if (response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException ioException) {
+      if (BuildConfig.DEBUG) {
+        ioException.printStackTrace();
+      }
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    return null; // TODO(jliarte): 18/07/18 we should either return a compositionDto or throw an exception!
   }
 }

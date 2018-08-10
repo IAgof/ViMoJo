@@ -17,6 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
+import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- *
+ * Data adapter for {@link Project} recycler view in projects gallery activity
  */
 public class GalleryProjectListAdapter extends
     RecyclerView.Adapter<GalleryProjectListAdapter.RetrieveProjectListItemViewHolder> {
@@ -36,8 +37,8 @@ public class GalleryProjectListAdapter extends
   private List<Project> projectList;
   private GalleryProjectClickListener clickListener;
 
-  public void setRetrieveProjectClickListener(GalleryProjectClickListener
-                                                  GalleryProjectClickListener) {
+  public void setRetrieveProjectClickListener(
+          GalleryProjectClickListener GalleryProjectClickListener) {
     clickListener = GalleryProjectClickListener;
   }
 
@@ -53,11 +54,20 @@ public class GalleryProjectListAdapter extends
   public void onBindViewHolder(RetrieveProjectListItemViewHolder holder, int position) {
     Project project = projectList.get(position);
     if (project.getMediaTrack().getItems().size() > 0) {
-      drawVideoThumbnail(holder.imagenProject, project);
+      drawVideoThumbnail(holder.projectPoster, project);
     } else {
-      holder.imagenProject.setImageResource(R.drawable.activity_gallery_project_no_preview);
+      // TODO(jliarte): 9/08/18 if project has poster
+      holder.projectPoster.setImageResource(R.drawable.activity_gallery_project_no_preview);
     }
-    holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getLastModification()));
+    if (project.getDataPersistanceType() == DataPersistanceType.API) {
+      holder.cloudProjectIcon.setVisibility(View.VISIBLE);
+    }
+    // TODO(jliarte): 8/08/18 remove after fixing dates from api?
+    try {
+      holder.dateProject.setText(DateUtils.toFormatDateDayMonthYear(project.getLastModification()));
+    } catch (Exception ignored) {}
+    // TODO(jliarte): 9/08/18 FIXME it seems that onBindViewHolder is called multiple times for a
+    //                item, resulting in appending data from several projects in the same viewholder
     holder.durationProject.append(" " +
         TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
     holder.numClipsProject.append((" " + project.numberOfClips()));
@@ -68,8 +78,7 @@ public class GalleryProjectListAdapter extends
     holder.sizeMbProject.append(" " + formatProjectSizeMb + " Mb");
   }
 
-  public void drawVideoThumbnail(ImageView thumbnailView, Project project) {
-
+  private void drawVideoThumbnail(ImageView thumbnailView, Project project) {
     Video firstVideo = (Video) project.getMediaTrack().getItems().get(0);
     int microSecond = firstVideo.getStartTime() * 1000;
     BitmapPool bitmapPool = Glide.get(context).getBitmapPool();
@@ -102,7 +111,6 @@ public class GalleryProjectListAdapter extends
   }
 
   class RetrieveProjectListItemViewHolder extends RecyclerView.ViewHolder {
-
     @BindView(R.id.project_date)
     TextView dateProject;
     @BindView(R.id.project_duration)
@@ -110,7 +118,9 @@ public class GalleryProjectListAdapter extends
     @BindView(R.id.project_num_clips)
     TextView numClipsProject;
     @BindView(R.id.project_image)
-    ImageView imagenProject;
+    ImageView projectPoster;
+    @BindView(R.id.cloud_project)
+    ImageView cloudProjectIcon;
     @BindView(R.id.project_title)
     TextView titleProject;
     @BindView(R.id.project_size_mb)

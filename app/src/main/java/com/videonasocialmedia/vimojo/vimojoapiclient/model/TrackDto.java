@@ -7,24 +7,25 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Model class for Track vimojo API calls.
  */
 public class TrackDto {
-  public TrackDto() {
-    this.mediaItems = new ArrayList<MediaDto>();
-  }
-
   @SerializedName("_id") public String id;
   @SerializedName("uuid") public String uuid;
-  @SerializedName("trackId") public int trackId;
+  @SerializedName("trackIndex") public int trackIndex;
   @SerializedName("volume") public float volume;
-  @SerializedName("mute") public boolean mute;
+  @SerializedName("muted") public boolean muted;
   @SerializedName("position") public int position;
-  @SerializedName("compositionId") public int compositionId;
+  @SerializedName("compositionId") public String compositionId;
   @SerializedName("medias") public List<MediaDto> mediaItems;
+
+  public TrackDto() {
+    this.mediaItems = new ArrayList<>();
+  }
 
   public String getId() {
     return id;
@@ -34,24 +35,31 @@ public class TrackDto {
     return uuid;
   }
 
-  public int getTrackId() {
-    return trackId;
+  public int getTrackIndex() {
+    return trackIndex;
   }
 
   public float getVolume() {
     return volume;
   }
 
-  public boolean isMute() {
-    return mute;
+  public boolean isMuted() {
+    return muted;
   }
 
   public int getPosition() {
     return position;
   }
 
-  public int getCompositionId() {
+  public String getCompositionId() {
     return compositionId;
+  }
+
+  public List<MediaDto> getMediaItems() {
+    if (mediaItems != null) {
+      return mediaItems;
+    }
+    return Collections.emptyList();
   }
 
   @Override
@@ -63,14 +71,14 @@ public class TrackDto {
             + ", uuid='"
             + uuid
             + '\''
-            + ", trackId='"
-            + trackId
+            + ", trackIndex='"
+            + trackIndex
             + '\''
             + ", volume='"
             + volume
             + '\''
-            + ", mute='"
-            + mute
+            + ", muted='"
+            + muted
             + '\''
             + ", position='"
             + position

@@ -12,11 +12,14 @@ import java.util.Map;
  */
 public class CompositionQuery {
   private static final String QUERY_ORDER_BY = "orderBy";
+  private static final String QUERY_CASCADE = "cascade";
 
   private final String orderBy;
+  private final boolean cascade;
 
-  public CompositionQuery(String orderBy) {
+  public CompositionQuery(String orderBy, boolean cascade) {
     this.orderBy = orderBy;
+    this.cascade = cascade;
   }
 
   public Map<String, Object> toMap() {
@@ -26,12 +29,17 @@ public class CompositionQuery {
       returnValues.put(QUERY_ORDER_BY, orderBy);
     }
 
+    if (cascade) {
+      returnValues.put(QUERY_CASCADE, cascade);
+    }
+
     return returnValues;
   }
 
   public static class Builder {
     private String orderBy;
     private boolean orderByAscendant;
+    private boolean cascade;
 
     private Builder() {
     }
@@ -46,10 +54,15 @@ public class CompositionQuery {
       return this;
     }
 
+    public Builder withCascade(boolean cascade) {
+      this.cascade = cascade;
+      return this;
+    }
+
     public CompositionQuery build() {
       String plainOrderBy = convertOrderBy(orderBy, orderByAscendant);
 
-      return new CompositionQuery(plainOrderBy);
+      return new CompositionQuery(plainOrderBy, cascade);
     }
 
     private String convertOrderBy(String orderBy, boolean ascendant) {

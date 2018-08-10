@@ -14,9 +14,12 @@ import com.videonasocialmedia.vimojo.composition.repository.datasource.Compositi
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
-import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,6 +35,10 @@ public class ProjectRepository extends VimojoRepository<Project> {
   private static final String LOG_TAG = ProjectRepository.class.getSimpleName();
   private final ProjectRealmDataSource projectRealmDataSource;
   private final CompositionApiDataSource compositionApiDataSource;
+  private Comparator<Project> dateComparatorDescending = (Comparator<Project>) (left, right) -> {
+    return DateUtils.parseStringDate(right.getLastModification())
+            .compareTo(DateUtils.parseStringDate(left.getLastModification())); // use your logic
+  };
 
   @Inject
   public ProjectRepository(ProjectRealmDataSource projectRealmDataSource,
@@ -61,9 +68,6 @@ public class ProjectRepository extends VimojoRepository<Project> {
     this.compositionApiDataSource.update(item);
   }
 
-  /**
-   * {@link DataSource#remove(Object)}
-   */
   @Override
   public void remove(Project item) {
     this.projectRealmDataSource.remove(item);
@@ -81,7 +85,23 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   @Override
   public Project getById(String id)  {
-    return this.projectRealmDataSource.getById(id);
+    // TODO(jliarte): 8/08/18 get project details in cascade, set API source, and insert into hashmap
+    Project realmProject = this.projectRealmDataSource.getById(id);
+    Project apiComposition = this.compositionApiDataSource.getById(id);
+    if (realmProject != null && apiComposition != null) {
+      // TODO(jliarte): 8/08/18 merge projects by date
+      return returnLastModified(realmProject, apiComposition);
+    } else {
+      if (realmProject != null) return realmProject;
+      else return apiComposition;
+    }
+  }
+
+  private Project returnLastModified(Project realmProject, Project apiComposition) {
+    // TODO(jliarte): 10/08/18 should we update the other copy?
+    List<Project> projects = Collections.singletonList(realmProject);
+    projects.add(apiComposition);
+    return Collections.max(projects, dateComparatorDescending);
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!
@@ -97,7 +117,30 @@ public class ProjectRepository extends VimojoRepository<Project> {
     List<Project> realmProjects = projectRealmDataSource
             .getListProjectsByLastModificationDescending();
     List<Project> apiCompositions = compositionApiDataSource.getListProjectsByLastModificationDescending(); // TODO(jliarte): 27/07/18 change to query by specification?
-    return realmProjects;
+    return mergeCompositions(realmProjects, apiCompositions);
+  }
+
+  private List<Project> mergeCompositions(List<Project> realmProjects,
+                                          List<Project> apiCompositions) {
+    HashMap<String, Project> compositionHash = new HashMap<>();
+    for (Project project : realmProjects) {
+      compositionHash.put(project.getUuid(), project);
+    }
+    for (Project apiComposition : apiCompositions) {
+      if (compositionHash.get(apiComposition.getUuid()) != null) {
+        compositionHash.put(apiComposition.getUuid(),
+                returnLastModified(compositionHash.get(apiComposition.getUuid()), apiComposition));
+      } else {
+        compositionHash.put(apiComposition.getUuid(), this.getById(apiComposition.getUuid()));
+      }
+    }
+    return getSortedCompositionList(compositionHash);
+  }
+
+  private List<Project> getSortedCompositionList(HashMap<String, Project> compositionHash) {
+    List<Project> list = new ArrayList<>(compositionHash.values());
+    Collections.sort(list, dateComparatorDescending);
+    return list;
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!
@@ -107,7 +150,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   // TODO(jliarte): 11/07/18 this is a use case!
   public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
-    this.updateFrameRate(project, videoFrameRate);
+    this.projectRealmDataSource.updateFrameRate(project, videoFrameRate);
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!
@@ -117,7 +160,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   // TODO(jliarte): 11/07/18 this is a use case!
   public void setWatermarkActivated(Project project, boolean isChecked) {
-    this.setWatermarkActivated(project, isChecked);
+    this.projectRealmDataSource.setWatermarkActivated(project, isChecked);
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!

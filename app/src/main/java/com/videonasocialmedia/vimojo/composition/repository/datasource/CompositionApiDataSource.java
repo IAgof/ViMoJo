@@ -10,7 +10,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.AssetApiDataSource;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.AssetToAssetDtoMapper;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.mapper.CompositionToCompositionDtoMapper;
@@ -22,7 +21,6 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.TrackDto;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -38,7 +36,6 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
   private CompositionApiClient compositionApiClient;
 
   private final CompositionToCompositionDtoMapper mapper = new CompositionToCompositionDtoMapper();
-  private final AssetToAssetDtoMapper assetMapper = new AssetToAssetDtoMapper();
   private final AssetApiDataSource assetApiDataSource;
 
   @Inject
@@ -149,6 +146,17 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Override
   public Project getById(String id) {
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      CompositionDto composition = this.compositionApiClient
+              .get(id, accessToken);
+      return mapper.reverseMap(composition);
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
+    }
     return null;
   }
 
