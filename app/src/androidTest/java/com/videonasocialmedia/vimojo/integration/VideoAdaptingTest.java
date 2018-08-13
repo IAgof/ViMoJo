@@ -317,7 +317,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
     currentProject.setProjectPath(testPath);
     currentProject.getVMComposition().getMediaTrack().insertItem(video);
-    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmDataSource());
+    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     projectRepo.update(currentProject);
     String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
     int videoPosition = 0;

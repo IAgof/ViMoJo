@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.galleryprojects.domain;
+package com.videonasocialmedia.vimojo.composition.domain.usecase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -27,14 +27,14 @@ import static org.mockito.Mockito.verify;
  * Created by alvaro on 14/12/16.
  */
 @RunWith(PowerMockRunner.class)
-public class DeleteProjectUseCaseTest {
+public class DeleteCompositionTest {
 
   @Mock
   ProjectRepository mockedProjectRepository;
   @Mock
   TrackDataSource mockedTrackRepository;
   @InjectMocks
-  DeleteProjectUseCase injectedUseCase;
+  DeleteComposition injectedUseCase;
   private Project currentProject;
 
   @Before

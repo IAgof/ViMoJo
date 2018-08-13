@@ -4,6 +4,9 @@ package com.videonasocialmedia.vimojo.composition.repository.datasource;
  * Created by jliarte on 20/10/16.
  */
 
+import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -33,9 +36,11 @@ import io.realm.Sort;
 public class ProjectRealmDataSource implements DataSource<Project> {
   protected Mapper<Project, RealmProject> toRealmProjectMapper;
   protected Mapper<RealmProject, Project> toProjectMapper;
+  private TrackRealmDataSource trackDataSource;
 
   @Inject
-  public ProjectRealmDataSource() {
+  public ProjectRealmDataSource(TrackRealmDataSource trackDataSource) {
+    this.trackDataSource = trackDataSource;
     this.toProjectMapper = new RealmProjectToProjectMapper();
     this.toRealmProjectMapper = new ProjectToRealmProjectMapper();
   }
@@ -47,13 +52,9 @@ public class ProjectRealmDataSource implements DataSource<Project> {
 
   @Override
   public void add(final Iterable<Project> items) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        for (Project item: items) {
-          realm.copyToRealm(toRealmProjectMapper.map(item));
-        }
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      for (Project item: items) {
+        realm.copyToRealm(toRealmProjectMapper.map(item));
       }
     });
   }
@@ -61,36 +62,46 @@ public class ProjectRealmDataSource implements DataSource<Project> {
   @Override
   public void update(final Project item) {
     item.updateDateOfModification(DateUtils.getDateRightNow());
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
-      }
-    });
+    Realm.getDefaultInstance().executeTransaction(
+            realm -> realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item)));
   }
 
   public void updateWithDate(final Project item, String date) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item));
-      }
-    });
+    // TODO(jliarte): 10/08/18 date is not used!!
+    Realm.getDefaultInstance().executeTransaction(
+            realm -> realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item)));
   }
 
   @Override
   public void remove(final Project item) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmResults<RealmProject> result = realm.where(RealmProject.class).
-                equalTo("uuid", item.getUuid()).findAll();
-        result.deleteAllFromRealm();
-      }
+    removeAllProjectTracks(item);
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmResults<RealmProject> result = realm.where(RealmProject.class).
+              equalTo("uuid", item.getUuid()).findAll();
+      result.deleteAllFromRealm();
     });
+  }
+
+  private void removeAllProjectTracks(Project project) {
+    removeMediaTrack(project);
+    removeAudioTrack(project, Constants.INDEX_AUDIO_TRACK_MUSIC);
+    if (project.hasVoiceOver()) {
+      removeAudioTrack(project, Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+    }
+  }
+
+  private void removeAudioTrack(Project item, int indexAudioTrack) {
+    ArrayList<AudioTrack> audioTracks = item.getAudioTracks();
+    if (audioTracks != null && audioTracks.size() > 0) {
+      // TODO(jliarte): 9/08/18 FIXME: sometimes audioTracks is empty
+      Track track = audioTracks.get(indexAudioTrack);
+      trackDataSource.remove(track);
+    }
+  }
+
+  private void removeMediaTrack(Project item) {
+    Track videoTrack = item.getMediaTrack();
+    trackDataSource.remove(videoTrack);
   }
 
   @Override

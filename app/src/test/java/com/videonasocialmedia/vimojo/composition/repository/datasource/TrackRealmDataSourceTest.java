@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class TrackRealmDataSourceTest {
   @Test
   public void testTrackRealmRepositoryConstructorSetsMappers() {
-    TrackRealmDataSource repo = new TrackRealmDataSource();
+    TrackRealmDataSource repo = new TrackRealmDataSource(videoDataSource, musicDataSource);
 
     assertThat(repo.toTrackMapper, notNullValue());
     assertThat(repo.toRealmTrackMapper, notNullValue());

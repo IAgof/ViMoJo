@@ -136,4 +136,27 @@ public class CompositionApiClient extends VimojoApiClient {
     }
     return null; // TODO(jliarte): 18/07/18 we should either return a compositionDto or throw an exception!
   }
+
+  public CompositionDto remove(String id, String accessToken) throws VimojoApiException {
+    CompositionService compositionService = getCompositionService(accessToken);
+    try {
+      // TODO(jliarte): 11/07/18 set composition dto project
+      String projectId = "defaultProject";
+      Map<String, Object> map = new HashMap<>();
+      map.put("cascade", true);
+      Response<CompositionDto> response = compositionService
+              .remove(projectId, id, map).execute();
+      if (response.isSuccessful()) {
+        return response.body();
+      } else {
+        parseError(response);
+      }
+    } catch (IOException ioException) {
+      if (BuildConfig.DEBUG) {
+        ioException.printStackTrace();
+      }
+      throw new VimojoApiException(-1, VimojoApiException.NETWORK_ERROR);
+    }
+    return null; // TODO(jliarte): 18/07/18 we should either return a compositionDto or throw an exception!
+  }
 }

@@ -81,7 +81,7 @@ public class ProjectRealmDataSourceTest {
   @Ignore
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
-    ProjectRealmDataSource repo = new ProjectRealmDataSource();
+    ProjectRealmDataSource repo = new ProjectRealmDataSource(trackDataSource);
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
@@ -92,7 +92,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testConstructorsSetsMappers() {
-    ProjectRealmDataSource repo = new ProjectRealmDataSource();
+    ProjectRealmDataSource repo = new ProjectRealmDataSource(trackDataSource);
 
     assertThat(repo.toRealmProjectMapper, is(notNullValue()));
     assertThat(repo.toProjectMapper, is(notNullValue()));
@@ -116,7 +116,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testUpdateResolutionUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     VideoResolution.Resolution videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION;
     Mockito.doNothing().when(repo).update(any(Project.class));
 
@@ -127,7 +127,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testUpdateFrameRateUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     VideoFrameRate.FrameRate videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE;
     Mockito.doNothing().when(repo).update(any(Project.class));
 
@@ -138,7 +138,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testUpdateQualityUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     VideoQuality.Quality videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY;
     Mockito.doNothing().when(repo).update(any(Project.class));
 
@@ -149,7 +149,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testSetWatermarkActivatedUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     Mockito.doNothing().when(repo).update(any(Project.class));
     boolean watermarkActivated = true;
     assert(!currentProject.hasWatermark());
@@ -161,7 +161,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testSetProjectInfoUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource());
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     Mockito.doNothing().when(repo).update(any(Project.class));
     String title = "title";
     String description = "description";

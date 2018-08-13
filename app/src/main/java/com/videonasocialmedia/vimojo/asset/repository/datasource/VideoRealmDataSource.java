@@ -1,5 +1,9 @@
 package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
+/**
+ * Created by Alejandro on 21/10/16.
+ */
+
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.RealmSpecification;
@@ -17,9 +21,9 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
- * Created by Alejandro on 21/10/16.
+ * Realm DataSource for videos. Provide local persistance of {@link Video} using Realm
+ * via {@link RealmVideo} class.
  */
-
 public class VideoRealmDataSource implements VideoDataSource {
   protected Mapper<RealmVideo, Video> toVideoMapper;
   protected Mapper<Video, RealmVideo> toRealmVideoMapper;
@@ -43,15 +47,11 @@ public class VideoRealmDataSource implements VideoDataSource {
 
   @Override
   public void add(final Video item) {
-    final Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmVideo realmVideo = toRealmVideoMapper.map(item);
-        realm.copyToRealm(realmVideo);
-      }
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmVideo realmVideo = toRealmVideoMapper.map(item);
+      realm.copyToRealm(realmVideo);
     });
-    realm.close();
+    Realm.getDefaultInstance().close();
   }
 
   @Override
@@ -88,25 +88,16 @@ public class VideoRealmDataSource implements VideoDataSource {
 
   @Override
   public void update(final Video item, final RealmProject project) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        realm.copyToRealmOrUpdate(toRealmVideoMapper.map(item));
-      }
-    });
+    Realm.getDefaultInstance().executeTransaction(
+            realm -> realm.copyToRealmOrUpdate(toRealmVideoMapper.map(item)));
   }
 
   @Override
   public void remove(final Video item) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmResults<RealmVideo> result = realm.where(RealmVideo.class).
-                equalTo("uuid", item.getUuid()).findAll();
-        result.deleteAllFromRealm();
-      }
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmResults<RealmVideo> result = realm.where(RealmVideo.class).
+              equalTo("uuid", item.getUuid()).findAll();
+      result.deleteAllFromRealm();
     });
   }
 

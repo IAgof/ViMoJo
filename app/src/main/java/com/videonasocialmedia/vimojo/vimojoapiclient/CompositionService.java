@@ -14,6 +14,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -62,4 +63,9 @@ public interface CompositionService {
   Call<CompositionDto> get(@Path("projectId") String projectId,
                            @Path("compositionId") String compositionId,
                            @QueryMap Map<String, Object> query);
+
+  @DELETE("project/{projectId}/composition/{compositionId}")
+  Call<CompositionDto> remove(@Path("projectId") String projectId,
+                              @Path("compositionId") String compositionId,
+                              @QueryMap Map<String, Object> query);
 }

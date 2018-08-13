@@ -12,6 +12,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
+import com.videonasocialmedia.vimojo.repository.DeletePolicy;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -69,8 +71,19 @@ public class ProjectRepository extends VimojoRepository<Project> {
   }
 
   @Override
+  public void remove(Project item, DeletePolicy policy) {
+    if (policy.useLocal()) {
+      this.projectRealmDataSource.remove(item);
+    }
+
+    if (policy.useRemote()) {
+      this.compositionApiDataSource.remove(item);
+    }
+  }
+
+  @Override
   public void remove(Project item) {
-    this.projectRealmDataSource.remove(item);
+    remove(item, DeletePolicy.DELETE_ALL);
   }
 
   @Override
@@ -129,8 +142,10 @@ public class ProjectRepository extends VimojoRepository<Project> {
     }
     for (Project apiComposition : apiCompositions) {
       if (compositionHash.get(apiComposition.getUuid()) != null) {
-        compositionHash.put(apiComposition.getUuid(),
-                returnLastModified(compositionHash.get(apiComposition.getUuid()), apiComposition));
+        // (jliarte): 10/08/18 apiComposition has not details in cascade, should call this.getByUuid
+        Project project = this.getById(apiComposition.getUuid());
+        project.setDataPersistanceType(DataPersistanceType.ALL);
+        compositionHash.put(apiComposition.getUuid(), project);
       } else {
         compositionHash.put(apiComposition.getUuid(), this.getById(apiComposition.getUuid()));
       }

@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDat
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -41,7 +42,6 @@ import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
@@ -366,11 +366,11 @@ public class ActivityPresentersModule {
           ProjectRepository projectRepository, SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
-          DeleteProjectUseCase deleteProjectUseCase, SaveComposition saveComposition,
+          DeleteComposition deleteComposition, SaveComposition saveComposition,
           UpdateComposition updateComposition, GetCompositions getCompositions) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
-            deleteProjectUseCase,
+            deleteComposition,
             (ProjectInstanceCache) activity.getApplication(), saveComposition, updateComposition,
             getCompositions);
   }
@@ -458,7 +458,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkProject(ProjectRepository projectRepository) {
+  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkProject(
+          ProjectRepository projectRepository) {
     return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
@@ -466,12 +467,13 @@ public class ActivityPresentersModule {
     return new DuplicateProjectUseCase();
   }
 
-  @Provides DeleteProjectUseCase provideDeleteProject(ProjectRepository projectRepository,
-                                                      VideoDataSource videoRepository,
-                                                      MusicDataSource musicRepository,
-                                                      TrackDataSource trackRepository) {
-    return new DeleteProjectUseCase(projectRepository, videoRepository, musicRepository,
-        trackRepository);
+  @Provides
+  DeleteComposition provideDeleteComposition(ProjectRepository projectRepository,
+                                         VideoDataSource videoRepository,
+                                         MusicDataSource musicRepository,
+                                         TrackDataSource trackRepository) {
+    return new DeleteComposition(projectRepository
+    );
   }
 
   @Provides CheckIfProjectHasBeenExportedUseCase provideCheckIfProjectHasBeenExported() {

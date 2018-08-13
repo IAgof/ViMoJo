@@ -1,5 +1,9 @@
 package com.videonasocialmedia.vimojo.repository.music.datasource;
 
+/**
+ * Created by alvaro on 12/04/17.
+ */
+
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -16,9 +20,9 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
- * Created by alvaro on 12/04/17.
+ * Realm DataSource for music. Provide local persistance of {@link Music} using Realm
+ * via {@link RealmMusic} class.
  */
-
 public class MusicRealmDataSource implements MusicDataSource {
   protected Mapper<RealmMusic, Music> toMusicMapper;
   protected Mapper<Music, RealmMusic> toRealmMusicMapper;
@@ -31,15 +35,11 @@ public class MusicRealmDataSource implements MusicDataSource {
 
   @Override
   public void add(final Music item) {
-    final Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmMusic realmMusic = toRealmMusicMapper.map(item);
-        realm.copyToRealm(realmMusic);
-      }
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmMusic realmMusic = toRealmMusicMapper.map(item);
+      realm.copyToRealm(realmMusic);
     });
-    realm.close();
+    Realm.getDefaultInstance().close();
   }
 
   @Override
@@ -49,14 +49,10 @@ public class MusicRealmDataSource implements MusicDataSource {
 
   @Override
   public void remove(final Music item) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmResults<RealmMusic> result = realm.where(RealmMusic.class).
-            equalTo("uuid", item.getUuid()).findAll();
-        result.deleteAllFromRealm();
-      }
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmResults<RealmMusic> result = realm.where(RealmMusic.class).
+          equalTo("uuid", item.getUuid()).findAll();
+      result.deleteAllFromRealm();
     });
   }
 
@@ -80,13 +76,8 @@ public class MusicRealmDataSource implements MusicDataSource {
 
   @Override
   public void update(final Music item) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        realm.copyToRealmOrUpdate(toRealmMusicMapper.map(item));
-      }
-    });
+    Realm.getDefaultInstance().executeTransaction(
+            realm -> realm.copyToRealmOrUpdate(toRealmMusicMapper.map(item)));
   }
 
   @Override

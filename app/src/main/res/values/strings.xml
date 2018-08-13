@@ -142,6 +142,7 @@
     <string name="dialog_project_remove_message">Remove project</string>
     <string name="dialog_project_remove_accept">Yes</string>
     <string name="dialog_project_remove_cancel">No</string>
+    <string name="dialog_project_remove_local_only">Only local</string>
 
     <!-- Detail project activity -->
     <string name="detail_project_title">Title</string>

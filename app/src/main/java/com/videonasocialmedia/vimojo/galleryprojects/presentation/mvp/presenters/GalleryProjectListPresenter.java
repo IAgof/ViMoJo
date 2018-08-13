@@ -12,7 +12,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultPro
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
-import com.videonasocialmedia.vimojo.galleryprojects.domain.DeleteProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -24,9 +24,7 @@ import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
-
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -40,7 +38,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private GalleryProjectListView galleryProjectListView;
   private SharedPreferences sharedPreferences;
   private DuplicateProjectUseCase duplicateProjectUseCase;
-  private DeleteProjectUseCase deleteProjectUseCase;
+  private DeleteComposition deleteComposition;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private ProjectInstanceCache projectInstanceCache;
   private SaveComposition saveComposition;
@@ -53,7 +51,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
           ProjectRepository projectRepository,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
-          DeleteProjectUseCase deleteProjectUseCase, ProjectInstanceCache projectInstanceCache,
+          DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
           SaveComposition saveComposition, UpdateComposition updateComposition,
           GetCompositions getCompositions) {
     this.galleryProjectListView = galleryProjectListView;
@@ -61,7 +59,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.projectRepository = projectRepository;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.duplicateProjectUseCase = duplicateProjectUseCase;
-    this.deleteProjectUseCase = deleteProjectUseCase;
+    this.deleteComposition = deleteComposition;
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
     this.updateComposition = updateComposition;
@@ -98,9 +96,29 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   }
 
   public void deleteProject(Project project) {
-    deleteProjectUseCase.delete(project);
-    updateCurrentProjectInstance();
+    // TODO(jliarte): 10/08/18 from both
+    Futures.addCallback(executeUseCaseCall(() -> deleteComposition.delete(project)), new FutureCallback<Object>() {
+      @Override
+      public void onSuccess(@Nullable Object result) {
+        updateCurrentProjectInstance();
+        updateProjectList();
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        // TODO(jliarte): 10/08/18 show/track error
+        updateProjectList();
+      }
+    });
   }
+
+  public void deleteLocalProject(Project project) {
+    // TODO(jliarte): 10/08/18 only local
+    deleteComposition.deleteOnlyLocal(project);
+    updateCurrentProjectInstance();
+    updateProjectList();
+  }
+
 
   private void updateCurrentProjectInstance() {
     // TODO(jliarte): 11/07/18 this is a use case!

@@ -131,7 +131,15 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Override
   public void remove(Project item) {
-
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      this.compositionApiClient.remove(item.getUuid(), accessToken);
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
+    }
   }
 
   @Override

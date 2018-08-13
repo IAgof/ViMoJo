@@ -25,6 +25,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Gall
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectClickListener;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.adapter.GalleryProjectListAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GoToRecordOrGalleryActivity;
+import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -141,20 +142,22 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   }
 
   private void showDeleteConfirmDialog(Project project) {
-    final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        if (which == DialogInterface.BUTTON_POSITIVE) {
-            presenter.deleteProject(project);
-            presenter.updateProjectList();
-        }
+    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      if (which == DialogInterface.BUTTON_POSITIVE) {
+        presenter.deleteProject(project);
+      } else if (which == DialogInterface.BUTTON_NEUTRAL) {
+        presenter.deleteLocalProject(project);
       }
     };
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
-    builder.setMessage(R.string.dialog_project_remove_message)
-        .setPositiveButton(R.string.dialog_project_remove_accept, dialogClickListener)
-        .setNegativeButton(R.string.dialog_project_remove_cancel, dialogClickListener).show();
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog)
+            .setMessage(R.string.dialog_project_remove_message)
+            .setPositiveButton(R.string.dialog_project_remove_accept, dialogClickListener)
+            .setNegativeButton(R.string.dialog_project_remove_cancel, dialogClickListener);
+    if (project.getDataPersistanceType() != DataPersistanceType.API) {
+      builder.setNeutralButton(R.string.dialog_project_remove_local_only, dialogClickListener);
+    }
+    builder.show();
   }
 
   @Override
