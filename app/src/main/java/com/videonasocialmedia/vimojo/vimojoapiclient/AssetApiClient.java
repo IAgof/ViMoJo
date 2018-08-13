@@ -51,6 +51,7 @@ public class AssetApiClient extends VimojoApiClient {
   private static final String ASSET_API_KEY_TYPE = "type";
   private static final String ASSET_API_KEY_HASH = "hash";
   private static final String ASSET_API_KEY_DATE = "date";
+  private static final String ASSET_API_MEDIA_ID = "mediaId";
 
   @Inject
   public AssetApiClient() {
@@ -82,14 +83,16 @@ public class AssetApiClient extends VimojoApiClient {
     RequestBody requestBodyType = createPartFromString(asset.getType());
     RequestBody requestBodyHash = createPartFromString(asset.getHash());
     RequestBody requestBodyDate = createPartFromString(asset.getDate());
+    RequestBody requestBodyMediaId = createPartFromString(asset.getMediaId());
 
     HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
     requestBodyHashMap.put(ASSET_API_KEY_NAME, requestBodyName);
     requestBodyHashMap.put(ASSET_API_KEY_TYPE, requestBodyType);
     requestBodyHashMap.put(ASSET_API_KEY_HASH, requestBodyHash);
     requestBodyHashMap.put(ASSET_API_KEY_DATE, requestBodyDate);
-    Call<AssetDto> assetUploadTask = assetService.addAsset(asset.getId(),
-            requestBodyHashMap, body);
+    requestBodyHashMap.put(ASSET_API_MEDIA_ID, requestBodyMediaId);
+    // TODO(jliarte): 13/08/18 set project id
+    Call<AssetDto> assetUploadTask = assetService.addAsset("confihack", requestBodyHashMap, body);
     try {
       // TODO(jliarte): 18/07/18 check if asset with hash **** is already present in backend
       // else

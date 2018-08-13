@@ -54,7 +54,7 @@ class TrackToTrackDtoMapper extends KarumiMapper<Track, TrackDto> {
       track = new AudioTrack(trackDto.getTrackIndex(), trackDto.getVolume(), trackDto.isMuted(),
               trackDto.getPosition());
     }
-    track.setUuid(trackDto.getUuid());
+    track.setUuid(trackDto.getId());
     mapTrackDtoMedias(trackDto, track);
     return track;
   }

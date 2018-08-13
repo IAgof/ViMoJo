@@ -111,7 +111,8 @@ public class GalleryPagerPresenter extends VimojoPresenter
 
     private void addVideoToProject(List<Video> checkedVideoList) {
         // TODO(jliarte): 18/07/18 extract repo call outside this UC and replace in all other invocations!!
-        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, new OnAddMediaFinishedListener() {
+        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList,
+                new OnAddMediaFinishedListener() {
             @Override
             public void onAddMediaItemToTrackSuccess(Media video) {
                 // TODO(jliarte): 18/07/18 check if this UC call should be inside if

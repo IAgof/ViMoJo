@@ -70,7 +70,7 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
     switch (value.getMediaType()) {
       case MediaDto.MEDIA_TYPE_VIDEO:
         media = new Video(value.getMediaPath(), value.getVolume());
-        media.setUuid(value.getUuid());
+        media.setUuid(value.getId());
         ((Video) media).tempPath = value.getTempPath();
         media.setPosition(value.getPosition());
         ((Video) media).setClipText(value.getClipText());
@@ -102,7 +102,7 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
             this.getUuid();
           }
         };
-        media.setUuid(value.getUuid());
+        media.setUuid(value.getId());
         return media;
     }
   }

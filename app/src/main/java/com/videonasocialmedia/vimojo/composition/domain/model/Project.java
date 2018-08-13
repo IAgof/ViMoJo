@@ -97,11 +97,6 @@ public class Project implements ElementChangedListener {
       //  createProjectFolders();
     }
 
-  @NonNull
-  public String getResourceWatermarkFilePath(String privatePath) {
-    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
-  }
-
   public Project(Project project) throws IllegalItemOnTrack {
     projectInfo = new ProjectInfo(project.getProjectInfo());
     vmComposition = new VMComposition(project.getVMComposition());
@@ -110,6 +105,11 @@ public class Project implements ElementChangedListener {
     lastModification = project.getLastModification();
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
+  }
+
+  @NonNull
+  public String getResourceWatermarkFilePath(String privatePath) {
+    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
   }
 
   public VMComposition getVMComposition() {

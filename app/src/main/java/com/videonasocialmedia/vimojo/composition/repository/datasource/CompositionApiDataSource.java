@@ -71,21 +71,33 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
    * @param createdComposition
    */
   private void updateTrackMediaAssets(Project project, CompositionDto createdComposition) {
-    if (createdComposition.tracks != null && createdComposition.tracks.size() > 0) {
-      for (TrackDto trackDto : createdComposition.tracks) {
-        if (trackDto.mediaItems != null && trackDto.mediaItems.size() > 0) {
-          for (MediaDto mediaDto : trackDto.mediaItems) {
-            if (mediaDto.getAssetId() == null) {
-              // TODO(jliarte): 18/07/18 set Media id and persist on media repo?
-              Media mediaFromProjectTrack = getMediaFromProjectTrack(project, mediaDto.getUuid());
-              if (mediaFromProjectTrack != null) {
-                // TODO(jliarte): 20/07/18 set project Id
-                assetApiDataSource.add(new Asset("confiHack", mediaFromProjectTrack));
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      CompositionDto composition = this.compositionApiClient
+              .get(createdComposition.getId(), accessToken);
+      if (composition.tracks != null && composition.tracks.size() > 0) {
+        for (TrackDto trackDto : composition.tracks) {
+          if (trackDto.mediaItems != null && trackDto.mediaItems.size() > 0) {
+            for (MediaDto mediaDto : trackDto.mediaItems) {
+              if (mediaDto.getAssetId() == null
+                      || (mediaDto.getAssetId() != null && mediaDto.getAssetId().equals("")) ) {
+                // TODO(jliarte): 18/07/18 set Media id and persist on media repo?
+                Media mediaFromProjectTrack = getMediaFromProjectTrack(project, mediaDto.getId());
+                if (mediaFromProjectTrack != null) {
+                  // TODO(jliarte): 20/07/18 set project Id
+                  assetApiDataSource.add(new Asset("confiHack", mediaFromProjectTrack));
+                }
               }
             }
           }
         }
       }
+
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
     }
   }
 

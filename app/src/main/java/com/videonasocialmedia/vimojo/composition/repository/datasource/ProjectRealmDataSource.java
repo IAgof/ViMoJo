@@ -62,8 +62,10 @@ public class ProjectRealmDataSource implements DataSource<Project> {
   @Override
   public void update(final Project item) {
     item.updateDateOfModification(DateUtils.getDateRightNow());
-    Realm.getDefaultInstance().executeTransaction(
+    Realm instance = Realm.getDefaultInstance();
+    instance.executeTransactionAsync(
             realm -> realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item)));
+    instance.close();
   }
 
   public void updateWithDate(final Project item, String date) {
