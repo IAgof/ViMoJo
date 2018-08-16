@@ -33,6 +33,7 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
   public String mediaPath;
   public int numTries;
   public boolean acceptedUploadMobileNetwork = false;
+  private HashCountGenerator hashCountGenerator = new HashCountGenerator(); // TODO(jliarte): 14/08/18 inject this?
 
   public Asset(String projectId, Media media) {
     this.projectId = projectId;
@@ -96,7 +97,7 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
 
   public String getHash() {
     // TODO: 21/6/18 Generate hash
-    return "asdsfdsgkñdfmkcñdlfglñksdlñ";
+    return this.hash;
   }
 
   public void setHash(String hash) {

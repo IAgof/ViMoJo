@@ -7,9 +7,9 @@ package com.videonasocialmedia.vimojo.asset.repository.datasource;
 import android.util.Log;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.MediaToMediaDtoMapper;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
@@ -34,8 +34,8 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
 
   @Inject
   protected MediaApiDataSource(UserAuth0Helper userAuth0Helper, MediaApiClient mediaApiClient,
-                               AssetApiDataSource assetApiDataSource) {
-    super(userAuth0Helper);
+                               AssetApiDataSource assetApiDataSource, GetUserId getUserId) {
+    super(userAuth0Helper, getUserId);
     this.mediaApiClient = mediaApiClient;
     this.assetApiDataSource = assetApiDataSource;
   }

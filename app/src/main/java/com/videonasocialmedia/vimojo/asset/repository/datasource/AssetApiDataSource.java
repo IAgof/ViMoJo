@@ -9,6 +9,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.AssetToAssetDtoMapper;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
@@ -38,8 +39,8 @@ public class AssetApiDataSource extends ApiDataSource<Asset> {
   @Inject
   public AssetApiDataSource(UserAuth0Helper userAuth0Helper, AssetUploadQueue assetUploadQueue,
                             RunSyncAdapterHelper runSyncAdapterHelper,
-                            AssetApiClient assetApiClient) {
-    super(userAuth0Helper);
+                            AssetApiClient assetApiClient, GetUserId getUserId) {
+    super(userAuth0Helper, getUserId);
     this.assetUploadQueue = assetUploadQueue;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.assetApiClient = assetApiClient;
