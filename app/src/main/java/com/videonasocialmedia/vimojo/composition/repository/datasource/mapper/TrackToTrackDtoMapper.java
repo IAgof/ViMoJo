@@ -15,6 +15,9 @@ import com.videonasocialmedia.vimojo.repository.KarumiMapper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.TrackDto;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import javax.inject.Inject;
 
 /**
@@ -23,6 +26,8 @@ import javax.inject.Inject;
 class TrackToTrackDtoMapper extends KarumiMapper<Track, TrackDto> {
   // TODO(jliarte): 13/07/18 maybe inject this?
   private MediaToMediaDtoMapper mediaToMediaDtoMapper = new MediaToMediaDtoMapper();
+  private Comparator<? super MediaDto> orderComparator = (Comparator<MediaDto>)
+          (left, right) -> Integer.valueOf(left.position).compareTo(right.position);
 
   @Inject public TrackToTrackDtoMapper() {
   }
@@ -61,6 +66,7 @@ class TrackToTrackDtoMapper extends KarumiMapper<Track, TrackDto> {
 
   private void mapTrackDtoMedias(TrackDto trackDto, Track track) {
     if (trackDto.getMediaItems().size() > 0) {
+      Collections.sort(trackDto.getMediaItems(), orderComparator);
       for (MediaDto mediaDto : trackDto.getMediaItems())
         try {
           track.insertItem(mediaToMediaDtoMapper.reverseMap(mediaDto));

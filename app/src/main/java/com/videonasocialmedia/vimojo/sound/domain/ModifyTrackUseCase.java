@@ -20,7 +20,8 @@ public class ModifyTrackUseCase {
       item.setVolume(volume);
     }
     track.setVolume(volume);
-    projectRepository.update(currentProject);
+    // TODO(jliarte): 17/08/18 change all mehtod calls
+    //projectRepository.update(currentProject);
   }
 
   public void setTrackMute(Project currentProject, Track track, boolean isMute) {

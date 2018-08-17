@@ -251,7 +251,7 @@ public class EditorPresenter extends VimojoPresenter
         public void onVideosRetrieved(List<Video> videosRetrieved) {
           checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
           List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-          List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+          List<Video> videoCopy = new ArrayList<>(videosRetrieved);
           videonaPlayerView.bindVideoList(videoCopy);
           //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
           newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
@@ -284,20 +284,20 @@ public class EditorPresenter extends VimojoPresenter
         // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(video);
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
-            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
-              @Override
-              public void onRemoveMediaItemFromTrackSuccess(List<Media> mediaList) {
-                executeUseCaseCall(() -> removeMedia.removeMedias(mediaList));
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
-              }
-
-              @Override
-              public void onRemoveMediaItemFromTrackError() {
-                // TODO: 19/2/18 Define on remove media error
-                editorActivityView.showError(R.string.addMediaItemToTrackError);
-              }
-            });
+//        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
+//            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+//              @Override
+//              public void onRemoveMediaItemFromTrackSuccess(List<Media> mediaList) {
+//                executeUseCaseCall(() -> removeMedia.removeMedias(mediaList));
+//                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+//              }
+//
+//              @Override
+//              public void onRemoveMediaItemFromTrackError() {
+//                // TODO: 19/2/18 Define on remove media error
+//                editorActivityView.showError(R.string.addMediaItemToTrackError);
+//              }
+//            });
         Log.e(LOG_TAG, video.getMediaPath() + " not found!! deleting from project");
       } else {
         checkedVideoList.add(video);

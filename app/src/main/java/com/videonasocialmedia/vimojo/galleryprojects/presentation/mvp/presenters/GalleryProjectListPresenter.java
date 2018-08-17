@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
+import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -8,6 +9,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
@@ -44,6 +46,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private SaveComposition saveComposition;
   private UpdateComposition updateComposition;
   private GetCompositions getCompositions;
+  private GetCompositionAssets getCompositionAssets;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -53,7 +56,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
           SaveComposition saveComposition, UpdateComposition updateComposition,
-          GetCompositions getCompositions) {
+          GetCompositions getCompositions, GetCompositionAssets getCompositionAssets) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -64,6 +67,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.saveComposition = saveComposition;
     this.updateComposition = updateComposition;
     this.getCompositions = getCompositions;
+    this.getCompositionAssets = getCompositionAssets;
   }
 
   public void init() {
@@ -167,13 +171,43 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void goToEdit(Project project) {
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> updateComposition.updateComposition(project));
-    galleryProjectListView.navigateTo(EditActivity.class); // TODO(jliarte): 26/07/18 should chain with update? I think not, as projectInstanceCache has been updated
+    galleryProjectListView.showUpdateAssetsProgressDialog();
+    BroadcastReceiver completionReceiver = getCompositionAssets.updateAssetFiles(project,
+            new GetCompositionAssets.UpdateAssetFilesListener() {
+      @Override
+      public void onCompletion() {
+        galleryProjectListView.hideUpdateAssetsProgressDialog();
+        galleryProjectListView.navigateTo(EditActivity.class);
+      }
+
+      @Override
+      public void onProgress(int remaining) {
+        galleryProjectListView.updateUpdateAssetsProgressDialog(remaining);
+        Log.d(LOG_TAG, "Progress updating composition assets, remaining " + remaining);
+      }
+    });
+    galleryProjectListView.registerFileUploadReceiver(completionReceiver);
   }
 
   public void goToShare(Project project) {
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> updateComposition.updateComposition(project));
-    galleryProjectListView.navigateTo(ShareActivity.class); // TODO(jliarte): 26/07/18 should chain with update? I think not, as projectInstanceCache has been updated
+    galleryProjectListView.showUpdateAssetsProgressDialog();
+    BroadcastReceiver completionReceiver = getCompositionAssets.updateAssetFiles(project,
+            new GetCompositionAssets.UpdateAssetFilesListener() {
+              @Override
+              public void onCompletion() {
+                galleryProjectListView.hideUpdateAssetsProgressDialog();
+                galleryProjectListView.navigateTo(ShareActivity.class);
+              }
+
+              @Override
+              public void onProgress(int remaining) {
+                galleryProjectListView.updateUpdateAssetsProgressDialog(remaining);
+                Log.d(LOG_TAG, "Progress updating composition assets, remaining " + remaining);
+              }
+            });
+    galleryProjectListView.registerFileUploadReceiver(completionReceiver);
   }
 
   public void goToDetailProject(Project project) {

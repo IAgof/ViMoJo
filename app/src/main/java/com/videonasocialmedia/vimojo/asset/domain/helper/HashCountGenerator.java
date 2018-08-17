@@ -11,6 +11,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.inject.Inject;
+
 /**
  * Created by jliarte on 23/07/18.
  */
@@ -19,6 +21,10 @@ import java.security.NoSuchAlgorithmException;
  * Generate a MD5 checksum of a given file
  */
 public class HashCountGenerator {
+  @Inject
+  public HashCountGenerator() {
+  }
+
   public String getHash(String mediaPath) {
     File file = new File(mediaPath);
     if (!file.exists()) {

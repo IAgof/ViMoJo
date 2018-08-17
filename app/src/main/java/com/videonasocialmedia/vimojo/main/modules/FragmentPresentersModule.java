@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.SwitchPreference;
@@ -162,6 +163,11 @@ public class FragmentPresentersModule {
   @Provides
   UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
     return new UserAuth0Helper(userApiClient);
+  }
+
+  @Provides
+  DownloadManager provideDownloadManager() {
+    return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
 }

@@ -1,9 +1,12 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
@@ -367,12 +370,12 @@ public class ActivityPresentersModule {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteComposition deleteComposition, SaveComposition saveComposition,
-          UpdateComposition updateComposition, GetCompositions getCompositions) {
+          UpdateComposition updateComposition, GetCompositions getCompositions,
+          GetCompositionAssets getCompositionAssets) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
-            deleteComposition,
-            (ProjectInstanceCache) activity.getApplication(), saveComposition, updateComposition,
-            getCompositions);
+            deleteComposition, (ProjectInstanceCache) activity.getApplication(), saveComposition,
+            updateComposition, getCompositions, getCompositionAssets);
   }
 
   @Provides @PerActivity
@@ -587,5 +590,10 @@ public class ActivityPresentersModule {
   @Provides
   UserAuth0Helper provideUserAuth0Helper(UserApiClient userApiClient) {
     return new UserAuth0Helper(userApiClient);
+  }
+
+  @Provides
+  DownloadManager provideDownloadManager() {
+    return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 }

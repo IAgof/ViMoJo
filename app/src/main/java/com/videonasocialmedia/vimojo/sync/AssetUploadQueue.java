@@ -125,7 +125,7 @@ public class AssetUploadQueue {
           if (BuildConfig.DEBUG) {
             fileNotFoundError.printStackTrace();
           }
-          Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
+          Log.d(LOG_TAG, "File " + element.getPath() + " trying to upload does not exists!");
           removeHeadElement(getQueue());
         }
       }

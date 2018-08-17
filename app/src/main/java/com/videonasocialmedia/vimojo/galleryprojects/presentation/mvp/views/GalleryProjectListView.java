@@ -1,6 +1,8 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views;
 
 
+import android.content.BroadcastReceiver;
+
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
@@ -22,4 +24,12 @@ public interface GalleryProjectListView {
   void showLoading();
 
   void hideLoading();
+
+  void registerFileUploadReceiver(BroadcastReceiver completionReceiver);
+
+  void showUpdateAssetsProgressDialog();
+
+  void hideUpdateAssetsProgressDialog();
+
+  void updateUpdateAssetsProgressDialog(int remaining);
 }

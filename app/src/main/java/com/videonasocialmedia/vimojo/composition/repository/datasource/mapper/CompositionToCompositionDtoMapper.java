@@ -14,11 +14,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.AssetToAssetDtoMapper;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
 import com.videonasocialmedia.vimojo.repository.KarumiMapper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.TrackDto;
 
 import java.util.Date;
@@ -33,13 +35,16 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
  * Class to provide model conversions between {@link Project} and {@link CompositionDto}
  */
 public class CompositionToCompositionDtoMapper extends KarumiMapper<Project, CompositionDto> {
-  // TODO(jliarte): 13/07/18 maybe inject?
-  private TrackToTrackDtoMapper trackToTrackDtoMapper = new TrackToTrackDtoMapper();
+  private TrackToTrackDtoMapper trackToTrackDtoMapper;
+  private AssetToAssetDtoMapper assetToAssetDtoMapper;
   private String rootPath;
   private String privatePath;
 
   @Inject
-  public CompositionToCompositionDtoMapper() {
+  public CompositionToCompositionDtoMapper(TrackToTrackDtoMapper trackToTrackDtoMapper,
+                                           AssetToAssetDtoMapper assetToAssetDtoMapper) {
+    this.trackToTrackDtoMapper = trackToTrackDtoMapper;
+    this.assetToAssetDtoMapper = assetToAssetDtoMapper;
     // TODO(jliarte): 7/08/18 inject to remove Constants dep?
     this.rootPath = com.videonasocialmedia.vimojo.utils.Constants.PATH_APP;
     this.privatePath = com.videonasocialmedia.vimojo.utils.Constants.PATH_APP_ANDROID;
@@ -109,7 +114,19 @@ public class CompositionToCompositionDtoMapper extends KarumiMapper<Project, Com
     project.setWatermarkActivated(compositionDto.isWatermarkActivated());
     project.updateDateOfModification(compositionDto.getModification_date().toString());
     mapCompositionDtoTracks(compositionDto, project);
+    mapCompositionDtoAssets(compositionDto, project);
     return project;
+  }
+
+  private void mapCompositionDtoAssets(CompositionDto compositionDto, Project project) {
+    for (TrackDto trackDto : compositionDto.getTracks()) {
+      for (MediaDto mediaDto : trackDto.getMediaItems()) {
+        if (mediaDto.getAsset() != null) {
+          project.getAssets().put(mediaDto.getId(),
+                  assetToAssetDtoMapper.reverseMap(mediaDto.getAsset()));
+        }
+      }
+    }
   }
 
   private void mapCompositionDtoTracks(CompositionDto compositionDto, Project project) {

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by alvaro on 13/12/16.
@@ -38,7 +39,7 @@ public class DateUtils {
     } catch (ParseException e) {
       // TODO(jliarte): 9/08/18 now try this format (from API?) Thu Aug 09 11:50:24 GMT+02:00 2018
       try {
-        dateFormat = new SimpleDateFormat(API_DATE_FORMAT).parse(date);
+        dateFormat = new SimpleDateFormat(API_DATE_FORMAT, Locale.US).parse(date.replaceAll("CEST", "CST"));
       } catch (ParseException e1) {
         try {
           dateFormat = new SimpleDateFormat(OLD_LOCAL_DATE_FORMAT).parse(date);

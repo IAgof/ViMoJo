@@ -21,6 +21,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
@@ -29,7 +30,9 @@ import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -57,7 +60,7 @@ public class Project implements ElementChangedListener {
   private VMComposition vmComposition;
 
   private String lastModification;
-  
+
   private String uuid = UUID.randomUUID().toString();
 
   private LastVideoExported lastVideoExported;
@@ -76,8 +79,9 @@ public class Project implements ElementChangedListener {
 
   private ProjectInfo projectInfo;
   private DataPersistanceType dataPersistanceType;
+  private final HashMap<String, Asset> assets;
 
-    /**
+  /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
      * @param projectInfo    - Project info.
@@ -95,6 +99,7 @@ public class Project implements ElementChangedListener {
         this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
             File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
       //  createProjectFolders();
+      assets = new HashMap<>();
     }
 
   public Project(Project project) throws IllegalItemOnTrack {
@@ -105,6 +110,7 @@ public class Project implements ElementChangedListener {
     lastModification = project.getLastModification();
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
+    assets = new HashMap<>(project.getAssets());
   }
 
   @NonNull
@@ -314,4 +320,7 @@ public class Project implements ElementChangedListener {
     this.dataPersistanceType = dataPersistanceType;
   }
 
+  public HashMap getAssets() {
+    return assets;
+  }
 }

@@ -52,6 +52,7 @@ public class AssetApiClient extends VimojoApiClient {
   private static final String ASSET_API_KEY_NAME = "name";
   private static final String ASSET_API_KEY_TYPE = "type";
   private static final String ASSET_API_KEY_HASH = "hash";
+  private static final String ASSET_API_KEY_PATH = "path";
   private static final String ASSET_API_KEY_DATE = "date";
   private static final String ASSET_API_MEDIA_ID = "mediaId";
   private static final String ASSET_API_KEY_ID = "id";
@@ -78,6 +79,7 @@ public class AssetApiClient extends VimojoApiClient {
     RequestBody requestBodyName = createPartFromString(asset.getName());
     RequestBody requestBodyType = createPartFromString(asset.getType());
     RequestBody requestBodyHash = createPartFromString(asset.getHash());
+    RequestBody requestBodyPath = createPartFromString(asset.getPath());
     RequestBody requestBodyDate = createPartFromString(asset.getDate());
     RequestBody requestBodyMediaId = createPartFromString(asset.getMediaId());
 
@@ -85,6 +87,7 @@ public class AssetApiClient extends VimojoApiClient {
     requestBodyHashMap.put(ASSET_API_KEY_NAME, requestBodyName);
     requestBodyHashMap.put(ASSET_API_KEY_TYPE, requestBodyType);
     requestBodyHashMap.put(ASSET_API_KEY_HASH, requestBodyHash);
+    requestBodyHashMap.put(ASSET_API_KEY_PATH, requestBodyPath);
     requestBodyHashMap.put(ASSET_API_KEY_DATE, requestBodyDate);
     requestBodyHashMap.put(ASSET_API_MEDIA_ID, requestBodyMediaId);
 
@@ -94,7 +97,7 @@ public class AssetApiClient extends VimojoApiClient {
             .withCreatedBy(asset.getCreatedBy()).build();
     List<AssetDto> exisitingAssets = this.query(accessToken, query);
     if (exisitingAssets.size() == 0) {
-      File file = new File(asset.getMediaPath());
+      File file = new File(asset.getPath());
       RequestBody requestFile = RequestBody.create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
       // MultipartBody.Part is used to send also the actual file name
       body = MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);

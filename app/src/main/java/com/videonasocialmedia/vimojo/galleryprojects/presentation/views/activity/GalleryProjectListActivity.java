@@ -4,8 +4,12 @@ package com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activit
  *
  */
 
+import android.app.DownloadManager;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -38,7 +42,6 @@ import butterknife.OnClick;
 
 public class GalleryProjectListActivity extends VimojoActivity implements GalleryProjectListView,
     GalleryProjectClickListener {
-
   @Inject GalleryProjectListPresenter presenter;
 
   @BindView(R.id.bookloading_view)
@@ -50,6 +53,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   EditText editTextDialog;
 
   private GalleryProjectListAdapter projectAdapter;
+  private BroadcastReceiver completionReceiver;
+  private ProgressDialog updateAssetsProgressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,13 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
     initProjectListRecycler();
+    initUpdateAssetsProgressDialog();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    presenter.updateProjectList();
   }
 
   private void initProjectListRecycler() {
@@ -70,10 +82,25 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     projectList.setAdapter(projectAdapter);
   }
 
+  private void initUpdateAssetsProgressDialog() {
+    updateAssetsProgressDialog = new ProgressDialog(GalleryProjectListActivity.this,
+            R.style.VideonaDialog);
+    updateAssetsProgressDialog.setTitle(R.string.dialog_title_update_assets_progress_dialog);
+    updateAssetsProgressDialog.setMessage(getString(R.string.dialog_message_update_assets_progress_dialog));
+    updateAssetsProgressDialog.setProgressStyle(updateAssetsProgressDialog.STYLE_HORIZONTAL);
+    updateAssetsProgressDialog.setIndeterminate(true);
+    updateAssetsProgressDialog.setProgressNumberFormat(null);
+    updateAssetsProgressDialog.setProgressPercentFormat(null);
+    updateAssetsProgressDialog.setCanceledOnTouchOutside(false);
+    updateAssetsProgressDialog.setCancelable(false);
+  }
+
   @Override
-  public void onResume() {
-    super.onResume();
-    presenter.updateProjectList();
+  protected void onDestroy() {
+    super.onDestroy();
+    if (this.completionReceiver != null) {
+      unregisterReceiver(this.completionReceiver);
+    }
   }
 
   @Override
@@ -108,6 +135,30 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   }
 
   @Override
+  public void registerFileUploadReceiver(BroadcastReceiver completionReceiver) {
+    this.completionReceiver = completionReceiver;
+    registerReceiver(completionReceiver,
+            new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+  }
+
+  @Override
+  public void showUpdateAssetsProgressDialog() {
+    updateAssetsProgressDialog.show();
+  }
+
+  @Override
+  public void hideUpdateAssetsProgressDialog() {
+    updateAssetsProgressDialog.hide();
+  }
+
+  @Override
+  public void updateUpdateAssetsProgressDialog(int remaining) {
+    updateAssetsProgressDialog.setMessage(
+            getString(R.string.dialog_message_update_assets_progress_dialog) + "\n " + remaining + " "
+                    + getString(R.string.update_assets_remaining));
+  }
+
+  @Override
   public void showProjectList(List<Project> projectList) {
     runOnUiThread(() -> {
       projectAdapter.setProjectList(projectList);
@@ -121,7 +172,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     // TODO(jliarte): 20/04/18 review this workflow
     // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
     Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
-    presenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
+    presenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+            drawableFadeTransitionVideo);
     //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }

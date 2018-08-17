@@ -18,6 +18,7 @@ import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetQuery;
 
 import java.io.IOException;
 import java.util.List;
@@ -100,7 +101,7 @@ public class AssetApiDataSource extends ApiDataSource<Asset> {
       // TODO(jliarte): 18/07/18 get project
       assetUploadQueue.addAssetToUpload(asset);
       runSyncAdapterHelper.runNowSyncAdapter();
-      Log.d(LOG_TAG, "addAsset " + asset.getMediaPath());
+      Log.d(LOG_TAG, "addAsset " + asset.getPath());
     } catch (IOException ioException) {
       ioException.printStackTrace();
       Log.d(LOG_TAG, ioException.getMessage());

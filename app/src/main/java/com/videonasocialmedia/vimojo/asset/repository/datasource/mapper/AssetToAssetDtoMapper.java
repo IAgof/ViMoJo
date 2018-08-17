@@ -4,11 +4,17 @@ import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.repository.KarumiMapper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;
 
+import javax.inject.Inject;
+
 /**
  * Created by jliarte on 20/07/18.
  */
 
 public class AssetToAssetDtoMapper extends KarumiMapper<Asset, AssetDto> {
+  @Inject
+  public AssetToAssetDtoMapper() {
+  }
+
   @Override
   public AssetDto map(Asset asset) {
     AssetDto assetDto = new AssetDto();
@@ -16,7 +22,8 @@ public class AssetToAssetDtoMapper extends KarumiMapper<Asset, AssetDto> {
     assetDto.projectId = asset.getProjectId();
     assetDto.uri = asset.getUri();
     assetDto.mimetype = asset.getMimetype();
-    assetDto.filename = asset.getFilename();
+    assetDto.filename = asset.getFileName();
+    assetDto.path = asset.getPath();
     assetDto.type = asset.getType();
     assetDto.date = asset.getDate();
     return assetDto;
@@ -31,6 +38,7 @@ public class AssetToAssetDtoMapper extends KarumiMapper<Asset, AssetDto> {
     asset.type = assetDto.getType();
     asset.hash = assetDto.getHash();
     asset.filename = assetDto.getFilename();
+    asset.path = assetDto.getPath();
     asset.mimetype = assetDto.getMimetype();
     asset.uri = assetDto.getUri();
     asset.projectId = assetDto.getProjectId();

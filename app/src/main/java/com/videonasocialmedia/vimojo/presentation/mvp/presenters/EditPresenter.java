@@ -110,7 +110,7 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                             int sizeOriginalVideoList = videosRetrieved.size();
                             List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
 
-                            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+                            List<Video> videoCopy = new ArrayList<>(videosRetrieved);
 
                             if (sizeOriginalVideoList > checkedVideoList.size()) {
                                 editActivityView.showDialogMediasNotFound();
@@ -193,18 +193,18 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                 // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
-                removeVideoFromProjectUseCase.removeMediaItemsFromProject(
-                        currentProject, mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
-                            @Override
-                            public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
-                                onMediaRemoved(removedMedias);
-                            }
-
-                            @Override
-                            public void onRemoveMediaItemFromTrackError() {
-                                onMediaRemovedError();
-                            }
-                        });
+//                removeVideoFromProjectUseCase.removeMediaItemsFromProject(
+//                        currentProject, mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+//                            @Override
+//                            public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+//                                onMediaRemoved(removedMedias);
+//                            }
+//
+//                            @Override
+//                            public void onRemoveMediaItemFromTrackError() {
+//                                onMediaRemovedError();
+//                            }
+//                        });
                 Log.e(TAG, video.getMediaPath() + " not found!! deleting from project");
             } else {
                 checkedVideoList.add(video);

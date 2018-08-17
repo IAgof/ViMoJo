@@ -23,6 +23,7 @@ public class AssetDto {
   @SerializedName("type") public String type;
   @SerializedName("hash") public String hash;
   @SerializedName("filename") public String filename;
+  @SerializedName("path") public String path;
   @SerializedName("mimetype") public String mimetype;
   @SerializedName("uri") public String uri;
   @SerializedName("projectId") public String projectId;
@@ -53,6 +54,10 @@ public class AssetDto {
 
   public String getFilename() {
     return filename;
+  }
+
+  public String getPath() {
+    return path;
   }
 
   public String getMimetype() {
@@ -103,6 +108,9 @@ public class AssetDto {
             + '\''
             + ", filename='"
             + filename
+            + '\''
+            + ", path='"
+            + path
             + '\''
             + ", mimetype='"
             + mimetype

@@ -36,16 +36,18 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
   private static final String LOG_TAG = CompositionApiDataSource.class.getSimpleName();
   private CompositionApiClient compositionApiClient;
 
-  private final CompositionToCompositionDtoMapper mapper = new CompositionToCompositionDtoMapper();
+  private final CompositionToCompositionDtoMapper mapper;
   private final AssetApiDataSource assetApiDataSource;
 
   @Inject
   public CompositionApiDataSource(CompositionApiClient compositionApiClient,
                                   UserAuth0Helper userAuth0Helper,
-                                  AssetApiDataSource assetApiDataSource, GetUserId getUserId) {
+                                  AssetApiDataSource assetApiDataSource, GetUserId getUserId,
+                                  CompositionToCompositionDtoMapper mapper) {
     super(userAuth0Helper, getUserId);
     this.compositionApiClient = compositionApiClient;
     this.assetApiDataSource = assetApiDataSource;
+    this.mapper = mapper;
   }
 
   @Override

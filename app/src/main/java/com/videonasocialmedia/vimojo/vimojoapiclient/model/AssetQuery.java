@@ -14,15 +14,18 @@ public class AssetQuery {
   private static final String QUERY_ORDER_BY = "orderBy";
   private static final String QUERY_HASH = "hash";
   private static final String QUERY_CREATED_BY = "created_by";
+  private static final String QUERY_COMPOSITION_ID = "compositionId";
 
   private final String orderBy;
   private final String hash;
   private final String createdBy;
+  private final String compositionId;
 
-  public AssetQuery(String orderBy, String hash, String createdBy) {
+  public AssetQuery(String orderBy, String hash, String createdBy, String compositionId) {
     this.orderBy = orderBy;
     this.hash = hash;
     this.createdBy = createdBy;
+    this.compositionId = compositionId;
   }
 
   public Map<String, Object> toMap() {
@@ -48,6 +51,7 @@ public class AssetQuery {
     private boolean orderByAscendant;
     private String hash;
     private String createdBy;
+    private String compositionId;
 
     private Builder() {
     }
@@ -72,10 +76,15 @@ public class AssetQuery {
       return this;
     }
 
+    public Builder withCompositionId(String compositionId) {
+      this.compositionId = compositionId;
+      return this;
+    }
+
     public AssetQuery build() {
       String plainOrderBy = convertOrderBy(orderBy, orderByAscendant);
 
-      return new AssetQuery(plainOrderBy, hash, createdBy);
+      return new AssetQuery(plainOrderBy, hash, createdBy, compositionId);
     }
 
     private String convertOrderBy(String orderBy, boolean ascendant) {
