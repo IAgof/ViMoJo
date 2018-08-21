@@ -8,6 +8,7 @@ import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -84,7 +85,7 @@ public class FragmentPresentersModule {
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, GetAccount getAccount) {
+          UploadDataSource uploadRepository, GetAccount getAccount, UpdateComposition updateComposition) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
@@ -95,7 +96,7 @@ public class FragmentPresentersModule {
             updateIntermediateTemporalFilesTransitionsUseCase,
             updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache, getAccount);
+            uploadRepository, projectInstanceCache, getAccount, updateComposition);
   }
 
   @Provides
@@ -106,12 +107,6 @@ public class FragmentPresentersModule {
   @Provides
   GetPreferencesTransitionFromProjectUseCase provideGetPreferencesTransitionFromProject() {
     return new GetPreferencesTransitionFromProjectUseCase();
-  }
-
-  @Provides
-  UpdateAudioTransitionPreferenceToProjectUseCase provideUpdateAudioTransitionPreference(
-      ProjectRepository projectRepository) {
-    return new UpdateAudioTransitionPreferenceToProjectUseCase(projectRepository);
   }
 
   @Provides

@@ -34,6 +34,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -92,14 +93,15 @@ public class PreferencesPresenter extends VimojoPresenter
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private GetAccount getAccount;
   private Project currentProject;
+  private UpdateComposition updateComposition;
 
   /**
    * Constructor
-   *
-   * @param preferencesView
+   *  @param preferencesView
    * @param context
    * @param sharedPreferences
    * @param userAuth0Helper
+   * @param updateComposition
    */
   public PreferencesPresenter(
           PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
@@ -117,7 +119,7 @@ public class PreferencesPresenter extends VimojoPresenter
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
           UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
-          GetAccount getAccount) {
+          GetAccount getAccount, UpdateComposition updateComposition) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -145,6 +147,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.uploadRepository = uploadRepository;
     this.userAuth0Helper = userAuth0Helper;
     this.getAccount = getAccount;
+    this.updateComposition = updateComposition;
   }
 
   public void updatePresenter(Activity activity) {
@@ -253,6 +256,7 @@ public class PreferencesPresenter extends VimojoPresenter
         boolean dataTransitionAudio = sharedPreferences.getBoolean(key, false);
         updateAudioTransitionPreferenceToProjectUseCase
             .setAudioFadeTransitionActivated(currentProject, dataTransitionAudio);
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
         updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
         break;
       case ConfigPreferences.TRANSITION_VIDEO:
