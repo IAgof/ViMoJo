@@ -413,9 +413,8 @@ public class ActivityPresentersModule {
 
   @Provides
   AddVideoToProjectUseCase provideVideoAdder(
-          ProjectRepository projectRepository,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase) {
-    return new AddVideoToProjectUseCase(projectRepository, launchTranscoderAddAVTransitionUseCase);
+    return new AddVideoToProjectUseCase(launchTranscoderAddAVTransitionUseCase);
   }
 
   @Provides

@@ -6,9 +6,6 @@ package com.videonasocialmedia.vimojo.composition.repository;
 
 import android.util.Log;
 
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;

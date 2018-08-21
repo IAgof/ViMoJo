@@ -276,8 +276,11 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
     @Override
     public void showError(int stringResourceId) {
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, stringResourceId, Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        runOnUiThread(() -> {
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, stringResourceId,
+                    Snackbar.LENGTH_SHORT);
+            snackbar.show();
+        });
     }
 
     @Override

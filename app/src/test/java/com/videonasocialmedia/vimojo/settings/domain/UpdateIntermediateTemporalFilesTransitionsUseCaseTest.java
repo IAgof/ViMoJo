@@ -52,7 +52,7 @@ public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
   @Test
   public void ifProjectHasVideosCallsVideoToRelaunchListener() {
     AddVideoToProjectUseCase addVideoToProjectUseCase =
-            new AddVideoToProjectUseCase(mockedProjectRepository, mockedApplyAVTransitionUseCase);
+            new AddVideoToProjectUseCase(mockedApplyAVTransitionUseCase);
     Video videoAdded = new Video("somepath", 1f);
     videoAdded.setTempPath("tempDirectory");
     addVideoToProjectUseCase.addVideoToProjectAtPosition(currentProject, videoAdded, 0,
