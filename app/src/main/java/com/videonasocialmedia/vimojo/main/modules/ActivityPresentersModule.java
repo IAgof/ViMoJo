@@ -386,10 +386,10 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   DetailProjectPresenter provideDetailProjectPresenter(
-          UserEventTracker userEventTracker, ProjectRepository projectRepository,
-          UpdateComposition updateComposition, SetCompositionInfo setCompositionInfo) {
+          UserEventTracker userEventTracker, UpdateComposition updateComposition,
+          SetCompositionInfo setCompositionInfo) {
     return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
-        userEventTracker, projectRepository, projectInstanceCache, updateComposition,
+        userEventTracker, projectInstanceCache, updateComposition,
             setCompositionInfo);
   }
 

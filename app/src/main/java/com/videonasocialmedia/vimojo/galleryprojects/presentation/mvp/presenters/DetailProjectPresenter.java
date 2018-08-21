@@ -13,7 +13,6 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
@@ -32,7 +31,6 @@ public class DetailProjectPresenter extends VimojoPresenter {
   private final Context context;
   private DetailProjectView detailProjectView;
   private UserEventTracker userEventTracker;
-  private ProjectRepository projectRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private Project currentProject;
   private HashMap<Integer, Boolean> productTypeCheckedIdsMap;
@@ -51,12 +49,11 @@ public class DetailProjectPresenter extends VimojoPresenter {
   @Inject
   public DetailProjectPresenter(
           Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
-          ProjectRepository projectRepository, ProjectInstanceCache projectInstanceCache,
-          UpdateComposition updateComposition, SetCompositionInfo setCompositionInfo) {
+          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+          SetCompositionInfo setCompositionInfo) {
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;
-    this.projectRepository = projectRepository;
     this.projectInstanceCache = projectInstanceCache;
     this.updateComposition = updateComposition;
     this.setCompositionInfo = setCompositionInfo;
