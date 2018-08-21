@@ -160,11 +160,12 @@ public class ActivityPresentersModule {
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
-                  modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase) {
+                  modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
+          UpdateComposition updateComposition) {
     return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase,
-            projectInstanceCache);
+            projectInstanceCache, updateComposition);
   }
 
   @Provides @PerActivity
@@ -517,10 +518,6 @@ public class ActivityPresentersModule {
   @Provides ExportProjectUseCase provideProjectExporter(
           VideoToAdaptDataSource videoToAdaptRepository) {
     return new ExportProjectUseCase(videoToAdaptRepository);
-  }
-
-  @Provides ModifyTrackUseCase providesModifyTrackUseCase(ProjectRepository projectRepository) {
-    return new ModifyTrackUseCase(projectRepository);
   }
 
   @Provides VideoListErrorCheckerDelegate providesVideoListErrorCheckerDelegate() {

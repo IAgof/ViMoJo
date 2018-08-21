@@ -189,18 +189,15 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
     }
 
     private void retrieveVoiceOver() {
-        getAudioFromProjectUseCase.getVoiceOverFromProject(currentProject, new GetMusicFromProjectCallback() {
-            @Override
-            public void onMusicRetrieved(Music voiceOver) {
-                musicDetailView.setVoiceOver(voiceOver);
-            }
-        });
+        getAudioFromProjectUseCase.getVoiceOverFromProject(currentProject,
+                voiceOver -> musicDetailView.setVoiceOver(voiceOver));
     }
 
     public void setVolume(float volume) {
         // Now setVolume update MusicTrackVolume until Vimojo support setVolume by clip.
-        modifyTrackUseCase.setTrackVolume(currentProject, currentProject.getAudioTracks()
+        modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     }
 
     @Override
