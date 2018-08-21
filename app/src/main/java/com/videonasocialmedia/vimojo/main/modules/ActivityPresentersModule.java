@@ -323,19 +323,18 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   ShareVideoPresenter provideVideoSharePresenter(
-      UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
-      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-      ExportProjectUseCase exportProjectUseCase,
-      ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-      GetFtpListUseCase getFtpListUseCase, UploadToPlatform uploadToPlatform,
-      RunSyncAdapterHelper runSyncAdapterHelper,
-      UserAuth0Helper userAuth0Helper) {
+          UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
+          AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+          ExportProjectUseCase exportProjectUseCase,
+          ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+          GetFtpListUseCase getFtpListUseCase, UploadToPlatform uploadToPlatform,
+          RunSyncAdapterHelper runSyncAdapterHelper,
+          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
-            sharedPreferences, createDefaultProjectUseCase, addLastVideoExportedProjectUseCase,
+            sharedPreferences, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
             uploadToPlatform, runSyncAdapterHelper, projectInstanceCache,
-            userAuth0Helper);
+            userAuth0Helper, updateComposition);
   }
 
   @Provides @PerActivity
@@ -462,11 +461,6 @@ public class ActivityPresentersModule {
 
   @Provides GetMediaListFromProjectUseCase provideMediaListRetriever() {
     return new GetMediaListFromProjectUseCase();
-  }
-
-  @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
-          ProjectRepository projectRepository) {
-    return new AddLastVideoExportedToProjectUseCase(projectRepository);
   }
 
   @Provides DuplicateProjectUseCase provideDuplicateProject() {

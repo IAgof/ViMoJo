@@ -67,12 +67,6 @@ public class ProjectRealmDataSource implements DataSource<Project> {
     instance.close();
   }
 
-  public void updateWithDate(final Project item, String date) {
-    // TODO(jliarte): 10/08/18 date is not used!!
-    Realm.getDefaultInstance().executeTransaction(
-            realm -> realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item)));
-  }
-
   @Override
   public void remove(final Project item) {
     removeAllProjectTracks(item);

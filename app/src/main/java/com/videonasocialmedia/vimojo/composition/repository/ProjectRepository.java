@@ -119,11 +119,6 @@ public class ProjectRepository extends VimojoRepository<Project> {
     return Collections.min(projects, dateComparatorDescending);
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateWithDate(Project item, String date) {
-    this.projectRealmDataSource.updateWithDate(item, date);
-  }
-
   public Project getLastModifiedProject() {
     return this.projectRealmDataSource.getLastModifiedProject();
   }

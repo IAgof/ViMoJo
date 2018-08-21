@@ -116,10 +116,10 @@ public class ShareVideoPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
                 mockedShareVideoView, userEventTracker, mockedSharedPreferences,
-                mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
+                mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
                 mockedUploadToPlatform, mockedRunSyncAdapterHelper, mockedProjectInstanceCache,
-                mockedUserAuth0Helper);
+                mockedUserAuth0Helper, updateComposition);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -387,11 +387,11 @@ public class ShareVideoPresenterTest {
     private ShareVideoPresenter getShareVideoPresenter() {
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
             mockedShareVideoView, mockedUserEventTracker,
-            mockedSharedPreferences, mockedCreateDefaultProjectUseCase,
+            mockedSharedPreferences,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase,
             mockedUploadToPlatform, mockedRunSyncAdapterHelper,
-            mockedProjectInstanceCache, mockedUserAuth0Helper);
+            mockedProjectInstanceCache, mockedUserAuth0Helper, updateComposition);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }
