@@ -263,6 +263,7 @@ public class PreferencesPresenter extends VimojoPresenter
         boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
         updateVideoTransitionPreferenceToProjectUseCase
             .setVideoFadeTransitionActivated(currentProject, dataTransitionVideo);
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
         updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
         break;
       case ConfigPreferences.WATERMARK:

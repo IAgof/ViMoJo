@@ -110,12 +110,6 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UpdateVideoTransitionPreferenceToProjectUseCase provideUpdateVideoTransitionPreference(
-      ProjectRepository projectRepository) {
-    return new UpdateVideoTransitionPreferenceToProjectUseCase(projectRepository);
-  }
-
-  @Provides
   UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions() {
     return new UpdateIntermediateTemporalFilesTransitionsUseCase();
   }
