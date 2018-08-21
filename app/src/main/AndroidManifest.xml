@@ -193,6 +193,7 @@
 
         <activity
         android:name=".share.presentation.views.activity.ShareActivity"
+        android:process=":renderer"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:screenOrientation="sensorPortrait"
@@ -242,6 +243,7 @@
 
         <activity
         android:name=".trim.presentation.views.activity.VideoTrimActivity"
+        android:process=":editor"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
@@ -249,6 +251,7 @@
 
         <activity
         android:name=".split.presentation.views.activity.VideoSplitActivity"
+        android:process=":editor"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:screenOrientation="portrait"
@@ -256,6 +259,7 @@
 
         <activity
             android:name=".text.presentation.views.activity.VideoEditTextActivity"
+            android:process=":editor"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -263,6 +267,7 @@
 
         <activity
             android:name=".presentation.views.activity.VideoDuplicateActivity"
+            android:process=":editor"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -292,20 +297,23 @@
 
         <activity
             android:name=".sound.presentation.views.activity.MusicListActivity"
+            android:process=":editor"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:parentActivityName=".sound.presentation.views.activity.SoundActivity"/>
 
         <activity
-        android:name=".sound.presentation.views.activity.MusicDetailActivity"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:screenOrientation="portrait"
-        android:parentActivityName=".sound.presentation.views.activity.MusicListActivity"/>
+            android:name=".sound.presentation.views.activity.MusicDetailActivity"
+            android:process=":editor"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".sound.presentation.views.activity.MusicListActivity"/>
 
         <activity
             android:name=".sound.presentation.views.activity.VoiceOverRecordActivity"
+            android:process=":editor"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -313,6 +321,7 @@
 
         <activity
             android:name=".sound.presentation.views.activity.VoiceOverVolumeActivity"
+            android:process=":editor"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
