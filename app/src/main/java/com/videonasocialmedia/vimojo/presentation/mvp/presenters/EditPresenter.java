@@ -46,8 +46,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-public class EditPresenter extends VimojoPresenter implements OnAddMediaFinishedListener,
-        ElementChangedListener {
+public class EditPresenter extends VimojoPresenter implements ElementChangedListener {
     private static final String LOG_TAG = EditPresenter.class.getSimpleName();
     private final String TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
@@ -109,9 +108,7 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                         public void onVideosRetrieved(List<Video> videosRetrieved) {
                             int sizeOriginalVideoList = videosRetrieved.size();
                             List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-
                             List<Video> videoCopy = new ArrayList<>(videosRetrieved);
-
                             if (sizeOriginalVideoList > checkedVideoList.size()) {
                                 editActivityView.showDialogMediasNotFound();
                             }
@@ -173,16 +170,6 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                 editActivityView.updatePlayerVideoListChanged();
             }
         });
-    }
-
-    @Override
-    public void onAddMediaItemToTrackError() {
-        //TODO modify error message
-        editActivityView.showError(R.string.addMediaItemToTrackError);
-    }
-
-    @Override
-    public void onAddMediaItemToTrackSuccess(Media media) {
     }
 
     private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoList) {

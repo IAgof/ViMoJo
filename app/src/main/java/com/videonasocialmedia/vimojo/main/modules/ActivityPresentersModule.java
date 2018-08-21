@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionInfo;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
@@ -380,9 +381,11 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   DetailProjectPresenter provideDetailProjectPresenter(
-          UserEventTracker userEventTracker, ProjectRepository projectRepository) {
+          UserEventTracker userEventTracker, ProjectRepository projectRepository,
+          UpdateComposition updateComposition, SetCompositionInfo setCompositionInfo) {
     return new DetailProjectPresenter(activity, (DetailProjectActivity) activity,
-        userEventTracker, projectRepository, projectInstanceCache);
+        userEventTracker, projectRepository, projectInstanceCache, updateComposition,
+            setCompositionInfo);
   }
 
   @Provides @PerActivity

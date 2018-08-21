@@ -18,7 +18,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
@@ -450,8 +449,6 @@ public class EditorPresenter extends VimojoPresenter
   public void updateTitleCurrentProject(String title) {
     ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.setProjectInfo(currentProject, projectInfo.getTitle(), projectInfo.getDescription(),
-        projectInfo.getProductTypeList());
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 }

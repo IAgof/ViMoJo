@@ -77,6 +77,7 @@ public class AddVideoToProjectUseCase {
                 mediaTrack.insertItem(video);
                 checkIfVideoNeedAVTransitionTempFile(video, currentProject);
             }
+            new ReorderProjectVideoListUseCase().reorderVideoList(currentProject);
             listener.onAddMediaItemToTrackSuccess(null);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();

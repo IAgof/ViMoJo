@@ -87,7 +87,7 @@ public class DetailProjectPresenterTest {
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
     return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
-        mockedProjectRepo, mockedProjectInstanceCache);
+        mockedProjectRepo, mockedProjectInstanceCache, updateComposition, setCompositionInfo);
   }
 
   private void getAProject() {

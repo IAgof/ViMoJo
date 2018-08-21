@@ -73,7 +73,7 @@ public class AssetUploadQueue {
       Crashlytics.log("Error creating queue video to upload");
       Crashlytics.logException(ioException);
     }
-    Log.d(LOG_TAG, "...returned queue");
+    Log.d(LOG_TAG, "...returned queue of size " + assetUploadObjectQueue.size());
     return assetUploadObjectQueue;
   }
 

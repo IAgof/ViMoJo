@@ -118,9 +118,19 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
 
   public void deleteLocalProject(Project project) {
     // TODO(jliarte): 10/08/18 only local
-    deleteComposition.deleteOnlyLocal(project);
-    updateCurrentProjectInstance();
-    updateProjectList();
+    Futures.addCallback(executeUseCaseCall(() -> deleteComposition.deleteOnlyLocal(project)),
+            new FutureCallback<Object>() {
+      @Override
+      public void onSuccess(@Nullable Object result) {
+        updateCurrentProjectInstance();
+        updateProjectList();
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        updateProjectList();
+      }
+    });
   }
 
 

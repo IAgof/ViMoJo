@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.helper.HashCountGenerator;
@@ -29,6 +30,7 @@ import javax.inject.Inject;
  * Use Case for retrieving asset files from backend.
  */
 public class GetCompositionAssets {
+  private static final String LOG_TAG = GetCompositionAssets.class.getSimpleName();
   private AssetRepository assetRepository;
   private HashCountGenerator hashCountGenerator;
   private DownloadManager downloadManager;
@@ -50,7 +52,7 @@ public class GetCompositionAssets {
 
   public BroadcastReceiver updateAssetFiles(Project project, UpdateAssetFilesListener listener) {
     this.listener = listener;
-    if (project.getDataPersistanceType() == DataPersistanceType.API) {
+    if (project.getDataPersistanceType() != DataPersistanceType.LOCAL) {
       ArrayList<Asset> assets = new ArrayList<Asset>(project.getAssets().values());
       for (Asset asset : assets) {
         updateAssetFile(asset);
@@ -115,6 +117,8 @@ public class GetCompositionAssets {
 //        FileUtils.move(asset.getTmpFile(), compositionPath + "/" + asset.getFileName())
         if (asset != null) {
           FileUtils.move(asset.getTmpFile(), asset.getPath());
+          Log.d(LOG_TAG, "onComplete ref " + referenceId + " asset is null. DownloadRefs.size" +
+                  " is " + downloadRefs.size() + " this " + this);
         }
 
         if (downloadRefs.isEmpty()) {

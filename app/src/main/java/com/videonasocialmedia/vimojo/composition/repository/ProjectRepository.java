@@ -66,6 +66,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   @Override
   public void update(Project item) {
+    item.updateDateOfModification(DateUtils.getDateRightNow());
     this.projectRealmDataSource.update(item);
     this.compositionApiDataSource.update(item);
   }
@@ -115,7 +116,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
     ArrayList<Project> projects = new ArrayList<>(2);
     projects.add(realmProject);
     projects.add(apiComposition);
-    return Collections.max(projects, dateComparatorDescending);
+    return Collections.min(projects, dateComparatorDescending);
   }
 
   // TODO(jliarte): 11/07/18 this is a use case!
@@ -179,10 +180,4 @@ public class ProjectRepository extends VimojoRepository<Project> {
     this.projectRealmDataSource.setWatermarkActivated(project, isChecked);
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void setProjectInfo(Project project, String projectTitle, String projectDescription,
-                             List<String> productTypesListSelected) {
-    this.projectRealmDataSource.setProjectInfo(project, projectTitle, projectDescription,
-            productTypesListSelected);
-  }
 }

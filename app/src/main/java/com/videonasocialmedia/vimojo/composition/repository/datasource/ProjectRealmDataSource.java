@@ -61,7 +61,6 @@ public class ProjectRealmDataSource implements DataSource<Project> {
 
   @Override
   public void update(final Project item) {
-    item.updateDateOfModification(DateUtils.getDateRightNow());
     Realm instance = Realm.getDefaultInstance();
     instance.executeTransactionAsync(
             realm -> realm.copyToRealmOrUpdate(toRealmProjectMapper.map(item)));
@@ -174,16 +173,6 @@ public class ProjectRealmDataSource implements DataSource<Project> {
   // TODO(jliarte): 11/07/18 this is a use case!
   public void setWatermarkActivated(Project project, boolean watermarkActivated) {
     project.setWatermarkActivated(watermarkActivated);
-    update(project);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void setProjectInfo(Project project, String projectTitle, String projectDescription,
-                             List<String> productTypesListSelected) {
-    ProjectInfo projectInfo = project.getProjectInfo();
-    projectInfo.setTitle(projectTitle);
-    projectInfo.setDescription(projectDescription);
-    projectInfo.setProductTypeList(productTypesListSelected);
     update(project);
   }
 
