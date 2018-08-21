@@ -221,16 +221,13 @@ public class EditorPresenter extends VimojoPresenter
             });
   }
 
-  private ListenableFuture<Object> setNewProject(String rootPath, String privatePath,
-                                                 Drawable drawableFadeTransitionVideo) {
+  private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
+                                            Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             getPreferenceWaterMark(), drawableFadeTransitionVideo);
     projectInstanceCache.setCurrentProject(project);
     // TODO(jliarte): 11/07/18 change to runnable
-    return executeUseCaseCall(() -> {
-      saveComposition.saveComposition(project);
-      return null;
-    });
+    return executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
