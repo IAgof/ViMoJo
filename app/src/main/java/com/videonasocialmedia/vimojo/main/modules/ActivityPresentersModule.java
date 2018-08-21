@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionInfo;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -80,7 +81,6 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.presentation.mvp.presenters.VimojoStorePresenter;
 import com.videonasocialmedia.vimojo.store.presentation.mvp.views.VimojoStoreView;
@@ -354,15 +354,16 @@ public class ActivityPresentersModule {
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository, NewClipImporter newClipImporter,
-          BillingManager billingManager, SaveComposition saveComposition,
-          UpdateComposition updateComposition, RemoveMedia removeMedia) {
+          NewClipImporter newClipImporter, BillingManager billingManager,
+          SaveComposition saveComposition, UpdateComposition updateComposition,
+          RemoveMedia removeMedia, UpdateCompositionWatermark updateWatermark) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
             getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            relaunchTranscoderTempBackgroundUseCase, projectRepository, newClipImporter,
-            billingManager, projectInstanceCache, saveComposition, updateComposition, removeMedia);
+            relaunchTranscoderTempBackgroundUseCase, newClipImporter,
+            billingManager, projectInstanceCache, saveComposition, removeMedia,
+            updateWatermark, updateComposition);
   }
 
   @Provides @PerActivity
@@ -461,12 +462,6 @@ public class ActivityPresentersModule {
   @Provides AddLastVideoExportedToProjectUseCase provideLastVideoExporterAdded(
           ProjectRepository projectRepository) {
     return new AddLastVideoExportedToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkProject(
-          ProjectRepository projectRepository) {
-    return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
   @Provides DuplicateProjectUseCase provideDuplicateProject() {

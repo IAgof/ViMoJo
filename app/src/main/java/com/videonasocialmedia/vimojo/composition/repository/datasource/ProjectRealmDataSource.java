@@ -170,10 +170,4 @@ public class ProjectRealmDataSource implements DataSource<Project> {
     update(project);
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void setWatermarkActivated(Project project, boolean watermarkActivated) {
-    project.setWatermarkActivated(watermarkActivated);
-    update(project);
-  }
-
 }

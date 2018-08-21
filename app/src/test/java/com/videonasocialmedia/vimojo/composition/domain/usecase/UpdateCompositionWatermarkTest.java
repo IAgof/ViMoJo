@@ -1,4 +1,4 @@
-package com.videonasocialmedia.vimojo.settings.domain;
+package com.videonasocialmedia.vimojo.composition.domain.usecase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -27,12 +26,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by alvaro on 28/02/17.
  */
 
-public class UpdateWatermarkPreferenceToProjectUseCaseTest {
+public class UpdateCompositionWatermarkTest {
 
   @Mock
   ProjectRepository mockedProjectRepository;
   @InjectMocks
-  UpdateWatermarkPreferenceToProjectUseCase injectedUseCase;
+  UpdateCompositionWatermark injectedUseCase;
   private Project currentProject;
 
   @Before
@@ -44,7 +43,7 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
 
   @Test
   public void updateWatermarkPreferenceCallsUpdateRepository(){
-    injectedUseCase.setWatermarkActivated(currentProject, true);
+    injectedUseCase.updateCompositionWatermark(currentProject, true);
     verify(mockedProjectRepository).update(currentProject);
   }
 
@@ -54,7 +53,7 @@ public class UpdateWatermarkPreferenceToProjectUseCaseTest {
         CoreMatchers.is(false));
     boolean activateWatermark = true;
 
-    injectedUseCase.setWatermarkActivated(currentProject, activateWatermark);
+    injectedUseCase.updateCompositionWatermark(currentProject, activateWatermark);
 
     assertThat("UseCase update Watermark ", currentProject.hasWatermark(),
         CoreMatchers.is(activateWatermark));

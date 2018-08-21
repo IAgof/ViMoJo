@@ -175,9 +175,4 @@ public class ProjectRepository extends VimojoRepository<Project> {
     this.projectRealmDataSource.updateQuality(project, videoQuality);
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void setWatermarkActivated(Project project, boolean isChecked) {
-    this.projectRealmDataSource.setWatermarkActivated(project, isChecked);
-  }
-
 }
