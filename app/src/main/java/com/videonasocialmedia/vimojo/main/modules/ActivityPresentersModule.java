@@ -13,7 +13,10 @@ import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionInfo;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQuality;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
@@ -232,10 +235,14 @@ public class ActivityPresentersModule {
   CameraSettingsPresenter provideCameraSettingPresenter(
           UserEventTracker userEventTracker,
           GetCameraSettingsMapperSupportedListUseCase getCameraSettingsMapperSupportedListUseCase,
-          CameraSettingsDataSource cameraSettingsRepository, ProjectRepository projectRepository) {
+          CameraSettingsDataSource cameraSettingsRepository,
+          SetCompositionQuality setCompositionQuality, UpdateComposition updateComposition,
+          SetCompositionFrameRate setCompositionFrameRate,
+          SetCompositionResolution setCompositionResolution) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
-        getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository, projectRepository,
-            projectInstanceCache);
+        getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository,
+            updateComposition, projectInstanceCache, setCompositionQuality, setCompositionFrameRate,
+            setCompositionResolution);
   }
 
   @Provides @PerActivity
@@ -263,13 +270,11 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   GalleryPagerPresenter provideGalleryPagerPresenter(
           AddVideoToProjectUseCase addVideoToProjectUseCase,
-          ApplyAVTransitionsUseCase applyAVTransitionsUseCase, ProjectRepository projectRepository,
-          SharedPreferences sharedPreferences, VideoDataSource videoRepository,
-          UpdateComposition updateComposition) {
+          ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences sharedPreferences,
+          UpdateComposition updateComposition, SetCompositionResolution setCompositionResolution) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
-            applyAVTransitionsUseCase,
-            projectRepository, videoRepository, sharedPreferences, projectInstanceCache,
-            updateComposition);
+            applyAVTransitionsUseCase, sharedPreferences, projectInstanceCache, updateComposition,
+            setCompositionResolution);
   }
 
  /* @Provides @PerActivity

@@ -152,22 +152,4 @@ public class ProjectRealmDataSource implements DataSource<Project> {
     return projectList;
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateResolution(Project project, VideoResolution.Resolution videoResolution) {
-    project.getProfile().setResolution(videoResolution);
-    update(project);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
-    project.getProfile().setFrameRate(videoFrameRate);
-    update(project);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateQuality(Project project, VideoQuality.Quality videoQuality) {
-    project.getProfile().setQuality(videoQuality);
-    update(project);
-  }
-
 }

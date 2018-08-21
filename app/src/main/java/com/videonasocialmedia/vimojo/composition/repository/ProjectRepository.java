@@ -160,19 +160,4 @@ public class ProjectRepository extends VimojoRepository<Project> {
     return list;
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateResolution(Project project, VideoResolution.Resolution videoResolution) {
-    this.projectRealmDataSource.updateResolution(project, videoResolution);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
-    this.projectRealmDataSource.updateFrameRate(project, videoFrameRate);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateQuality(Project project, VideoQuality.Quality videoQuality) {
-    this.projectRealmDataSource.updateQuality(project, videoQuality);
-  }
-
 }

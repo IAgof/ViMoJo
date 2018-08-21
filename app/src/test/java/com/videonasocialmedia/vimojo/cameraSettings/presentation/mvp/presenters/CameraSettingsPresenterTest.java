@@ -73,7 +73,7 @@ public class CameraSettingsPresenterTest {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
-            mockedCameraSettingsRepository, mockedProjectRepository, mockedProjectInstanceCache);
+            mockedCameraSettingsRepository, updateComposition, mockedProjectInstanceCache, setCompositionQuality, setCompositionFrameRate, setCompositionResolution);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -139,7 +139,7 @@ public class CameraSettingsPresenterTest {
   private CameraSettingsPresenter getCameraSettingsPresenter() {
     CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(mockedCameraSettingsListView,
         mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
-        mockedProjectRepository, mockedProjectInstanceCache);
+            updateComposition, mockedProjectInstanceCache, setCompositionQuality, setCompositionFrameRate, setCompositionResolution);
     cameraSettingsPresenter.currentProject = currentProject;
     return cameraSettingsPresenter;
   }

@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
@@ -27,8 +28,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
@@ -50,15 +49,14 @@ public class GalleryPagerPresenter extends VimojoPresenter
     protected Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
-    private final VideoDataSource videoRepository;
     private final ProjectInstanceCache projectInstanceCache;
     private boolean differentVideoFormat;
 
     private final ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
-    private final ProjectRepository projectRepository;
     private final UpdateComposition updateComposition;
+    private SetCompositionResolution setCompositionResolution;
 
     /**
      * Constructor.
@@ -66,17 +64,15 @@ public class GalleryPagerPresenter extends VimojoPresenter
     @Inject public GalleryPagerPresenter(
             GalleryPagerView galleryPagerView, Context context,
             AddVideoToProjectUseCase addVideoToProjectUseCase,
-            ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-            ProjectRepository projectRepository,
-            VideoDataSource videoRepository, SharedPreferences preferences,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            SetCompositionResolution setCompositionResolution) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
-        this.projectRepository = projectRepository;
-        this.videoRepository = videoRepository;
         this.preferences = preferences;
+        this.setCompositionResolution = setCompositionResolution;
         // TODO(jliarte): 23/04/18 inject this dependency? maybe abstracting from android with an interface
         metadataRetriever = new MediaMetadataRetriever();
         this.projectInstanceCache = projectInstanceCache;
@@ -189,12 +185,12 @@ public class GalleryPagerPresenter extends VimojoPresenter
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
             if (resolutionForWidth != null) {
-                // TODO(jliarte): 11/07/18 this is a use case!
-                projectRepository.updateResolution(currentProject, resolutionForWidth);
+                setCompositionResolution.setResolution(currentProject, resolutionForWidth);
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                         getPreferenceResolutionForWidth(videoWidth));
-                preferencesEditor.commit();
+                preferencesEditor.apply();
             }
         }
     }
