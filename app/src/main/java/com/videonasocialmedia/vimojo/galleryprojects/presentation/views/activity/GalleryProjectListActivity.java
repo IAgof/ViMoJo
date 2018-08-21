@@ -174,7 +174,6 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
     presenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
             drawableFadeTransitionVideo);
-    //presenter.updateProjectList();
     navigateTo(GoToRecordOrGalleryActivity.class);
   }
 

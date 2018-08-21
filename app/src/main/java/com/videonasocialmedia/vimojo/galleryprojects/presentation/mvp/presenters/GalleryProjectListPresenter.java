@@ -79,9 +79,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     try {
       Project newProject = duplicateProjectUseCase.duplicate(project);
       // TODO(jliarte): 11/07/18 change to runnable
-      Futures.addCallback(executeUseCaseCall(() -> {
-        saveComposition.saveComposition(newProject);
-      }), new FutureCallback<Object>() {
+      Futures.addCallback(executeUseCaseCall(() -> saveComposition.saveComposition(newProject)),
+              new FutureCallback<Object>() {
         @Override
         public void onSuccess(@Nullable Object result) {
           updateProjectList();
@@ -101,7 +100,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
 
   public void deleteProject(Project project) {
     // TODO(jliarte): 10/08/18 from both
-    Futures.addCallback(executeUseCaseCall(() -> deleteComposition.delete(project)), new FutureCallback<Object>() {
+    Futures.addCallback(executeUseCaseCall(() -> deleteComposition.delete(project)),
+            new FutureCallback<Object>() {
       @Override
       public void onSuccess(@Nullable Object result) {
         updateCurrentProjectInstance();
@@ -170,8 +170,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             isWatermarkActivated(), drawableFadeTransitionVideo);
     projectInstanceCache.setCurrentProject(project);
-    // TODO(jliarte): 11/07/18 move call to background
-    saveComposition.saveComposition(project);
+    executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 
   private boolean isWatermarkActivated() {
