@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -39,6 +40,7 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
@@ -112,6 +114,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
         presenter.updatePresenter();
         clipText.requestFocus();
         showKeyboard();
@@ -206,8 +211,16 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     private void createDrawableFromText(String text, TextEffect.TextPosition textPosition) {
         text = getTextFromEditText();
-        presenter.createDrawableWithText(text, textPosition.name(), Constants.DEFAULT_VIMOJO_WIDTH,
-            Constants.DEFAULT_VIMOJO_HEIGHT);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            if (videonaPlayer.getWidth() > 0) {
+                presenter.createDrawableWithText(text, textPosition.name(),
+                    videonaPlayer.getVideoPreview().getWidth(),
+                    videonaPlayer.getVideoPreview().getHeight());
+            }
+        } else {
+            presenter.createDrawableWithText(text, textPosition.name(),
+                Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        }
     }
 
     @NonNull
@@ -321,7 +334,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         }
         TextEffect.TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
         paintPositionEditText(positionText);
-        createDrawableFromText(typedText, positionText);
+        if (videonaPlayer != null) {
+            createDrawableFromText(typedText, positionText);
+        }
     }
 
     @Override

@@ -46,6 +46,8 @@ import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 
 public class VimojoApplication extends Application implements ProjectInstanceCache {
@@ -163,8 +165,13 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     public VimojoApplicationModule getVimojoApplicationModule() {
+        int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
+        }
         if (vimojoApplicationModule == null) {
-            vimojoApplicationModule = new VimojoApplicationModule(this);
+            vimojoApplicationModule = new VimojoApplicationModule(this,
+                defaultCameraIdSelected);
         }
         return vimojoApplicationModule;
     }
@@ -214,7 +221,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
-                    drawableFadeTransitionVideo);
+                    drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
             projectRepository.add(project);
             return project;
         } else {

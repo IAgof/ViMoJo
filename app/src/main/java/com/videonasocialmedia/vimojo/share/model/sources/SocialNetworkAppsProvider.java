@@ -52,8 +52,13 @@ public class SocialNetworkAppsProvider {
                         activityName, icon, "#videona");
             } else if (packageName.toLowerCase().contains("instagram")
                     || activityName.toLowerCase().contains("instagram")) {
-                socialNetwork = new SocialNetwork("Instagram","Instagram", packageName,
+                if (activityName.equals("com.instagram.share.handleractivity.StoryShareHandlerActivity")) {
+                    socialNetwork = new SocialNetwork("Instagram", "Instagram Stories", packageName,
                         activityName, icon, "#videona");
+                } else {
+                    socialNetwork = new SocialNetwork("Instagram", "Instagram", packageName,
+                        activityName, icon, "#videona");
+                }
             } else {
                 socialNetwork = new SocialNetwork("Generic","Generic", packageName,
                         activityName, icon, "");

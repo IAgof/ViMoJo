@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="4dp"
     android:layout_marginRight="16dp"
@@ -22,8 +22,8 @@
 
         <ImageView
             android:id="@+id/music_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/sound_list_item_view_holder_size_thumb"
+            android:layout_height="@dimen/sound_list_item_view_holder_size_thumb"
             android:layout_centerVertical="true"
             android:layout_margin="8dp"
             tools:src="@drawable/fragment_gallery_no_image"/>

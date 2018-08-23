@@ -432,19 +432,19 @@ public class Utils {
     public static VideoResolution.Resolution getResolutionFromItemName(Context context,
                                                                       String resolution) {
         if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
-                return VideoResolution.Resolution.HD720;
+                return VideoResolution.Resolution.H_720P;
             }
 
         if (resolution.compareTo(context.getString(R.string.good_resolution_name)) == 0) {
-            return VideoResolution.Resolution.HD1080;
+            return VideoResolution.Resolution.H_1080P;
         }
 
         if (resolution.compareTo(context.getString(R.string.high_resolution_name)) == 0) {
-            return VideoResolution.Resolution.HD4K;
+            return VideoResolution.Resolution.H_4K;
         }
 
         // default
-        return VideoResolution.Resolution.HD720;
+        return VideoResolution.Resolution.H_720P;
     }
 
     public static VideoQuality.Quality getQualityFromItemName(Context context,
@@ -606,6 +606,13 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static String capitalizeFirstLetter(String original) {
+        if (original == null || original.length() == 0) {
+            return original;
+        }
+        return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
 }

@@ -42,11 +42,11 @@ public class CreateDefaultProjectUseCase {
    * @return created project instance
    */
   public Project createProject(String rootPath, String privatePath, boolean isWatermarkFeatured,
-                               Drawable drawableFadeTransitionVideo) {
+                               Drawable drawableFadeTransitionVideo, boolean isVerticalMode) {
     ProjectInfo projectInfo = new ProjectInfo(DateUtils.getDateRightNow(), "",
             new ArrayList<>());
     Project currentProject = new Project(projectInfo, rootPath, privatePath,
-            profileRepository.getCurrentProfile());
+            profileRepository.getCurrentProfile(isVerticalMode));
     if (isWatermarkFeatured) {
       currentProject.setWatermarkActivated(true);
     }

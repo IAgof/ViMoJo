@@ -25,7 +25,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
-import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -202,7 +201,7 @@ public class TrimPreviewPresenterTest {
     }
 
     private void setAProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

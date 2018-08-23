@@ -158,6 +158,15 @@ public class PreferencesPresenter extends VimojoPresenter
     checkAvailablePreferences();
     checkVimojoStore(activity);
     setupUserAuthPreference();
+    setupMoreApps();
+  }
+
+  private void setupMoreApps() {
+    if (BuildConfig.FEATURE_SHOW_MORE_APPS) {
+      preferencesView.showMoreAppsSection();
+    } else {
+      preferencesView.hideMoreAppsSection();
+    }
   }
 
   public void pausePresenter() {

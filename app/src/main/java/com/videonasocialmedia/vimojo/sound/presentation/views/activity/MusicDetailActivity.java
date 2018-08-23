@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -35,6 +36,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
+
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
@@ -92,6 +95,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
             //TODO show snackbar with error message
         }
         presenter.updatePresenter(musicPath);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
     }
 
     @Override

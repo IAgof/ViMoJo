@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 
@@ -24,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -37,6 +36,7 @@ public class InitAppPresenterTest {
   @Mock CreateDefaultProjectUseCase mockedUseCase;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Context mockedContext;
+  @Mock InitAppView mockedInitAppView;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock CameraSettingsRepository mockedCameraSettingsRepository;
   @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
@@ -61,13 +61,13 @@ public class InitAppPresenterTest {
   }
 
   private InitAppPresenter getInitAppPresenter() {
-    return new InitAppPresenter(mockedContext, mockedSharedPreferences, mockedUseCase,
-        mockedCameraSettingsRepository, mockedRunSyncAdapterHelper, mockedProjectRepository,
-        mockedProjectInstanceCache);
+    return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
+        mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
+        mockedProjectRepository, mockedProjectInstanceCache);
   }
 
   public void getAProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+    Profile profile = new Profile(VideoResolution.Resolution.H_720P, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

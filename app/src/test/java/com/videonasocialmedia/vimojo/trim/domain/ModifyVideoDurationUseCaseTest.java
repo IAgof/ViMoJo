@@ -185,7 +185,7 @@ public class ModifyVideoDurationUseCaseTest {
   }
 
   private void getAProject() {
-    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.H_720P,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
   }
 

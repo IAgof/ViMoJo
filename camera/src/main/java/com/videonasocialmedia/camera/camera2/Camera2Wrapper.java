@@ -662,8 +662,10 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
         }
       }, backgroundHandler);
     } catch (CameraAccessException e) {
+      Log.e(LOG_TAG, "CameraAccessException " + e.getMessage());
       e.printStackTrace();
     } catch (IOException e) {
+      Log.e(LOG_TAG, "IOException setUpMediaRecorder " + e.getMessage());
       e.printStackTrace();
     } finally {
       initializingRecorder = false;
@@ -767,6 +769,9 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
   /********* end of Zoom component ********/
 
   public int getRotation() {
+    if (rotation == Surface.ROTATION_0) {
+      return getVerticalNormalRotation();
+    }
     if (rotation == Surface.ROTATION_270) {
       if (sensorOrientation == 90) {
         return getInverseRotation();
@@ -790,11 +795,27 @@ public class Camera2Wrapper implements TextureView.SurfaceTextureListener {
     }
   }
 
+  private int getVerticalInverseRotation() {
+    if (cameraIdSelected == CAMERA_ID_REAR) {
+      return 90;
+    } else {
+      return 270;
+    }
+  }
+
   private int getNormalRotation() {
     if (cameraIdSelected == CAMERA_ID_REAR) {
       return 0;
     } else {
       return 180;
+    }
+  }
+
+  private int getVerticalNormalRotation() {
+    if (cameraIdSelected == CAMERA_ID_REAR) {
+      return 90;
+    } else {
+      return 270;
     }
   }
 

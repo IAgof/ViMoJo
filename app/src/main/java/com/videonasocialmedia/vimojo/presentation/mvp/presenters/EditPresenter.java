@@ -18,6 +18,7 @@ import android.util.TypedValue;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -110,6 +111,9 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                             editActivityView.updateVideoList(videoCopy);
                             videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
                                     checkedVideoList, videoTranscodingErrorNotifier);
+                            if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+                                editActivityView.disableEditTextAction();
+                            }
                         }
 
                         @Override

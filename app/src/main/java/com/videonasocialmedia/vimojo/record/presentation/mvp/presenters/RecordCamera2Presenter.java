@@ -53,6 +53,12 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_1080;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_2160;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_1080;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_2160;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
 import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.DEFAULT_AUDIO_GAIN;
 import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.GRID_MODE_CROSSES;
 import static com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity.GRID_MODE_FIBONACCI;
@@ -137,19 +143,46 @@ public class RecordCamera2Presenter implements Camera2WrapperListener {
   }
 
   public void initViews() {
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      recordView.screenOrientationPortrait();
+    } else {
+      recordView.screenOrientationLandscape();
+    }
     cameraSettings = cameraSettingsRepository.getCameraSettings();
     if(cameraSettings.getCameraIdSelected() == CAMERA_ID_FRONT) {
       isFrontCameraSelected = true;
     }
     checkCameraInterface(cameraSettings);
     checkSwitchCameraAvailable(cameraSettings);
-    recordView.setCameraSettingSelected(cameraSettings.getResolutionSettingValue(),
-            cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
+    recordView.setCameraSettingSelected(
+        getAdaptedResolutionValueName(cameraSettings.getResolutionSettingValue()),
+        cameraSettings.getQuality(), cameraSettings.getFrameRateSettingValue());
     recordView.showPrincipalViews();
     recordView.showRightControlsView();
     recordView.showSettingsCameraView();
     recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
+    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+      recordView.hideTutorials();
+    }
+  }
+
+  private String getAdaptedResolutionValueName(String resolutionSettingValue) {
+    if (resolutionSettingValue.equals(CAMERA_SETTING_RESOLUTION_H_720)
+        || resolutionSettingValue.equals(CAMERA_SETTING_RESOLUTION_V_720)) {
+      return "720p";
+    } else {
+      if (resolutionSettingValue.equals(CAMERA_SETTING_RESOLUTION_H_1080)
+          || resolutionSettingValue.equals(CAMERA_SETTING_RESOLUTION_V_1080)) {
+        return "1080p";
+      } else {
+        if (resolutionSettingValue.equals(CAMERA_SETTING_RESOLUTION_H_2160)
+            || resolutionSettingValue.equals(CAMERA_SETTING_RESOLUTION_V_2160)) {
+          return  "4k";
+        }
+      }
+    }
+    return "";
   }
 
   private void checkCameraInterface(CameraSettings cameraSettings) {

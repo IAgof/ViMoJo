@@ -128,7 +128,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
   }
 
   private void getCurrentProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

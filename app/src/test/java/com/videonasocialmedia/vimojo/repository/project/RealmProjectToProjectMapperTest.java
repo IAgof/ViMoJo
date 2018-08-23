@@ -14,7 +14,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
@@ -34,8 +33,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -85,7 +82,7 @@ public class RealmProjectToProjectMapperTest {
     String title = realmProject.title = "Project title";
     realmProject.projectPath = "project/path";
     realmProject.quality = VideoQuality.Quality.HIGH.name();
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    realmProject.resolution = VideoResolution.Resolution.H_720P.name();
     realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
@@ -104,7 +101,7 @@ public class RealmProjectToProjectMapperTest {
     Profile profile = project.getProfile();
 
     assertThat(profile.getQuality(), is(VideoQuality.Quality.HIGH));
-    assertThat(profile.getResolution(), is(VideoResolution.Resolution.HD720));
+    assertThat(profile.getResolution(), is(VideoResolution.Resolution.H_720P));
     assertThat(profile.getFrameRate(), is(VideoFrameRate.FrameRate.FPS25));
   }
 
@@ -122,7 +119,7 @@ public class RealmProjectToProjectMapperTest {
   @Test
   public void testMapReturnsNullIfEmptyResolution() {
     RealmProject realmProject = new RealmProject();
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    realmProject.resolution = VideoResolution.Resolution.H_720P.name();
     RealmProjectToProjectMapper mapper = new RealmProjectToProjectMapper();
 
     Project project = mapper.map(realmProject);
@@ -339,7 +336,7 @@ public class RealmProjectToProjectMapperTest {
   private RealmProject getARealmProject() {
     RealmProject realmProject = new RealmProject();
     realmProject.quality = VideoQuality.Quality.HIGH.name();
-    realmProject.resolution = VideoResolution.Resolution.HD720.name();
+    realmProject.resolution = VideoResolution.Resolution.H_720P.name();
     realmProject.frameRate = VideoFrameRate.FrameRate.FPS25.name();
     realmProject.projectPath = "/projects";
     return realmProject;

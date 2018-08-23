@@ -23,7 +23,7 @@
         <LinearLayout
             android:id="@+id/linear_layout_audio_blocks"
             android:layout_width="match_parent"
-            android:layout_height="96dp">
+            android:layout_height="@dimen/custom_sound_card_view_linear_layout_audio_blocks_height">
             <include layout="@layout/custom_sound_gallery_clips"/>
         </LinearLayout>
 
