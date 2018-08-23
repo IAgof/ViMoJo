@@ -71,7 +71,7 @@ public class VoiceOverVolumePresenterTest {
 
     voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
-    verify(mockedModifyTrackUseCase).setTrackVolume(currentProject, currentProject.getAudioTracks()
+    verify(mockedModifyTrackUseCase).setTrackVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
   }
 
@@ -105,7 +105,7 @@ public class VoiceOverVolumePresenterTest {
         mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
-        mockedProjectInstanceCache);
+        mockedProjectInstanceCache, updateComposition);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

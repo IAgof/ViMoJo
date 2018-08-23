@@ -37,8 +37,7 @@ public class SyncService extends Service {
 
   @Inject UploadToPlatform uploadToPlatform;
   @Inject AssetUploadQueue assetUploadQueue;
-  @Inject
-  UploadDataSource uploadRepository;
+  @Inject UploadDataSource uploadRepository;
 
   /*
    * Instantiate the sync adapter object.

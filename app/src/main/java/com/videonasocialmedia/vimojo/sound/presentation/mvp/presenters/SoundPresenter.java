@@ -96,7 +96,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   public void setTrackVolume(int id, int seekBarProgress){
     Track track = getTrackById(id);
     float volume = (float) (seekBarProgress * 0.01);
-    modifyTrackUseCase.setTrackVolume(currentProject, track, volume);
+    modifyTrackUseCase.setTrackVolume(track, volume);
     updatePlayerVolume(id, volume);
     executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
@@ -130,7 +130,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
 
   public void setTrackMute(int id, boolean isMute){
     Track track = getTrackById(id);
-    modifyTrackUseCase.setTrackMute(currentProject, track, isMute);
+    modifyTrackUseCase.setTrackMute(track, isMute);
     updatePlayerMute(id, isMute);
     executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }

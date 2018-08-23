@@ -6,17 +6,19 @@ package com.videonasocialmedia.vimojo.composition.repository;
 
 import android.util.Log;
 
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
+import com.videonasocialmedia.vimojo.repository.DeletePolicy;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
-import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,6 +34,10 @@ public class ProjectRepository extends VimojoRepository<Project> {
   private static final String LOG_TAG = ProjectRepository.class.getSimpleName();
   private final ProjectRealmDataSource projectRealmDataSource;
   private final CompositionApiDataSource compositionApiDataSource;
+  private Comparator<Project> dateComparatorDescending = (Comparator<Project>) (left, right) -> {
+    return DateUtils.parseStringDate(right.getLastModification())
+            .compareTo(DateUtils.parseStringDate(left.getLastModification())); // use your logic
+  };
 
   @Inject
   public ProjectRepository(ProjectRealmDataSource projectRealmDataSource,
@@ -57,16 +63,25 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   @Override
   public void update(Project item) {
+    item.updateDateOfModification(DateUtils.getDateRightNow());
     this.projectRealmDataSource.update(item);
     this.compositionApiDataSource.update(item);
   }
 
-  /**
-   * {@link DataSource#remove(Object)}
-   */
+  @Override
+  public void remove(Project item, DeletePolicy policy) {
+    if (policy.useLocal()) {
+      this.projectRealmDataSource.remove(item);
+    }
+
+    if (policy.useRemote()) {
+      this.compositionApiDataSource.remove(item);
+    }
+  }
+
   @Override
   public void remove(Project item) {
-    this.projectRealmDataSource.remove(item);
+    remove(item, DeletePolicy.DELETE_ALL);
   }
 
   @Override
@@ -81,12 +96,24 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   @Override
   public Project getById(String id)  {
-    return this.projectRealmDataSource.getById(id);
+    // TODO(jliarte): 8/08/18 get project details in cascade, set API source, and insert into hashmap
+    Project realmProject = this.projectRealmDataSource.getById(id);
+    Project apiComposition = this.compositionApiDataSource.getById(id);
+    if (realmProject != null && apiComposition != null) {
+      // TODO(jliarte): 8/08/18 merge projects by date
+      return returnLastModified(realmProject, apiComposition);
+    } else {
+      if (realmProject != null) return realmProject;
+      else return apiComposition;
+    }
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateWithDate(Project item, String date) {
-    this.projectRealmDataSource.updateWithDate(item, date);
+  private Project returnLastModified(Project realmProject, Project apiComposition) {
+    // TODO(jliarte): 10/08/18 should we update the other copy?
+    ArrayList<Project> projects = new ArrayList<>(2);
+    projects.add(realmProject);
+    projects.add(apiComposition);
+    return Collections.min(projects, dateComparatorDescending);
   }
 
   public Project getLastModifiedProject() {
@@ -97,33 +124,32 @@ public class ProjectRepository extends VimojoRepository<Project> {
     List<Project> realmProjects = projectRealmDataSource
             .getListProjectsByLastModificationDescending();
     List<Project> apiCompositions = compositionApiDataSource.getListProjectsByLastModificationDescending(); // TODO(jliarte): 27/07/18 change to query by specification?
-    return realmProjects;
+    return mergeCompositions(realmProjects, apiCompositions);
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateResolution(Project project, VideoResolution.Resolution videoResolution) {
-    this.projectRealmDataSource.updateResolution(project, videoResolution);
+  private List<Project> mergeCompositions(List<Project> realmProjects,
+                                          List<Project> apiCompositions) {
+    HashMap<String, Project> compositionHash = new HashMap<>();
+    for (Project project : realmProjects) {
+      compositionHash.put(project.getUuid(), project);
+    }
+    for (Project apiComposition : apiCompositions) {
+      if (compositionHash.get(apiComposition.getUuid()) != null) {
+        // (jliarte): 10/08/18 apiComposition has not details in cascade, should call this.getByUuid
+        Project project = this.getById(apiComposition.getUuid());
+        project.setDataPersistanceType(DataPersistanceType.ALL);
+        compositionHash.put(apiComposition.getUuid(), project);
+      } else {
+        compositionHash.put(apiComposition.getUuid(), this.getById(apiComposition.getUuid()));
+      }
+    }
+    return getSortedCompositionList(compositionHash);
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateFrameRate(Project project, VideoFrameRate.FrameRate videoFrameRate) {
-    this.updateFrameRate(project, videoFrameRate);
+  private List<Project> getSortedCompositionList(HashMap<String, Project> compositionHash) {
+    List<Project> list = new ArrayList<>(compositionHash.values());
+    Collections.sort(list, dateComparatorDescending);
+    return list;
   }
 
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void updateQuality(Project project, VideoQuality.Quality videoQuality) {
-    this.projectRealmDataSource.updateQuality(project, videoQuality);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void setWatermarkActivated(Project project, boolean isChecked) {
-    this.setWatermarkActivated(project, isChecked);
-  }
-
-  // TODO(jliarte): 11/07/18 this is a use case!
-  public void setProjectInfo(Project project, String projectTitle, String projectDescription,
-                             List<String> productTypesListSelected) {
-    this.projectRealmDataSource.setProjectInfo(project, projectTitle, projectDescription,
-            productTypesListSelected);
-  }
 }

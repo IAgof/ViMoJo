@@ -1,44 +1,58 @@
 package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
+/**
+ * Created by alvaro on 10/04/17.
+ */
+
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.Mapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
+import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.RealmTrackToTrackMapper;
 import com.videonasocialmedia.vimojo.repository.track.datasource.mapper.TrackToRealmTrackMapper;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
- * Created by alvaro on 10/04/17.
+ * Realm DataSource for tracks. Provide local persistance of {@link Track} using Realm
+ * via {@link RealmTrack} class.
  */
-
 public class TrackRealmDataSource implements TrackDataSource {
   protected Mapper<RealmTrack, Track> toTrackMapper;
   protected Mapper<Track, RealmTrack> toRealmTrackMapper;
+  private VideoRealmDataSource videoDataSource;
+  private MusicRealmDataSource musicDataSource;
 
-  public TrackRealmDataSource() {
+  @Inject
+  public TrackRealmDataSource(VideoRealmDataSource videoDataSource,
+                              MusicRealmDataSource musicDataSource) {
+    this.videoDataSource = videoDataSource;
+    this.musicDataSource = musicDataSource;
     this.toTrackMapper = new RealmTrackToTrackMapper();
     this.toRealmTrackMapper = new TrackToRealmTrackMapper();
   }
 
   @Override
   public void add(final Track item) {
-    final Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmTrack realmTrack = toRealmTrackMapper.map(item);
-        realm.copyToRealm(realmTrack);
-      }
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmTrack realmTrack = toRealmTrackMapper.map(item);
+      realm.copyToRealm(realmTrack);
     });
-    realm.close();
+    Realm.getDefaultInstance().close();
   }
 
   @Override
@@ -48,13 +62,8 @@ public class TrackRealmDataSource implements TrackDataSource {
 
   @Override
   public void update(final Track item) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        realm.copyToRealmOrUpdate(toRealmTrackMapper.map(item));
-      }
-    });
+    Realm.getDefaultInstance().executeTransaction(
+            realm -> realm.copyToRealmOrUpdate(toRealmTrackMapper.map(item)));
   }
 
   @Override
@@ -117,16 +126,24 @@ public class TrackRealmDataSource implements TrackDataSource {
   }
 
   @Override
-  public void remove(final Track item) {
-    Realm realm = Realm.getDefaultInstance();
-    realm.executeTransaction(new Realm.Transaction() {
-      @Override
-      public void execute(Realm realm) {
-        RealmResults<RealmTrack> result = realm.where(RealmTrack.class).
-            equalTo("uuid", item.getUuid()).findAll();
-        result.deleteAllFromRealm();
-      }
+  public void remove(final Track track) {
+    deleteAllMediasInTrack(track);
+    Realm.getDefaultInstance().executeTransaction(realm -> {
+      RealmResults<RealmTrack> result = realm.where(RealmTrack.class).
+          equalTo("uuid", track.getUuid()).findAll();
+      result.deleteAllFromRealm();
     });
+  }
+
+  private void deleteAllMediasInTrack(Track track) {
+    LinkedList<Media> mediaList = track.getItems();
+    for (Media media : mediaList) {
+      if (media instanceof Video) {
+        videoDataSource.remove((Video) media);
+      } else if (media instanceof Music) {
+        musicDataSource.remove((Music) media);
+      }
+    }
   }
 
   @Override

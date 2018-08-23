@@ -12,6 +12,7 @@ import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.SettableFuture;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
@@ -26,9 +27,11 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 public abstract class ApiDataSource<T> implements DataSource<T> {
   private static final String LOG_TAG = ApiDataSource.class.getSimpleName();
   private final UserAuth0Helper userAuth0Helper;
+  private final GetUserId getUserId;
 
-  protected ApiDataSource(UserAuth0Helper userAuth0Helper) {
+  protected ApiDataSource(UserAuth0Helper userAuth0Helper, GetUserId getUserId) {
     this.userAuth0Helper = userAuth0Helper;
+    this.getUserId = getUserId;
   }
 
   protected SettableFuture<Credentials> getApiAccessToken() {
@@ -50,6 +53,10 @@ public abstract class ApiDataSource<T> implements DataSource<T> {
       }
     });
     return credentialsListenableFuture;
+  }
+
+  protected String getUserId() {
+    return getUserId.getUserId().getId();
   }
 
   protected void processApiError(VimojoApiException apiError) {

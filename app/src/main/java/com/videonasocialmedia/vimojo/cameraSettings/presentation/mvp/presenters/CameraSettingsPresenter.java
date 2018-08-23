@@ -10,10 +10,14 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQuality;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +32,17 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
-public class CameraSettingsPresenter {
+public class CameraSettingsPresenter extends VimojoPresenter {
   private final CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
   private CameraSettingsDataSource cameraSettingsRepository;
-  private ProjectRepository projectRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private CameraSettings cameraSettings;
+  private UpdateComposition updateComposition;
+  private SetCompositionQuality setCompositionQuality;
+  private SetCompositionFrameRate setCompositionFrameRate;
+  private SetCompositionResolution setCompositionResolution;
 
   private HashMap<Integer, String> resolutionNames;
   private HashMap<Integer, VideoResolution.Resolution> videoResolutionValues;
@@ -51,15 +58,21 @@ public class CameraSettingsPresenter {
   public CameraSettingsPresenter(
           CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
           GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
-          CameraSettingsDataSource cameraSettingsRepository, ProjectRepository projectRepository,
-          ProjectInstanceCache projectInstanceCache) {
+          CameraSettingsDataSource cameraSettingsRepository,
+          UpdateComposition updateComposition, ProjectInstanceCache projectInstanceCache,
+          SetCompositionQuality setCompositionQuality,
+          SetCompositionFrameRate setCompositionFrameRate,
+          SetCompositionResolution setCompositionResolution) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
-    this.projectRepository = projectRepository;
     this.projectInstanceCache = projectInstanceCache;
     this.cameraSettings = cameraSettingsRepository.getCameraSettings();
+    this.setCompositionQuality = setCompositionQuality;
+    this.updateComposition = updateComposition;
+    this.setCompositionFrameRate = setCompositionFrameRate;
+    this.setCompositionResolution = setCompositionResolution;
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
@@ -164,8 +177,8 @@ public class CameraSettingsPresenter {
     userEventTracker.trackChangeResolution(resolution);
     VideoResolution.Resolution videoResolution = videoResolutionValues.get(resolutionSelectedId);
     if (videoResolution == null) { videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION; }
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.updateResolution(currentProject, videoResolution);
+    setCompositionResolution.setResolution(currentProject, videoResolution);
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   public void setCameraFrameRateSetting(int frameRateSelectedId) {
@@ -175,8 +188,8 @@ public class CameraSettingsPresenter {
     if (videoFrameRate == null) { videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.updateFrameRate(currentProject, videoFrameRate);
+    setCompositionFrameRate.updateFrameRate(currentProject, videoFrameRate);
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     userEventTracker.trackChangeFrameRate(frameRate);
   }
 
@@ -187,8 +200,8 @@ public class CameraSettingsPresenter {
     if (videoQuality == null) { videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.updateQuality(currentProject, videoQuality);
+    setCompositionQuality.setQuality(currentProject, videoQuality);
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     userEventTracker.trackChangeQuality(quality);
   }
 

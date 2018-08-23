@@ -45,7 +45,7 @@ public class AddVideoToProjectUseCaseAndroidTest extends AndroidTestCase {
     }
 
     public AddVideoToProjectUseCaseAndroidTest() {
-        useCase = new AddVideoToProjectUseCase(mockedProjectRepository,
+        useCase = new AddVideoToProjectUseCase(
                 mockedApplyAVTransitionsUseCase);
         listener = mock(OnAddMediaFinishedListener.class);
     }

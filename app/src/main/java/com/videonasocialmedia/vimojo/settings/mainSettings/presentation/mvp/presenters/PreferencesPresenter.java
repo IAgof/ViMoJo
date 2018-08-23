@@ -34,18 +34,18 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
@@ -59,7 +59,6 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * This class is used to show the setting menu.
@@ -82,7 +81,6 @@ public class PreferencesPresenter extends VimojoPresenter
   private Preference watermarkPref;
   private Preference themeApp;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-  private boolean isPreferenceAvailable = false;
   private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
   private UpdateAudioTransitionPreferenceToProjectUseCase
       updateAudioTransitionPreferenceToProjectUseCase;
@@ -90,39 +88,38 @@ public class PreferencesPresenter extends VimojoPresenter
       updateVideoTransitionPreferenceToProjectUseCase;
   private UpdateIntermediateTemporalFilesTransitionsUseCase
       updateIntermediateTemporalFilesTransitionsUseCase;
-  private UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase;
+  private UpdateCompositionWatermark updateCompositionWatermark;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private GetAccount getAccount;
-  private ProjectRepository projectRepository;
   private Project currentProject;
+  private UpdateComposition updateComposition;
 
   /**
    * Constructor
-   *
-   * @param preferencesView
+   *  @param preferencesView
    * @param context
    * @param sharedPreferences
    * @param userAuth0Helper
+   * @param updateComposition
    */
   public PreferencesPresenter(
           PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
           Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
-          Preference watermarkPref, ProjectRepository projectRepository,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          Preference watermarkPref, GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           UpdateAudioTransitionPreferenceToProjectUseCase
-          updateAudioTransitionPreferenceToProjectUseCase,
+                  updateAudioTransitionPreferenceToProjectUseCase,
           UpdateVideoTransitionPreferenceToProjectUseCase
-          updateVideoTransitionPreferenceToProjectUseCase,
+                  updateVideoTransitionPreferenceToProjectUseCase,
           UpdateIntermediateTemporalFilesTransitionsUseCase
-          updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+                  updateIntermediateTemporalFilesTransitionsUseCase,
+          UpdateCompositionWatermark updateCompositionWatermark,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
           UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
-          GetAccount getAccount) {
+          GetAccount getAccount, UpdateComposition updateComposition) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -130,7 +127,6 @@ public class PreferencesPresenter extends VimojoPresenter
     this.transitionAudioPref = transitionAudioPref;
     this.watermarkPref = watermarkPref;
     this.themeApp = themeApp;
-    this.projectRepository = projectRepository;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.getPreferencesTransitionFromProjectUseCase =
         getPreferencesTransitionFromProjectUseCase;
@@ -140,7 +136,7 @@ public class PreferencesPresenter extends VimojoPresenter
         updateVideoTransitionPreferenceToProjectUseCase;
     this.updateIntermediateTemporalFilesTransitionsUseCase =
         updateIntermediateTemporalFilesTransitionsUseCase;
-    this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
+    this.updateCompositionWatermark = updateCompositionWatermark;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     userEventTracker = UserEventTracker.getInstance(MixpanelAPI
@@ -151,6 +147,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.uploadRepository = uploadRepository;
     this.userAuth0Helper = userAuth0Helper;
     this.getAccount = getAccount;
+    this.updateComposition = updateComposition;
   }
 
   public void updatePresenter(Activity activity) {
@@ -259,12 +256,14 @@ public class PreferencesPresenter extends VimojoPresenter
         boolean dataTransitionAudio = sharedPreferences.getBoolean(key, false);
         updateAudioTransitionPreferenceToProjectUseCase
             .setAudioFadeTransitionActivated(currentProject, dataTransitionAudio);
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
         updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
         break;
       case ConfigPreferences.TRANSITION_VIDEO:
         boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
         updateVideoTransitionPreferenceToProjectUseCase
             .setVideoFadeTransitionActivated(currentProject, dataTransitionVideo);
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
         updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
         break;
       case ConfigPreferences.WATERMARK:
@@ -272,7 +271,7 @@ public class PreferencesPresenter extends VimojoPresenter
         if (data && !(new File(Constants.PATH_WATERMARK).exists())) {
           Utils.copyWatermarkResourceToDevice();
         }
-        updateWatermarkPreferenceToProjectUseCase.setWatermarkActivated(currentProject,
+        updateCompositionWatermark.updateCompositionWatermark(currentProject,
             data);
         preferencesView.setWatermarkSwitchPref(data);
       default:

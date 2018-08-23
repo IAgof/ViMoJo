@@ -73,7 +73,7 @@ public class AssetUploadQueue {
       Crashlytics.log("Error creating queue video to upload");
       Crashlytics.logException(ioException);
     }
-    Log.d(LOG_TAG, "...returned queue");
+    Log.d(LOG_TAG, "...returned queue of size " + assetUploadObjectQueue.size());
     return assetUploadObjectQueue;
   }
 
@@ -102,8 +102,6 @@ public class AssetUploadQueue {
           Log.d(LOG_TAG, "uploading video ... videoApiClient.uploadVideo");
           AssetDto assetDto = assetApiClient.addAsset(credentials.getAccessToken(), element);
           // TODO(jliarte): 18/07/18 assign assetId to backend media object
-          // (jliarte): 25/07/18 this assignement should now be done automatically in backend as asset add/update query has mediaId param
-//          assignAssetIdToMedia(assetDto.getId(), element.getId());
           Log.d(LOG_TAG, "uploaded video ... videoApiClient.uploadVideo");
           removeHeadElement(getQueue());
           Log.d(LOG_TAG, "finish upload success");
@@ -127,7 +125,7 @@ public class AssetUploadQueue {
           if (BuildConfig.DEBUG) {
             fileNotFoundError.printStackTrace();
           }
-          Log.d(LOG_TAG, "File " + element.getMediaPath() + " trying to upload does not exists!");
+          Log.d(LOG_TAG, "File " + element.getPath() + " trying to upload does not exists!");
           removeHeadElement(getQueue());
         }
       }

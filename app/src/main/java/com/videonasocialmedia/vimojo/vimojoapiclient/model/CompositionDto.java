@@ -7,6 +7,8 @@ package com.videonasocialmedia.vimojo.vimojoapiclient.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -99,6 +101,10 @@ public class CompositionDto {
     return projectId;
   }
 
+  public List<TrackDto> getTracks() {
+    return tracks;
+  }
+
   public Date getDate() {
     return date;
   }
@@ -175,4 +181,10 @@ public class CompositionDto {
             '}';
   }
 
+  public List<String> getProductTypeList() {
+    if (getProductType() == null) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(getProductType().split(","));
+  }
 }

@@ -27,6 +27,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 
 /**
@@ -52,4 +53,8 @@ public interface AssetService {
   @GET("asset/{assetId}")
   @Headers("Content-Type: application/json")
   Call<AssetDto> get(@Path("assetId") String id);
+
+  @GET("project/{projectId}/asset")
+  Call<List<AssetDto>> query(@Path("projectId") String projectId,
+                             @QueryMap Map<String, Object> query);
 }

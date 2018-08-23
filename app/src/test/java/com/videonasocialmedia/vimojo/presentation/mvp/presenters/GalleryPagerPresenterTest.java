@@ -204,7 +204,7 @@ public class GalleryPagerPresenterTest {
     return new GalleryPagerPresenter(
             mockedGalleryPagerView, mockedContext, mockedAddVideoToProjectUseCase,
             mockedApplyAVTransitionsUseCase,
-            mockedProjectRepository, mockedVideoRepository, mockedSharedPreferences,
+            mockedSharedPreferences,
             mockedProjectInstanceCache, mockedAssetUploadQueue, mockedRunSyncAdapterHelper,
             mockedCompositionApicClient);
   }

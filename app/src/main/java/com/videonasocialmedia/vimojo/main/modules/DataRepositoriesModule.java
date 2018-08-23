@@ -38,8 +38,9 @@ public class DataRepositoriesModule {
   }
 
   @Singleton @Provides
-  TrackDataSource provideDefaultTrackRepository(){
-    return new TrackRealmDataSource();
+  TrackDataSource provideDefaultTrackRepository(VideoRealmDataSource videoDataSource,
+                                                MusicRealmDataSource musicDataSource) {
+    return new TrackRealmDataSource(videoDataSource, musicDataSource);
   }
 
   @Singleton @Provides

@@ -4,6 +4,7 @@ package com.videonasocialmedia.vimojo.repository;
  * Created by jliarte on 11/07/18.
  */
 
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
 
 /**
@@ -15,4 +16,5 @@ import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
  */
 public abstract class VimojoRepository<T> implements DataSource<T> {
 
+  public abstract void remove(T item, DeletePolicy policy);
 }

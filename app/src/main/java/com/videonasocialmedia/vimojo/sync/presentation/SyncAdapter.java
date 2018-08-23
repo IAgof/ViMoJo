@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.moshi.JsonEncodingException;
 import com.squareup.tape2.ObjectQueue;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
@@ -126,7 +127,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       try {
         while (assetUploadQueue.getQueue().iterator().hasNext()) {
           Log.d(LOG_TAG, "launchingQueue");
-          boolean isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+          boolean isAcceptedUploadMobileNetwork = false;
+          try {
+            isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+          } catch (JsonEncodingException jsonError) {
+            // TODO(jliarte): 13/08/18 do some here?
+          }
           if (areThereNetworksConnected(isAcceptedUploadMobileNetwork)) {
             // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
             // reimplement this loop

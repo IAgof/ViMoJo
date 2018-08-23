@@ -221,7 +221,7 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.setVolume(volumeMusic);
 
-        verify(mockedModifyTrackUseCase).setTrackVolume(currentProject, musicTrack, volumeMusic);
+        verify(mockedModifyTrackUseCase).setTrackVolume(musicTrack, volumeMusic);
     }
 
     @NonNull

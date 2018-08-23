@@ -11,12 +11,8 @@ import javax.inject.Inject;
  */
 
 public class AddLastVideoExportedToProjectUseCase {
-
-  private ProjectRepository projectRepository;
-
   @Inject
-  public AddLastVideoExportedToProjectUseCase(ProjectRepository projectRepository) {
-    this.projectRepository = projectRepository;
+  public AddLastVideoExportedToProjectUseCase() {
   }
 
   public void addLastVideoExportedToProject(Project currentProject, String pathVideoExported,
@@ -24,8 +20,6 @@ public class AddLastVideoExportedToProjectUseCase {
     LastVideoExported lastVideoExported = new LastVideoExported(pathVideoExported, date);
     currentProject.setLastVideoExported(lastVideoExported);
     currentProject.updateDateOfModification(date);
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.updateWithDate(currentProject, date);
   }
 
 }

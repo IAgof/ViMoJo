@@ -18,10 +18,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -35,7 +35,6 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -84,13 +83,13 @@ public class EditorPresenter extends VimojoPresenter
   private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
   private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
   private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
-  private ProjectRepository projectRepository;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private SaveComposition saveComposition;
   private ProjectInstanceCache projectInstanceCache;
-  private UpdateComposition updateComposition;
   private RemoveMedia removeMedia;
+  private UpdateCompositionWatermark updateCompositionWatermark;
+  private UpdateComposition updateComposition;
 
   @Inject
   public EditorPresenter(
@@ -102,10 +101,10 @@ public class EditorPresenter extends VimojoPresenter
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository, NewClipImporter newClipImporter,
-          BillingManager billingManager, ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition, UpdateComposition updateComposition,
-          RemoveMedia removeMedia) {
+          NewClipImporter newClipImporter, BillingManager billingManager,
+          ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
+          RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
+          UpdateComposition updateComposition) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -117,14 +116,14 @@ public class EditorPresenter extends VimojoPresenter
     this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
     this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
-    this.projectRepository = projectRepository;
     this.newClipImporter = newClipImporter;
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
-    this.updateComposition = updateComposition;
     this.removeMedia = removeMedia;
+    this.updateCompositionWatermark = updateCompositionWatermark;
+    this.updateComposition = updateComposition;
   }
 
   public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
@@ -222,16 +221,13 @@ public class EditorPresenter extends VimojoPresenter
             });
   }
 
-  private ListenableFuture<Object> setNewProject(String rootPath, String privatePath,
-                                                 Drawable drawableFadeTransitionVideo) {
+  private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
+                                            Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             getPreferenceWaterMark(), drawableFadeTransitionVideo);
     projectInstanceCache.setCurrentProject(project);
     // TODO(jliarte): 11/07/18 change to runnable
-    return executeUseCaseCall(() -> {
-      saveComposition.saveComposition(project);
-      return null;
-    });
+    return executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
@@ -251,7 +247,7 @@ public class EditorPresenter extends VimojoPresenter
         public void onVideosRetrieved(List<Video> videosRetrieved) {
           checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
           List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-          List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+          List<Video> videoCopy = new ArrayList<>(videosRetrieved);
           videonaPlayerView.bindVideoList(videoCopy);
           //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
           newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
@@ -284,20 +280,20 @@ public class EditorPresenter extends VimojoPresenter
         // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(video);
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
-            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
-              @Override
-              public void onRemoveMediaItemFromTrackSuccess(List<Media> mediaList) {
-                executeUseCaseCall(() -> removeMedia.removeMedias(mediaList));
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
-              }
-
-              @Override
-              public void onRemoveMediaItemFromTrackError() {
-                // TODO: 19/2/18 Define on remove media error
-                editorActivityView.showError(R.string.addMediaItemToTrackError);
-              }
-            });
+//        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
+//            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+//              @Override
+//              public void onRemoveMediaItemFromTrackSuccess(List<Media> mediaList) {
+//                executeUseCaseCall(() -> removeMedia.removeMedias(mediaList));
+//                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+//              }
+//
+//              @Override
+//              public void onRemoveMediaItemFromTrackError() {
+//                // TODO: 19/2/18 Define on remove media error
+//                editorActivityView.showError(R.string.addMediaItemToTrackError);
+//              }
+//            });
         Log.e(LOG_TAG, video.getMediaPath() + " not found!! deleting from project");
       } else {
         checkedVideoList.add(video);
@@ -374,8 +370,9 @@ public class EditorPresenter extends VimojoPresenter
     }
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
-      // TODO(jliarte): 11/07/18 this is a use case!
-      projectRepository.setWatermarkActivated(currentProject, isChecked);
+      updateCompositionWatermark.updateCompositionWatermark(currentProject, isChecked);
+      executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+      // TODO(jliarte): 21/08/18 should we chain this?
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
       }
@@ -450,8 +447,6 @@ public class EditorPresenter extends VimojoPresenter
   public void updateTitleCurrentProject(String title) {
     ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.setProjectInfo(currentProject, projectInfo.getTitle(), projectInfo.getDescription(),
-        projectInfo.getProductTypeList());
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 }

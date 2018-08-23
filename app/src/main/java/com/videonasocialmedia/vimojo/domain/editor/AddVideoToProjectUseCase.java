@@ -17,7 +17,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 
 import java.util.List;
@@ -29,18 +28,14 @@ import javax.inject.Inject;
  */
 // TODO(jliarte): 22/10/16 refactor this class to have a unique insert point. Get rid of event bus
 public class AddVideoToProjectUseCase {
-    protected ProjectRepository projectRepository;
     private ApplyAVTransitionsUseCase applyAVTransitionsUseCase;
 
     /**
-     * Default Constructor with project repository argument.
-     *  @param projectRepository the project repository
-     * @param applyAVTransitionsUseCase
+     * Default Constructor.
+     *  @param applyAVTransitionsUseCase
      */
     @Inject public AddVideoToProjectUseCase(
-            ProjectRepository projectRepository,
             ApplyAVTransitionsUseCase applyAVTransitionsUseCase) {
-        this.projectRepository = projectRepository;
         this.applyAVTransitionsUseCase = applyAVTransitionsUseCase;
     }
 
@@ -49,7 +44,6 @@ public class AddVideoToProjectUseCase {
         try {
             Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItem(videoToAdd);
-//            projectRepository.update(currentProject);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             //TODO manejar error
         }
@@ -62,7 +56,6 @@ public class AddVideoToProjectUseCase {
             Track mediaTrack = currentProject.getMediaTrack();
             mediaTrack.insertItemAt(position, video);
             video.addListener(currentProject);
-            projectRepository.update(currentProject);
             listener.onAddMediaItemToTrackSuccess(video);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();
@@ -77,6 +70,7 @@ public class AddVideoToProjectUseCase {
                 mediaTrack.insertItem(video);
                 checkIfVideoNeedAVTransitionTempFile(video, currentProject);
             }
+            new ReorderProjectVideoListUseCase().reorderVideoList(currentProject);
             listener.onAddMediaItemToTrackSuccess(null);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             listener.onAddMediaItemToTrackError();

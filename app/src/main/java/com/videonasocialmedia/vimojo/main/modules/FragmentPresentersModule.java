@@ -1,12 +1,14 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.SwitchPreference;
 
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
@@ -24,7 +26,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
@@ -71,7 +73,6 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-          ProjectRepository projectRepository,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           UpdateAudioTransitionPreferenceToProjectUseCase
@@ -80,22 +81,22 @@ public class FragmentPresentersModule {
                   updateVideoTransitionPreferenceToProjectUseCase,
           UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
+          UpdateCompositionWatermark updateCompositionWatermark,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, GetAccount getAccount) {
+          UploadDataSource uploadRepository, GetAccount getAccount, UpdateComposition updateComposition) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
-            projectRepository, getMediaListFromProjectUseCase,
+            getMediaListFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase,
             updateAudioTransitionPreferenceToProjectUseCase,
             updateVideoTransitionPreferenceToProjectUseCase,
             updateIntermediateTemporalFilesTransitionsUseCase,
-            updateWatermarkPreferenceToProjectUseCase, relaunchTranscoderTempBackgroundUseCase,
+            updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache, getAccount);
+            uploadRepository, projectInstanceCache, getAccount, updateComposition);
   }
 
   @Provides
@@ -109,26 +110,8 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UpdateAudioTransitionPreferenceToProjectUseCase provideUpdateAudioTransitionPreference(
-      ProjectRepository projectRepository) {
-    return new UpdateAudioTransitionPreferenceToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateVideoTransitionPreferenceToProjectUseCase provideUpdateVideoTransitionPreference(
-      ProjectRepository projectRepository) {
-    return new UpdateVideoTransitionPreferenceToProjectUseCase(projectRepository);
-  }
-
-  @Provides
   UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions() {
     return new UpdateIntermediateTemporalFilesTransitionsUseCase();
-  }
-
-  @Provides
-  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkPreference(
-          ProjectRepository projectRepository) {
-    return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
   }
 
   @Provides
@@ -162,6 +145,11 @@ public class FragmentPresentersModule {
   @Provides
   UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
     return new UserAuth0Helper(userApiClient);
+  }
+
+  @Provides
+  DownloadManager provideDownloadManager() {
+    return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
 }

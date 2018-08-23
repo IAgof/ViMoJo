@@ -10,7 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.AssetApiDataSource;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.AssetToAssetDtoMapper;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.mapper.CompositionToCompositionDtoMapper;
@@ -22,7 +22,6 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.TrackDto;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -37,17 +36,18 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
   private static final String LOG_TAG = CompositionApiDataSource.class.getSimpleName();
   private CompositionApiClient compositionApiClient;
 
-  private final CompositionToCompositionDtoMapper mapper = new CompositionToCompositionDtoMapper();
-  private final AssetToAssetDtoMapper assetMapper = new AssetToAssetDtoMapper();
+  private final CompositionToCompositionDtoMapper mapper;
   private final AssetApiDataSource assetApiDataSource;
 
   @Inject
   public CompositionApiDataSource(CompositionApiClient compositionApiClient,
                                   UserAuth0Helper userAuth0Helper,
-                                  AssetApiDataSource assetApiDataSource) {
-    super(userAuth0Helper);
+                                  AssetApiDataSource assetApiDataSource, GetUserId getUserId,
+                                  CompositionToCompositionDtoMapper mapper) {
+    super(userAuth0Helper, getUserId);
     this.compositionApiClient = compositionApiClient;
     this.assetApiDataSource = assetApiDataSource;
+    this.mapper = mapper;
   }
 
   @Override
@@ -55,9 +55,10 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
     // create composition -> create track -> create media -> (mediaId)link with asset(assetID) <- asset upload
     try {
       String accessToken = getApiAccessToken().get().getAccessToken();
+      String userId = getUserId();
       CompositionDto createdComposition = this.compositionApiClient
               .addComposition(mapper.map(item), accessToken);
-      updateTrackMediaAssets(item, createdComposition);
+      updateTrackMediaAssets(item, createdComposition, userId);
       Log.d(LOG_TAG, "Composition added to platform!");
     } catch (VimojoApiException apiError) {
       processApiError(apiError);
@@ -69,26 +70,41 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   /**
    * Update media assets for compositionDto tracks medias.
-   *
    * @param project
    * @param createdComposition
+   * @param userId API user id
    */
-  private void updateTrackMediaAssets(Project project, CompositionDto createdComposition) {
-    if (createdComposition.tracks != null && createdComposition.tracks.size() > 0) {
-      for (TrackDto trackDto : createdComposition.tracks) {
-        if (trackDto.mediaItems != null && trackDto.mediaItems.size() > 0) {
-          for (MediaDto mediaDto : trackDto.mediaItems) {
-            if (mediaDto.getAssetId() == null) {
-              // TODO(jliarte): 18/07/18 set Media id and persist on media repo?
-              Media mediaFromProjectTrack = getMediaFromProjectTrack(project, mediaDto.getUuid());
-              if (mediaFromProjectTrack != null) {
-                // TODO(jliarte): 20/07/18 set project Id
-                assetApiDataSource.add(new Asset("confiHack", mediaFromProjectTrack));
+  private void updateTrackMediaAssets(Project project, CompositionDto createdComposition,
+                                      String userId) {
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      CompositionDto composition = this.compositionApiClient
+              .get(createdComposition.getId(), accessToken);
+      if (composition.tracks != null && composition.tracks.size() > 0) {
+        for (TrackDto trackDto : composition.tracks) {
+          if (trackDto.mediaItems != null && trackDto.mediaItems.size() > 0) {
+            for (MediaDto mediaDto : trackDto.mediaItems) {
+              if (mediaDto.getAssetId() == null
+                      || (mediaDto.getAssetId() != null && mediaDto.getAssetId().equals("")) ) {
+                // TODO(jliarte): 18/07/18 set Media id and persist on media repo?
+                Media mediaFromProjectTrack = getMediaFromProjectTrack(project, mediaDto.getId());
+                if (mediaFromProjectTrack != null) {
+                  // TODO(jliarte): 20/07/18 set project Id
+                  Asset asset = new Asset("confiHack", mediaFromProjectTrack);
+                  asset.createdBy = userId;
+                  assetApiDataSource.add(asset);
+                }
               }
             }
           }
         }
       }
+
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
     }
   }
 
@@ -120,9 +136,10 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
     // update composition -> update/create track -> update/create media -> (mediaId)link with asset(assetID) <- asset upload
     try {
       String accessToken = getApiAccessToken().get().getAccessToken();
+      String userId = getUserId();
       CompositionDto createdComposition = this.compositionApiClient
               .updateComposition(mapper.map(item), accessToken);
-      updateTrackMediaAssets(item, createdComposition);
+      updateTrackMediaAssets(item, createdComposition, userId);
       Log.d(LOG_TAG, "Composition added to platform!");
     } catch (VimojoApiException apiError) {
       processApiError(apiError);
@@ -134,7 +151,15 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Override
   public void remove(Project item) {
-
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      this.compositionApiClient.remove(item.getUuid(), accessToken);
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -149,6 +174,17 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Override
   public Project getById(String id) {
+    try {
+      String accessToken = getApiAccessToken().get().getAccessToken();
+      CompositionDto composition = this.compositionApiClient
+              .get(id, accessToken);
+      return mapper.reverseMap(composition);
+    } catch (VimojoApiException apiError) {
+      processApiError(apiError);
+    } catch (InterruptedException | ExecutionException e) {
+      // TODO(jliarte): 12/07/18 manage this error
+      e.printStackTrace();
+    }
     return null;
   }
 

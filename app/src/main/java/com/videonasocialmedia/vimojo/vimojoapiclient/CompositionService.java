@@ -14,6 +14,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -49,11 +50,22 @@ public interface CompositionService {
   @PUT("project/{projectId}/composition/{compositionId}")
   @Headers("Content-Type: application/json")
   Call<CompositionDto> updateComposition(@Path("projectId") String projectId,
-                                         @Path("projectId") String compositionId,
+                                         @Path("compositionId") String compositionId,
                                          @Body CompositionDto compositionDto);
 
   @GET("project/{projectId}/composition")
   @Headers("Content-Type: application/json")
   Call<List<CompositionDto>> getAll(@Path("projectId") String projectId,
                                     @QueryMap Map<String, Object> compositionFilter);
+
+  @GET("project/{projectId}/composition/{compositionId}")
+  @Headers("Content-Type: application/json")
+  Call<CompositionDto> get(@Path("projectId") String projectId,
+                           @Path("compositionId") String compositionId,
+                           @QueryMap Map<String, Object> query);
+
+  @DELETE("project/{projectId}/composition/{compositionId}")
+  Call<CompositionDto> remove(@Path("projectId") String projectId,
+                              @Path("compositionId") String compositionId,
+                              @QueryMap Map<String, Object> query);
 }

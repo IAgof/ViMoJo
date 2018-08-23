@@ -20,10 +20,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
@@ -62,7 +62,6 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
 
   private GetFtpListUseCase getFtpListUseCase;
-  private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private WeakReference<ShareVideoView> shareVideoViewReference;
   protected Project currentProject;
   protected UserEventTracker userEventTracker;
@@ -86,24 +85,23 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private boolean hasBeenProjectExported;
   protected boolean isAppExportingProject;
   private UserAuth0Helper userAuth0Helper;
+  private UpdateComposition updateComposition;
 
   @Inject
   public ShareVideoPresenter(
-      Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-      SharedPreferences sharedPreferences,
-      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-      ExportProjectUseCase exportProjectUseCase,
-      ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-      GetFtpListUseCase getFtpListUseCase,
-      UploadToPlatform uploadToPlatform,
-      RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-      UserAuth0Helper userAuth0Helper) {
+          Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+          SharedPreferences sharedPreferences,
+          AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+          ExportProjectUseCase exportProjectUseCase,
+          ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+          GetFtpListUseCase getFtpListUseCase,
+          UploadToPlatform uploadToPlatform,
+          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition) {
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;
     this.sharedPreferences = sharedPreferences;
-    this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.addLastVideoExportedProjectUseCase = addLastVideoExportedProjectUseCase;
     this.exportUseCase = exportProjectUseCase;
     this.obtainNetworksToShareUseCase = obtainNetworksToShareUseCase;
@@ -112,6 +110,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.userAuth0Helper = userAuth0Helper;
+    this.updateComposition = updateComposition;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -186,6 +185,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   public void addVideoExportedToProject(String videoPath) {
     addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(currentProject, videoPath,
         DateUtils.getDateRightNow());
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   protected void startExport(int typeNetworkSelected) {

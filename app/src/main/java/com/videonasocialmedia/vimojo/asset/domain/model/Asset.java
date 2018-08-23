@@ -22,6 +22,7 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
   public String name;
   public String type;
   public String hash;
+  public String path;
   public String filename;
   public String mimetype;
   public String uri;
@@ -30,13 +31,15 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
   public String creationDate;
   public String modificationDate;
   public String createdBy;
-  public String mediaPath;
   public int numTries;
   public boolean acceptedUploadMobileNetwork = false;
+  private HashCountGenerator hashCountGenerator = new HashCountGenerator(); // TODO(jliarte): 14/08/18 inject this?
+  private String tmpFile;
+  private String fileName;
 
   public Asset(String projectId, Media media) {
     this.projectId = projectId;
-    this.mediaPath = media.getMediaPath();
+    this.path = media.getMediaPath();
     this.name = media.getTitle();
 //    this.id = media.getUuid();
     this.mediaId = media.getUuid();
@@ -96,19 +99,19 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
 
   public String getHash() {
     // TODO: 21/6/18 Generate hash
-    return "asdsfdsgkñdfmkcñdlfglñksdlñ";
+    return this.hash;
   }
 
   public void setHash(String hash) {
     this.hash = hash;
   }
 
-  public String getFilename() {
-    return filename;
+  public String getPath() {
+    return path;
   }
 
-  public void setFilename(String filename) {
-    this.filename = filename;
+  public void setPath(String path) {
+    this.path = path;
   }
 
   public String getMimetype() {
@@ -168,10 +171,6 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
     this.createdBy = createdBy;
   }
 
-  public String getMediaPath() {
-    return mediaPath;
-  }
-
   public int getNumTries() {
     return numTries;
   }
@@ -185,4 +184,19 @@ public class Asset { // TODO(jliarte): 20/07/18 put this class in the Media hier
     numTries++;
   }
 
+  public void setTmpFile(String tmpFile) {
+    this.tmpFile = tmpFile;
+  }
+
+  public String getTmpFile() {
+    return tmpFile;
+  }
+
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
+
+  public String getFileName() {
+    return fileName;
+  }
 }

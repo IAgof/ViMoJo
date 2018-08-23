@@ -68,6 +68,7 @@ public class SplitVideoUseCase {
             public void onAddMediaItemToTrackSuccess(Media media) {
                 // TODO(jliarte): 19/07/18 handle composition update
                 runTrimTasks(initialVideo, endVideo);
+                listener.onSuccessSplittingVideo();
             }
         });
 

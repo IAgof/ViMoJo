@@ -5,14 +5,16 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionInfo;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProductType;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,11 +27,10 @@ import javax.inject.Inject;
  * Created by alvaro on 19/12/16.
  */
 
-public class DetailProjectPresenter {
+public class DetailProjectPresenter extends VimojoPresenter {
   private final Context context;
   private DetailProjectView detailProjectView;
   private UserEventTracker userEventTracker;
-  private ProjectRepository projectRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private Project currentProject;
   private HashMap<Integer, Boolean> productTypeCheckedIdsMap;
@@ -42,16 +43,20 @@ public class DetailProjectPresenter {
   private final int INTERVIEW_ID = 3;
   private final int GRAPHICS_ID = 4;
   private final int PIECE_ID = 5;
+  private UpdateComposition updateComposition;
+  private SetCompositionInfo setCompositionInfo;
 
   @Inject
   public DetailProjectPresenter(
           Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
-          ProjectRepository projectRepository, ProjectInstanceCache projectInstanceCache) {
+          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+          SetCompositionInfo setCompositionInfo) {
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;
-    this.projectRepository = projectRepository;
     this.projectInstanceCache = projectInstanceCache;
+    this.updateComposition = updateComposition;
+    this.setCompositionInfo = setCompositionInfo;
   }
 
   public void init() {
@@ -139,9 +144,9 @@ public class DetailProjectPresenter {
   public void setProjectInfo(String projectTitle, String projectDescription,
                              List<String> projectInfoProductTypeSelected) {
     userEventTracker.trackProjectInfo(currentProject);
-    // TODO(jliarte): 11/07/18 this is a use case!
-    projectRepository.setProjectInfo(currentProject, projectTitle, projectDescription,
+    setCompositionInfo.setCompositionInfo(currentProject, projectTitle, projectDescription,
         getProjectInfoProductTypeSelectedInOrder(projectInfoProductTypeSelected));
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   // Product list is added/removed item by item without order. Needed sort list to show it properly in activity.

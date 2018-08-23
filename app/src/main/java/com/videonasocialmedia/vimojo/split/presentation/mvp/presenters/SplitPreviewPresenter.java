@@ -16,7 +16,6 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
@@ -31,12 +30,8 @@ import javax.inject.Inject;
 /**
  * Created by vlf on 7/7/15.
  */
-public class SplitPreviewPresenter extends VimojoPresenter implements OnVideosRetrieved,
-    OnSplitVideoListener, ElementChangedListener {
-    /**
-     * LOG_TAG
-     */
-    private final String LOG_TAG = getClass().getSimpleName();
+public class SplitPreviewPresenter extends VimojoPresenter implements ElementChangedListener {
+    private final String LOG_TAG = SplitPreviewPresenter.class.getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
     private SplitVideoUseCase splitVideoUseCase;
 
@@ -57,8 +52,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements OnVideosRe
             SplitView splitView, UserEventTracker userEventTracker,
             SplitVideoUseCase splitVideoUseCase,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache,
-            UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
@@ -87,42 +81,40 @@ public class SplitPreviewPresenter extends VimojoPresenter implements OnVideosRe
         }
     }
 
-    @Override
     public void onVideosRetrieved(List<Video> videoList) {
         splitView.showPreview(videoList);
         Video video = videoList.get(0);
-        if(video.hasText())
+        if (video.hasText())
             splitView.showText(video.getClipText(), video.getClipTextPosition());
         maxSeekBarSplit =  video.getStopTime() - video.getStartTime();
         splitView.initSplitView(video.getStartTime(), maxSeekBarSplit);
     }
 
-    @Override
-    public void onNoVideosRetrieved() {
-        splitView.showError(R.string.onNoVideosRetrieved);
-    }
-
-
     public void splitVideo(int positionInAdapter, int timeMs) {
-        splitVideoUseCase.splitVideo(currentProject, videoToEdit, positionInAdapter,timeMs, this);
+        splitVideoUseCase.splitVideo(currentProject, videoToEdit, positionInAdapter, timeMs,
+                new OnSplitVideoListener() {
+            @Override
+            public void onSuccessSplittingVideo() {
+                // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+            }
+
+            @Override
+            public void showErrorSplittingVideo() {
+                splitView.showError(R.string.addMediaItemToTrackError);
+            }
+        });
         trackSplitVideo();
-        // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
-        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     }
 
     public void trackSplitVideo() {
         userEventTracker.trackClipSplitted(currentProject);
     }
 
-    @Override
-    public void showErrorSplittingVideo() {
-        splitView.showError(R.string.addMediaItemToTrackError);
-    }
-
     public void advanceBackwardStartSplitting(int advancePlayerPrecision,
                                               int currentSplitPosition) {
         int progress = 0;
-        if(currentSplitPosition > advancePlayerPrecision) {
+        if (currentSplitPosition > advancePlayerPrecision) {
             progress = currentSplitPosition - advancePlayerPrecision;
         }
         splitView.updateSplitSeekbar(progress);

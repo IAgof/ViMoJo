@@ -98,7 +98,7 @@ public class UploadToPlatform implements ProgressRequestBody.UploadCallbacks {
   public void processAsyncUpload(VideoUpload videoUpload) {
     Log.d(LOG_TAG, "processAsyncUpload");
     Log.d(LOG_TAG, "startNotification " + videoUpload.getUuid());
-    UserId userId = getUserId.getUserId(context);
+    UserId userId = getUserId.getUserId();
     userAuth0Helper.getAccessToken(new BaseCallback<Credentials, CredentialsManagerException>() {
       @Override
       public void onFailure(CredentialsManagerException error) {

@@ -46,8 +46,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-public class EditPresenter extends VimojoPresenter implements OnAddMediaFinishedListener,
-        ElementChangedListener {
+public class EditPresenter extends VimojoPresenter implements ElementChangedListener {
     private static final String LOG_TAG = EditPresenter.class.getSimpleName();
     private final String TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
@@ -109,9 +108,7 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                         public void onVideosRetrieved(List<Video> videosRetrieved) {
                             int sizeOriginalVideoList = videosRetrieved.size();
                             List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-
-                            List<Video> videoCopy = new ArrayList<>(checkedVideoList);
-
+                            List<Video> videoCopy = new ArrayList<>(videosRetrieved);
                             if (sizeOriginalVideoList > checkedVideoList.size()) {
                                 editActivityView.showDialogMediasNotFound();
                             }
@@ -175,16 +172,6 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
         });
     }
 
-    @Override
-    public void onAddMediaItemToTrackError() {
-        //TODO modify error message
-        editActivityView.showError(R.string.addMediaItemToTrackError);
-    }
-
-    @Override
-    public void onAddMediaItemToTrackSuccess(Media media) {
-    }
-
     private List<Video> checkMediaPathVideosExistOnDevice(List<Video> videoList) {
         List<Video> checkedVideoList = new ArrayList<>();
         for (int index = 0; index < videoList.size(); index++) {
@@ -193,18 +180,18 @@ public class EditPresenter extends VimojoPresenter implements OnAddMediaFinished
                 // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
                 ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
                 mediaToDeleteFromProject.add(video);
-                removeVideoFromProjectUseCase.removeMediaItemsFromProject(
-                        currentProject, mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
-                            @Override
-                            public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
-                                onMediaRemoved(removedMedias);
-                            }
-
-                            @Override
-                            public void onRemoveMediaItemFromTrackError() {
-                                onMediaRemovedError();
-                            }
-                        });
+//                removeVideoFromProjectUseCase.removeMediaItemsFromProject(
+//                        currentProject, mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+//                            @Override
+//                            public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+//                                onMediaRemoved(removedMedias);
+//                            }
+//
+//                            @Override
+//                            public void onRemoveMediaItemFromTrackError() {
+//                                onMediaRemovedError();
+//                            }
+//                        });
                 Log.e(TAG, video.getMediaPath() + " not found!! deleting from project");
             } else {
                 checkedVideoList.add(video);

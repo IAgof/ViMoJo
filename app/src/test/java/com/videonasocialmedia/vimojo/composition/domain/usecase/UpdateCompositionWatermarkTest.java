@@ -1,5 +1,4 @@
-package com.videonasocialmedia.vimojo.galleryprojects.domain;
-
+package com.videonasocialmedia.vimojo.composition.domain.usecase;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -19,52 +18,45 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * Created by alvaro on 14/12/16.
+ * Created by alvaro on 28/02/17.
  */
 
-public class UpdateCurrentProjectUseCaseTest {
+public class UpdateCompositionWatermarkTest {
 
   @Mock
   ProjectRepository mockedProjectRepository;
   @InjectMocks
-  UpdateCurrentProjectUseCase injectedUseCase;
+  UpdateCompositionWatermark injectedUseCase;
   private Project currentProject;
 
   @Before
-  public void injectDoubles() {
+  public void setup(){
     MockitoAnnotations.initMocks(this);
     getAProject();
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
-  public void updateCurrentProjectUpdateLastModificationDate(){
-    currentProject.updateDateOfModification("FakeDate");
-    String oldLastModification = currentProject.getLastModification();
-
-    injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
-
-    String newLastModification = currentProject.getLastModification();
-    assertNotEquals(oldLastModification, newLastModification);
-  }
-
-  @Test
-  public void updateCurrentProjectCallsUpdateProjectRepository(){
-    injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
-
+  public void updateWatermarkPreferenceCallsUpdateRepository(){
+    injectedUseCase.updateCompositionWatermark(currentProject, true);
     verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
-  public void shouldUpdateProjectInstanceIfProjectIsUpdate(){
-    injectedUseCase.updateLastModificationAndProjectInstance(currentProject);
+  public void shouldUpdateWatermarkPreferenceAfterUseCase(){
+    assertThat("Add watermark is false by default", currentProject.hasWatermark(),
+        CoreMatchers.is(false));
+    boolean activateWatermark = true;
 
-    assertThat("currentProject is different", currentProject, CoreMatchers.is(currentProject));
+    injectedUseCase.updateCompositionWatermark(currentProject, activateWatermark);
+
+    assertThat("UseCase update Watermark ", currentProject.hasWatermark(),
+        CoreMatchers.is(activateWatermark));
   }
 
   private void getAProject() {

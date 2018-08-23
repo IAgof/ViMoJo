@@ -21,14 +21,18 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.model.entities.editor.LastVideoExported;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -56,7 +60,7 @@ public class Project implements ElementChangedListener {
   private VMComposition vmComposition;
 
   private String lastModification;
-  
+
   private String uuid = UUID.randomUUID().toString();
 
   private LastVideoExported lastVideoExported;
@@ -74,8 +78,10 @@ public class Project implements ElementChangedListener {
     private int duration;
 
   private ProjectInfo projectInfo;
+  private DataPersistanceType dataPersistanceType;
+  private final HashMap<String, Asset> assets;
 
-    /**
+  /**
      * Constructor of minimum number of parameters. This is the Default constructor.
      *
      * @param projectInfo    - Project info.
@@ -93,12 +99,8 @@ public class Project implements ElementChangedListener {
         this.projectPath = rootPath + File.separator + Constants.FOLDER_NAME_VIMOJO_PROJECTS +
             File.separator + uuid; //todo probablemente necesitemos un slugify de ese title.
       //  createProjectFolders();
+      assets = new HashMap<>();
     }
-
-  @NonNull
-  public String getResourceWatermarkFilePath(String privatePath) {
-    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
-  }
 
   public Project(Project project) throws IllegalItemOnTrack {
     projectInfo = new ProjectInfo(project.getProjectInfo());
@@ -108,6 +110,12 @@ public class Project implements ElementChangedListener {
     lastModification = project.getLastModification();
     projectPath = new File(project.getProjectPath()).getParent() + File.separator + uuid;
     createFolder(projectPath);
+    assets = new HashMap<>(project.getAssets());
+  }
+
+  @NonNull
+  public String getResourceWatermarkFilePath(String privatePath) {
+    return privatePath + File.separator + Constants.RESOURCE_WATERMARK_NAME;
   }
 
   public VMComposition getVMComposition() {
@@ -302,5 +310,17 @@ public class Project implements ElementChangedListener {
 
   public String getProjectId() {
     return projectId;
+  }
+
+  public DataPersistanceType getDataPersistanceType() {
+    return dataPersistanceType;
+  }
+
+  public void setDataPersistanceType(DataPersistanceType dataPersistanceType) {
+    this.dataPersistanceType = dataPersistanceType;
+  }
+
+  public HashMap getAssets() {
+    return assets;
   }
 }
