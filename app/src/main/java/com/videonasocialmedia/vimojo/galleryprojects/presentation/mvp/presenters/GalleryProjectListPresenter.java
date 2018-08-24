@@ -168,7 +168,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void createNewProject(String rootPath, String privatePath,
                                Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            isWatermarkActivated(), drawableFadeTransitionVideo);
+            isWatermarkActivated(), drawableFadeTransitionVideo,
+            BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }

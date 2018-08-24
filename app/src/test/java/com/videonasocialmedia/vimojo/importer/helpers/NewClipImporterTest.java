@@ -140,8 +140,7 @@ public class NewClipImporterTest {
         newClipImporterSpy.relaunchUnfinishedAdaptTasks(currentProject);
 
         Mockito.verify(newClipImporterSpy).adaptVideoToVideonaFormat(currentProject, video, position,
-                cameraRotation,
-                ++retries);
+                cameraRotation, ++retries);
         assertThat(videosToAdapt.get(0).getVideo().getIdentifier(), is(video.getIdentifier()));
     }
 

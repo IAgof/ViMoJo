@@ -166,6 +166,7 @@ public class EditorPresenter extends VimojoPresenter
     checkWatermark();
     checkVimojoStore();
     checkVimojoPlatform();
+    checkShowTutorial();
   }
 
   private void checkVimojoPlatform() {
@@ -189,6 +190,12 @@ public class EditorPresenter extends VimojoPresenter
       editorActivityView.watermarkFeatureAvailable();
     } else {
       editorActivityView.hideWatermarkSwitch();
+    }
+  }
+
+  private void checkShowTutorial() {
+    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+      editorActivityView.hideTutorialViews();
     }
   }
 
@@ -224,9 +231,9 @@ public class EditorPresenter extends VimojoPresenter
   private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
                                             Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            getPreferenceWaterMark(), drawableFadeTransitionVideo);
+            getPreferenceWaterMark(), drawableFadeTransitionVideo,
+            BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectInstanceCache.setCurrentProject(project);
-    // TODO(jliarte): 11/07/18 change to runnable
     return executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 

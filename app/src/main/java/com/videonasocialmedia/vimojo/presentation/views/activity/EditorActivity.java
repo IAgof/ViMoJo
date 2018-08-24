@@ -60,6 +60,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter.VOLUME_MUTE;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 
 /**
  *
@@ -149,6 +150,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onStart();
     videonaPlayer.setListener(this);
     videonaPlayer.onShown(this);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+    }
   }
 
   @Override
@@ -436,6 +440,15 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     runOnUiThread(() -> {
       Menu menu = navigationView.getMenu();
       MenuItem target = menu.findItem(R.id.switch_watermark);
+      target.setVisible(false);
+    });
+  }
+
+  @Override
+  public void hideTutorialViews() {
+    runOnUiThread(() -> {
+      Menu menu = navigationView.getMenu();
+      MenuItem target = menu.findItem(R.id.menu_navview_tutorial);
       target.setVisible(false);
     });
   }

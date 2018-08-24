@@ -145,7 +145,11 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
   public void obtainNetworksToShare() {
     if (BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {
-      socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+      if (BuildConfig.FLAVOR.equals("vishow")) {
+        socialNetworkList = obtainNetworksToShareUseCase.obtainVishowNetworks();
+      } else {
+        socialNetworkList = obtainNetworksToShareUseCase.obtainMainNetworks();
+      }
     } else {
       shareVideoViewReference.get().hideShowMoreSocialNetworks();
     }
@@ -316,7 +320,12 @@ public class ShareVideoPresenter extends VimojoPresenter {
   public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
     shareVideoViewReference.get().pauseVideoPlayerPreview();
     socialNetworkSelected = socialNetwork;
-    exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
+    if (socialNetwork.getName().equals("Instagram Stories")
+        && currentProject.getDuration() > 15000) {
+      shareVideoViewReference.get().showDialogInstagramStoriesDuration();
+    } else {
+      exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
+    }
   }
 
   public void onVimojoPlatformClicked(boolean isWifiConnected,
@@ -340,7 +349,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork);
   }
 
-  protected void exportOrProcessNetwork(int typeNetworkSelected) {
+  public void exportOrProcessNetwork(int typeNetworkSelected) {
     if (!hasBeenProjectExported()) {
       startExport(typeNetworkSelected);
     } else {
@@ -388,6 +397,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   }
 
   public void cancelExportation() {
+    Log.d(LOG_TAG, "cancelExportation ");
     exportUseCase.cancelExport();
   }
 

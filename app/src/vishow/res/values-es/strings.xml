@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_music_title_arp_bounce">Geographer \nMúsica dance y electrónica | Dramática</string>
+    <string name="activity_music_title_club_thump">Gunnar Olsen \nMúsica dance y electrónica | Trance</string>
+    <string name="activity_music_title_the_missing_link">The Whole Other \nMúsica chillout y electrónica | Groove</string>
+    <string name="activity_music_title_the_toe_jam">Diamond Ortiz \nMúsica dance y electrónica | Funky</string>
+
+    <string name="vimojo_kit_web">"https://vimojo.co/kitmojo/?utm_source=vishow_android&amp;utm_medium=app_link"</string>
+</resources>

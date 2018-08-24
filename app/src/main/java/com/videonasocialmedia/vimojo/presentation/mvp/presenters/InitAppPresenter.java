@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
@@ -28,7 +29,8 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -47,10 +49,10 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
  */
 public class InitAppPresenter extends VimojoPresenter {
   private final Context context;
+  private final InitAppView initAppView;
   private final CameraSettingsDataSource cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
-  // TODO(jliarte): 11/07/18 make final if injected
-  private SaveComposition saveComposition;
+  private final SaveComposition saveComposition;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
@@ -59,19 +61,21 @@ public class InitAppPresenter extends VimojoPresenter {
 
 
   @Inject
-  public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
+  public InitAppPresenter(Context context, InitAppView initAppView,
+                          SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
                           CameraSettingsDataSource cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper,
-                          ProjectInstanceCache projectInstanceCache) {
+                          ProjectInstanceCache projectInstanceCache,
+                          SaveComposition saveComposition) {
     this.context = context;
+    this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
-    // TODO(jliarte): 11/07/18 inject this
-//    saveComposition = new SaveComposition(projectInstanceCache, projectRepository);
+    this.saveComposition = saveComposition;
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -79,17 +83,16 @@ public class InitAppPresenter extends VimojoPresenter {
     if (projectInstanceCache.getCurrentProject() == null) {
       // TODO(jliarte): 23/04/18 in fact, there will be always a project instance, consider removing
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-              isWatermarkActivated(), drawableFadeTransitionVideo);
+              isWatermarkActivated(), drawableFadeTransitionVideo,
+              BuildConfig.FEATURE_VERTICAL_VIDEOS);
       projectInstanceCache.setCurrentProject(project);
       saveComposition.saveComposition(project);
     }
   }
 
   public boolean isWatermarkActivated() {
-    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
-      return true;
-    }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
+    return BuildConfig.FEATURE_FORCE_WATERMARK
+        || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
   public void checkCamera2FrameRateAndResolutionSupported() {
@@ -146,7 +149,8 @@ public class InitAppPresenter extends VimojoPresenter {
     }
 
     if(!resolutionBack1080pSupported){
-      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
+      defaultResolution = BuildConfig.FEATURE_VERTICAL_VIDEOS ? CAMERA_SETTING_RESOLUTION_V_720
+          : CAMERA_SETTING_RESOLUTION_H_720;
       //resolutionBack1080pSupported = true;
     }
 
@@ -206,6 +210,10 @@ public class InitAppPresenter extends VimojoPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      initAppView.screenOrientationPortrait();
+    } else {
+      initAppView.screenOrientationLandscape();
+    }
   }
-
 }

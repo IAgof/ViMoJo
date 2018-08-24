@@ -12,7 +12,6 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.OnRelaunchTemporalFileListener;
 
@@ -24,7 +23,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -33,10 +31,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 
 public class UpdateIntermediateTemporalFilesTransitionsUseCaseTest {
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @Mock
-  VideoDataSource mockedVideoRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock OnRelaunchTemporalFileListener mockedOnRelaunchTemporalFileListener;
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @Mock private ApplyAVTransitionsUseCase mockedApplyAVTransitionUseCase;

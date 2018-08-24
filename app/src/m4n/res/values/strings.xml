@@ -5,6 +5,49 @@
     <string name="activity_music_title_jazzy_frenchy">Jazz music featuring acoustic guitar, double bass, accordion and vibes</string>
     <string name="activity_music_title_acoustic_breeze">Acoustic music with a soft and mellow mood featuring folk guitar and cello</string>
 
+    <string name="licenseMusic">
+
+        GOING HIGHER\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            https://www.bensound.com/royalty-free-music/track/going-higher\n\n
+
+        UKELELE\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            http://www.bensound.com/royalty-free-music/track/ukulele\n\n
+
+        JAZZY-FRENCHY\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            https://www.bensound.com/royalty-free-music/track/jazzy-frenchy\n\n
+
+        ACOUSTIC BREEZE\n
+            My music is licensed under a Creative Commons License:\n
+            You are free to use the music in your multimedia project (online videos(youtube,…),
+            websites, animations, etc.) as long as you credit me, For example:\n
+            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
+
+            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
+            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
+            http://www.bensound.com/index.php?route=product/search&amp;search=ACOUSTIC%20BREEZE\n\n
+   </string>
+
     <string name="vimojo_kit_web">https://vimojo.co/mojokit/?utm_source=m4n_android&amp;utm_medium=app_link</string>
     <string name="vimojo_platform_base">https://market4news.com</string>
     <string name="vimojo_platform">"https://market4news.com/?utm_source=m4n_android&amp;utm_medium=app_link"</string>
@@ -13,5 +56,17 @@
     <string name="com_auth0_client_id">2cD3Ta5Gb9ohFUrqbG49462Rl2DaXooN</string>
     <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
     <string name="com_auth0_audience">https://market4news.vimojo.auth/api</string>
+
+    <string name="flavor_name">Market 4 News</string>
+
+    <string name="app_videona">Videona</string>
+    <string name="app_videona_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.videona&amp;referrer=utm_source%3DVideona%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+    <string name="app_kamarada">Kamarada</string>
+    <string name="app_kamarada_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.kamarada&amp;referrer=utm_source%3DKamarada%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+    <string name="app_vimojo">Vimojo</string>
+    <string name="app_vimojo_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.vimojo.main&amp;referrer=utm_source%3DVimojo%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+
+    <string name="admob_app_id">ca-app-pub-4533929990381933~3090744535</string>
+    <string name="admob_banner_ad_unit_id">ca-app-pub-4533929990381933/1063346996</string>
 
 </resources>

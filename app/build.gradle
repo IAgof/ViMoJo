@@ -88,6 +88,10 @@ android {
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
             ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
             manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
@@ -181,6 +185,10 @@ android {
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "c5e050918c143441f6b23e7936f7f83faa1330b4"
             ext.fabricApiSecret = "2c2a5661adbf7258c3dfb8711f48b40ed43d5291f9474ba8e4cda6d05b917b55"
             manifestPlaceholders = [vimojoAppName: "Vimojo Thomson Foundation", fabricApiKey: "c5e050918c143441f6b23e7936f7f83faa1330b4"]
@@ -229,6 +237,10 @@ android {
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "false"
+            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"
             ext.fabricApiSecret = "40b9ea4d7a095ba1c106dbdebd1cf69c9761460d54f2c8418b206c167f677ea4"
             manifestPlaceholders = [vimojoAppName: "Vimojo Market4News", fabricApiKey: "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"]
@@ -279,6 +291,10 @@ android {
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "1442d44814a667b767d05105af9eaf0887fa55bf"
             ext.fabricApiSecret = "0fcdb4c627d49f12bdd91f05aab78cc2df83d19e142221ad4361b4596bd9f5f8"
             manifestPlaceholders = [vimojoAppName: "Vimojo El Confidencial", fabricApiKey: "1442d44814a667b767d05105af9eaf0887fa55bf"]
@@ -304,9 +320,42 @@ android {
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "ba042a668ef1e5a3445c6e91d54df22eb70dbfc9"
             ext.fabricApiSecret = "b3aa2331c01539f74d9b0167cd8cc4162ebb0004907a676f8c5007f0b003df39"
             manifestPlaceholders = [vimojoAppName: "Vimojo Vanitatis", fabricApiKey: "ba042a668ef1e5a3445c6e91d54df22eb70dbfc9"]
+        }
+
+        vishow {
+            applicationId "com.videonasocialmedia.vimojo.vishow"
+            versionCode 6 // 20180809 // v1 Beta for Google Play
+            versionName "0.20.5.fVishow" // 20180710
+            resValue "string", "app_out_of_date", "2018-06-30" // 20180522
+            resValue "string", "app_name", "Vishow"
+            resValue "string", "content_authority", applicationId + '.provider'
+            resValue "string", "account_type", applicationId + ".auth0"
+            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+            buildConfigField "boolean", "FEATURE_FTP", "false"
+            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
+            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
+            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
+            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
+            buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "true"
+            buildConfigField "boolean", "FEATURE_SHOW_ADS", "true"
+            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "true"
+            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "false"
+            ext.fabricApiKey = "84ed2eec6d02a66257b9991e2478d8c0f6fbb811"
+            ext.fabricApiSecret = "d9bda43e1f7bb8832aa78e4ad90bf0ed2689c6791f023cc62cdd151236028c79"
+            manifestPlaceholders = [vimojoAppName: "Vishow", fabricApiKey: "84ed2eec6d02a66257b9991e2478d8c0f6fbb811"]
         }
     }
     File fabricProperties = new File("${project.projectDir.absolutePath}/fabric.properties")
@@ -479,6 +528,7 @@ dependencies {
     implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
     implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation 'com.auth0.android:auth0:1.13.0'
+    implementation 'com.google.firebase:firebase-ads:11.8.0'
 }
 
 // Ensure the no-op dependency is always used in JVM tests.

@@ -35,8 +35,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(RobolectricTestRunner.class)
 public class ReorderMediaItemUseCaseTest {
-  @Mock
-  ProjectRepository mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   @InjectMocks ReorderMediaItemUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
   private Project currentProject;

@@ -83,6 +83,7 @@ public class AdaptVideoToFormatUseCase {
       mediaRepository.update(video); // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
       notifySuccess(video);
     }
+
     private void notifySuccess(Video video) {
       AdaptListener listener = adaptListener.get();
       if (listener != null) {
