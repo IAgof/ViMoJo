@@ -98,9 +98,7 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    if (this.completionReceiver != null) {
-      unregisterReceiver(this.completionReceiver);
-    }
+    unregisterFileUploadReceiver();
   }
 
   @Override
@@ -139,6 +137,13 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
     this.completionReceiver = completionReceiver;
     registerReceiver(completionReceiver,
             new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+  }
+
+  @Override
+  public void unregisterFileUploadReceiver() {
+    if (this.completionReceiver != null) {
+      unregisterReceiver(this.completionReceiver);
+    }
   }
 
   @Override
