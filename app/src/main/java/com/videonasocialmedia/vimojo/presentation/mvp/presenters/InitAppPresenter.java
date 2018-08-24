@@ -86,7 +86,7 @@ public class InitAppPresenter extends VimojoPresenter {
               isWatermarkActivated(), drawableFadeTransitionVideo,
               BuildConfig.FEATURE_VERTICAL_VIDEOS);
       projectInstanceCache.setCurrentProject(project);
-      saveComposition.saveComposition(project);
+      executeUseCaseCall(() -> saveComposition.saveComposition(project));
     }
   }
 
