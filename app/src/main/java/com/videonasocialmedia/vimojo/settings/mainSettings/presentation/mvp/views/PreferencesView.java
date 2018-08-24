@@ -81,4 +81,6 @@ public interface PreferencesView {
     void showMoreAppsSection();
 
     void hideMoreAppsSection();
+
+  void navigateToInitRegisterLogin();
 }

@@ -389,6 +389,7 @@ public class PreferencesPresenter extends VimojoPresenter
         if (am != null) {
           Log.d(LOG_TAG, "removeAccount");
           am.removeAccount(account, null, null);
+          preferencesView.navigateToInitRegisterLogin();
         }
       }
       @Override

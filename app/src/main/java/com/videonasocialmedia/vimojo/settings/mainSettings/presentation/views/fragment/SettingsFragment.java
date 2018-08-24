@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -343,6 +344,11 @@ public class SettingsFragment extends PreferenceFragment implements
         if (moreAppsPrefCategory != null) {
             getPreferenceScreen().removePreference(moreAppsPrefCategory);
         }
+    }
+
+    @Override
+    public void navigateToInitRegisterLogin() {
+        navigateTo(InitRegisterLoginActivity.class);
     }
 
     private AlertDialog createSignOutDialog() {

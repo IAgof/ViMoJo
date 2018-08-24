@@ -5,15 +5,17 @@ import android.content.SharedPreferences;
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.init.presentation.mvp.presenters.InitRegisterLoginPresenter;
+import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitRegisterLoginView;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.share.presentation.views.utils.LoggedValidator;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
@@ -49,7 +51,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePrevie
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
+import com.videonasocialmedia.vimojo.init.presentation.mvp.presenters.InitAppPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
@@ -322,10 +324,17 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsRepository cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository) {
+          RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository,
+          UserAuth0Helper userAuth0Helper) {
     return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
             createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
-            projectRepository, (ProjectInstanceCache) activity.getApplication());
+            projectRepository, (ProjectInstanceCache) activity.getApplication(), userAuth0Helper);
+  }
+
+  @Provides @PerActivity
+  InitRegisterLoginPresenter provideRegisterLoginPresenter(UserAuth0Helper userAuth0Helper) {
+    return new InitRegisterLoginPresenter(activity, (InitRegisterLoginActivity) activity,
+        userAuth0Helper);
   }
 
   @Provides @PerActivity

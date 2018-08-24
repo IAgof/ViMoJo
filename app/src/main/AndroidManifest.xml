@@ -124,7 +124,7 @@
         </receiver>
 
         <activity
-            android:name=".presentation.views.activity.InitAppActivity"
+            android:name=".init.presentation.views.activity.InitAppActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
@@ -135,6 +135,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".init.presentation.views.activity.InitRegisterLoginActivity"
+            android:screenOrientation="sensorPortrait">
         </activity>
 
 
