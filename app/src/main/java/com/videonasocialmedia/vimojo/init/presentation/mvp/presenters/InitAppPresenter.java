@@ -223,7 +223,7 @@ public class InitAppPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS || !userAuth0Helper.isLogged()) {
       initAppView.screenOrientationPortrait();
     } else {
       initAppView.screenOrientationLandscape();

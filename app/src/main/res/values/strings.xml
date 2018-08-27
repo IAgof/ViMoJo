@@ -1122,6 +1122,13 @@ limitations under the License. \n
         SOFTWARE.\n\n
     </string>
 
+    <string name="licenseIntroRegisterLoginVideo">
+        Intro video for register or login. \n\n
+
+        Video from https://pixabay.com/ \n\n
+        Music, Benjamin Tissot https://www.bensound.com/royalty-free-music/track/energy \n\n
+    </string>
+
 
     <!-- Legal Notice -->
 
