@@ -48,9 +48,6 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.Utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -58,7 +55,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -82,7 +78,6 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_ST
  */
 
 public class InitAppActivity extends VimojoActivity implements InitAppView, OnInitAppEventListener {
-
     private final String LOG_TAG = this.getClass().getSimpleName();
     private long MINIMUN_WAIT_TIME = 900;
 
@@ -228,7 +223,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void setup() {
         androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         setupPathsApp(this);
-        trackUserProfileGeneralTraits();
+        presenter.trackUserProfileGeneralTraits();
     }
 
     /**
@@ -254,48 +249,30 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             case NORMAL:
                 Log.d(LOG_TAG, " AppStart State NORMAL");
                 initState = AnalyticsConstants.INIT_STATE_RETURNING;
-                trackAppStartupProperties(false);
+                presenter.trackAppStartupProperties(false);
                 initSettings();
                 break;
             case FIRST_TIME_VERSION:
                 Log.d(LOG_TAG, " AppStart State FIRST_TIME_VERSION");
                 initState = AnalyticsConstants.INIT_STATE_UPGRADE;
-                trackAppStartupProperties(false);
+                presenter.trackAppStartupProperties(false);
                 // Repeat this method for security, if user delete app data miss this configs.
                 setupCameraSettings();
-                trackUserProfile();
+                presenter.trackUserProfile(this.androidId);
                 initSettings();
                 break;
             case FIRST_TIME:
                 Log.d(LOG_TAG, " AppStart State FIRST_TIME");
                 initState = AnalyticsConstants.INIT_STATE_FIRST_TIME;
-                trackAppStartupProperties(true);
+                presenter.trackAppStartupProperties(true);
                 setupCameraSettings();
-                trackUserProfile();
-                trackCreatedSuperProperty();
+                presenter.trackUserProfile(this.androidId);
+                presenter.trackCreatedSuperProperty();
                 initSettings();
                 initThemeAndWatermark();
                 break;
             default:
                 break;
-        }
-    }
-
-    private void trackUserProfileGeneralTraits() {
-        mixpanel.getPeople().increment(AnalyticsConstants.APP_USE_COUNT, 1);
-        JSONObject userProfileProperties = new JSONObject();
-        String userType = AnalyticsConstants.USER_TYPE_FREE;
-        if (BuildConfig.FLAVOR.equals("alpha")) {
-            userType = AnalyticsConstants.USER_TYPE_BETA;
-        }
-        try {
-            userProfileProperties.put(AnalyticsConstants.TYPE, userType);
-            userProfileProperties.put(AnalyticsConstants.LOCALE,
-                    Locale.getDefault().toString());
-            userProfileProperties.put(AnalyticsConstants.LANG, Locale.getDefault().getISO3Language());
-            mixpanel.getPeople().set(userProfileProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
@@ -315,25 +292,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         String privatePath = privateDataFolderModel.getAbsolutePath();
         editor.putString(ConfigPreferences.PRIVATE_PATH, privatePath).commit();
         Utils.copyWatermarkResourceToDevice();
-    }
-
-    private void trackAppStartupProperties(boolean state) {
-        JSONObject appStartupSuperProperties = new JSONObject();
-        int appUseCount;
-        try {
-            appUseCount = mixpanel.getSuperProperties().getInt(AnalyticsConstants.APP_USE_COUNT);
-        } catch (JSONException e) {
-            appUseCount = 0;
-        }
-        try {
-            appStartupSuperProperties.put(AnalyticsConstants.APP_USE_COUNT, ++appUseCount);
-            appStartupSuperProperties.put(AnalyticsConstants.FIRST_TIME, state);
-            appStartupSuperProperties.put(AnalyticsConstants.APP, "ViMoJo");
-            appStartupSuperProperties.put(AnalyticsConstants.FLAVOR, BuildConfig.FLAVOR);
-            mixpanel.registerSuperProperties(appStartupSuperProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -357,45 +315,10 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
        presenter.checkCamera2FrameRateAndResolutionSupported();
     }
 
-    private void trackUserProfile() {
-        mixpanel.identify(androidId);
-        mixpanel.getPeople().identify(androidId);
-        JSONObject userProfileProperties = new JSONObject();
-        try {
-            userProfileProperties.put(AnalyticsConstants.CREATED,
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
-            mixpanel.getPeople().setOnce(userProfileProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void trackCreatedSuperProperty() {
-        JSONObject createdSuperProperty = new JSONObject();
-        try {
-            createdSuperProperty.put(AnalyticsConstants.CREATED,
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
-            mixpanel.registerSuperPropertiesOnce(createdSuperProperty);
-        } catch (JSONException e) {
-            Log.e("ANALYTICS", "Error sending created super property");
-        }
-    }
-
     private void checkAndInitPath(String pathApp) {
         File fEdited = new File(pathApp);
         if (!fEdited.exists()) {
             fEdited.mkdirs();
-        }
-    }
-
-    private void trackAppStartup() {
-        JSONObject initAppProperties = new JSONObject();
-        try {
-            initAppProperties.put(AnalyticsConstants.TYPE, AnalyticsConstants.TYPE_ORGANIC);
-            initAppProperties.put(AnalyticsConstants.INIT_STATE, initState);
-            mixpanel.track(AnalyticsConstants.APP_STARTED, initAppProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
@@ -559,6 +482,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
     private void setupAndTrackInit() throws CameraAccessException {
         setup();
-        trackAppStartup();
+        presenter.trackAppStartup(this.initState);
     }
 }

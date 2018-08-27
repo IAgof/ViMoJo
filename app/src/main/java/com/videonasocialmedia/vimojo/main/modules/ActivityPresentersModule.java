@@ -6,7 +6,6 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.presenters.InitRegisterLoginPresenter;
-import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitRegisterLoginView;
 import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -325,10 +324,11 @@ public class ActivityPresentersModule {
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsRepository cameraSettingsRepository,
           RunSyncAdapterHelper runSyncAdapterHelper, ProjectRepository projectRepository,
-          UserAuth0Helper userAuth0Helper) {
+          UserAuth0Helper userAuth0Helper, UserEventTracker userEventTracker) {
     return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
             createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
-            projectRepository, (ProjectInstanceCache) activity.getApplication(), userAuth0Helper);
+            projectRepository, (ProjectInstanceCache) activity.getApplication(), userAuth0Helper,
+            userEventTracker);
   }
 
   @Provides @PerActivity

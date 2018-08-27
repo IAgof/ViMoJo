@@ -112,7 +112,7 @@ public class InitAppPresenterTest {
   private InitAppPresenter getInitAppPresenter() {
     return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
         mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
-        mockedProjectRepository, mockedProjectInstanceCache, mockedUserAuth0Helper);
+        mockedProjectRepository, mockedProjectInstanceCache, mockedUserAuth0Helper, userEventTracker);
   }
 
   public void getAProject() {

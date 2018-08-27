@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.utils;
 import android.util.Log;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by jliarte on 7/06/16.
@@ -41,6 +43,80 @@ public class UserEventTracker {
     protected void trackEvent(Event event) {
         if (event != null) {
             mixpanel.track(event.getName(), event.getProperties());
+        }
+    }
+
+    /***** App startup - from initAppActivity ******/
+
+    public void trackUserProfileGeneralTraits() {
+        mixpanel.getPeople().increment(AnalyticsConstants.APP_USE_COUNT, 1);
+        JSONObject userProfileProperties = new JSONObject();
+        String userType = AnalyticsConstants.USER_TYPE_FREE;
+        if (BuildConfig.FLAVOR.equals("alpha")) {
+            userType = AnalyticsConstants.USER_TYPE_BETA;
+        }
+        try {
+            userProfileProperties.put(AnalyticsConstants.TYPE, userType);
+            userProfileProperties.put(AnalyticsConstants.LOCALE,
+                    Locale.getDefault().toString());
+            userProfileProperties.put(AnalyticsConstants.LANG, Locale.getDefault().getISO3Language());
+            mixpanel.getPeople().set(userProfileProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackAppStartupProperties(boolean state) {
+        JSONObject appStartupSuperProperties = new JSONObject();
+        int appUseCount;
+        try {
+            appUseCount = mixpanel.getSuperProperties().getInt(AnalyticsConstants.APP_USE_COUNT);
+        } catch (JSONException e) {
+            appUseCount = 0;
+        }
+        try {
+            appStartupSuperProperties.put(AnalyticsConstants.APP_USE_COUNT, ++appUseCount);
+            appStartupSuperProperties.put(AnalyticsConstants.FIRST_TIME, state);
+            appStartupSuperProperties.put(AnalyticsConstants.APP, "ViMoJo");
+            appStartupSuperProperties.put(AnalyticsConstants.FLAVOR, BuildConfig.FLAVOR);
+            mixpanel.registerSuperProperties(appStartupSuperProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackUserProfile(String androidId) {
+        mixpanel.identify(androidId);
+        mixpanel.getPeople().identify(androidId);
+        JSONObject userProfileProperties = new JSONObject();
+        try {
+            userProfileProperties.put(AnalyticsConstants.CREATED,
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
+            mixpanel.getPeople().setOnce(userProfileProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackCreatedSuperProperty() {
+        JSONObject createdSuperProperty = new JSONObject();
+        try {
+            createdSuperProperty.put(AnalyticsConstants.CREATED,
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
+            mixpanel.registerSuperPropertiesOnce(createdSuperProperty);
+        } catch (JSONException e) {
+            Log.e("ANALYTICS", "Error sending created super property");
+        }
+    }
+
+    public void trackAppStartup(String initState) {
+        JSONObject initAppProperties = new JSONObject();
+        try {
+            initAppProperties.put(AnalyticsConstants.TYPE, AnalyticsConstants.TYPE_ORGANIC);
+            initAppProperties.put(AnalyticsConstants.INIT_STATE, initState);
+            mixpanel.track(AnalyticsConstants.APP_STARTED, initAppProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -174,7 +250,6 @@ public class UserEventTracker {
     }
 
     public void trackVideoShared(String socialNetworkId, Project project,int totalVideoShared) {
-
         JSONObject eventProperties = new JSONObject();
         try {
             eventProperties.put(AnalyticsConstants.SOCIAL_NETWORK, socialNetworkId);

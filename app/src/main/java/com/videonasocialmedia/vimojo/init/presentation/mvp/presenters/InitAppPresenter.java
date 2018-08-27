@@ -29,12 +29,20 @@ import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -68,6 +76,7 @@ public class InitAppPresenter {
   private CameraSettings cameraSettings;
   private String LOG_TAG = InitAppPresenter.class.getCanonicalName();
   private UserAuth0Helper userAuth0Helper;
+  private UserEventTracker userEventTracker;
 
 
   @Inject
@@ -78,7 +87,7 @@ public class InitAppPresenter {
                           RunSyncAdapterHelper runSyncAdapterHelper,
                           ProjectRepository projectRepository,
                           ProjectInstanceCache projectInstanceCache,
-                          UserAuth0Helper userAuth0Helper) {
+                          UserAuth0Helper userAuth0Helper, UserEventTracker userEventTracker) {
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
@@ -88,6 +97,7 @@ public class InitAppPresenter {
     this.projectRepository = projectRepository;
     this.projectInstanceCache = projectInstanceCache;
     this.userAuth0Helper = userAuth0Helper;
+    this.userEventTracker = userEventTracker;
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -244,5 +254,25 @@ public class InitAppPresenter {
     } else {
       initAppView.navigate(InitRegisterLoginActivity.class);
     }
+  }
+
+  public void trackUserProfileGeneralTraits() {
+    userEventTracker.trackUserProfileGeneralTraits();
+  }
+
+  public void trackAppStartupProperties(boolean state) {
+    userEventTracker.trackAppStartupProperties(state);
+  }
+
+  public void trackUserProfile(String androidId) {
+    userEventTracker.trackUserProfile(androidId);
+  }
+
+  public void trackCreatedSuperProperty() {
+    userEventTracker.trackCreatedSuperProperty();
+  }
+
+  public void trackAppStartup(String initState) {
+    userEventTracker.trackAppStartup(initState);
   }
 }
