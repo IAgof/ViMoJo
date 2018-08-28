@@ -22,7 +22,6 @@ import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
-import com.google.firebase.FirebaseApp;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -39,6 +38,9 @@ import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.FirebaseTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.MixpanelTracker;
 
 import javax.inject.Inject;
 
@@ -91,6 +93,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         Fabric.with(this, crashlyticsKit);
         context = getApplicationContext();
         setupGoogleAnalytics();
+        setupUserEventTracker();
 //        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         Dexter.initialize(this);
         setupLeakCanary();
@@ -99,6 +102,14 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .vimojoApplicationModule(getVimojoApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .build().inject(this);
+    }
+
+    private void setupUserEventTracker() {
+        UserEventTracker userEventTracker = new UserEventTracker.Builder(context)
+                .use(FirebaseTracker.FACTORY)
+                .use(MixpanelTracker.FACTORY)
+                .build();
+        UserEventTracker.setSingletonInstance(userEventTracker);
     }
 
     void initSystemComponent() {
@@ -150,7 +161,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         appTracker = analytics.newTracker(R.xml.app_tracker);
         appTracker.enableAdvertisingIdCollection(true);
 
-      FirebaseApp.initializeApp(context);
+//      FirebaseApp.initializeApp(context);
     }
 
     private void setupLeakCanary() {

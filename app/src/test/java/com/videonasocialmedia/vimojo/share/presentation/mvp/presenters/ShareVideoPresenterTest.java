@@ -113,7 +113,7 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
                 mockedShareVideoView, userEventTracker, mockedSharedPreferences,
                 mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,

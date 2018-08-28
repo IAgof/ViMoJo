@@ -67,7 +67,7 @@ public class DuplicatePreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
         DuplicatePreviewPresenter duplicatePreviewPresenter =
                 new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker,
                     mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,

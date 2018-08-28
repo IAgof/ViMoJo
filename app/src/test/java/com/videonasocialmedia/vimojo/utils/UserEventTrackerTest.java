@@ -53,7 +53,7 @@ public class UserEventTrackerTest {
 
     @Test
     public void constructorSetsMixpanelProperty() {
-        UserEventTracker userEventTracker = new UserEventTracker(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = new UserEventTracker(mockedMixpanelAPI, context);
 
         assertThat("Mixpanel is set", userEventTracker.mixpanel, is(mockedMixpanelAPI));
         assertThat("Mixpanel object type", userEventTracker.mixpanel,
@@ -62,7 +62,7 @@ public class UserEventTrackerTest {
 
     @Test
     public void getInstanceReturnsATrackerObject() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
 
         assertThat("Mixpanel is set", userEventTracker, notNullValue());
         assertThat("Mixpanel object type", userEventTracker, instanceOf(UserEventTracker.class));
@@ -70,15 +70,15 @@ public class UserEventTrackerTest {
 
     @Test
     public void getInstanceReturnsSameTrackerObject() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        UserEventTracker userEventTracker2 = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+        UserEventTracker userEventTracker2 = UserEventTracker.getInstance(mockedMixpanelAPI, context);
 
         assertThat("Same instances", userEventTracker, is(userEventTracker2));
     }
 
     @Test
     public void trackEventCallsMixpanelTrack() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
 
         UserEventTracker.Event event = new UserEventTracker.Event(AnalyticsConstants.VIDEO_EDITED,
                 null);
@@ -94,7 +94,7 @@ public class UserEventTrackerTest {
     public void trackVideoStartRecordingCallsTrackWithEventNameAndProperties()
             throws JSONException {
         UserEventTracker userEventTracker = Mockito
-            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI, context));
 
         userEventTracker.trackVideoStartRecording();
 
@@ -108,7 +108,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackVideoStopRecordingCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito
-            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI, context));
 
         userEventTracker.trackVideoStopRecording();
 
@@ -122,7 +122,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackChangeCameraCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito
-            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI, context));
         boolean isFrontCameraSelected = false;
 
         userEventTracker.trackChangeCamera(isFrontCameraSelected);
@@ -137,7 +137,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackChangeFlashModeCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito
-            .spy(UserEventTracker.getInstance(mockedMixpanelAPI));
+            .spy(UserEventTracker.getInstance(mockedMixpanelAPI, context));
         boolean isFlashSelected = false;
 
         userEventTracker.trackChangeFlashMode(isFlashSelected);
@@ -152,7 +152,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackVideoRecordedCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-            .getInstance(mockedMixpanelAPI));
+            .getInstance(mockedMixpanelAPI, context));
         int totalVideosRecorded = 2;
 
         userEventTracker.trackVideoRecorded(currentProject, totalVideosRecorded);
@@ -170,7 +170,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackClipsReorderedCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
 
         userEventTracker.trackClipsReordered(currentProject);
 
@@ -186,7 +186,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackClipTrimmedCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
 
         userEventTracker.trackClipTrimmed(currentProject);
 
@@ -202,7 +202,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackClipSplitCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
 
         userEventTracker.trackClipSplitted(currentProject);
 
@@ -218,7 +218,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackClipDuplicatedCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
         int copies = 3;
 
         userEventTracker.trackClipDuplicated(copies, currentProject);
@@ -237,7 +237,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackClipAddTextToClipCallsTrackWithEventAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
         String position = "Center";
         int lengthText = 27;
 
@@ -262,7 +262,7 @@ public class UserEventTrackerTest {
     public void trackMusicSetCallsTrackWithEventNameAndProperties()
             throws IllegalItemOnTrack, JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
         Music music = new Music(1, "Music title", 2, 3, "Music Author","", 0);
         currentProject.getAudioTracks().get(0).insertItem(music);
 
@@ -282,7 +282,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackMusicSetTracksEmptyTitleIfMusicIsNull() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
 
         userEventTracker.trackMusicSet(currentProject);
 
@@ -295,7 +295,7 @@ public class UserEventTrackerTest {
     public void trackVoiceOverSetCallsTrackWithEventNameAndProperties() throws IllegalItemOnTrack,
             JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
         final float defaultVolume = 0.5f;
         int defaultDuration = 100;
         String mediaPath = "somePath";
@@ -317,7 +317,7 @@ public class UserEventTrackerTest {
     public void trackVideoSharedPropertiesCallsTrackWithEventNameAndProperties()
             throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-                .getInstance(mockedMixpanelAPI));
+                .getInstance(mockedMixpanelAPI, context));
 
         String socialNetworkId = "SocialNetwork";
         Profile profile = currentProject.getProfile();
@@ -351,7 +351,7 @@ public class UserEventTrackerTest {
     @Test
     public void trackProjectInfoCallsTrackWithEventNameAndProperties() throws JSONException {
         UserEventTracker userEventTracker = Mockito.spy(UserEventTracker
-            .getInstance(mockedMixpanelAPI));
+            .getInstance(mockedMixpanelAPI, context));
         String title = "title";
         String description = "description";
         List<String> productTypes = new ArrayList<>();

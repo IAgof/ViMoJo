@@ -75,7 +75,7 @@ public class SplitPreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
             userEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
             mockedProjectInstanceCache);
