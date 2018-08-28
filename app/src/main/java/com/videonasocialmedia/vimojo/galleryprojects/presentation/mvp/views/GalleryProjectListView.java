@@ -27,6 +27,8 @@ public interface GalleryProjectListView {
 
   void registerFileUploadReceiver(BroadcastReceiver completionReceiver);
 
+  void unregisterFileUploadReceiver();
+
   void showUpdateAssetsProgressDialog();
 
   void hideUpdateAssetsProgressDialog();

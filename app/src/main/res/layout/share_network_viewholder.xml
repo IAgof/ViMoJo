@@ -12,12 +12,12 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="@dimen/share_buttons_network_view_holder_icon_size"
+        android:layout_height="@dimen/share_buttons_network_view_holder_icon_size"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="8dp"
-        tools:layout_height="27dp"
-        tools:layout_width="27dp"
+        tools:layout_height="@dimen/share_buttons_network_view_holder_icon_size"
+        tools:layout_width="@dimen/share_buttons_network_view_holder_icon_size"
         tools:src="@drawable/fragment_gallery_no_image"/>
 
     <TextView
@@ -27,8 +27,8 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:textAlignment="center"
-        android:textSize="15sp"
-        tools:text="Gatito"/>
+        android:textSize="@dimen/share_buttons_network_view_holder_name_text_size"
+        tools:text="Instagram stories"/>
 
     <CheckBox
         android:id="@+id/checkbox"

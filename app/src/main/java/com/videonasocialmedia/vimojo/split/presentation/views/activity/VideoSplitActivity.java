@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -43,6 +44,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_HIGH;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
@@ -108,6 +110,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
         presenter.updatePresenter();
     }
 
@@ -284,8 +289,8 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void showText(String text, String position) {
-        videonaPlayer.setImageText(text, position);
+    public void showText(String text, String position, int width, int height) {
+        videonaPlayer.setImageText(text, position, width, height);
     }
 
     @Override

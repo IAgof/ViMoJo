@@ -10,4 +10,8 @@ package com.videonasocialmedia.vimojo.presentation.mvp.views;
 public interface InitAppView {
 
     public void navigate(Class<?> cls);
+
+    void screenOrientationPortrait();
+
+    void screenOrientationLandscape();
 }

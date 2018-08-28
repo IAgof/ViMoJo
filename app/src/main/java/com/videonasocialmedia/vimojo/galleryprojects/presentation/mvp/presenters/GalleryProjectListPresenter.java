@@ -168,7 +168,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void createNewProject(String rootPath, String privatePath,
                                Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            isWatermarkActivated(), drawableFadeTransitionVideo);
+            isWatermarkActivated(), drawableFadeTransitionVideo,
+            BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
@@ -180,34 +181,24 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void goToEdit(Project project) {
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> updateComposition.updateComposition(project));
-    galleryProjectListView.showUpdateAssetsProgressDialog();
-    BroadcastReceiver completionReceiver = getCompositionAssets.updateAssetFiles(project,
-            new GetCompositionAssets.UpdateAssetFilesListener() {
-      @Override
-      public void onCompletion() {
-        galleryProjectListView.hideUpdateAssetsProgressDialog();
-        galleryProjectListView.navigateTo(EditActivity.class);
-      }
-
-      @Override
-      public void onProgress(int remaining) {
-        galleryProjectListView.updateUpdateAssetsProgressDialog(remaining);
-        Log.d(LOG_TAG, "Progress updating composition assets, remaining " + remaining);
-      }
-    });
-    galleryProjectListView.registerFileUploadReceiver(completionReceiver);
+    downloadAssetsAndNavigate(project, EditActivity.class);
   }
 
   public void goToShare(Project project) {
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> updateComposition.updateComposition(project));
+    downloadAssetsAndNavigate(project, ShareActivity.class);
+  }
+
+  private void downloadAssetsAndNavigate(Project project, Class navigateTo) {
     galleryProjectListView.showUpdateAssetsProgressDialog();
     BroadcastReceiver completionReceiver = getCompositionAssets.updateAssetFiles(project,
             new GetCompositionAssets.UpdateAssetFilesListener() {
               @Override
               public void onCompletion() {
                 galleryProjectListView.hideUpdateAssetsProgressDialog();
-                galleryProjectListView.navigateTo(ShareActivity.class);
+                galleryProjectListView.unregisterFileUploadReceiver();
+                galleryProjectListView.navigateTo(navigateTo);
               }
 
               @Override

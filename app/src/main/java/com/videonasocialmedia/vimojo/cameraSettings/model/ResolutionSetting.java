@@ -17,9 +17,12 @@ import java.util.HashMap;
  * This model is intended for record area.
  */
 public class ResolutionSetting {
-  public static final String CAMERA_SETTING_RESOLUTION_720 = "720p";
-  public static final String CAMERA_SETTING_RESOLUTION_1080 = "1080p";
-  public static final String CAMERA_SETTING_RESOLUTION_2160 = "4k";
+  public static final String CAMERA_SETTING_RESOLUTION_H_720 = "720p";
+  public static final String CAMERA_SETTING_RESOLUTION_H_1080 = "1080p";
+  public static final String CAMERA_SETTING_RESOLUTION_H_2160 = "4k";
+  public static final String CAMERA_SETTING_RESOLUTION_V_720 = "V_720p";
+  public static final String CAMERA_SETTING_RESOLUTION_V_1080 = "V_1080p";
+  public static final String CAMERA_SETTING_RESOLUTION_V_2160 = "V_4K";
   public static final int CAMERA_SETTING_RESOLUTION_720_BACK_ID = 720;
   public static final int CAMERA_SETTING_RESOLUTION_720_FRONT_ID = 721;
   public static final int CAMERA_SETTING_RESOLUTION_1080_BACK_ID = 1080;
@@ -39,12 +42,18 @@ public class ResolutionSetting {
 
   private void initResolutionIdsMap() {
     this.backCameraResolutionIdsMap = new HashMap<>();
-    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_720,
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_H_720,
             CAMERA_SETTING_RESOLUTION_720_BACK_ID);
-    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_1080,
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_H_1080,
             CAMERA_SETTING_RESOLUTION_1080_BACK_ID);
-    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_2160,
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_H_2160,
             CAMERA_SETTING_RESOLUTION_2160_BACK_ID);
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_V_720,
+        CAMERA_SETTING_RESOLUTION_720_BACK_ID);
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_V_1080,
+        CAMERA_SETTING_RESOLUTION_1080_BACK_ID);
+    backCameraResolutionIdsMap.put(CAMERA_SETTING_RESOLUTION_V_2160,
+        CAMERA_SETTING_RESOLUTION_2160_BACK_ID);
   }
 
   public String getResolution() {

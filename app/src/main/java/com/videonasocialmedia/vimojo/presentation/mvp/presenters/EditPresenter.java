@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
@@ -118,6 +119,9 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
                             editActivityView.updateVideoList(videoCopy);
                             videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
                                     checkedVideoList, videoTranscodingErrorNotifier);
+                            if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+                                editActivityView.disableEditTextAction();
+                            }
                         }
 
                         @Override

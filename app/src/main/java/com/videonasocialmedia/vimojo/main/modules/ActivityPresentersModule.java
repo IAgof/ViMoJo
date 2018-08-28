@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
@@ -130,6 +131,7 @@ public class ActivityPresentersModule {
  // private GLCameraView cameraView = null;
   private String directorySaveVideos;
   private long freeStorage;
+  private int defaultCameraIdSelected;
 
   public ActivityPresentersModule(VimojoActivity vimojoActivity) {
     this.activity = vimojoActivity;
@@ -146,13 +148,15 @@ public class ActivityPresentersModule {
 
   public ActivityPresentersModule(RecordCamera2Activity activity,
                                   String directorySaveVideos,
-                                  AutoFitTextureView textureView, long freeStorage) {
+                                  AutoFitTextureView textureView,
+                                  long freeStorage, int defaultCameraIdSelected) {
     this.activity = activity;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
     this.freeStorage = freeStorage;
     this.currentProject = ((VimojoApplication)this.activity.getApplication()).getCurrentProject();
     this.projectInstanceCache = (ProjectInstanceCache) this.activity.getApplication();
+    this.defaultCameraIdSelected = defaultCameraIdSelected;
   }
 
   @Provides @PerActivity
@@ -343,10 +347,10 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences,
           CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsDataSource cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper) {
-    return new InitAppPresenter(activity, sharedPreferences, createDefaultProjectUseCase,
-            cameraSettingsRepository, runSyncAdapterHelper,
-            (ProjectInstanceCache) activity.getApplication());
+          RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition) {
+    return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
+            createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
+            (ProjectInstanceCache) activity.getApplication(), saveComposition);
   }
 
   @Provides @PerActivity
@@ -555,7 +559,7 @@ public class ActivityPresentersModule {
 
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsDataSource cameraSettingsRepository) {
-    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository);
+    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository, defaultCameraIdSelected);
   }
 
   @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {

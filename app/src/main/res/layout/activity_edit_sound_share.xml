@@ -17,7 +17,8 @@
         <com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo
             android:id="@+id/videona_player"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            />
 
         <LinearLayout
             android:id="@+id/container_layout"

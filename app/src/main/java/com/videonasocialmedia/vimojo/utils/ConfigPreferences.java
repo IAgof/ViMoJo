@@ -61,6 +61,9 @@ public class ConfigPreferences {
     public final static String TOTAL_VIDEOS_RECORDED = "total_videos_recorded";
     public final static String TOTAL_VIDEOS_SHARED = "total_videos_shared";
     public final static String FILTER_OVERLAY_GIFT = "filter_overlay_gift";
+    public static final String APP_VIDEONA = "appVideona";
+    public static final String APP_KAMARADA = "appKamarada";
+    public static final String APP_VIMOJO = "appVimojo";
     public static final String ABOUT_US = "aboutUs";
     public static final String PRIVACY_POLICY ="privacyPolicy" ;
     public static final String TERM_OF_SERVICE ="termOfService";

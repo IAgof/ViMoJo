@@ -117,6 +117,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
   }
 
   public Project getLastModifiedProject() {
+    // TODO(jliarte): 23/08/18 getting results from API too?
     return this.projectRealmDataSource.getLastModifiedProject();
   }
 

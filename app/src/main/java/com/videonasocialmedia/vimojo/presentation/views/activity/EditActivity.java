@@ -421,6 +421,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     });
   }
 
+  @Override
+  public void disableEditTextAction() {
+    editTextButton.setVisibility(View.GONE);
+  }
+
   private void updatePlayer() {
     Futures.addCallback(updatePlayerVideos(), new FutureCallback<Object>() {
       @Override

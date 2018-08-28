@@ -56,8 +56,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
   @Mock Project mockedProject;
-  @Mock
-  VideoDataSource mockedVideoRepository;
+  @Mock VideoDataSource mockedVideoRepository;
 
   @InjectMocks
   RelaunchTranscoderTempBackgroundUseCase injectedRelaunchTranscoderTempBackgroundUseCase;

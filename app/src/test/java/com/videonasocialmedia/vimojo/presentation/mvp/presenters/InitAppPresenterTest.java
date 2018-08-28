@@ -9,10 +9,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 
 import org.junit.Before;
@@ -35,12 +37,12 @@ public class InitAppPresenterTest {
   @Mock CreateDefaultProjectUseCase mockedUseCase;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Context mockedContext;
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @Mock
-  CameraSettingsDataSource mockedCameraSettingsRepository;
+  @Mock InitAppView mockedInitAppView;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock SaveComposition mockedSaveComposition;
   private Project currentProject;
 
 
@@ -61,9 +63,9 @@ public class InitAppPresenterTest {
   }
 
   private InitAppPresenter getInitAppPresenter() {
-    return new InitAppPresenter(
-            mockedContext, mockedSharedPreferences, mockedUseCase, mockedCameraSettingsRepository,
-            mockedRunSyncAdapterHelper, mockedProjectInstanceCache);
+    return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
+        mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
+        mockedProjectInstanceCache, mockedSaveComposition);
   }
 
   public void getAProject() {

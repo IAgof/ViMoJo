@@ -41,4 +41,6 @@ public interface EditActivityView {
   void updatePlayerVideoListChanged();
 
   void seekToClip(int toPosition);
+
+  void disableEditTextAction();
 }

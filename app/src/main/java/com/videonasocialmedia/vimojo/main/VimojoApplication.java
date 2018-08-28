@@ -22,6 +22,8 @@ import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.firebase.FirebaseApp;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
@@ -41,12 +43,16 @@ import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.util.concurrent.Executors;
+
 import javax.inject.Inject;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 
 public class VimojoApplication extends Application implements ProjectInstanceCache {
@@ -62,12 +68,10 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
      */
     private Project currentProject;
 
-    @Inject
-    ProjectRepository projectRepository;
+    @Inject ProjectRepository projectRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
     @Inject SharedPreferences sharedPreferences;
-    @Inject
-    SaveComposition saveComposition;
+    @Inject SaveComposition saveComposition;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -166,8 +170,13 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     public VimojoApplicationModule getVimojoApplicationModule() {
+        int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
+        }
         if (vimojoApplicationModule == null) {
-            vimojoApplicationModule = new VimojoApplicationModule(this);
+            vimojoApplicationModule = new VimojoApplicationModule(this,
+                defaultCameraIdSelected);
         }
         return vimojoApplicationModule;
     }
@@ -217,8 +226,9 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
-                    drawableFadeTransitionVideo);
-            saveComposition.saveComposition(project);
+                    drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
+            ListeningExecutorService executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+            executorPool.submit(() -> saveComposition.saveComposition(project));
             return project;
         } else {
             return projectRepository.getLastModifiedProject();

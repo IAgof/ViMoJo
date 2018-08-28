@@ -38,11 +38,13 @@ public class GetCompositionAssets {
   private HashMap<Long, Asset> downloadRefs;
   private BroadcastReceiver onCompleteReceiver;
   private UpdateAssetFilesListener listener;
+  private final ArrayList<String> assetIds;
 
   @Inject
   public GetCompositionAssets(AssetRepository assetRepository,
                               HashCountGenerator hashCountGenerator,
                               DownloadManager downloadManager) {
+    this.assetIds = new ArrayList<>();
     this.assetRepository = assetRepository;
     this.hashCountGenerator = hashCountGenerator;
     this.downloadManager = downloadManager;
@@ -55,7 +57,10 @@ public class GetCompositionAssets {
     if (project.getDataPersistanceType() != DataPersistanceType.LOCAL) {
       ArrayList<Asset> assets = new ArrayList<Asset>(project.getAssets().values());
       for (Asset asset : assets) {
-        updateAssetFile(asset);
+        if (!assetIds.contains(asset.getId())) {
+          assetIds.add(asset.getId());
+          updateAssetFile(asset);
+        }
       }
     }
     if (downloadRefs.size() == 0) {

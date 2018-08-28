@@ -56,14 +56,15 @@ public class AutoFitTextureView extends TextureView {
 
     // full screen implementation, does not check aspect ratio
     //setMeasuredDimension(width, height);
-
     if (0 == mRatioWidth || 0 == mRatioHeight) {
       setMeasuredDimension(width, height);
     } else {
       if (width < height * mRatioWidth / mRatioHeight) {
-        setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
-      } else {
+        // setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
         setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
+      } else {
+        //setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
+        setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
       }
     }
   }

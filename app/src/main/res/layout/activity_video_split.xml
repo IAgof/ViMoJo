@@ -60,7 +60,7 @@
                         android:layout_marginBottom="8dp"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginTop="@dimen/activity_split_seekbar_margin_top"
                         android:background="@null"
                         android:maxHeight="1dp"
                         android:progressDrawable="?android:attr/colorAccent"

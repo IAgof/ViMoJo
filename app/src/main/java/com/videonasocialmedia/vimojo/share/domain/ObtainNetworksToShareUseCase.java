@@ -30,7 +30,6 @@ public class ObtainNetworksToShareUseCase {
                 mainNetworksList.add(app);
             }
         }
-
         return mainNetworksList;
     }
 
@@ -41,6 +40,18 @@ public class ObtainNetworksToShareUseCase {
                 || appName.equalsIgnoreCase("Whatsapp")
                 || appName.equalsIgnoreCase("GooglePlus")
                 || appName.equalsIgnoreCase("Youtube")
-                || appName.equalsIgnoreCase("Instagram");
+                || appName.equalsIgnoreCase("Instagram")
+                || appName.equalsIgnoreCase("Instagram Stories");
+    }
+
+    public List<SocialNetwork> obtainVishowNetworks() {
+        List<SocialNetwork> networksList = provider.getSocialNetworksAppsInstalled();
+        List<SocialNetwork> mainNetworksList = new ArrayList<>();
+        for (SocialNetwork app : networksList) {
+            if (app.getName().equals("Instagram Stories")) {
+                mainNetworksList.add(app);
+            }
+        }
+        return mainNetworksList;
     }
 }

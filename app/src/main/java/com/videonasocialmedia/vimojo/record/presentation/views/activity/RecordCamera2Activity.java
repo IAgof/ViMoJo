@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.BatteryManager;
@@ -30,11 +31,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar;
 import com.videonasocialmedia.camera.camera2.Camera2FocusHelper;
 import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.customview.CustomManualFocusView;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -55,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -65,6 +69,8 @@ import butterknife.OnTouch;
 import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_AUTO;
 import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_MANUAL;
 import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_REGIONS;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
@@ -159,7 +165,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   LinearLayout isoSubmenu;
   @BindView(R.id.icon_iso)
   ImageView iconISO;
-  @BindView(R.id.exposure_time_seekbar)
+  @Nullable @BindView(R.id.exposure_time_seekbar_vertical)
+  VerticalSeekBar exposureTimeSeekBarVertical;
+  @Nullable @BindView(R.id.exposure_time_seekbar)
   SeekBar exposureTimeSeekBar;
   @BindView(R.id.exposure_time_seekBar_text_max)
   TextView maxExposureText;
@@ -350,7 +358,6 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
-    setupSlideSeekBar();
 //    configChronometer(); // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     configShowThumbAndNumberClips();
 
@@ -367,8 +374,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void onResume() {
     super.onResume();
     initOrientationHelper();
-    presenter.updatePresenter();
     presenter.initViews();
+    presenter.updatePresenter();
     hideSystemUi();
     registerReceiver(batteryReceiver,new IntentFilter(IntentConstants.BATTERY_NOTIFICATION));
     registerReceiver(jackConnectorReceiver,new IntentFilter(Intent.ACTION_HEADSET_PLUG));
@@ -396,8 +403,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
+    int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
+    }
     return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
-        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())));
+        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())),
+        defaultCameraIdSelected);
   }
 
   private void keepScreenOn() {
@@ -450,7 +462,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void setupSlideSeekBar() {
     slideSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
-    exposureTimeSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      exposureTimeSeekBarVertical.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+    } else {
+      exposureTimeSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+    }
     disableExposureTimeSeekBar();
   }
 
@@ -859,13 +875,16 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     gridModeButtons.put(GRID_MODE_LINES, gridModeLines);
     gridModeButtons.put(GRID_MODE_ONE_ONE, gridModeOneOne);
     gridModeButtons.put(GRID_MODE_CROSSES, gridModeCrosses);
-    gridModeButtons.put(GRID_MODE_FIBONACCI, gridModeFibonacci);
 
     listGridModeValues = new ArrayList<>();
     listGridModeValues.add(GRID_MODE_LINES);
     listGridModeValues.add(GRID_MODE_ONE_ONE);
     listGridModeValues.add(GRID_MODE_CROSSES);
-    listGridModeValues.add(GRID_MODE_FIBONACCI);
+
+    if (!BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      gridModeButtons.put(GRID_MODE_FIBONACCI, gridModeFibonacci);
+      listGridModeValues.add(GRID_MODE_FIBONACCI);
+    }
   }
 
   @Override
@@ -1543,22 +1562,49 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showGridModeLines() {
-    imageViewGrid.setImageResource(R.drawable.activity_record_grid_lines_background);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      imageViewGrid.setImageResource(R.drawable.activity_record_grid_lines_background_vertical);
+    } else {
+      imageViewGrid.setImageResource(R.drawable.activity_record_grid_lines_background);
+    }
   }
 
   @Override
   public void showGridModeOneOne() {
-    imageViewGrid.setImageResource(R.drawable.activity_record_grid_one_one_background);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      imageViewGrid.setImageResource(R.drawable.activity_record_grid_one_one_background_vertical);
+    } else {
+      imageViewGrid.setImageResource(R.drawable.activity_record_grid_one_one_background);
+    }
   }
 
   @Override
   public void showGridModeCrosses() {
-    imageViewGrid.setImageResource(R.drawable.activity_record_grid_crosses_bakcground);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      imageViewGrid.setImageResource(R.drawable.activity_record_grid_crosses_bakcground_vertical);
+    } else {
+      imageViewGrid.setImageResource(R.drawable.activity_record_grid_crosses_bakcground);
+    }
   }
 
   @Override
   public void showGridModeFibonacci() {
     imageViewGrid.setImageResource(R.drawable.activity_record_grid_fibonacci_background);
+  }
+
+  @Override
+  public void screenOrientationPortrait() {
+    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+  }
+
+  @Override
+  public void screenOrientationLandscape() {
+    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+  }
+
+  @Override
+  public void hideTutorials() {
+    tutorial.setVisibility(View.GONE);
   }
 
   @Override
@@ -1573,12 +1619,21 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void enableExposureTimeSeekBar() {
-    exposureTimeSeekBar.setEnabled(true);
+    setupSlideSeekBar();
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      exposureTimeSeekBarVertical.setEnabled(true);
+    } else {
+      exposureTimeSeekBar.setEnabled(true);
+    }
   }
 
   @Override
   public void disableExposureTimeSeekBar() {
-    exposureTimeSeekBar.setEnabled(false);
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      exposureTimeSeekBarVertical.setEnabled(false);
+    } else {
+      exposureTimeSeekBar.setEnabled(false);
+    }
   }
 
   @Override
@@ -1609,8 +1664,13 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     int maxShutterSpeed = presenter.getMaximumExposureTime();
     maxExposureText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
     minExposureText.setText("1/" + (1000000000 / minExposureTime));
-    exposureTimeSeekBar.setMax(maxShutterSpeed - minExposureTime);
-    exposureTimeSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      exposureTimeSeekBarVertical.setMax(maxShutterSpeed- minExposureTime);
+      exposureTimeSeekBarVertical.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
+    } else {
+      exposureTimeSeekBar.setMax(maxShutterSpeed - minExposureTime);
+      exposureTimeSeekBar.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
+    }
   }
 
   @Override
@@ -1767,7 +1827,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void exposureTimeChanged(long exposureTime) {
     if (slideSeekBarMode == SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME) {
-      exposureTimeSeekBar.setProgress((int) exposureTime);
+      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        exposureTimeSeekBarVertical.setProgress((int) exposureTime);
+      } else {
+        exposureTimeSeekBar.setProgress((int) exposureTime);
+      }
     }
   }
 
@@ -1848,17 +1912,33 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     @Override
     public void onOrientationChanged(int orientation) {
       checkShowRotateDeviceImage(orientation);
-      if (orientation > 85 && orientation < 95) {
-        if (orientationHaveChanged) {
-          Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          orientationHaveChanged = false;
-          restartPreview();
+      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        if (orientation > 255 && orientation < 5) {
+          if (orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = false;
+            restartPreview();
+          }
+        } else if (orientation > 175 && orientation < 185) {
+          if (!orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = true;
+            restartPreview();
+          }
         }
-      } else if (orientation > 265 && orientation < 275) {
-        if (!orientationHaveChanged) {
-          Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
-          orientationHaveChanged = true;
-          restartPreview();
+      } else {
+        if (orientation > 85 && orientation < 95) {
+          if (orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = false;
+            restartPreview();
+          }
+        } else if (orientation > 265 && orientation < 275) {
+          if (!orientationHaveChanged) {
+            Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
+            orientationHaveChanged = true;
+            restartPreview();
+          }
         }
       }
     }
@@ -1875,23 +1955,51 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
 
     private void checkShowRotateDeviceImage(int orientation) {
-      if (( orientation > 345 || orientation < 15 ) && orientation != -1) {
-        rotateDeviceHint.setRotation(270);
-        rotateDeviceHint.setRotationX(0);
-        rotateDeviceHint.setVisibility(View.VISIBLE);
-        if (!isRecording) {
-          recordButton.setEnabled(false);
-        }
-      } else if (orientation > 165 && orientation < 195) {
-        rotateDeviceHint.setRotation(-270);
-        rotateDeviceHint.setRotationX(180);
-        rotateDeviceHint.setVisibility(View.VISIBLE);
-        if (!isRecording) {
-          recordButton.setEnabled(false);
+      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        if ((orientation > 75 && orientation < 105) && orientation != -1) {
+          rotateDeviceHint.setRotation(90);
+          rotateDeviceHint.setRotationX(0);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else if (orientation > 245 && orientation < 285) {
+          rotateDeviceHint.setRotation(-90);
+          rotateDeviceHint.setRotationX(180);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else if (orientation > 165 && orientation < 195) {
+          rotateDeviceHint.setRotation(-270);
+          rotateDeviceHint.setRotationX(180);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else {
+          rotateDeviceHint.setVisibility(View.GONE);
+          recordButton.setEnabled(true);
         }
       } else {
-        rotateDeviceHint.setVisibility(View.GONE);
-        recordButton.setEnabled(true);
+        if ((orientation > 345 || orientation < 15) && orientation != -1) {
+          rotateDeviceHint.setRotation(270);
+          rotateDeviceHint.setRotationX(0);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else if (orientation > 165 && orientation < 195) {
+          rotateDeviceHint.setRotation(-270);
+          rotateDeviceHint.setRotationX(180);
+          rotateDeviceHint.setVisibility(View.VISIBLE);
+          if (!isRecording) {
+            recordButton.setEnabled(false);
+          }
+        } else {
+          rotateDeviceHint.setVisibility(View.GONE);
+          recordButton.setEnabled(true);
+        }
       }
     }
   }

@@ -53,8 +53,8 @@
 
                 <ImageView
                     android:id="@+id/music_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/activity_music_detail_size_thumb"
+                    android:layout_height="@dimen/activity_music_detail_size_thumb"
                     android:layout_marginLeft="4dp"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/fragment_gallery_no_image"
@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/activity_music_detail_text_size_music_title"
                     tools:text="El título de la canción"/>
 
                 <TextView
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/activity_music_detail_text_size_music_duration"
                     tools:text="La duración de la canción"/>
 
                 <TextView
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/activity_music_detail_text_size_music_author"
                     tools:text="El autor de la canción"/>
 
 
@@ -105,7 +105,7 @@
                     android:id="@+id/linear_layout_seekBar_volume_sound"
                     android:layout_below="@+id/music_image"
                     android:orientation="horizontal"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="24dp"
                     android:layout_marginBottom="16dp">
 
                     <TextView

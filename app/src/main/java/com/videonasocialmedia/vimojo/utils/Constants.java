@@ -35,8 +35,9 @@ public class Constants {
 
 
     // Folders
-    final public static String FOLDER_NAME_VIMOJO_MASTERS = "Vimojo_Masters";
-    final public static String FOLDER_NAME_VIMOJO = "Vimojo";
+    final public static String FOLDER_NAME_VIMOJO_MASTERS =
+        Utils.capitalizeFirstLetter(BuildConfig.FLAVOR) + "_Masters";
+    final public static String FOLDER_NAME_VIMOJO = Utils.capitalizeFirstLetter(BuildConfig.FLAVOR);
     final public static String FOLDER_NAME_VIMOJO_TEMP = ".temporal";
     final public static String FOLDER_NAME_VIMOJO_PROJECTS = ".projects";
 
@@ -116,10 +117,13 @@ public class Constants {
 
     public static final boolean DEFAULT_THEME_DARK_STATE = false;
     public static final boolean DEFAULT_WATERMARK_STATE = true;
-
-  public static final String DEFAULT_CAMERA_SETTING_RESOLUTION = ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
+  // TODO: 30/7/18 Delete BuildConfig dependency and default values from Constants.java
+  public static final String DEFAULT_CAMERA_SETTING_RESOLUTION =
+      BuildConfig.FEATURE_VERTICAL_VIDEOS ? ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720
+          : ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
   public static final VideoResolution.Resolution DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION =
-          VideoResolution.Resolution.HD1080;
+      BuildConfig.FEATURE_VERTICAL_VIDEOS ? VideoResolution.Resolution.V_1080P
+          : VideoResolution.Resolution.HD1080;
   public static final String DEFAULT_CAMERA_SETTING_QUALITY = CameraSettings.CAMERA_SETTING_QUALITY_16;
   public static final VideoQuality.Quality DEFAULT_CAMERA_SETTING_VIDEO_QUALITY =
           VideoQuality.Quality.LOW;
@@ -138,6 +142,9 @@ public class Constants {
   public static final String CAMERA_SETTING_INTERFACE_BASIC = "Camera basic";
   public static final String DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED = CAMERA_SETTING_INTERFACE_PRO;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED = BACK_CAMERA_ID;
+  public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP = FRONT_CAMERA_ID;
 
   public static final String BASE_PACKAGE_NAME = "com.videonasocialmedia.vimojo";
+
+  public static final int DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE = 260;
 }

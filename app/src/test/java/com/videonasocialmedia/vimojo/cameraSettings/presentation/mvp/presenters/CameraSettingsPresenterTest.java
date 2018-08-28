@@ -40,6 +40,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTI
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -102,9 +104,9 @@ public class CameraSettingsPresenterTest {
 
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
-    verify(mockedCameraSettingsRepository).setResolutionSetting(cameraSettings, "720p");
-    verify(mockedProjectRepository).updateResolution(currentProject, VideoResolution.Resolution.HD720);
-    verify(mockedUserEventTracker).trackChangeResolution("720p");
+    verify(mockedCameraSettingsRepository).setResolutionSetting(any(CameraSettings.class), anyString());
+    verify(mockedProjectRepository).updateResolution(any(Project.class), any(VideoResolution.Resolution.class));
+    verify(mockedUserEventTracker).trackChangeResolution(anyString());
   }
 
   @Test
