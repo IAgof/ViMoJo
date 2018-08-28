@@ -26,7 +26,7 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
   };
   private final FirebaseAnalytics firebaseAnalytics;
 
-  public FirebaseTracker(Context context) {
+  private FirebaseTracker(Context context) {
     this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
   }
 

@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.utils;
 import android.content.Context;
 import android.util.Log;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -55,6 +54,10 @@ public class UserEventTracker {
 
     public static void clear() {
         userEventTrackerInstance = null;
+    }
+
+    public Context getApplication() {
+        return context;
     }
 
     private void identify(String id) {
@@ -571,10 +574,6 @@ public class UserEventTracker {
             Log.d(TAG, "trackProjectInfo: error sending mixpanel PROJECT_EDITED project info event");
             e.printStackTrace();
         }
-    }
-
-    public Context getApplication() {
-        return context;
     }
 
     /** Fluent API for creating {@link UserEventTracker} instances. */

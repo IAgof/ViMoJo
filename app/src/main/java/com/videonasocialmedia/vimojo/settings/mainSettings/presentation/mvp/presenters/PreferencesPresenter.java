@@ -143,7 +143,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
-    // TODO(jliarte): 28/08/18 inject this field! 
+    // TODO(jliarte): 28/08/18 inject this field!
     userEventTracker = UserEventTracker.getInstance();
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);

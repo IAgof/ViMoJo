@@ -6,7 +6,6 @@ package com.videonasocialmedia.vimojo.utils.tracker;
 
 import android.content.Context;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -22,17 +21,15 @@ public class MixpanelTracker extends UserEventTracker.TrackerIntegration<Mixpane
     Context context = userEventTracker.getApplication();
     return new MixpanelTracker(context);
   };
-  protected static final String ANDROID_PUSH_SENDER_ID = "783686583047"; // TODO(jliarte): 28/08/18 move to gradle?
-  private final FirebaseAnalytics firebaseAnalytics;
+  private static final String ANDROID_PUSH_SENDER_ID = "783686583047"; // TODO(jliarte): 28/08/18 move to gradle?
   private final MixpanelAPI mixpanel;
 
-  public MixpanelTracker(Context context) {
+  private MixpanelTracker(Context context) {
     this.mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
     if (mixpanel != null) {
       mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
       mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
     }
-    this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
   }
 
   @Override
