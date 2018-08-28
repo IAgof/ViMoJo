@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
@@ -35,7 +34,6 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
-import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
@@ -65,7 +63,6 @@ public class SettingsFragment extends PreferenceFragment implements
     protected Context context;
     protected SharedPreferences sharedPreferences;
     protected SharedPreferences.Editor editor;
-    protected MixpanelAPI mixpanel;
     private boolean darkThemePurchased = false;
     private boolean watermarkPurchased = false;
     private boolean isVimojoStoreSupported = false;
@@ -78,7 +75,6 @@ public class SettingsFragment extends PreferenceFragment implements
         initPreferences();
         FragmentPresentersComponent fragmentPresentersComponent = initComponent();
         fragmentPresentersComponent.inject(this);
-        mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_TOKEN);
     }
 
     @Override
@@ -207,7 +203,8 @@ public class SettingsFragment extends PreferenceFragment implements
     public void setPreference(ListPreference preference, String name) {
         preference.setValue(name);
         preference.setSummary(name);
-        trackQualityAndResolutionAndFrameRateUserTraits(preference.getKey(), name);
+        preferencesPresenter.trackQualityAndResolutionAndFrameRateUserTraits(preference.getKey(),
+            name);
     }
 
     @Override
@@ -374,22 +371,6 @@ public class SettingsFragment extends PreferenceFragment implements
                 .create();
     }
 
-    private void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
-        String property = null;
-        switch (key) {
-            case ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION:
-                property = AnalyticsConstants.RESOLUTION;
-                break;
-            case ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY:
-                property = AnalyticsConstants.QUALITY;
-                break;
-            case ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE:
-                property = AnalyticsConstants.FRAME_RATE;
-                break;
-        }
-        mixpanel.getPeople().set(property, value.toLowerCase());
-    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference connectionPref = findPreference(key);
@@ -424,7 +405,8 @@ public class SettingsFragment extends PreferenceFragment implements
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
             return;
         }
-        trackQualityAndResolutionAndFrameRateUserTraits(key, sharedPreferences.getString(key, ""));
+        preferencesPresenter.trackQualityAndResolutionAndFrameRateUserTraits(key,
+            sharedPreferences.getString(key, ""));
     }
 
     private boolean isDarkThemeAvailable() {

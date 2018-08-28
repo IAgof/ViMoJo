@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVide
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
@@ -392,6 +393,11 @@ public class ActivityPresentersModule {
           UserAuth0Helper userAuth0Helper) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
         obtainLocalVideosUseCase, userAuth0Helper);
+  }
+
+  @Provides @PerActivity
+  VimojoPresenter provideVimojoPresenter(UserEventTracker userEventTracker) {
+    return new VimojoPresenter(userEventTracker);
   }
 
   @Provides

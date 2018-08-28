@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.json.JSONArray;
@@ -105,6 +106,21 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
   @Override
   public void incrementUserProperty(String propertyName, int increment) {
     // TODO(jliarte): 28/08/18 should retrieve current value from shared prefs, increment and set
+  }
+
+  @Override
+  public void flush() {
+    // (jliarte): 28/08/18 firebase doesn't need/support flush
+  }
+
+  @Override
+  public void startView(Class<? extends VimojoActivity> activity) {
+    // (jliarte): 28/08/18 null implementation by now as firebase analytics automatically track activity views
+  }
+
+  @Override
+  public void endView(Class<? extends VimojoActivity> activity) {
+    // (jliarte): 28/08/18 null implementation by now as firebase analytics automatically track activity views
   }
 
 

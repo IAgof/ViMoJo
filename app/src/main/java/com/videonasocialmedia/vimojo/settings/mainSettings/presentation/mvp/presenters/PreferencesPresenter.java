@@ -27,7 +27,6 @@ import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -122,7 +121,7 @@ public class PreferencesPresenter extends VimojoPresenter
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
       UploadRepository uploadRepository, ProjectInstanceCache projectInstanceCache,
-      GetAccount getAccount) {
+      GetAccount getAccount, UserEventTracker userEventTracker) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -143,8 +142,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.updateWatermarkPreferenceToProjectUseCase = updateWatermarkPreferenceToProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
-    // TODO(jliarte): 28/08/18 inject this field!
-    userEventTracker = UserEventTracker.getInstance();
+    this.userEventTracker = userEventTracker;
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
@@ -428,5 +426,19 @@ public class PreferencesPresenter extends VimojoPresenter
             preferencesView.setupUserAuthentication(true);
           }
         });
+  }
+
+  public void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {
+    switch (key) {
+      case ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION:
+        userEventTracker.trackResolutionUserTraits(value);
+        break;
+      case ConfigPreferences.KEY_LIST_PREFERENCES_QUALITY:
+        userEventTracker.trackQualityUserTraits(value);
+        break;
+      case ConfigPreferences.KEY_LIST_PREFERENCES_FRAME_RATE:
+        userEventTracker.trackFrameRateUserTraits(value);
+        break;
+    }
   }
 }

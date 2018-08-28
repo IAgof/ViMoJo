@@ -8,6 +8,8 @@ import android.content.Context;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.json.JSONException;
@@ -86,5 +88,26 @@ public class MixpanelTracker extends UserEventTracker.TrackerIntegration<Mixpane
   @Override
   public void incrementUserProperty(String propertyName, int increment) {
     mixpanel.getPeople().increment(propertyName, increment);
+  }
+
+  @Override
+  public void flush() {
+    mixpanel.flush();
+  }
+
+  @Override
+  public void startView(Class<? extends VimojoActivity> activity) {
+    mixpanel.timeEvent(AnalyticsConstants.TIME_IN_ACTIVITY);
+  }
+
+  @Override
+  public void endView(Class<? extends VimojoActivity> activity) {
+    JSONObject activityProperties = new JSONObject();
+    try {
+      activityProperties.put(AnalyticsConstants.ACTIVITY, activity.getSimpleName());
+      mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
   }
 }

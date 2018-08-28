@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -124,6 +125,12 @@ public class UserEventTracker {
         }
     }
 
+    public void flush() {
+        for (TrackerIntegration integration : trackers) {
+            integration.flush();
+        }
+    }
+
     private int getMixpanelSuperProperty(String propertyName, int defValue) {
         int value = defValue;
         for (TrackerIntegration trackerIntegration : trackers) {
@@ -132,6 +139,18 @@ public class UserEventTracker {
             }
         }
         return value;
+    }
+
+    public void startView(Class<? extends VimojoActivity> activity) {
+        for (TrackerIntegration integration : trackers) {
+            integration.startView(activity);
+        }
+    }
+
+    public void endView(Class<? extends VimojoActivity> activity) {
+        for (TrackerIntegration integration : trackers) {
+            integration.endView(activity);
+        }
     }
 
     /***** App startup - from initAppActivity ******/
@@ -344,6 +363,7 @@ public class UserEventTracker {
             e.printStackTrace();
         }
     }
+
     public void trackVideoSharedUserTraits() {
         incrementUserProperty(AnalyticsConstants.TOTAL_VIDEOS_SHARED, 1);
         setUserProperties(AnalyticsConstants.LAST_VIDEO_SHARED,
@@ -543,6 +563,19 @@ public class UserEventTracker {
         }
     }
 
+    public void trackResolutionUserTraits(String value) {
+        this.setUserProperties(AnalyticsConstants.RESOLUTION, value.toLowerCase());
+    }
+
+    public void trackQualityUserTraits(String value) {
+        this.setUserProperties(AnalyticsConstants.QUALITY, value.toLowerCase());
+    }
+
+    public void trackFrameRateUserTraits(String value) {
+        this.setUserProperties(AnalyticsConstants.FRAME_RATE, value.toLowerCase());
+    }
+
+
     public void trackUpdateUserName(String userName) {
         // TODO(jliarte): 28/08/18 mixpanel.getDistinctId
 //        this.identify(mixpanel.getDistinctId());
@@ -634,6 +667,12 @@ public class UserEventTracker {
         public abstract int getSuperProperty(String propertyName, int defValue);
 
         public abstract void incrementUserProperty(String propertyName, int increment);
+
+        public abstract void flush();
+
+        public abstract void startView(Class<? extends VimojoActivity> activity);
+
+        public abstract void endView(Class<? extends VimojoActivity> activity);
 
         public interface Factory {
             /**
