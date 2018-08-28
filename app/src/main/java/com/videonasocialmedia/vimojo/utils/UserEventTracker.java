@@ -470,6 +470,19 @@ public class UserEventTracker {
         }
     }
 
+    public void trackResolutionUserTraits(String value) {
+        mixpanel.getPeople().set(AnalyticsConstants.RESOLUTION, value.toLowerCase());
+    }
+
+    public void trackQualityUserTraits(String value) {
+        mixpanel.getPeople().set(AnalyticsConstants.QUALITY, value.toLowerCase());
+    }
+
+    public void trackFrameRateUserTraits(String value) {
+        mixpanel.getPeople().set(AnalyticsConstants.FRAME_RATE, value.toLowerCase());
+    }
+
+
     public void trackUpdateUserName(String userName) {
         mixpanel.getPeople().identify(mixpanel.getDistinctId());
         mixpanel.getPeople().set(MIXPANEL_USERNAME_ID, userName);
@@ -501,7 +514,26 @@ public class UserEventTracker {
         }
     }
 
-  public static class Event {
+    /*** Mix panel methods, flush, timeEventStart, timeEventPause ***/
+    public void flush() {
+        mixpanel.flush();
+    }
+
+    public void timeEventStart() {
+        mixpanel.timeEvent(AnalyticsConstants.TIME_IN_ACTIVITY);
+    }
+
+    public void timeEventPause() {
+        JSONObject activityProperties = new JSONObject();
+        try {
+            activityProperties.put(AnalyticsConstants.ACTIVITY, getClass().getSimpleName());
+            mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class Event {
         private String name;
         private JSONObject properties;
 
