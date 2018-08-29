@@ -368,6 +368,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   protected void processNetworkClicked(int typeNetworkSelected, String videoPath) {
     switch (typeNetworkSelected) {
       case OptionsToShareList.typeVimojoNetwork:
+        trackVideoShared("VimojoPlatform");
         clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
         break;
