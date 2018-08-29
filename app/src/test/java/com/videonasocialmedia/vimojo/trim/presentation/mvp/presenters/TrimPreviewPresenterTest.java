@@ -71,7 +71,7 @@ public class TrimPreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
             mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);

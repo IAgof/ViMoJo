@@ -109,14 +109,14 @@ public abstract class VimojoActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        vimojoPresenter.flush();
+        vimojoPresenter.onActivityDestroy();
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        vimojoPresenter.timeEventPause();
+        vimojoPresenter.onActivityPause(getClass());
     }
 
     @Override
@@ -127,7 +127,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        vimojoPresenter.timeEventStart();
+        vimojoPresenter.onActivityStart(getClass());
     }
 
     protected final void closeApp() {

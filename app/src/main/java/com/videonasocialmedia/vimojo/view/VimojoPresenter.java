@@ -7,6 +7,7 @@ package com.videonasocialmedia.vimojo.view;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.concurrent.Callable;
@@ -42,16 +43,15 @@ public class VimojoPresenter {
     return executorPool.submit(runnable);
   }
 
-
-  public void flush() {
+  public void onActivityDestroy() {
     userEventTracker.flush();
   }
 
-  public void timeEventStart() {
-    userEventTracker.timeEventStart();
+  public void onActivityStart(Class<? extends VimojoActivity> activity) {
+    userEventTracker.startView(activity);
   }
 
-  public void timeEventPause() {
-    userEventTracker.timeEventPause();
+  public void onActivityPause(Class<? extends VimojoActivity> activity) {
+    userEventTracker.endView(activity);
   }
 }
