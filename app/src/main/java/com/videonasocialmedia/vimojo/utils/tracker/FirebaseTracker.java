@@ -65,6 +65,11 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
   }
 
   @Override
+  public void setUserProperties(String propertyName, boolean propertyValue) {
+    firebaseAnalytics.setUserProperty(propertyName, String.valueOf(propertyValue));
+  }
+
+  @Override
   public void setUserPropertiesOnce(JSONObject userProperties) {
     for (Iterator<String> it = userProperties.keys(); it.hasNext(); ) {
       String key = it.next();
@@ -101,6 +106,12 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
   public int getSuperProperty(String propertyName, int defValue) {
     // TODO(jliarte): 28/08/18 null implementation as firebase dont support super properties
     return 0;
+  }
+
+  @Override
+  public String getSuperProperty(String propertyName, String defValue) {
+    // TODO(jliarte): 28/08/18 null implementation as firebase dont support super properties
+    return null;
   }
 
   @Override

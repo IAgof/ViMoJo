@@ -29,20 +29,17 @@ import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
-import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -145,33 +142,33 @@ public class InitAppPresenter {
     boolean resolutionFront1080pSupported = false;
     boolean resolutionFront2160pSupported = false;
 
-    for(Size sizeBackCamera: camera2Settings.getSupportedVideoSizes(BACK_CAMERA_ID)){
-      if(sizeBackCamera.getWidth() == 1280 && sizeBackCamera.getHeight() == 720){
+    for(Size sizeBackCamera: camera2Settings.getSupportedVideoSizes(BACK_CAMERA_ID)) {
+      if (sizeBackCamera.getWidth() == 1280 && sizeBackCamera.getHeight() == 720) {
         resolutionBack720pSupported = true;
         }
-      if(sizeBackCamera.getWidth() == 1920 && sizeBackCamera.getHeight() == 1080){
+      if (sizeBackCamera.getWidth() == 1920 && sizeBackCamera.getHeight() == 1080) {
         resolutionBack1080pSupported = true;
         }
-      if(sizeBackCamera.getWidth() == 3840 && sizeBackCamera.getHeight() == 2160){
+      if (sizeBackCamera.getWidth() == 3840 && sizeBackCamera.getHeight() == 2160) {
         resolutionBack2160pSupported = true;
         }
     }
 
-    if(camera2Settings.hasFrontCamera()) {
-      for(Size sizeFrontCamera: camera2Settings.getSupportedVideoSizes(FRONT_CAMERA_ID)){
-        if(sizeFrontCamera.getWidth() == 1280 && sizeFrontCamera.getHeight() == 720){
+    if (camera2Settings.hasFrontCamera()) {
+      for(Size sizeFrontCamera: camera2Settings.getSupportedVideoSizes(FRONT_CAMERA_ID)) {
+        if (sizeFrontCamera.getWidth() == 1280 && sizeFrontCamera.getHeight() == 720) {
           resolutionFront720pSupported = true;
         }
-        if(sizeFrontCamera.getWidth() == 1920 && sizeFrontCamera.getHeight() == 1080){
+        if (sizeFrontCamera.getWidth() == 1920 && sizeFrontCamera.getHeight() == 1080) {
           resolutionFront1080pSupported = true;
         }
-        if(sizeFrontCamera.getWidth() == 3840 && sizeFrontCamera.getHeight() == 2160){
+        if (sizeFrontCamera.getWidth() == 3840 && sizeFrontCamera.getHeight() == 2160) {
           resolutionFront2160pSupported = true;
         }
       }
     }
 
-    if(!resolutionBack1080pSupported){
+    if (!resolutionBack1080pSupported) {
       defaultResolution = BuildConfig.FEATURE_VERTICAL_VIDEOS ? CAMERA_SETTING_RESOLUTION_V_720
           : CAMERA_SETTING_RESOLUTION_H_720;
       //resolutionBack1080pSupported = true;
@@ -188,7 +185,7 @@ public class InitAppPresenter {
             resolutionsSupportedMap);
 
     cameraSettings = cameraSettingsRepository.getCameraSettings();
-    if(cameraSettings != null) {
+    if (cameraSettings != null) {
       cameraSettingsRepository.setResolutionSettingSupported(cameraSettings, resolutionSetting);
     }
 
@@ -226,7 +223,7 @@ public class InitAppPresenter {
 
     FrameRateSetting frameRateSetting = new FrameRateSetting(defaultFrameRate, frameRateMap);
     cameraSettings = cameraSettingsRepository.getCameraSettings();
-    if(cameraSettings != null) {
+    if (cameraSettings != null) {
       cameraSettingsRepository.setFrameRateSettingSupported(cameraSettings, frameRateSetting);
     }
   }
@@ -260,8 +257,8 @@ public class InitAppPresenter {
     userEventTracker.trackUserProfileGeneralTraits();
   }
 
-  public void trackAppStartupProperties(boolean state) {
-    userEventTracker.trackAppStartupProperties(state);
+  public void trackAppStartupProperties(boolean firstTime) {
+    userEventTracker.trackAppStartupProperties(firstTime);
   }
 
   public void trackUserProfile(String androidId) {
@@ -275,4 +272,67 @@ public class InitAppPresenter {
   public void trackAppStartup(String initState) {
     userEventTracker.trackAppStartup(initState);
   }
+
+  public void onFirstTimeRun(String androidId) {
+    checkPrehistericUser();
+    saveFirstTimeData();
+    trackAppStartupProperties(true);
+    trackUserProfile(androidId);
+    trackCreatedSuperProperty();
+    checkCamera2FrameRateAndResolutionSupported();
+  }
+
+  public void checkPrehistericUser() { // TODO(jliarte): 28/08/18 make private
+    boolean preHisteric = sharedPreferences.getBoolean(ConfigPreferences.PREHISTERIC_USER, false);
+
+    String firstRunFromMPTracker = userEventTracker.getUserFirstRun();
+    if (!preHisteric
+            && !firstRunFromMPTracker.equals("")
+            && firstRunWasBeforeSaasLaunchDate(firstRunFromMPTracker)) {
+      sharedPreferences.edit().putBoolean(ConfigPreferences.PREHISTERIC_USER, true).apply();
+      trackPrehistericUser();
+    }
+  }
+
+  private boolean firstRunWasBeforeSaasLaunchDate(String firstRunFromMPTracker) {
+    boolean wasBefore = false;
+    Calendar firstRun = Calendar.getInstance();
+    Calendar saasLaunchDate = Calendar.getInstance();
+
+    try {
+      saasLaunchDate.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(Constants.SAAS_LAUNCH_DATE));
+      firstRun.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(firstRunFromMPTracker));
+      return firstRun.before(saasLaunchDate);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    return wasBefore;
+  }
+
+  private void trackPrehistericUser() {
+    userEventTracker.trackPrehistoricUser();
+  }
+
+  private void saveFirstTimeData() {
+    int firstInstalledVersion = sharedPreferences.getInt(ConfigPreferences.FIRST_APP_VERSION, -1);
+    if (firstInstalledVersion == -1) {
+      sharedPreferences.edit().putInt(ConfigPreferences.FIRST_APP_VERSION,
+              BuildConfig.VERSION_CODE).apply();
+    }
+    String firstRun = sharedPreferences.getString(ConfigPreferences.FIRST_APP_RUN, "");
+    if (firstRun.equals("")) {
+      sharedPreferences.edit().putString(ConfigPreferences.FIRST_APP_RUN,
+              DateUtils.getDateRightNow()).apply();
+    }
+  }
+
+  public void onAppUpgraded(String androidId) {
+    checkPrehistericUser();
+    trackAppStartupProperties(false);
+    trackUserProfile(androidId);
+    // Repeat this method for security, if user delete app data miss this configs.
+    checkCamera2FrameRateAndResolutionSupported();
+  }
+
 }

@@ -23,6 +23,7 @@ public class AnalyticsConstants {
     /**
      * User Traits
      */
+    public final static String PREHISTERIC = "prehisteric";
     public final static String CREATED = "created";
     public final static String TYPE = "type";
     public static final String APP_USE_COUNT = "appUseCount";

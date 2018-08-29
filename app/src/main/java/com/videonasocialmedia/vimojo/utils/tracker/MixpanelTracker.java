@@ -56,6 +56,11 @@ public class MixpanelTracker extends UserEventTracker.TrackerIntegration<Mixpane
   }
 
   @Override
+  public void setUserProperties(String propertyName, boolean propertyValue) {
+    mixpanel.getPeople().set(propertyName, propertyValue);
+  }
+
+  @Override
   public void setUserPropertiesOnce(JSONObject userProperties) {
     mixpanel.getPeople().setOnce(userProperties);
   }
@@ -79,6 +84,16 @@ public class MixpanelTracker extends UserEventTracker.TrackerIntegration<Mixpane
   public int getSuperProperty(String propertyName, int defValue) {
     try {
       return mixpanel.getSuperProperties().getInt(propertyName);
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return defValue;
+  }
+
+  @Override
+  public String getSuperProperty(String propertyName, String defValue) {
+    try {
+      return mixpanel.getSuperProperties().getString(propertyName);
     } catch (JSONException e) {
       e.printStackTrace();
     }

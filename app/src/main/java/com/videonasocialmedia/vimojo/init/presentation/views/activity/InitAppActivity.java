@@ -250,28 +250,17 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
                 Log.d(LOG_TAG, " AppStart State NORMAL");
                 initState = AnalyticsConstants.INIT_STATE_RETURNING;
                 presenter.trackAppStartupProperties(false);
-                initSettings();
                 break;
             case FIRST_TIME_VERSION:
                 Log.d(LOG_TAG, " AppStart State FIRST_TIME_VERSION");
                 initState = AnalyticsConstants.INIT_STATE_UPGRADE;
-                presenter.trackAppStartupProperties(false);
-                // Repeat this method for security, if user delete app data miss this configs.
-                setupCameraSettings();
-                presenter.trackUserProfile(this.androidId);
-                initSettings();
+                presenter.onAppUpgraded(this.androidId);
                 break;
             case FIRST_TIME:
                 Log.d(LOG_TAG, " AppStart State FIRST_TIME");
                 initState = AnalyticsConstants.INIT_STATE_FIRST_TIME;
-                presenter.trackAppStartupProperties(true);
-                setupCameraSettings();
-                presenter.trackUserProfile(this.androidId);
-                presenter.trackCreatedSuperProperty();
-                initSettings();
+                presenter.onFirstTimeRun(this.androidId);
                 initThemeAndWatermark();
-                break;
-            default:
                 break;
         }
     }
@@ -293,14 +282,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         editor.putString(ConfigPreferences.PRIVATE_PATH, privatePath).commit();
         Utils.copyWatermarkResourceToDevice();
     }
-
-    /**
-     * Initializes the camera id parameter in shared preferences to back camera
-     */
-    private void initSettings() {
-        editor.putInt(ConfigPreferences.CAMERA_ID, ConfigPreferences.BACK_CAMERA).commit();
-    }
-
 
     private void initThemeAndWatermark() {
         editor.putBoolean(ConfigPreferences.THEME_APP_DARK, DEFAULT_THEME_DARK_STATE).commit();
@@ -384,7 +365,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-
             try {
                 waitForCriticalPermissions();
                 initActivity.setupAndTrackInit();
