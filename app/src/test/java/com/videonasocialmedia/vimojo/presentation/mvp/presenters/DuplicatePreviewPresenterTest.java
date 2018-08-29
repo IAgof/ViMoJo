@@ -42,7 +42,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(RobolectricTestRunner.class)
 public class DuplicatePreviewPresenterTest {
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private DuplicateView mockedDuplicateView;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
@@ -67,7 +66,7 @@ public class DuplicatePreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         DuplicatePreviewPresenter duplicatePreviewPresenter =
                 new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker,
                     mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,

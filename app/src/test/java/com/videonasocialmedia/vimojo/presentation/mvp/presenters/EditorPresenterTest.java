@@ -71,7 +71,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Log.class})
 public class EditorPresenterTest {
 
-  @Mock private MixpanelAPI mockedMixpanelAPI;
   @Mock EditorActivityView mockedEditorActivityView;
   @Mock VideonaPlayerView mockedVideonaPlayerView;
   @Mock SharedPreferences mockedSharedPreferences;
@@ -103,7 +102,7 @@ public class EditorPresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+    UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditorPresenter editorPresenter = new EditorPresenter(mockedEditorActivityView,
             mockedVideonaPlayerView, mockedSharedPreferences, mockedContext, userEventTracker,
             mockedCreateDefaultProjectUseCase, mockedGetMediaListFromProjectUseCase,

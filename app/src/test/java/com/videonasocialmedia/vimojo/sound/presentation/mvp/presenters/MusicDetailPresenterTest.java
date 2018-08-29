@@ -51,7 +51,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 public class MusicDetailPresenterTest {
     @Mock private MusicDetailView mockedMusicDetailView;
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
@@ -81,7 +80,7 @@ public class MusicDetailPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         MusicDetailPresenter musicDetailPresenter =
                 getMusicDetailPresenter(userEventTracker);
 
