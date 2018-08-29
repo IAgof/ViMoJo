@@ -28,7 +28,7 @@ public class UserEventTracker {
     public static final String MIXPANEL_ACCOUNT_EMAIL_ID = "$account_email";
     public static final String MIXPANEL_USERNAME_ID = "$username";
     private Context context;
-    private ArrayList<TrackerIntegration> trackers;
+    protected ArrayList<TrackerIntegration> trackers;
 
     protected UserEventTracker(Context context, ArrayList<TrackerIntegration.Factory> factories) {
         this.trackers = new ArrayList<>();

@@ -52,7 +52,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(RobolectricTestRunner.class)
 public class SplitPreviewPresenterTest {
     @Mock private SplitView mockedSplitView;
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
@@ -75,7 +74,7 @@ public class SplitPreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
             userEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
             mockedProjectInstanceCache);

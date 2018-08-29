@@ -26,6 +26,7 @@ import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -58,6 +59,7 @@ public class InitAppPresenterTest {
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock UserAuth0Helper mockedUserAuth0Helper;
   private Project currentProject;
+  @Mock UserEventTracker mockedUserEventTracker;
 
 
   @Before
@@ -94,7 +96,7 @@ public class InitAppPresenterTest {
     InitAppPresenter initAppPresenter = getInitAppPresenter();
     when(mockedUserAuth0Helper.isLogged()).thenReturn(true);
 
-    initAppPresenter.setNavigation();
+    initAppPresenter.checkLogin();
 
     verify(mockedInitAppView).navigate(RecordCamera2Activity.class);
   }
@@ -104,7 +106,7 @@ public class InitAppPresenterTest {
     InitAppPresenter initAppPresenter = getInitAppPresenter();
     when(mockedUserAuth0Helper.isLogged()).thenReturn(false);
 
-    initAppPresenter.setNavigation();
+    initAppPresenter.checkLogin();
 
     verify(mockedInitAppView).navigate(InitRegisterLoginActivity.class);
   }
@@ -112,7 +114,8 @@ public class InitAppPresenterTest {
   private InitAppPresenter getInitAppPresenter() {
     return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
         mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
-        mockedProjectRepository, mockedProjectInstanceCache, mockedUserAuth0Helper, userEventTracker);
+        mockedProjectRepository, mockedProjectInstanceCache, mockedUserAuth0Helper,
+        mockedUserEventTracker);
   }
 
   public void getAProject() {

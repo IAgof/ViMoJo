@@ -58,7 +58,6 @@ public class CameraSettingsPresenterTest {
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
-  @Mock private MixpanelAPI mockedMixpanelAPI;
   private Project currentProject;
 
   @Before
@@ -70,7 +69,7 @@ public class CameraSettingsPresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+    UserEventTracker userEventTracker = UserEventTracker.getInstance();
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
             mockedCameraSettingsRepository, mockedProjectRepository, mockedProjectInstanceCache);

@@ -51,7 +51,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class TrimPreviewPresenterTest {
     @Mock private TrimView mockedTrimView;
     @Mock private SharedPreferences mockedSharedPreferences;
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
@@ -71,7 +70,7 @@ public class TrimPreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI, context);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(mockedTrimView,
             mockedSharedPreferences, userEventTracker, mockedGetMediaListFromProjectUseCase,
             mockedModifyVideoDurationUseCase, mockedProjectInstanceCache);
