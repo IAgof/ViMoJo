@@ -82,6 +82,10 @@ public class AnalyticsConstants {
     public static final String CAMERA_BACK = "back";
     public static final String CAMERA_FRONT = "front";
     public static final String SOCIAL_NETWORK = "socialNetwork";
+    public static final String SOCIAL_NETWORK_PLATFORM = "VimojoPlatform";
+    public static final String SOCIAL_NETWORK_FTP = "Ftp";
+    public static final String SOCIAL_NETWORK_UNKNOWN = "Unknown";
+    public static final String SOCIAL_NETWORK_OTHER = "Other network";
     public static final String CLEAR_FILTER = "clearFilter";
     public static final String SET_FILTER_GROUP = "setFilterGroup";
     public static final String FILTER_GROUP_OVERLAY = "overlay";

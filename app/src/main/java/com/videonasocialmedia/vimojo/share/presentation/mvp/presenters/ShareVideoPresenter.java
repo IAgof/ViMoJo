@@ -57,6 +57,11 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.utils.AnalyticsConstants.SOCIAL_NETWORK_FTP;
+import static com.videonasocialmedia.vimojo.utils.AnalyticsConstants.SOCIAL_NETWORK_OTHER;
+import static com.videonasocialmedia.vimojo.utils.AnalyticsConstants.SOCIAL_NETWORK_PLATFORM;
+import static com.videonasocialmedia.vimojo.utils.AnalyticsConstants.SOCIAL_NETWORK_UNKNOWN;
+
 /**
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
  */
@@ -366,18 +371,20 @@ public class ShareVideoPresenter extends VimojoPresenter {
   }
 
   protected void processNetworkClicked(int typeNetworkSelected, String videoPath) {
+    String socialNetwork = SOCIAL_NETWORK_UNKNOWN;
     switch (typeNetworkSelected) {
       case OptionsToShareList.typeVimojoNetwork:
-        trackVideoShared("VimojoPlatform");
+        socialNetwork = SOCIAL_NETWORK_PLATFORM;
         clickUploadToPlatform(isWifiConnected, acceptUploadVideoMobileNetwork,
             isMobileNetworkConnected, videoPath);
         break;
       case OptionsToShareList.typeFtp:
+        socialNetwork = SOCIAL_NETWORK_FTP;
         shareVideoViewReference.get().createDialogToInsertNameProject(ftpNetworkSelected,
             videoPath);
         break;
       case OptionsToShareList.typeSocialNetwork:
-        trackVideoShared(getSocialNetworkSelected().getIdSocialNetwork());
+        socialNetwork = getSocialNetworkSelected().getIdSocialNetwork();
         if (getSocialNetworkSelected().getName().equals(context.getString(R.string.save_to_gallery))) {
           shareVideoViewReference.get().showMessage(R.string.video_saved);
           return;
@@ -386,11 +393,12 @@ public class ShareVideoPresenter extends VimojoPresenter {
         shareVideoViewReference.get().shareVideo(videoPath, getSocialNetworkSelected());
         break;
       case OptionsToShareList.typeMoreSocialNetwork:
-        trackVideoShared("Other network");
+        socialNetwork = SOCIAL_NETWORK_OTHER;
         updateNumTotalVideosShared();
         shareVideoViewReference.get().showIntentOtherNetwork(videoPath);
         break;
     }
+    trackVideoShared(socialNetwork);
   }
 
   public void updateHasBeenProjectExported(boolean hasBeenProjectExported) {
