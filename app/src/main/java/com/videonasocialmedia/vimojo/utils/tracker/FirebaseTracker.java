@@ -5,10 +5,12 @@ package com.videonasocialmedia.vimojo.utils.tracker;
  */
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.json.JSONArray;
@@ -16,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * TrackerIntegration class for Firebase google analytics.
@@ -26,10 +29,23 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
     return new FirebaseTracker(context);
   };
   private final FirebaseAnalytics firebaseAnalytics;
+  private SharedPreferences trackingSuperProperties;
+  private SharedPreferences trackingUserProperties;
 
   private FirebaseTracker(Context context) {
     this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+    initializePreferences(context);
   }
+
+  private void initializePreferences(Context context) {
+    trackingSuperProperties = context.getSharedPreferences(
+            ConfigPreferences.SETTINGS_SHARED_PREFERENCES_TRACKING_SUPER_PROPERTIES,
+            Context.MODE_PRIVATE);
+    trackingUserProperties = context.getSharedPreferences(
+            ConfigPreferences.SETTINGS_SHARED_PREFERENCES_TRACKING_USER_PROPERTIES,
+            Context.MODE_PRIVATE);
+  }
+
 
   @Override
   public void identify(String id) {
@@ -39,10 +55,31 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
   @Override
   public void track(UserEventTracker.Event event) {
     Bundle eventBundle = fromJson(event.getProperties());
-    // TODO(jliarte): 28/08/18 add "super" properties?
+    appendSuperProperties(eventBundle);
     // TODO(jliarte): 28/08/18 map event and params to firebase standards
     String eventName = event.getName().replace(" ", "_"); // (jliarte): 28/08/18 Name must consist of letters, digits or _ (underscores).
     firebaseAnalytics.logEvent(eventName, eventBundle);
+  }
+
+  private void appendSuperProperties(Bundle eventBundle) {
+    Map<String, ?> superProperties = trackingSuperProperties.getAll();
+    for (Map.Entry<String, ?> entry : superProperties.entrySet()) {
+      String key = entry.getKey();
+      Object value = entry.getValue();
+      appendSuperProperty(eventBundle, key, value);
+    }
+  }
+
+  private void appendSuperProperty(Bundle eventBundle, String key, Object value) {
+    if (value instanceof String) {
+      eventBundle.putString(key, (String) value);
+    } else if (value instanceof Integer) {
+      eventBundle.putInt(key, (Integer) value);
+    } else if (value instanceof Boolean) {
+      eventBundle.putBoolean(key, (Boolean) value);
+    } else {
+      eventBundle.putString(key, String.valueOf(value));
+    }
   }
 
   @Override
@@ -51,6 +88,7 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
       String key = it.next();
       try {
         Object value = userProperties.get(key);
+        setLocalUserProperty(key, value);
         firebaseAnalytics.setUserProperty(key, String.valueOf(value));
       } catch (JSONException e) {
         // TODO(jliarte): 28/08/18 check this error
@@ -59,13 +97,34 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
     }
   }
 
+  private void setLocalUserProperty(String key, Object value) {
+    if (value instanceof String) {
+      trackingUserProperties.edit().putString(key, (String) value).apply();
+    } else {
+      trackingUserProperties.edit().putString(key, String.valueOf(value)).apply();
+    }
+  }
+
+  private void setLocalUserPropertyOnce(String key, Object value) {
+    if (!isLocalUserPropertySet(key)) {
+      setLocalUserProperty(key, value);
+    }
+  }
+
+  private boolean isLocalUserPropertySet(String propertyName) {
+    Map<String, ?> props = trackingUserProperties.getAll();
+    return props.containsKey(propertyName);
+  }
+
   @Override
   public void setUserProperties(String propertyName, String propertyValue) {
+    setLocalUserProperty(propertyName, propertyValue);
     firebaseAnalytics.setUserProperty(propertyName, propertyValue);
   }
 
   @Override
   public void setUserProperties(String propertyName, boolean propertyValue) {
+    setLocalUserProperty(propertyName, propertyValue);
     firebaseAnalytics.setUserProperty(propertyName, String.valueOf(propertyValue));
   }
 
@@ -75,6 +134,7 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
       String key = it.next();
       try {
         Object value = userProperties.get(key);
+        setLocalUserPropertyOnce(key, value);
         setUserPropertiesOnce(key, String.valueOf(value));
       } catch (JSONException e) {
         // TODO(jliarte): 28/08/18 check this error
@@ -85,8 +145,7 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
 
   @Override
   public void setUserPropertiesOnce(String propertyName, String propertyValue) {
-    // TODO(jliarte): 28/08/18 check the property is not already set
-    boolean propertyIsSet = false;
+    boolean propertyIsSet = isLocalUserPropertySet(propertyName);
     if (!propertyIsSet) {
       firebaseAnalytics.setUserProperty(propertyName, propertyValue);
     }
@@ -94,29 +153,69 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
 
   @Override
   public void registerSuperProperties(JSONObject superProperties) {
-    // TODO(jliarte): 28/08/18 this should save super properties in a shared pref archive to retrieve them before sending an event
+    for (Iterator<String> it = superProperties.keys(); it.hasNext(); ) {
+      String key = it.next();
+      try {
+        Object value = superProperties.get(key);
+        registerSuperProperty(key, value);
+      } catch (JSONException e) {
+        // TODO(jliarte): 28/08/18 check this error
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void registerSuperProperty(String key, Object value) {
+    if (value instanceof String) {
+      trackingSuperProperties.edit().putString(key, (String) value).apply();
+    } else if (value instanceof Integer) {
+      trackingSuperProperties.edit().putInt(key, (Integer) value).apply();
+    } else if (value instanceof Boolean) {
+      trackingSuperProperties.edit().putBoolean(key, (Boolean) value);
+    } else {
+      trackingSuperProperties.edit().putString(key, String.valueOf(value)).apply();
+    }
   }
 
   @Override
   public void registerSuperPropertiesOnce(JSONObject superProperties) {
-    // TODO(jliarte): 28/08/18 this should save super properties in a shared pref archive - if, not already set - to retrieve them before sending an event
+    for (Iterator<String> it = superProperties.keys(); it.hasNext(); ) {
+      String key = it.next();
+      try {
+        Object value = superProperties.get(key);
+        registerSuperPropertyOnce(key, value);
+      } catch (JSONException e) {
+        // TODO(jliarte): 28/08/18 check this error
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void registerSuperPropertyOnce(String key, Object value) {
+    if (!isSuperPropertySet(key)) {
+      registerSuperProperty(key, value);
+    }
+  }
+
+  private boolean isSuperPropertySet(String propertyName) {
+    Map<String, ?> props = trackingSuperProperties.getAll();
+    return props.containsKey(propertyName);
   }
 
   @Override
   public int getSuperProperty(String propertyName, int defValue) {
-    // TODO(jliarte): 28/08/18 null implementation as firebase dont support super properties
-    return 0;
+    return trackingSuperProperties.getInt(propertyName, defValue);
   }
 
   @Override
   public String getSuperProperty(String propertyName, String defValue) {
-    // TODO(jliarte): 28/08/18 null implementation as firebase dont support super properties
-    return null;
+    return trackingSuperProperties.getString(propertyName, defValue);
   }
 
   @Override
   public void incrementUserProperty(String propertyName, int increment) {
-    // TODO(jliarte): 28/08/18 should retrieve current value from shared prefs, increment and set
+    int value = getSuperProperty(propertyName, 0);
+    registerSuperProperty(propertyName, value + increment);
   }
 
   @Override

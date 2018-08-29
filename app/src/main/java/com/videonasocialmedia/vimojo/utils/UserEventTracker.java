@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.videonasocialmedia.vimojo.BuildConfig;
@@ -231,7 +232,7 @@ public class UserEventTracker {
         try {
             initAppProperties.put(AnalyticsConstants.TYPE, AnalyticsConstants.TYPE_ORGANIC);
             initAppProperties.put(AnalyticsConstants.INIT_STATE, initState);
-            Event event = new Event(AnalyticsConstants.APP_STARTED, initAppProperties); // TODO(jliarte): 28/08/18 std firebase event name
+            Event event = new Event(AnalyticsConstants.APP_STARTED, initAppProperties); // TODO(jliarte): 28/08/18 std firebase event name??
             this.trackEvent(event);
         } catch (JSONException e) {
             e.printStackTrace();

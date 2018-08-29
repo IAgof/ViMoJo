@@ -16,6 +16,8 @@ public class ConfigPreferences {
     public final static String FIRST_APP_RUN = "first_app_run";
     public final static String PREHISTERIC_USER = "prehisteric";
     public final static String SETTINGS_SHARED_PREFERENCES_FILE_NAME = "SETTINGS_SHARED_PREFERENCES_CAMERA";
+    public final static String SETTINGS_SHARED_PREFERENCES_TRACKING_USER_PROPERTIES = "tracking_user_props";
+    public final static String SETTINGS_SHARED_PREFERENCES_TRACKING_SUPER_PROPERTIES = "tracking_super_props";
     public final static String NAME = "name";
     public final static String USERNAME = "username";
     public final static String FTP1 ="ftp1";
