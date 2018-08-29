@@ -171,7 +171,7 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
     } else if (value instanceof Integer) {
       trackingSuperProperties.edit().putInt(key, (Integer) value).apply();
     } else if (value instanceof Boolean) {
-      trackingSuperProperties.edit().putBoolean(key, (Boolean) value);
+      trackingSuperProperties.edit().putBoolean(key, (Boolean) value).apply();
     } else {
       trackingSuperProperties.edit().putString(key, String.valueOf(value)).apply();
     }
