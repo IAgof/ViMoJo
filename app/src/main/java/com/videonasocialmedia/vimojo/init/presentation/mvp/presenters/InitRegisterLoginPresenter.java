@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitRegisterLoginView;
 import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 /**
@@ -33,12 +34,15 @@ public class InitRegisterLoginPresenter extends VimojoPresenter {
   private InitRegisterLoginView initRegisterLoginView;
   private UserAuth0Helper userAuth0Helper;
   private Context context;
+  private UserEventTracker userEventTracker;
 
   public InitRegisterLoginPresenter(Context context, InitRegisterLoginView initRegisterLoginView,
-                                    UserAuth0Helper userAuth0Helper) {
+                                    UserAuth0Helper userAuth0Helper,
+                                    UserEventTracker userEventTracker) {
     this.context = context;
     this.initRegisterLoginView = initRegisterLoginView;
     this.userAuth0Helper = userAuth0Helper;
+    this.userEventTracker = userEventTracker;
   }
 
   public void init() {
@@ -48,6 +52,16 @@ public class InitRegisterLoginPresenter extends VimojoPresenter {
   }
 
   public void performLogin(InitRegisterLoginActivity initRegisterLoginActivity) {
+    userEventTracker.trackLoginClick();
+    performAuth0RegisterLogin(initRegisterLoginActivity);
+  }
+
+  public void performRegister(InitRegisterLoginActivity initRegisterLoginActivity) {
+    userEventTracker.trackRegisterClick();
+    performAuth0RegisterLogin(initRegisterLoginActivity);
+  }
+
+  private void performAuth0RegisterLogin(InitRegisterLoginActivity initRegisterLoginActivity) {
     userAuth0Helper.performLogin(initRegisterLoginActivity, new AuthCallback() {
       @Override
       public void onFailure(@NonNull Dialog dialog) {

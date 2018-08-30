@@ -41,6 +41,11 @@ public class MixpanelTracker extends UserEventTracker.TrackerIntegration<Mixpane
   }
 
   @Override
+  public void aliasUser(String idAlias) {
+    mixpanel.alias(idAlias, mixpanel.getDistinctId());
+  }
+
+  @Override
   public void track(UserEventTracker.Event event) {
     mixpanel.track(event.getName(), event.getProperties());
   }

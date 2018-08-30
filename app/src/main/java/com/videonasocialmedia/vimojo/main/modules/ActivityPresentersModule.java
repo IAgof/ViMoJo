@@ -333,9 +333,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  InitRegisterLoginPresenter provideRegisterLoginPresenter(UserAuth0Helper userAuth0Helper) {
+  InitRegisterLoginPresenter provideRegisterLoginPresenter(UserAuth0Helper userAuth0Helper,
+                                                           UserEventTracker userEventTracker) {
     return new InitRegisterLoginPresenter(activity, (InitRegisterLoginActivity) activity,
-        userAuth0Helper);
+        userAuth0Helper, userEventTracker);
   }
 
   @Provides @PerActivity
@@ -601,7 +602,9 @@ public class ActivityPresentersModule {
   }
 
   @Provides
-  UserAuth0Helper provideUserAuth0Helper(UserApiClient userApiClient) {
-    return new UserAuth0Helper(userApiClient);
+  UserAuth0Helper provideUserAuth0Helper(UserApiClient userApiClient,
+                                         SharedPreferences sharedPreferences,
+                                         UserEventTracker userEventTracker) {
+    return new UserAuth0Helper(userApiClient, sharedPreferences, userEventTracker);
   }
 }

@@ -165,8 +165,10 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
-    return new UserAuth0Helper(userApiClient);
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient,
+                                          SharedPreferences sharedPreferences,
+                                          UserEventTracker userEventTracker) {
+    return new UserAuth0Helper(userApiClient, sharedPreferences, userEventTracker);
   }
 
 }

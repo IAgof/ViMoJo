@@ -49,7 +49,12 @@ public class FirebaseTracker extends UserEventTracker.TrackerIntegration<Firebas
 
   @Override
   public void identify(String id) {
-    firebaseAnalytics.setUserId(id);
+    // TODO: 29/8/18 Review Firebase session unification by user Id
+  }
+
+  @Override
+  public void aliasUser(String idAlias) {
+    firebaseAnalytics.setUserId(idAlias);
   }
 
   @Override

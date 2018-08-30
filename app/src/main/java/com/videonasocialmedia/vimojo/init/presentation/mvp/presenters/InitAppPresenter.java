@@ -247,6 +247,7 @@ public class InitAppPresenter {
 
   protected void checkLogin() {
     if (userAuth0Helper.isLogged()) {
+      userEventTracker.trackUserLoggedIn(true);
       initAppView.navigate(RecordCamera2Activity.class);
     } else {
       initAppView.navigate(InitRegisterLoginActivity.class);

@@ -74,9 +74,14 @@ public class InitRegisterLoginActivity extends VimojoActivity implements InitReg
     presenter.init();
   }
 
-  @OnClick ({R.id.button_init_login, R.id.button_init_register})
-  public void onClickRegisterLoginAuth0() {
+  @OnClick (R.id.button_init_login)
+  public void onClickLogin() {
     presenter.performLogin(this);
+  }
+
+  @OnClick (R.id.button_init_register)
+  public void onClickRegister() {
+    presenter.performRegister(this);
   }
 
   @Override
