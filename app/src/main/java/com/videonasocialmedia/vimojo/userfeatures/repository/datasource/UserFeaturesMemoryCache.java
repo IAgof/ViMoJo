@@ -39,22 +39,7 @@ public class UserFeaturesMemoryCache implements MemoryCacheDataSource<UserFeatur
 
   @Override
   public UserFeatures getCurrent() {
-    if (userFeatures == null) {
-      userFeatures = getDefaultCurrentUserFeatures();
-    }
     return userFeatures;
-  }
-
-  private UserFeatures getDefaultCurrentUserFeatures() {
-    boolean forceWatermark = DEFAULT_FORCE_WATERMARK;
-    boolean ftp = Constants.DEFAULT_FTP;
-    boolean showAds = DEFAULT_SHOW_ADS;
-    boolean vimojoPlatform = DEFAULT_VIMOJO_PLATFORM;
-    boolean vimojoStore = DEFAULT_VIMOJO_STORE;
-    boolean voiceOver = DEFAULT_VOICE_OVER;
-    boolean watermark = DEFAULT_WATERMARK;
-    return new UserFeatures(forceWatermark, ftp, showAds, vimojoPlatform, vimojoStore, voiceOver,
-        watermark);
   }
 
   @Override

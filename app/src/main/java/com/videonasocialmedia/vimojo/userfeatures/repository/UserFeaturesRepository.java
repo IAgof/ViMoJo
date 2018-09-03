@@ -58,7 +58,7 @@ public class UserFeaturesRepository extends VimojoRepository<UserFeatures> {
   @Override
   public void update(UserFeatures item) {
     // Only add local user features, from backend to app
-    localDataSource.add(item);
+    localDataSource.update(item);
   }
 
   @Override
@@ -84,8 +84,7 @@ public class UserFeaturesRepository extends VimojoRepository<UserFeatures> {
     if (apiFeatures != null) {
       return apiFeatures;
     }
-    UserFeatures localFeatures = localDataSource.get();
-    return localFeatures;
+    return getCurrentUserFeatures();
   }
 
   @Override
@@ -94,7 +93,12 @@ public class UserFeaturesRepository extends VimojoRepository<UserFeatures> {
   }
 
   public UserFeatures getCurrentUserFeatures() {
-    return memoryCacheDataSource.getCurrent();
+    UserFeatures memoryCacheFeatures = memoryCacheDataSource.getCurrent();
+    if( memoryCacheFeatures != null) {
+      return memoryCacheFeatures;
+    }
+    UserFeatures localFeatures = localDataSource.get();
+    return localFeatures;
   }
 
   public void setCurrentUserFeatures(UserFeatures userFeatures) {
