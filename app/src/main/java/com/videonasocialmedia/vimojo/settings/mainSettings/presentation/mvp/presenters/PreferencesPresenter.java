@@ -50,6 +50,8 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.view
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -71,6 +73,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private UserAuth0Helper userAuth0Helper;
   private final UploadDataSource uploadRepository;
   private final ProjectInstanceCache projectInstanceCache;
+  private GetCurrentUserFeatures getCurrentUserFeatures;
   private PlayStoreBillingDelegate playStoreBillingDelegate;
   private Context context;
   private UserEventTracker userEventTracker;
@@ -94,32 +97,35 @@ public class PreferencesPresenter extends VimojoPresenter
   private GetAccount getAccount;
   private Project currentProject;
   private UpdateComposition updateComposition;
+  private UserFeatures userFeatures;
 
   /**
    * Constructor
-   *  @param preferencesView
+   * @param preferencesView
    * @param context
    * @param sharedPreferences
    * @param userAuth0Helper
    * @param updateComposition
+   * @param getCurrentUserFeatures
    */
   public PreferencesPresenter(
-          PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
-          Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
-          Preference watermarkPref, GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          UpdateAudioTransitionPreferenceToProjectUseCase
+      PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
+      Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
+      Preference watermarkPref, GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-          UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-          UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateCompositionWatermark updateCompositionWatermark,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
-          GetAccount getAccount, UpdateComposition updateComposition) {
+      UpdateCompositionWatermark updateCompositionWatermark,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+      UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
+      GetAccount getAccount, UpdateComposition updateComposition, GetCurrentUserFeatures
+          getCurrentUserFeatures) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -148,10 +154,12 @@ public class PreferencesPresenter extends VimojoPresenter
     this.userAuth0Helper = userAuth0Helper;
     this.getAccount = getAccount;
     this.updateComposition = updateComposition;
+    this.getCurrentUserFeatures = getCurrentUserFeatures;
   }
 
   public void updatePresenter(Activity activity) {
     this.currentProject = projectInstanceCache.getCurrentProject();
+    this.userFeatures = getCurrentUserFeatures.get();
     checkAvailablePreferences();
     checkVimojoStore(activity);
     setupUserAuthPreference();
@@ -167,7 +175,7 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   public void pausePresenter() {
-    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+    if (userFeatures.isVimojoStore()) {
       billingManager.destroy();
     }
   }
@@ -177,7 +185,7 @@ public class PreferencesPresenter extends VimojoPresenter
    */
 
   public void checkAvailablePreferences() {
-    if (BuildConfig.FEATURE_FTP) {
+    if (userFeatures.isFtp()) {
       checkUserFTP1Data();
       // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
       //checkUserFTP2Data();
@@ -213,7 +221,7 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void checkWatermark() {
-    if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
+    if (userFeatures.isWatermark() && !userFeatures.isForceWatermark()) {
       boolean data = currentProject.hasWatermark();
       preferencesView.setWatermarkSwitchPref(data);
     } else {
@@ -344,14 +352,14 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   public void checkVimojoStore(Activity activity) {
-    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+    if (userFeatures.isVimojoStore()) {
       initBilling(activity);
       preferencesView.vimojoStoreSupported();
     }
   }
 
   public void setupUserAuthPreference() {
-    if (!BuildConfig.FEATURE_VIMOJO_PLATFORM) {
+    if (!userFeatures.isVimojoPlatform()) {
       preferencesView.hideRegisterLoginView();
       return;
     }

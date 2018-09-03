@@ -23,6 +23,8 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
@@ -36,6 +38,7 @@ import javax.inject.Inject;
  */
 public class GalleryProjectListPresenter extends VimojoPresenter {
   private static final String LOG_TAG = GalleryProjectListPresenter.class.getSimpleName();
+  private final GetCurrentUserFeatures getCurrentUserFeatures;
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private SharedPreferences sharedPreferences;
@@ -47,16 +50,18 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private UpdateComposition updateComposition;
   private GetCompositions getCompositions;
   private GetCompositionAssets getCompositionAssets;
+  private UserFeatures userFeatures;
 
   @Inject
   public GalleryProjectListPresenter(
-          GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
-          ProjectRepository projectRepository,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          DuplicateProjectUseCase duplicateProjectUseCase,
-          DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition, UpdateComposition updateComposition,
-          GetCompositions getCompositions, GetCompositionAssets getCompositionAssets) {
+      GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
+      ProjectRepository projectRepository,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      DuplicateProjectUseCase duplicateProjectUseCase,
+      DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
+      SaveComposition saveComposition, UpdateComposition updateComposition,
+      GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
+      GetCurrentUserFeatures getCurrentUserFeatures) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -68,9 +73,11 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.updateComposition = updateComposition;
     this.getCompositions = getCompositions;
     this.getCompositionAssets = getCompositionAssets;
+    this.getCurrentUserFeatures = getCurrentUserFeatures;
   }
 
   public void init() {
+    userFeatures = getCurrentUserFeatures.get();
     updateProjectList();
   }
 
@@ -175,7 +182,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   }
 
   private boolean isWatermarkActivated() {
-    return BuildConfig.FEATURE_FORCE_WATERMARK || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
+    return userFeatures.isForceWatermark()
+        || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 
   public void goToEdit(Project project) {

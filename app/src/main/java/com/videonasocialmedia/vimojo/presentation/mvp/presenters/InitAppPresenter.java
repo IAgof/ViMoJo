@@ -11,6 +11,7 @@ import android.util.Range;
 import android.util.Size;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
@@ -19,6 +20,10 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetByIdUserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SaveLocalUserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SetMemoryCacheUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
@@ -48,17 +53,21 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
  * Created by jliarte on 22/10/16.
  */
 public class InitAppPresenter extends VimojoPresenter {
+  private String LOG_TAG = InitAppPresenter.class.getCanonicalName();
   private final Context context;
   private final InitAppView initAppView;
   private final CameraSettingsDataSource cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private final SaveComposition saveComposition;
+  private final GetByIdUserFeatures getById;
+  private final SaveLocalUserFeatures saveLocal;
+  private final SetMemoryCacheUserFeatures setMemoryCache;
+  private final GetUserId getUserId;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
   private CameraSettings cameraSettings;
-  private String LOG_TAG = InitAppPresenter.class.getCanonicalName();
-
+  private UserFeatures userFeatures;
 
   @Inject
   public InitAppPresenter(Context context, InitAppView initAppView,
@@ -67,7 +76,9 @@ public class InitAppPresenter extends VimojoPresenter {
                           CameraSettingsDataSource cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper,
                           ProjectInstanceCache projectInstanceCache,
-                          SaveComposition saveComposition) {
+                          SaveComposition saveComposition,
+                          GetByIdUserFeatures getUserFeatures, SaveLocalUserFeatures saveUserFeatures,
+                          SetMemoryCacheUserFeatures setMemoryCacheUserFeatures, GetUserId getUserId) {
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
@@ -76,6 +87,10 @@ public class InitAppPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
+    this.getById = getUserFeatures;
+    this.saveLocal = saveUserFeatures;
+    this.setMemoryCache = setMemoryCacheUserFeatures;
+    this.getUserId = getUserId;
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -88,10 +103,18 @@ public class InitAppPresenter extends VimojoPresenter {
       projectInstanceCache.setCurrentProject(project);
       saveComposition.saveComposition(project);
     }
+    manageUserFeatures();
+    checkShowAds(userFeatures.isShowAds());
+  }
+
+  private void manageUserFeatures() {
+    userFeatures = getById.getUserFeatures(getUserId.getUserId().getId());
+    setMemoryCache.setUserFeatures(userFeatures);
+    saveLocal.saveUserFeatures(userFeatures);
   }
 
   public boolean isWatermarkActivated() {
-    return BuildConfig.FEATURE_FORCE_WATERMARK
+    return userFeatures.isForceWatermark()
         || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
@@ -214,6 +237,12 @@ public class InitAppPresenter extends VimojoPresenter {
       initAppView.screenOrientationPortrait();
     } else {
       initAppView.screenOrientationLandscape();
+    }
+  }
+
+  private void checkShowAds(boolean showAds) {
+    if (showAds) {
+      initAppView.initializeAdMob();
     }
   }
 }

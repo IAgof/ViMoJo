@@ -30,6 +30,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositio
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import dagger.Module;
@@ -73,19 +74,20 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          UpdateAudioTransitionPreferenceToProjectUseCase
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-          UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-          UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateCompositionWatermark updateCompositionWatermark,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, GetAccount getAccount, UpdateComposition updateComposition) {
+      UpdateCompositionWatermark updateCompositionWatermark,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+      UploadDataSource uploadRepository, GetAccount getAccount, UpdateComposition
+              updateComposition, GetCurrentUserFeatures getCurrentUserFeatures) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
@@ -96,7 +98,8 @@ public class FragmentPresentersModule {
             updateIntermediateTemporalFilesTransitionsUseCase,
             updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache, getAccount, updateComposition);
+            uploadRepository, projectInstanceCache, getAccount, updateComposition,
+            getCurrentUserFeatures);
   }
 
   @Provides

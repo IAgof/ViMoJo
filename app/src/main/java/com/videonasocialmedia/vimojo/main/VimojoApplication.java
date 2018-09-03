@@ -40,6 +40,9 @@ import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.CreateDefaultUserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.repository.UserFeaturesRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -67,9 +70,15 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
      * Project instance across all application
      */
     private Project currentProject;
+    /**
+     * UserFeatures instance across all application
+     */
+    private UserFeatures userFeatures;
 
     @Inject ProjectRepository projectRepository;
+    @Inject UserFeaturesRepository userFeaturesRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
+    @Inject CreateDefaultUserFeatures createDefaultUserFeatures;
     @Inject SharedPreferences sharedPreferences;
     @Inject SaveComposition saveComposition;
 
@@ -224,6 +233,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     public Project getDefaultProjectInstance() {
         if (projectRepositoryIsEmpty()) {
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+            userFeatures = createDefaultUserFeatures.getDefaultUserFeatures();
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
                     drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
@@ -236,7 +246,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     private boolean isWatermarkActivated() {
-        return BuildConfig.FEATURE_FORCE_WATERMARK || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
+        return userFeatures.isForceWatermark()
+            || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
     }
 
     private boolean projectRepositoryIsEmpty() {

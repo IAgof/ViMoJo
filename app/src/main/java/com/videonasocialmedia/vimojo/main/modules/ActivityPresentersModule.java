@@ -9,6 +9,7 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
+import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
@@ -35,6 +36,10 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVide
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetByIdUserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SaveLocalUserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SetMemoryCacheUserFeatures;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
@@ -213,9 +218,10 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SoundPresenter provideSoundPresenter(
-          ModifyTrackUseCase modifyTrackUseCase, UpdateComposition updateComposition) {
+      ModifyTrackUseCase modifyTrackUseCase, UpdateComposition updateComposition,
+      GetCurrentUserFeatures getCurrentUserFeatures) {
     return new SoundPresenter((SoundActivity) activity, modifyTrackUseCase, projectInstanceCache,
-            updateComposition);
+        updateComposition, getCurrentUserFeatures);
   }
 
   @Provides @PerActivity
@@ -334,23 +340,27 @@ public class ActivityPresentersModule {
           ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
           GetFtpListUseCase getFtpListUseCase, UploadToPlatform uploadToPlatform,
           RunSyncAdapterHelper runSyncAdapterHelper,
-          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition) {
+          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
+          GetCurrentUserFeatures getCurrentUserFeatures) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
             uploadToPlatform, runSyncAdapterHelper, projectInstanceCache,
-            userAuth0Helper, updateComposition);
+            userAuth0Helper, updateComposition, getCurrentUserFeatures);
   }
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
-          SharedPreferences sharedPreferences,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          CameraSettingsDataSource cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition) {
+      SharedPreferences sharedPreferences,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      CameraSettingsDataSource cameraSettingsRepository,
+      RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition,
+      GetByIdUserFeatures getUserFeatures, SaveLocalUserFeatures saveUserFeatures,
+      SetMemoryCacheUserFeatures setMemoryCacheUserFeatures, GetUserId getUserId) {
     return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
             createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
-            (ProjectInstanceCache) activity.getApplication(), saveComposition);
+            (ProjectInstanceCache) activity.getApplication(), saveComposition, getUserFeatures,
+            saveUserFeatures, setMemoryCacheUserFeatures, getUserId);
   }
 
   @Provides @PerActivity
@@ -365,14 +375,15 @@ public class ActivityPresentersModule {
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           NewClipImporter newClipImporter, BillingManager billingManager,
           SaveComposition saveComposition, UpdateComposition updateComposition,
-          RemoveMedia removeMedia, UpdateCompositionWatermark updateWatermark) {
+          RemoveMedia removeMedia, UpdateCompositionWatermark updateWatermark,
+          GetCurrentUserFeatures getCurrentUserFeatures) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
             getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             relaunchTranscoderTempBackgroundUseCase, newClipImporter,
             billingManager, projectInstanceCache, saveComposition, removeMedia,
-            updateWatermark, updateComposition);
+            updateWatermark, updateComposition, getCurrentUserFeatures);
   }
 
   @Provides @PerActivity
@@ -382,11 +393,12 @@ public class ActivityPresentersModule {
           DuplicateProjectUseCase duplicateProjectUseCase,
           DeleteComposition deleteComposition, SaveComposition saveComposition,
           UpdateComposition updateComposition, GetCompositions getCompositions,
-          GetCompositionAssets getCompositionAssets) {
+          GetCompositionAssets getCompositionAssets,
+          GetCurrentUserFeatures getCurrentUserFeatures) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteComposition, (ProjectInstanceCache) activity.getApplication(), saveComposition,
-            updateComposition, getCompositions, getCompositionAssets);
+            updateComposition, getCompositions, getCompositionAssets, getCurrentUserFeatures);
   }
 
   @Provides @PerActivity
@@ -411,9 +423,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          UserAuth0Helper userAuth0Helper) {
+          UserAuth0Helper userAuth0Helper, GetCurrentUserFeatures getCurrentUserFeatures) {
     return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, userAuth0Helper);
+        obtainLocalVideosUseCase, userAuth0Helper, getCurrentUserFeatures);
   }
 
   @Provides

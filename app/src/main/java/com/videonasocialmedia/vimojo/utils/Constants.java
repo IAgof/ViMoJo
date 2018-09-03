@@ -99,7 +99,6 @@ public class Constants {
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
     public static final int EXPORT_ERROR_UNKNOWN = 10;
     public static final int EXPORT_ERROR_NO_SPACE_LEFT = 11;
-
   public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH;}
 
     public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW;}
@@ -107,16 +106,17 @@ public class Constants {
     public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY;}
 
     public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
-    public static final float MS_CORRECTION_FACTOR = 1000f;
-    public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
-    public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
-    public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
 
+  public static final float MS_CORRECTION_FACTOR = 1000f;
+  public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
+  public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
+  public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
     public static final String IN_APP_BILLING_ITEM_WATERMARK = "inappitem_watermark";
-    public static final String IN_APP_BILLING_ITEM_DARK_THEME = "inappitem_darktheme";
 
+  public static final String IN_APP_BILLING_ITEM_DARK_THEME = "inappitem_darktheme";
     public static final boolean DEFAULT_THEME_DARK_STATE = false;
-    public static final boolean DEFAULT_WATERMARK_STATE = true;
+
+  public static final boolean DEFAULT_WATERMARK_STATE = true;
   // TODO: 30/7/18 Delete BuildConfig dependency and default values from Constants.java
   public static final String DEFAULT_CAMERA_SETTING_RESOLUTION =
       BuildConfig.FEATURE_VERTICAL_VIDEOS ? ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720
@@ -130,21 +130,31 @@ public class Constants {
   public static final String DEFAULT_CAMERA_SETTING_FRAME_RATE = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30;
   public static final VideoFrameRate.FrameRate DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE =
           VideoFrameRate.FrameRate.FPS30;
-
   // Default camera setting
 
   public static final int BACK_CAMERA_ID = 0;
-  public static final int FRONT_CAMERA_ID = 1;
 
+  public static final int FRONT_CAMERA_ID = 1;
   public static final int CAMERA_SETTING_INTERFACE_PRO_ID = 1;
+
   public static final String CAMERA_SETTING_INTERFACE_PRO = "Camera pro";
   public static final int CAMERA_SETTING_INTERFACE_BASIC_ID = 2;
   public static final String CAMERA_SETTING_INTERFACE_BASIC = "Camera basic";
   public static final String DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED = CAMERA_SETTING_INTERFACE_PRO;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED = BACK_CAMERA_ID;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP = FRONT_CAMERA_ID;
-
   public static final String BASE_PACKAGE_NAME = "com.videonasocialmedia.vimojo";
 
   public static final int DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE = 260;
+
+  /**
+   * Default User features values
+   */
+  public static final boolean DEFAULT_FORCE_WATERMARK = false;
+  public static final boolean DEFAULT_FTP = false;
+  public static final boolean DEFAULT_SHOW_ADS = true;
+  public static final boolean DEFAULT_VIMOJO_PLATFORM = false;
+  public static final boolean DEFAULT_VIMOJO_STORE = true;
+  public static final boolean DEFAULT_VOICE_OVER = false;
+  public static final boolean DEFAULT_WATERMARK = true;
 }

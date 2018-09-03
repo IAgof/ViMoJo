@@ -14,4 +14,6 @@ public interface InitAppView {
     void screenOrientationPortrait();
 
     void screenOrientationLandscape();
+
+  void initializeAdMob();
 }

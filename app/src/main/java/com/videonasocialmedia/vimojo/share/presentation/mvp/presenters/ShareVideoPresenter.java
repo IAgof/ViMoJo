@@ -36,6 +36,8 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishe
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -60,9 +62,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
   private Context context;
   private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
-
   private GetFtpListUseCase getFtpListUseCase;
   private WeakReference<ShareVideoView> shareVideoViewReference;
+
   protected Project currentProject;
   protected UserEventTracker userEventTracker;
   private SharedPreferences sharedPreferences;
@@ -86,18 +88,21 @@ public class ShareVideoPresenter extends VimojoPresenter {
   protected boolean isAppExportingProject;
   private UserAuth0Helper userAuth0Helper;
   private UpdateComposition updateComposition;
+  private final GetCurrentUserFeatures getCurrentUserFeatures;
+  private UserFeatures userFeatures;
 
   @Inject
   public ShareVideoPresenter(
-          Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-          SharedPreferences sharedPreferences,
-          AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-          ExportProjectUseCase exportProjectUseCase,
-          ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-          GetFtpListUseCase getFtpListUseCase,
-          UploadToPlatform uploadToPlatform,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition) {
+      Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+      SharedPreferences sharedPreferences,
+      AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+      ExportProjectUseCase exportProjectUseCase,
+      ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+      GetFtpListUseCase getFtpListUseCase,
+      UploadToPlatform uploadToPlatform,
+      RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+      UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
+      GetCurrentUserFeatures getCurrentUserFeatures) {
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;
@@ -111,14 +116,17 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.projectInstanceCache = projectInstanceCache;
     this.userAuth0Helper = userAuth0Helper;
     this.updateComposition = updateComposition;
+    this.getCurrentUserFeatures = getCurrentUserFeatures;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
     this.currentProject = projectInstanceCache.getCurrentProject();
+    this.userFeatures = getCurrentUserFeatures.get();
     obtainNetworksToShare();
     obtainListFtp();
     setupVimojoNetwork();
     obtainListOptionsToShare(vimojoNetwork, ftpList, socialNetworkList);
+    checkShowAds(userFeatures.isShowAds());
     if (shareVideoViewReference != null) {
       shareVideoViewReference.get().showOptionsShareList(optionToShareList);
     }
@@ -126,6 +134,14 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.videoPath = videoExportedPath;
     if (isAppExportingProject) {
       shareVideoViewReference.get().showProgressDialogVideoExporting();
+    }
+  }
+
+  private void checkShowAds(boolean showAds) {
+    if (showAds) {
+      shareVideoViewReference.get().showAdsView();
+    } else {
+      shareVideoViewReference.get().hideAdsCardView();
     }
   }
 
@@ -158,10 +174,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private void obtainListOptionsToShare(VimojoNetwork vimojoNetwork, List<FtpNetwork> ftpList,
                                         List<SocialNetwork> socialNetworkList) {
     optionToShareList = new ArrayList();
-    if (BuildConfig.FEATURE_VIMOJO_PLATFORM) {
+    if (userFeatures.isVimojoPlatform()) {
       optionToShareList.add(vimojoNetwork);
     }
-    if (BuildConfig.FEATURE_FTP) {
+    if (userFeatures.isFtp()) {
       optionToShareList.addAll(ftpList);
     }
     if (BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {

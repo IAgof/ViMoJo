@@ -15,16 +15,15 @@ import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
-import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.List;
 
@@ -35,24 +34,34 @@ import javax.inject.Inject;
  */
 public class UserProfilePresenter extends VimojoPresenter {
   private String LOG_TAG = UserProfilePresenter.class.getCanonicalName();
+  private final GetCurrentUserFeatures getCurrentUserFeatures;
   private final SharedPreferences sharedPreferences;
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   private final Context context;
   protected final UserAuth0Helper userAuth0Helper;
+  private UserFeatures userFeatures;
 
   @Inject
   public UserProfilePresenter(Context context, UserProfileView view,
                               SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper) {
+                              obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
+                              GetCurrentUserFeatures getCurrentUserFeatures) {
     this.context = context;
     this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.userAuth0Helper = userAuth0Helper;
+    this.getCurrentUserFeatures = getCurrentUserFeatures;
   }
 
-  public void getInfoVideosRecordedEditedShared() {
+  public void init() {
+    userFeatures = getCurrentUserFeatures.get();
+    getInfoVideosRecordedEditedShared();
+    setupUserInfo();
+  }
+
+  private void getInfoVideosRecordedEditedShared() {
     userProfileView.showLoading();
 
     int videosRecorded = sharedPreferences
@@ -77,11 +86,7 @@ public class UserProfilePresenter extends VimojoPresenter {
 
   }
 
-  public void setupUserInfo() {
-    if (!BuildConfig.FEATURE_VIMOJO_PLATFORM) {
-      return;
-    }
-
+  private void setupUserInfo() {
     if (!userAuth0Helper.isLogged()) {
       return;
     }
@@ -105,13 +110,13 @@ public class UserProfilePresenter extends VimojoPresenter {
   }
 
   public void onClickUsername(Activity activity, boolean emptyField) {
-    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
+    if (emptyField && userFeatures.isVimojoPlatform()) {
       performLoginAndSaveAccount(activity);
     }
   }
 
   public void onClickEmail(Activity activity, boolean emptyField) {
-    if (emptyField && BuildConfig.FEATURE_VIMOJO_PLATFORM) {
+    if (emptyField && userFeatures.isVimojoPlatform()) {
       performLoginAndSaveAccount(activity);
     }
   }

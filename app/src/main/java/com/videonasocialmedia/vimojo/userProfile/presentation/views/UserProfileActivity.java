@@ -157,8 +157,7 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     super.onResume();
     // TODO: 4/7/18 Implement feature updating pic user with auth0. Meanwhile we will use Auth0 pic
     //setUpAndCheckUserThumb();
-    presenter.getInfoVideosRecordedEditedShared();
-    presenter.setupUserInfo();
+    presenter.init();
   }
 
   @Override

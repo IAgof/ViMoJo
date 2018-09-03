@@ -11,6 +11,8 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
+import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
+import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -29,21 +31,26 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   private static final float VOLUME_MUTE = 0f;
   protected Project currentProject;
   private UpdateComposition updateComposition;
+  private final GetCurrentUserFeatures getCurrentUserFeatures;
+  private UserFeatures userFeatures;
 
   @Inject
   public SoundPresenter(SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
                         ProjectInstanceCache projectInstanceCache,
-                        UpdateComposition updateComposition) {
+                        UpdateComposition updateComposition, GetCurrentUserFeatures
+                        getCurrentUserFeatures) {
     this.soundView = soundView;
     this.projectInstanceCache = projectInstanceCache;
     this.modifyTrackUseCase = modifyTrackUseCase;
     this.updateComposition = updateComposition;
+    this.getCurrentUserFeatures = getCurrentUserFeatures;
   }
 
     public void updatePresenter() {
       this.currentProject = projectInstanceCache.getCurrentProject();
       this.currentProject.addListener(this);
-      checkVoiceOverFeatureToggle(BuildConfig.FEATURE_VOICE_OVER);
+      this.userFeatures = getCurrentUserFeatures.get();
+      checkVoiceOverFeatureToggle(userFeatures.isVoiceOver());
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
       // VMComposition
       retrieveTracks();

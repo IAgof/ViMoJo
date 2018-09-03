@@ -125,10 +125,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
-        if (BuildConfig.FEATURE_SHOW_ADS) {
-            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-            MobileAds.initialize(this, getString(R.string.admob_app_id));
-        }
     }
 
     private boolean isBetaAppOutOfDate() {
@@ -453,6 +449,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
+    @Override
+    public void initializeAdMob() {
+        // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+    }
+
     /**
      * Shows the splash screen
      */
@@ -503,9 +505,11 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             boolean granted = ContextCompat.checkSelfPermission(InitAppActivity.this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                     && ContextCompat.checkSelfPermission(InitAppActivity.this,
-                            Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(InitAppActivity.this,
-                            Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                            Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(InitAppActivity.this,
+                            Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(InitAppActivity.this,
+                    Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED;
             return granted;
         }
     }
