@@ -72,4 +72,10 @@ public class FeatureToggleModule {
     return featureDecisions.voiceOverAvailable();
   }
 
+  @Provides @Named("hideTransitionPreference")
+  boolean provideHideTransitionPreferenceDecision(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.hideTransitionPreference();
+  }
+
 }

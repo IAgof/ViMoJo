@@ -120,16 +120,16 @@ public class SettingsFragment extends PreferenceFragment implements
     setupTermOfService();
     setupLicense();
     setupLegalNotice();
-    setupTransitions();
     setupThemeApp();
   }
 
-  private void setupTransitions() {
+  @Override
+  public void setupTransitions(boolean hideTransitionPreference) {
     transitionsVideoPref = (SwitchPreference)
             findPreference(ConfigPreferences.TRANSITION_VIDEO);
     transitionsAudioPref = (SwitchPreference)
             findPreference(ConfigPreferences.TRANSITION_AUDIO);
-    if (!BuildConfig.FEATURE_AVTRANSTITION) {
+    if (hideTransitionPreference) {
       hideTransitions();
     }
   }

@@ -83,7 +83,8 @@ public class FragmentPresentersModule {
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable) {
+          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+          @Named("hideTransitionPreference") boolean hideTransitionPreference) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             getMediaListFromProjectUseCase,
@@ -95,7 +96,8 @@ public class FragmentPresentersModule {
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
             uploadRepository, projectInstanceCache, getAccount, updateComposition,
             fetchUserFeatures, vimojoStoreAvailable,
-            showWaterMarkSwitch, vimojoPlatformAvailable, ftpPublishingAvailable);
+            showWaterMarkSwitch, vimojoPlatformAvailable, ftpPublishingAvailable,
+            hideTransitionPreference);
   }
 
   @Provides

@@ -46,4 +46,8 @@ public class FeatureDecisions {
   public boolean voiceOverAvailable() {
     return features.isEnabled(Constants.USER_FEATURE_VOICE_OVER);
   }
+
+  public boolean hideTransitionPreference() {
+    return !features.isEnabled(Constants.FEATURE_AVTRANSITIONS);
+  }
 }

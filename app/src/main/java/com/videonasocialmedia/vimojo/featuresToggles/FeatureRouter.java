@@ -4,6 +4,7 @@ package com.videonasocialmedia.vimojo.featuresToggles;
  * Created by jliarte on 3/09/18.
  */
 
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.model.FeatureToggle;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -26,10 +27,12 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK;
 class FeatureRouter {
   private final FeatureRepository featureRepository;
   private HashMap<String, FeatureToggle> defaultMap;
+  private HashMap<String, FeatureToggle> releaseMap;
 
   @Inject
   public FeatureRouter(FeatureRepository featureRepository) {
     initDeafults();
+    initReleaseToggles();
     this.featureRepository = featureRepository;
   }
 
@@ -51,17 +54,27 @@ class FeatureRouter {
             new FeatureToggle(Constants.USER_FEATURE_VOICE_OVER, DEFAULT_VOICE_OVER));
   }
 
+  private void initReleaseToggles() {
+    releaseMap = new HashMap<>();
+    releaseMap.put(Constants.FEATURE_AVTRANSITIONS,
+            new FeatureToggle(Constants.FEATURE_AVTRANSITIONS, BuildConfig.FEATURE_AVTRANSTITION));
+  }
+
   public boolean isEnabled(String feature) {
     FeatureToggle featureToggle = this.getFeatureToggleById(feature);
     return featureToggle != null && featureToggle.isEnabled();
   }
 
   private FeatureToggle getFeatureToggleById(String feature) {
-    FeatureToggle featureToggle = featureRepository.getById(feature);
-    if (featureToggle != null) {
-      return featureToggle;
+    if (releaseMap.get(feature) != null) {
+      return releaseMap.get(feature);
     } else {
-      return defaultMap.get(feature);
+      FeatureToggle featureToggle = featureRepository.getById(feature);
+      if (featureToggle != null) {
+        return featureToggle;
+      } else {
+        return defaultMap.get(feature);
+      }
     }
   }
 

@@ -18,7 +18,9 @@ import java.util.ArrayList;
  * This interface is used to show the setting menu.
  */
 public interface PreferencesView {
-    /**
+  void setupTransitions(boolean hideTransitionPreference);
+
+  /**
      * This method sets the available settings supported by the device
      *
      * @param preference

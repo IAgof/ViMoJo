@@ -94,11 +94,11 @@ public class PreferencesPresenter extends VimojoPresenter
   private boolean showWaterMarkSwitch;
   private boolean vimojoPlatformAvailable;
   private boolean ftpPublishingAvailable;
+  private boolean hideTransitionPreference;
 
   /**
    * Constructor
-   *
-   * @param preferencesView
+   *  @param preferencesView
    * @param context
    * @param sharedPreferences
    * @param userAuth0Helper
@@ -108,6 +108,7 @@ public class PreferencesPresenter extends VimojoPresenter
    * @param showWaterMarkSwitch
    * @param vimojoPlatformAvailable
    * @param ftpPublishingAvailable
+   * @param hideTransitionPreference
    */
   public PreferencesPresenter(
           PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
@@ -129,7 +130,8 @@ public class PreferencesPresenter extends VimojoPresenter
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable) {
+          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+          @Named("hideTransitionPreference") boolean hideTransitionPreference) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -159,14 +161,20 @@ public class PreferencesPresenter extends VimojoPresenter
     this.showWaterMarkSwitch = showWaterMarkSwitch;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.ftpPublishingAvailable = ftpPublishingAvailable;
+    this.hideTransitionPreference = hideTransitionPreference;
   }
 
   public void updatePresenter(Activity activity) {
     this.currentProject = projectInstanceCache.getCurrentProject();
+    setupTransitions();
     checkAvailablePreferences();
     setupVimojoStore(activity);
     setupUserAuthPreference();
     setupMoreApps();
+  }
+
+  private void setupTransitions() {
+    preferencesView.setupTransitions(hideTransitionPreference);
   }
 
   private void setupMoreApps() {

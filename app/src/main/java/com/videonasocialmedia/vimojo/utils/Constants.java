@@ -158,6 +158,7 @@ public class Constants {
   public static final String USER_FEATURE_FTP_PUBLISHING = "user-feature-ftp-publishing";
   public static final String FEATURE_ADS_ENABLED = "feature-ads-enabled";
   public static final String USER_FEATURE_VOICE_OVER = "user-feature-voice-over";
+  public static final String FEATURE_AVTRANSITIONS = "feature-avtransitions";
 
   /**
    * Default User features values
