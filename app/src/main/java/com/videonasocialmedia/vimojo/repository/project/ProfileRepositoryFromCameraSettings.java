@@ -46,10 +46,10 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private HashMap<String, VideoResolution.Resolution> resolutionMap;
 
   public ProfileRepositoryFromCameraSettings(CameraSettingsDataSource cameraSettingsRepository,
-                                             int defaultCameraIdSelected) {
+                                             int defaultCameraIdSelected, boolean showCameraPro) {
     this.cameraSettingsRepository = cameraSettingsRepository;
     if (this.cameraSettingsRepository.getCameraSettings() == null) {
-      createDefaultCameraSettings(defaultCameraIdSelected);
+      createDefaultCameraSettings(defaultCameraIdSelected, showCameraPro);
     }
     setupVideoQualityMap();
     setupFrameRateMap();
@@ -87,7 +87,7 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   }
 
   // TODO(jliarte): 29/11/17 seems not to be responsibility of this repo, check for suitable class
-  private void createDefaultCameraSettings(int defaultCameraIdSelected) {
+  private void createDefaultCameraSettings(int defaultCameraIdSelected, boolean showCameraPro) {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, false);
@@ -107,7 +107,12 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
             Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE, frameRateSupportedMap);
 
     String quality = Constants.DEFAULT_CAMERA_SETTING_QUALITY;
-    String interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    String interfaceSelected;
+    if (showCameraPro) {
+      interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    } else {
+      interfaceSelected = Constants.CAMERA_SETTING_INTERFACE_BASIC;
+    }
     CameraSettings defaultCameraSettings = new CameraSettings(resolutionSetting,
             frameRateSetting, quality, interfaceSelected, defaultCameraIdSelected);
     cameraSettingsRepository.createCameraSetting(defaultCameraSettings);

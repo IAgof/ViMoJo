@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
@@ -54,6 +55,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
   private HashMap<Integer, VideoQuality.Quality> qualityValues;
   private HashMap<Integer, String> proInterfaceNames;
   protected Project currentProject;
+  private boolean showCameraPro;
 
   @Inject
   public CameraSettingsPresenter(
@@ -63,7 +65,8 @@ public class CameraSettingsPresenter extends VimojoPresenter {
           UpdateComposition updateComposition, ProjectInstanceCache projectInstanceCache,
           SetCompositionQuality setCompositionQuality,
           SetCompositionFrameRate setCompositionFrameRate,
-          SetCompositionResolution setCompositionResolution) {
+          SetCompositionResolution setCompositionResolution,
+          @Named("showCameraPro") boolean showCameraPro) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;
@@ -74,6 +77,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
     this.updateComposition = updateComposition;
     this.setCompositionFrameRate = setCompositionFrameRate;
     this.setCompositionResolution = setCompositionResolution;
+    this.showCameraPro = showCameraPro;
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
@@ -199,7 +203,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
   public void getCameraSettingsList() {
     List<CameraSettingViewModel> cameraSettingViewModels =
             getSettingListUseCase.getCameraSettingsList(resolutionNames, qualityNames,
-                    frameRateNames, proInterfaceNames);
+                    frameRateNames, proInterfaceNames, showCameraPro);
     cameraSettingsListView.showCameraSettingsList(cameraSettingViewModels);
   }
 

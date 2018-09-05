@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_PRO;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FORCE_WATERMARK;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FTP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SHOW_ADS;
@@ -52,6 +53,8 @@ class FeatureRouter {
             new FeatureToggle(Constants.FEATURE_ADS_ENABLED, DEFAULT_SHOW_ADS));
     defaultMap.put(Constants.USER_FEATURE_VOICE_OVER,
             new FeatureToggle(Constants.USER_FEATURE_VOICE_OVER, DEFAULT_VOICE_OVER));
+    defaultMap.put(Constants.USER_FEATURE_CAMERA_PRO,
+        new FeatureToggle(Constants.USER_FEATURE_CAMERA_PRO, DEFAULT_CAMERA_PRO));
   }
 
   private void initReleaseToggles() {

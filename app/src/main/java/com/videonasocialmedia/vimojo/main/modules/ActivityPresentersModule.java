@@ -247,11 +247,12 @@ public class ActivityPresentersModule {
           CameraSettingsDataSource cameraSettingsRepository,
           SetCompositionQuality setCompositionQuality, UpdateComposition updateComposition,
           SetCompositionFrameRate setCompositionFrameRate,
-          SetCompositionResolution setCompositionResolution) {
+          SetCompositionResolution setCompositionResolution,
+          @Named("showCameraPro") boolean showCameraPro) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
         getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository,
             updateComposition, projectInstanceCache, setCompositionQuality, setCompositionFrameRate,
-            setCompositionResolution);
+            setCompositionResolution, showCameraPro);
   }
 
   @Provides @PerActivity
@@ -578,8 +579,10 @@ public class ActivityPresentersModule {
   }
 
   @Provides ProfileRepository provideProfileRepository(
-          CameraSettingsDataSource cameraSettingsRepository) {
-    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository, defaultCameraIdSelected);
+          CameraSettingsDataSource cameraSettingsRepository,
+          @Named("showCameraPro") boolean showCameraPro) {
+    return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository,
+        defaultCameraIdSelected, showCameraPro);
   }
 
   @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {

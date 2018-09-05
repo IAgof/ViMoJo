@@ -78,4 +78,10 @@ public class FeatureToggleModule {
     return featureDecisions.hideTransitionPreference();
   }
 
+  @Provides @Named("showCameraPro")
+  boolean provideShowCameraProAvailable(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.cameraProAvailable();
+  }
+
 }

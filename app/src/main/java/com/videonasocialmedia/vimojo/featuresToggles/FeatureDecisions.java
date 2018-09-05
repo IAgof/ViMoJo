@@ -50,4 +50,8 @@ public class FeatureDecisions {
   public boolean hideTransitionPreference() {
     return !features.isEnabled(Constants.FEATURE_AVTRANSITIONS);
   }
+
+  public boolean cameraProAvailable() {
+    return features.isEnabled(Constants.USER_FEATURE_CAMERA_PRO);
+  }
 }

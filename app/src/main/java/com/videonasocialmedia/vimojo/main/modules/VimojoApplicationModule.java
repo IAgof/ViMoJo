@@ -9,6 +9,7 @@ import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepositoryFromCameraSettings;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -39,9 +40,10 @@ public class VimojoApplicationModule {
 
   @Provides
   ProfileRepository provideProfileRepository(
-          CameraSettingsDataSource cameraSettingsRepository) {
+          CameraSettingsDataSource cameraSettingsRepository,
+          @Named("showCameraPro") boolean showCameraPro) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository,
-            defaultCameraIdSelected);
+            defaultCameraIdSelected, showCameraPro);
   }
 
   @Provides @Singleton

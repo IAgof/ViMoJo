@@ -159,6 +159,7 @@ public class Constants {
   public static final String FEATURE_ADS_ENABLED = "feature-ads-enabled";
   public static final String USER_FEATURE_VOICE_OVER = "user-feature-voice-over";
   public static final String FEATURE_AVTRANSITIONS = "feature-avtransitions";
+  public static final String USER_FEATURE_CAMERA_PRO = "user-feature-camera-pro";
 
   /**
    * Default User features values
@@ -170,4 +171,5 @@ public class Constants {
   public static final boolean DEFAULT_VIMOJO_STORE = true;
   public static final boolean DEFAULT_VOICE_OVER = false;
   public static final boolean DEFAULT_WATERMARK = true;
+  public static final boolean DEFAULT_CAMERA_PRO = false;
 }
