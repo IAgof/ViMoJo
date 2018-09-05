@@ -56,6 +56,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
   private HashMap<Integer, String> proInterfaceNames;
   protected Project currentProject;
   private boolean showCameraPro;
+  private boolean allowSelectFrameRate;
 
   @Inject
   public CameraSettingsPresenter(
@@ -66,7 +67,8 @@ public class CameraSettingsPresenter extends VimojoPresenter {
           SetCompositionQuality setCompositionQuality,
           SetCompositionFrameRate setCompositionFrameRate,
           SetCompositionResolution setCompositionResolution,
-          @Named("showCameraPro") boolean showCameraPro) {
+          @Named("showCameraProAvailable") boolean showCameraPro,
+          @Named("selectFrameRateAvailable") boolean allowSelectFrameRate) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;
@@ -78,6 +80,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
     this.setCompositionFrameRate = setCompositionFrameRate;
     this.setCompositionResolution = setCompositionResolution;
     this.showCameraPro = showCameraPro;
+    this.allowSelectFrameRate = allowSelectFrameRate;
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
@@ -203,7 +206,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
   public void getCameraSettingsList() {
     List<CameraSettingViewModel> cameraSettingViewModels =
             getSettingListUseCase.getCameraSettingsList(resolutionNames, qualityNames,
-                    frameRateNames, proInterfaceNames, showCameraPro);
+                    frameRateNames, proInterfaceNames, showCameraPro, allowSelectFrameRate);
     cameraSettingsListView.showCameraSettingsList(cameraSettingViewModels);
   }
 

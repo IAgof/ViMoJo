@@ -54,4 +54,9 @@ public class FeatureDecisions {
   public boolean cameraProAvailable() {
     return features.isEnabled(Constants.USER_FEATURE_CAMERA_PRO);
   }
+
+  public boolean selectFrameRateAvailable() {
+    return features.isEnabled(Constants.USER_FEATURE_SELECT_FRAME_RATE);
+  }
+
 }

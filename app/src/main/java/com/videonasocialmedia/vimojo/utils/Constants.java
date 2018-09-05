@@ -160,6 +160,8 @@ public class Constants {
   public static final String USER_FEATURE_VOICE_OVER = "user-feature-voice-over";
   public static final String FEATURE_AVTRANSITIONS = "feature-avtransitions";
   public static final String USER_FEATURE_CAMERA_PRO = "user-feature-camera-pro";
+  public static final String USER_FEATURE_SELECT_FRAME_RATE = "user-feature-select-frame-rate";
+
 
   /**
    * Default User features values
@@ -172,4 +174,5 @@ public class Constants {
   public static final boolean DEFAULT_VOICE_OVER = false;
   public static final boolean DEFAULT_WATERMARK = true;
   public static final boolean DEFAULT_CAMERA_PRO = false;
+  public static final boolean DEFAULT_SELECT_FRAME_RATE = false;
 }

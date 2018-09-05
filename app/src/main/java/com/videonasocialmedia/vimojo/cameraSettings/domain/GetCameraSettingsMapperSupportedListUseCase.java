@@ -60,15 +60,17 @@ public class GetCameraSettingsMapperSupportedListUseCase {
   public List<CameraSettingViewModel> getCameraSettingsList(
       HashMap<Integer, String> resolutionNames, HashMap<Integer, String> qualityNames,
       HashMap<Integer, String> frameRateNames, HashMap<Integer, String> interfaceNames,
-      boolean showCameraPro) {
+      boolean showCameraPro, boolean allowSelectFrameRate) {
     List <CameraSettingViewModel> preferenceList = new ArrayList<>();
     if (showCameraPro) {
       addProInterfaceSettingsToList(interfaceNames, preferenceList);
     }
     addResolutionSettingsToList(
             resolutionNames, cameraSettings.getResolutionSetting(), preferenceList);
-    addFrameRateSettingsToList(
-            frameRateNames, cameraSettings.getFrameRateSetting(), preferenceList);
+    if (allowSelectFrameRate) {
+      addFrameRateSettingsToList(
+          frameRateNames, cameraSettings.getFrameRateSetting(), preferenceList);
+    }
     addQualitySettingsToList(qualityNames, preferenceList);
     return preferenceList;
   }
