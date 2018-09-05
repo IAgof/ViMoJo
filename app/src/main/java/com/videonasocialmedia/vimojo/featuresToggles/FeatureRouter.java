@@ -17,6 +17,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_PRO;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FORCE_WATERMARK;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FTP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SELECT_FRAME_RATE;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SELECT_RESOLUTION;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SHOW_ADS;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_VIMOJO_PLATFORM;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_VIMOJO_STORE;
@@ -58,6 +59,8 @@ class FeatureRouter {
         new FeatureToggle(Constants.USER_FEATURE_CAMERA_PRO, DEFAULT_CAMERA_PRO));
     defaultMap.put(Constants.USER_FEATURE_SELECT_FRAME_RATE,
         new FeatureToggle(Constants.USER_FEATURE_SELECT_FRAME_RATE, DEFAULT_SELECT_FRAME_RATE));
+    defaultMap.put(Constants.USER_FEATURE_SELECT_RESOLUTION,
+        new FeatureToggle(Constants.USER_FEATURE_SELECT_RESOLUTION, DEFAULT_SELECT_RESOLUTION));
   }
 
   private void initReleaseToggles() {

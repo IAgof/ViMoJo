@@ -249,11 +249,12 @@ public class ActivityPresentersModule {
           SetCompositionFrameRate setCompositionFrameRate,
           SetCompositionResolution setCompositionResolution,
           @Named("showCameraProAvailable") boolean showCameraPro,
-          @Named("selectFrameRateAvailable") boolean allowSelectFrameRate) {
+          @Named("selectFrameRateAvailable") boolean allowSelectFrameRate,
+          @Named("selectResolutionAvailable") boolean allowSelectResolution) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
         getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository,
             updateComposition, projectInstanceCache, setCompositionQuality, setCompositionFrameRate,
-            setCompositionResolution, showCameraPro, allowSelectFrameRate);
+            setCompositionResolution, showCameraPro, allowSelectFrameRate, allowSelectResolution);
   }
 
   @Provides @PerActivity

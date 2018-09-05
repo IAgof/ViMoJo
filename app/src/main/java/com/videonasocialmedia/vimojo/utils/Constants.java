@@ -122,8 +122,8 @@ public class Constants {
       BuildConfig.FEATURE_VERTICAL_VIDEOS ? ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720
           : ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
   public static final VideoResolution.Resolution DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION =
-      BuildConfig.FEATURE_VERTICAL_VIDEOS ? VideoResolution.Resolution.V_1080P
-          : VideoResolution.Resolution.HD1080;
+      BuildConfig.FEATURE_VERTICAL_VIDEOS ? VideoResolution.Resolution.V_720P
+          : VideoResolution.Resolution.HD720;
   public static final String DEFAULT_CAMERA_SETTING_QUALITY = CameraSettings.CAMERA_SETTING_QUALITY_16;
   public static final VideoQuality.Quality DEFAULT_CAMERA_SETTING_VIDEO_QUALITY =
           VideoQuality.Quality.LOW;
@@ -161,6 +161,7 @@ public class Constants {
   public static final String FEATURE_AVTRANSITIONS = "feature-avtransitions";
   public static final String USER_FEATURE_CAMERA_PRO = "user-feature-camera-pro";
   public static final String USER_FEATURE_SELECT_FRAME_RATE = "user-feature-select-frame-rate";
+  public static final String USER_FEATURE_SELECT_RESOLUTION = "user-feature-select-resolution";
 
 
   /**
@@ -175,4 +176,5 @@ public class Constants {
   public static final boolean DEFAULT_WATERMARK = true;
   public static final boolean DEFAULT_CAMERA_PRO = false;
   public static final boolean DEFAULT_SELECT_FRAME_RATE = false;
+  public static final boolean DEFAULT_SELECT_RESOLUTION = false;
 }

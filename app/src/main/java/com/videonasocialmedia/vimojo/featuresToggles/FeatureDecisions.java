@@ -59,4 +59,8 @@ public class FeatureDecisions {
     return features.isEnabled(Constants.USER_FEATURE_SELECT_FRAME_RATE);
   }
 
+  public boolean selectResolutionAvailable() {
+    return features.isEnabled(Constants.USER_FEATURE_SELECT_RESOLUTION);
+  }
+
 }

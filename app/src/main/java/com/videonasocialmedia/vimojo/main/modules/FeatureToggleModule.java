@@ -89,4 +89,11 @@ public class FeatureToggleModule {
     // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
     return featureDecisions.selectFrameRateAvailable();
   }
+
+  @Provides @Named("selectResolutionAvailable")
+  boolean provideSelectResolutionAvailable(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.selectResolutionAvailable();
+  }
+
 }
