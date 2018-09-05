@@ -130,24 +130,20 @@ public class Constants {
   public static final String DEFAULT_CAMERA_SETTING_FRAME_RATE = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30;
   public static final VideoFrameRate.FrameRate DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE =
           VideoFrameRate.FrameRate.FPS30;
-  // Default camera setting
-
   public static final int BACK_CAMERA_ID = 0;
-
   public static final int FRONT_CAMERA_ID = 1;
+
   public static final int CAMERA_SETTING_INTERFACE_PRO_ID = 1;
 
   public static final String CAMERA_SETTING_INTERFACE_PRO = "Camera pro";
   public static final int CAMERA_SETTING_INTERFACE_BASIC_ID = 2;
+
   public static final String CAMERA_SETTING_INTERFACE_BASIC = "Camera basic";
   public static final String DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED = CAMERA_SETTING_INTERFACE_PRO;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED = BACK_CAMERA_ID;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP = FRONT_CAMERA_ID;
   public static final String BASE_PACKAGE_NAME = "com.videonasocialmedia.vimojo";
-
   public static final int DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE = 260;
-
-
   /**
    * Feature toggles names - These names are local feature toggle ids for our repo
    */
@@ -162,7 +158,10 @@ public class Constants {
   public static final String USER_FEATURE_CAMERA_PRO = "user-feature-camera-pro";
   public static final String USER_FEATURE_SELECT_FRAME_RATE = "user-feature-select-frame-rate";
   public static final String USER_FEATURE_SELECT_RESOLUTION = "user-feature-select-resolution";
-
+  public static final String FEATURE_RECORD_AUDIO_GAIN = "feature-record-audio-gain";
+  public static final String FEATURE_SHARE_SHOW_SOCIAL_NETWORKS = "feature-show-social-networks";
+  public static final String FEATURE_SHOW_MORE_APPS = "feature-show-more-apps";
+  public static final String FEATURE_SHOW_TUTORIALS = "feature-show-tutorials";
 
   /**
    * Default User features values

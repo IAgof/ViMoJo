@@ -306,10 +306,13 @@ public class ActivityPresentersModule {
           UserEventTracker userEventTracker, SharedPreferences sharedPreferences,
           AddVideoToProjectUseCase addVideoToProjectUseCase, Camera2Wrapper camera2wrapper,
           NewClipImporter newClipImporter, CameraSettingsDataSource cameraSettingsRepository,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition,
+          @Named("hideRecordAudioGain") boolean hideRecordAudioGain,
+          @Named("hideTutorials") boolean hideTutorials) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
             sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
-            cameraSettingsRepository, projectInstanceCache, updateComposition);
+            cameraSettingsRepository, projectInstanceCache, updateComposition, hideRecordAudioGain,
+            hideTutorials);
   }
 
   @Provides @PerActivity
@@ -345,13 +348,13 @@ public class ActivityPresentersModule {
           FetchUserFeatures fetchUserFeatures,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("showAds") boolean showAds) {
+          @Named("showAds") boolean showAds,
+          @Named("showSocialNetworks") boolean showSocialNetworks) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
-            sharedPreferences, addLastVideoExportedProjectUseCase,
-            exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
-            uploadToPlatform, runSyncAdapterHelper, projectInstanceCache,
-            userAuth0Helper, updateComposition,
-            fetchUserFeatures, vimojoPlatformAvailable, ftpPublishingAvailable, showAds);
+        sharedPreferences, addLastVideoExportedProjectUseCase, exportProjectUseCase,
+        obtainNetworksToShareUseCase, getFtpListUseCase, uploadToPlatform, runSyncAdapterHelper,
+        projectInstanceCache, userAuth0Helper, updateComposition, fetchUserFeatures,
+        vimojoPlatformAvailable, ftpPublishingAvailable, showAds, showSocialNetworks);
   }
 
   @Provides @PerActivity
@@ -384,7 +387,8 @@ public class ActivityPresentersModule {
           @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("watermarkIsForced") boolean watermarkIsForced) {
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("hideTutorials") boolean hideTutorials) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
@@ -392,7 +396,7 @@ public class ActivityPresentersModule {
             relaunchTranscoderTempBackgroundUseCase, newClipImporter,
             billingManager, projectInstanceCache, saveComposition, removeMedia,
             updateWatermark, updateComposition, showWaterMarkSwitch,
-            vimojoStoreAvailable, vimojoPlatformAvailable, watermarkIsForced);
+            vimojoStoreAvailable, vimojoPlatformAvailable, watermarkIsForced, hideTutorials);
   }
 
   @Provides @PerActivity

@@ -90,6 +90,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private boolean vimojoPlatformAvailable;
   private boolean ftpPublishingAvailable;
   private boolean showAds;
+  private boolean showSocialNetworksDecision;
 
   @Inject
   public ShareVideoPresenter(
@@ -105,7 +106,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
           FetchUserFeatures fetchUserFeatures,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("showAds") boolean showAds) {
+          @Named("showAds") boolean showAds,
+          @Named("showSocialNetworks") boolean showSocialNetworksDecision) {
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;
@@ -123,6 +125,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.ftpPublishingAvailable = ftpPublishingAvailable;
     this.showAds = showAds;
+    this.showSocialNetworksDecision = showSocialNetworksDecision;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -165,7 +168,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   }
 
   public void obtainNetworksToShare() {
-    if (BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {
+    if (showSocialNetworksDecision) {
       if (BuildConfig.FLAVOR.equals("vishow")) {
         socialNetworkList = obtainNetworksToShareUseCase.obtainVishowNetworks();
       } else {
@@ -185,7 +188,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
     if (ftpPublishingAvailable) {
       optionToShareList.addAll(ftpList);
     }
-    if (BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS) {
+    if (showSocialNetworksDecision) {
       optionToShareList.addAll(socialNetworkList);
     }
   }

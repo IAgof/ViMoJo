@@ -63,4 +63,19 @@ public class FeatureDecisions {
     return features.isEnabled(Constants.USER_FEATURE_SELECT_RESOLUTION);
   }
 
+  public boolean hideRecordAudioGain() {
+    return !features.isEnabled(Constants.FEATURE_RECORD_AUDIO_GAIN);
+  }
+
+  public boolean showSocialNetworks() {
+    return features.isEnabled(Constants.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS);
+  }
+
+  public boolean showMoreAppsPreference() {
+    return features.isEnabled(Constants.FEATURE_SHOW_MORE_APPS);
+  }
+
+  public boolean hideTutorials() {
+    return !features.isEnabled(Constants.FEATURE_SHOW_TUTORIALS);
+  }
 }

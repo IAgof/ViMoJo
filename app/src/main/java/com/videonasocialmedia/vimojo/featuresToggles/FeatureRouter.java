@@ -67,6 +67,18 @@ class FeatureRouter {
     releaseMap = new HashMap<>();
     releaseMap.put(Constants.FEATURE_AVTRANSITIONS,
             new FeatureToggle(Constants.FEATURE_AVTRANSITIONS, BuildConfig.FEATURE_AVTRANSTITION));
+    releaseMap.put(Constants.FEATURE_RECORD_AUDIO_GAIN,
+        new FeatureToggle(Constants.FEATURE_RECORD_AUDIO_GAIN,
+            BuildConfig.FEATURE_RECORD_AUDIO_GAIN));
+    releaseMap.put(Constants.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS,
+        new FeatureToggle(Constants.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS,
+            BuildConfig.FEATURE_SHARE_SHOW_SOCIAL_NETWORKS));
+    releaseMap.put(Constants.FEATURE_SHOW_MORE_APPS,
+        new FeatureToggle(Constants.FEATURE_SHOW_MORE_APPS,
+            BuildConfig.FEATURE_SHOW_MORE_APPS));
+    releaseMap.put(Constants.FEATURE_SHOW_TUTORIALS,
+        new FeatureToggle(Constants.FEATURE_SHOW_TUTORIALS, BuildConfig.FEATURE_SHOW_TUTORIALS));
+
   }
 
   public boolean isEnabled(String feature) {

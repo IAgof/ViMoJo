@@ -95,6 +95,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private boolean vimojoPlatformAvailable;
   private boolean ftpPublishingAvailable;
   private boolean hideTransitionPreference;
+  private boolean showMoreAppsPreference;
 
   /**
    * Constructor
@@ -131,7 +132,8 @@ public class PreferencesPresenter extends VimojoPresenter
           @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("hideTransitionPreference") boolean hideTransitionPreference) {
+          @Named("hideTransitionPreference") boolean hideTransitionPreference,
+          @Named("showMoreAppsPreference") boolean showMoreAppsPreference) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
@@ -162,6 +164,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.ftpPublishingAvailable = ftpPublishingAvailable;
     this.hideTransitionPreference = hideTransitionPreference;
+    this.showMoreAppsPreference = showMoreAppsPreference;
   }
 
   public void updatePresenter(Activity activity) {
@@ -178,7 +181,7 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void setupMoreApps() {
-    if (BuildConfig.FEATURE_SHOW_MORE_APPS) {
+    if (showMoreAppsPreference) {
       preferencesView.showMoreAppsSection();
     } else {
       preferencesView.hideMoreAppsSection();

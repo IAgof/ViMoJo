@@ -84,7 +84,8 @@ public class FragmentPresentersModule {
           @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("hideTransitionPreference") boolean hideTransitionPreference) {
+          @Named("hideTransitionPreference") boolean hideTransitionPreference,
+          @Named("showMoreAppsPreference") boolean showMoreAppsPreference) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             getMediaListFromProjectUseCase,
@@ -97,7 +98,7 @@ public class FragmentPresentersModule {
             uploadRepository, projectInstanceCache, getAccount, updateComposition,
             fetchUserFeatures, vimojoStoreAvailable,
             showWaterMarkSwitch, vimojoPlatformAvailable, ftpPublishingAvailable,
-            hideTransitionPreference);
+            hideTransitionPreference, showMoreAppsPreference);
   }
 
   @Provides

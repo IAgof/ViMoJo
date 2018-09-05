@@ -44,6 +44,8 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import javax.inject.Named;
+
 import static com.videonasocialmedia.camera.camera2.Camera2Wrapper.CAMERA_ID_FRONT;
 import static com.videonasocialmedia.camera.camera2.Camera2Wrapper.CAMERA_ID_REAR;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
@@ -107,13 +109,17 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
   // TODO:(alvaro.martinez) 14/11/17 get data from realm camera repository
   private boolean cameraProSelected = false;
   private UpdateComposition updateComposition;
+  private boolean hideRecordAudioGain;
+  private boolean hideTutorials;
 
   public RecordCamera2Presenter(
-          Context context, RecordCamera2View recordView, UserEventTracker userEventTracker,
-          SharedPreferences sharedPreferences, AddVideoToProjectUseCase addVideoToProjectUseCase,
-          NewClipImporter newClipImporter, Camera2Wrapper camera,
-          CameraSettingsDataSource cameraSettingsRepository,
-          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+      Context context, RecordCamera2View recordView, UserEventTracker userEventTracker,
+      SharedPreferences sharedPreferences, AddVideoToProjectUseCase addVideoToProjectUseCase,
+      NewClipImporter newClipImporter, Camera2Wrapper camera,
+      CameraSettingsDataSource cameraSettingsRepository,
+      ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+      @Named("hideRecordAudioGain") boolean hideRecordAudioGain,
+      @Named("hideTutorials") boolean hideTutorialsDecision) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
@@ -128,6 +134,8 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
     this.updateComposition = updateComposition;
     this.camera.setCameraListener(this);
     this.newClipImporter = newClipImporter;
+    this.hideRecordAudioGain = hideRecordAudioGain;
+    this.hideTutorials = hideTutorialsDecision;
   }
 
   public void updatePresenter() {
@@ -163,7 +171,7 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
     recordView.showSettingsCameraView();
     recordView.hideRecordPointIndicator();
     setupAdvancedCameraControls();
-    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+    if (hideTutorials) {
       recordView.hideTutorials();
     }
   }
@@ -239,7 +247,7 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
       recordView.showDefaultButton();
       recordView.showAudioGainButton();
     }
-    if (!BuildConfig.FEATURE_RECORD_AUDIO_GAIN) {
+    if (hideRecordAudioGain) {
       recordView.disableAudioGainControls();
     }
 

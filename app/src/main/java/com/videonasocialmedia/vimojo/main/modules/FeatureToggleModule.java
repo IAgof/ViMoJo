@@ -96,4 +96,28 @@ public class FeatureToggleModule {
     return featureDecisions.selectResolutionAvailable();
   }
 
+  @Provides @Named("hideRecordAudioGain")
+  boolean provideHideRecordAudioGainDecision(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.hideRecordAudioGain();
+  }
+
+  @Provides @Named("showSocialNetworks")
+  boolean provideShowSocialNetworksDecision(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.showSocialNetworks();
+  }
+
+  @Provides @Named("showMoreAppsPreference")
+  boolean provideShowMoreAppsPreference(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.showMoreAppsPreference();
+  }
+
+  @Provides @Named("hideTutorials")
+  boolean provideHideTutorialsDecision(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.hideTutorials();
+  }
+
 }

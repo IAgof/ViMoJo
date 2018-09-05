@@ -94,6 +94,7 @@ public class EditorPresenter extends VimojoPresenter
   private boolean vimojoStoreAvailable;
   private boolean vimojoPlatformAvailable;
   private boolean watermarkIsForced;
+  private boolean hideTutorials;
 
   @Inject
   public EditorPresenter(
@@ -112,7 +113,8 @@ public class EditorPresenter extends VimojoPresenter
           @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("watermarkIsForced") boolean watermarkIsForced) {
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("hideTutorials") boolean hideTutorials) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -136,6 +138,7 @@ public class EditorPresenter extends VimojoPresenter
     this.vimojoStoreAvailable = vimojoStoreAvailable;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.watermarkIsForced = watermarkIsForced;
+    this.hideTutorials = hideTutorials;
   }
 
   public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath,
@@ -203,7 +206,7 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   private void setupTutorial() {
-    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+    if (hideTutorials) {
       editorActivityView.hideTutorialViews();
     }
   }
