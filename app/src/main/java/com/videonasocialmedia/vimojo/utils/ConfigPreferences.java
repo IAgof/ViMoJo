@@ -13,6 +13,7 @@ package com.videonasocialmedia.vimojo.utils;
 public class ConfigPreferences {
     public final static String FIRST_TIME = "first_time";
     public final static String SETTINGS_SHARED_PREFERENCES_FILE_NAME = "SETTINGS_SHARED_PREFERENCES_CAMERA";
+    public final static String SETTINGS_SHARED_PREFERENCES_FEATURE_TOGGLE_LOCAL_DS = "feature_toggle_local_datasource";
     public final static String NAME = "name";
     public final static String USERNAME = "username";
     public final static String FTP1 ="ftp1";
@@ -72,14 +73,4 @@ public class ConfigPreferences {
     public static final String THEME_APP_DARK = "themeAppDark";
     public static final String VIMOJO_NETWORK = "vimojo_platform";
 
-    /**
-     * User features
-     */
-    public static final String USER_FEATURES_FORCE_WATERMARK = "user_features_force_watermark";
-    public static final String USER_FEATURES_FTP = "user_features_ftp";
-    public static final String USER_FEATURES_SHOW_ADS = "user_features_show_ads";
-    public static final String USER_FEATURES_VIMOJO_PLATFORM = "user_features_vimojo_platform";
-    public static final String USER_FEATURES_VIMOJO_STORE = "user_features_vimojo_store";
-    public static final String USER_FEATURES_VOICE_OVER = "user_features_voice_over";
-    public static final String USER_FEATURES_WATERMARK = "user_features_watermark";
 }

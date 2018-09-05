@@ -303,6 +303,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
         switch (which) {
           case DialogInterface.BUTTON_NEUTRAL:
+            // TODO(jliarte): 4/09/18 show loading progress
             presenter.performLoginAndSaveAccount(this);
             break;
         }
@@ -417,14 +418,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showAdsView() {
-    adView = (AdView) exportDialogView.findViewById(R.id.adView);
+    adView = exportDialogView.findViewById(R.id.adView);
     adView.loadAd(new AdRequest.Builder().build());
     exportDialog.setContentView(exportDialogView);
   }
 
   @Override
-  public void hideAdsCardView() {
-    CardView adsCardView = (CardView) exportDialogView.findViewById(R.id.adsCardView);
+  public void hideAdsView() {
+    CardView adsCardView = exportDialogView.findViewById(R.id.adsCardView);
     adsCardView.setVisibility(View.GONE);
     exportDialog.setContentView(exportDialogView);
   }

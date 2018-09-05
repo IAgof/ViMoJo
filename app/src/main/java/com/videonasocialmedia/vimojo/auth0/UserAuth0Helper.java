@@ -10,8 +10,10 @@ package com.videonasocialmedia.vimojo.auth0;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -22,7 +24,6 @@ import com.auth0.android.authentication.storage.CredentialsManagerException;
 import com.auth0.android.authentication.storage.SecureCredentialsManager;
 import com.auth0.android.authentication.storage.SharedPreferencesStorage;
 import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
@@ -34,8 +35,9 @@ import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
-import javax.inject.Inject;
 import java.util.HashMap;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 2/7/18.
@@ -76,7 +78,7 @@ public class UserAuth0Helper {
     return manager.hasValidCredentials();
   }
 
-  public void performLogin(Activity activity, AuthCallback authCallback) {
+  public void performLogin(Activity activity, UserAuth0Helper.AuthCallback authCallback) {
     String domain = context.getString(R.string.com_auth0_domain);
     // TODO: 10/7/18 Study how to overwrite from build.gradle debug these string_debug, platform_base included
     String audience = BuildConfig.DEBUG ? context.getString(R.string.com_auth0_audience_debug)
@@ -91,7 +93,28 @@ public class UserAuth0Helper {
         .withScope("openid offline_access profile email")
         .withAudience(String.format(audience.toString(), domain))
         .withParameters(extraConfigParams)
-        .start(activity, authCallback);
+        .start(activity, new com.auth0.android.provider.AuthCallback() {
+          @Override
+          public void onFailure(@NonNull Dialog dialog) {
+            Log.d(LOG_TAG, "Error performLogin onFailure ");
+            authCallback.onFailure(new AuthenticationException("Unknown reason"));
+          }
+
+          @Override
+          public void onFailure(AuthenticationException exception) {
+            Log.d(LOG_TAG, "Error performLogin AuthenticationException "
+                    + exception.getMessage());
+            Crashlytics.log("Error performLogin AuthenticationException: " + exception);
+            authCallback.onFailure(exception);
+          }
+
+          @Override
+          public void onSuccess(@NonNull Credentials credentials) {
+            Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
+            saveCredentials(credentials);
+            authCallback.onSuccess(credentials);
+          }
+        });
   }
 
   public void saveCredentials(Credentials credentials) {
@@ -143,4 +166,9 @@ public class UserAuth0Helper {
     manager.getCredentials(baseCallback);
   }
 
+  public interface AuthCallback {
+    void onSuccess(Credentials credentials);
+
+    void onFailure(AuthenticationException exception);
+  }
 }

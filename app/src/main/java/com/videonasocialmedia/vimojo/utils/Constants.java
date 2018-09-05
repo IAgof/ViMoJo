@@ -147,6 +147,18 @@ public class Constants {
 
   public static final int DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE = 260;
 
+
+  /**
+   * Feature toggles names - These names are local feature toggle ids for our repo
+   */
+  public static final String USER_FEATURE_FORCE_WATERMARK = "user-feature-force-watermark";
+  public static final String USER_FEATURE_WATERMARK = "user-feature-watermark";
+  public static final String FEATURE_VIMOJO_STORE = "feature-vimojo-store";
+  public static final String FEATURE_VIMOJO_PLATFORM = "feature-vimojo-platform";
+  public static final String USER_FEATURE_FTP_PUBLISHING = "user-feature-ftp-publishing";
+  public static final String FEATURE_ADS_ENABLED = "feature-ads-enabled";
+  public static final String USER_FEATURE_VOICE_OVER = "user-feature-voice-over";
+
   /**
    * Default User features values
    */

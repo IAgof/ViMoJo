@@ -29,26 +29,25 @@ import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
-import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.CreateDefaultUserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.repository.UserFeaturesRepository;
+import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -70,17 +69,13 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
      * Project instance across all application
      */
     private Project currentProject;
-    /**
-     * UserFeatures instance across all application
-     */
-    private UserFeatures userFeatures;
 
     @Inject ProjectRepository projectRepository;
-    @Inject UserFeaturesRepository userFeaturesRepository;
+    @Inject FeatureRepository featureRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
-    @Inject CreateDefaultUserFeatures createDefaultUserFeatures;
     @Inject SharedPreferences sharedPreferences;
     @Inject SaveComposition saveComposition;
+    @Inject @Named("watermarkIsForced") boolean watermarkIsForced;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -99,11 +94,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     public void onCreate() {
         super.onCreate();
         initSystemComponent();
-        // Set up Crashlytics, disabled for debug builds
-        Crashlytics crashlyticsKit = new Crashlytics.Builder()
-            .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-            .build();
-        Fabric.with(this, crashlyticsKit);
+        setupCrashlytics();
         context = getApplicationContext();
         setupGoogleAnalytics();
 //        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -114,6 +105,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .vimojoApplicationModule(getVimojoApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .build().inject(this);
+        fetchFeatureToggles();
     }
 
     void initSystemComponent() {
@@ -154,6 +146,14 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             dataRepositoriesModule = new DataRepositoriesModule();
         }
         return dataRepositoriesModule;
+    }
+
+    private void setupCrashlytics() {
+        // Set up Crashlytics, disabled for debug builds
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+        Fabric.with(this, crashlyticsKit);
     }
 
     private void setupGoogleAnalytics() {
@@ -203,6 +203,11 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         Realm.setDefaultConfiguration(realmConfiguration);
     }
 
+    private void fetchFeatureToggles() {
+        // TODO(jliarte): 3/09/18 should we call fetch use case?
+        featureRepository.fetch();
+    }
+
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
@@ -233,7 +238,6 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     public Project getDefaultProjectInstance() {
         if (projectRepositoryIsEmpty()) {
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
-            userFeatures = createDefaultUserFeatures.getDefaultUserFeatures();
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
                     drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
@@ -246,7 +250,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     private boolean isWatermarkActivated() {
-        return userFeatures.isForceWatermark()
+        return watermarkIsForced
             || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
     }
 

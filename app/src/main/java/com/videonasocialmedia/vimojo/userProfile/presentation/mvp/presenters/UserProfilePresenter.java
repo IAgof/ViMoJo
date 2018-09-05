@@ -1,8 +1,6 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -10,7 +8,6 @@ import android.util.Log;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.authentication.storage.CredentialsManagerException;
 import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
@@ -20,43 +17,42 @@ import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * TODO: document this class, whats the objective and responsibility for this class?
  */
 public class UserProfilePresenter extends VimojoPresenter {
   private String LOG_TAG = UserProfilePresenter.class.getCanonicalName();
-  private final GetCurrentUserFeatures getCurrentUserFeatures;
   private final SharedPreferences sharedPreferences;
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
-  private final Context context;
   protected final UserAuth0Helper userAuth0Helper;
-  private UserFeatures userFeatures;
+  private FetchUserFeatures fetchUserFeatures;
+  private boolean vimojoPlatformAvailable;
 
   @Inject
-  public UserProfilePresenter(Context context, UserProfileView view,
-                              SharedPreferences sharedPreferences, ObtainLocalVideosUseCase
-                              obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
-                              GetCurrentUserFeatures getCurrentUserFeatures) {
-    this.context = context;
+  public UserProfilePresenter(
+          UserProfileView view, SharedPreferences sharedPreferences,
+          ObtainLocalVideosUseCase obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
+          FetchUserFeatures fetchUserFeatures,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable) {
     this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.userAuth0Helper = userAuth0Helper;
-    this.getCurrentUserFeatures = getCurrentUserFeatures;
+    this.fetchUserFeatures = fetchUserFeatures;
+    this.vimojoPlatformAvailable = vimojoPlatformAvailable;
   }
 
   public void init() {
-    userFeatures = getCurrentUserFeatures.get();
     getInfoVideosRecordedEditedShared();
     setupUserInfo();
   }
@@ -110,40 +106,34 @@ public class UserProfilePresenter extends VimojoPresenter {
   }
 
   public void onClickUsername(Activity activity, boolean emptyField) {
-    if (emptyField && userFeatures.isVimojoPlatform()) {
+    if (emptyField && vimojoPlatformAvailable) {
       performLoginAndSaveAccount(activity);
     }
   }
 
   public void onClickEmail(Activity activity, boolean emptyField) {
-    if (emptyField && userFeatures.isVimojoPlatform()) {
+    if (emptyField && vimojoPlatformAvailable) {
       performLoginAndSaveAccount(activity);
     }
   }
 
   protected void performLoginAndSaveAccount(Activity activity) {
-    userAuth0Helper.performLogin(activity, new AuthCallback() {
-          @Override
-          public void onFailure(@NonNull Dialog dialog) {
-            Log.d(LOG_TAG, "Error performLogin onFailure ");
-            userProfileView.showError(R.string.auth0_error_login_failure);
-          }
+    userAuth0Helper.performLogin(activity, new UserAuth0Helper.AuthCallback() {
+      @Override
+      public void onFailure(AuthenticationException exception) {
+        userProfileView.showError(R.string.auth0_error_authentication);
+      }
 
-          @Override
-          public void onFailure(AuthenticationException exception) {
-            Log.d(LOG_TAG, "Error performLogin AuthenticationException "
-                + exception.getMessage());
-            Crashlytics.log("Error performLogin AuthenticationException: " + exception);
-            userProfileView.showError(R.string.auth0_error_authentication);
-          }
+      @Override
+      public void onSuccess(@NonNull Credentials credentials) {
+        fetchUserFeatures();
+        setupUserInfo();
+      }
+    });
+  }
 
-          @Override
-          public void onSuccess(@NonNull Credentials credentials) {
-            Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
-            userAuth0Helper.saveCredentials(credentials);
-            setupUserInfo();
-          }
-        });
+  private void fetchUserFeatures() {
+    fetchUserFeatures.fetch();
   }
 
   private void getUserProfile(String accessToken) {

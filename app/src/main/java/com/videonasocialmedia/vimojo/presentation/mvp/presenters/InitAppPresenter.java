@@ -1,9 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.content.SharedPreferences;
-
-import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
@@ -11,32 +9,26 @@ import android.util.Range;
 import android.util.Size;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
-import com.videonasocialmedia.vimojo.auth0.GetUserId;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetByIdUserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SaveLocalUserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SetMemoryCacheUserFeatures;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.HashMap;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
-import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
@@ -46,6 +38,9 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
+import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 
@@ -59,26 +54,21 @@ public class InitAppPresenter extends VimojoPresenter {
   private final CameraSettingsDataSource cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private final SaveComposition saveComposition;
-  private final GetByIdUserFeatures getById;
-  private final SaveLocalUserFeatures saveLocal;
-  private final SetMemoryCacheUserFeatures setMemoryCache;
-  private final GetUserId getUserId;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   private SharedPreferences sharedPreferences;
   private CameraSettings cameraSettings;
-  private UserFeatures userFeatures;
+  private boolean watermarkIsForced;
+  private boolean showAds;
 
   @Inject
-  public InitAppPresenter(Context context, InitAppView initAppView,
-                          SharedPreferences sharedPreferences,
-                          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-                          CameraSettingsDataSource cameraSettingsRepository,
-                          RunSyncAdapterHelper runSyncAdapterHelper,
-                          ProjectInstanceCache projectInstanceCache,
-                          SaveComposition saveComposition,
-                          GetByIdUserFeatures getUserFeatures, SaveLocalUserFeatures saveUserFeatures,
-                          SetMemoryCacheUserFeatures setMemoryCacheUserFeatures, GetUserId getUserId) {
+  public InitAppPresenter(
+          Context context, InitAppView initAppView, SharedPreferences sharedPreferences,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          CameraSettingsDataSource cameraSettingsRepository,
+          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+          SaveComposition saveComposition, @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("showAds") boolean showAds) {
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
@@ -87,10 +77,8 @@ public class InitAppPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.saveComposition = saveComposition;
-    this.getById = getUserFeatures;
-    this.saveLocal = saveUserFeatures;
-    this.setMemoryCache = setMemoryCacheUserFeatures;
-    this.getUserId = getUserId;
+    this.watermarkIsForced = watermarkIsForced;
+    this.showAds = showAds;
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -103,18 +91,11 @@ public class InitAppPresenter extends VimojoPresenter {
       projectInstanceCache.setCurrentProject(project);
       saveComposition.saveComposition(project);
     }
-    manageUserFeatures();
-    checkShowAds(userFeatures.isShowAds());
-  }
-
-  private void manageUserFeatures() {
-    userFeatures = getById.getUserFeatures(getUserId.getUserId().getId());
-    setMemoryCache.setUserFeatures(userFeatures);
-    saveLocal.saveUserFeatures(userFeatures);
+    setupAds();
   }
 
   public boolean isWatermarkActivated() {
-    return userFeatures.isForceWatermark()
+    return watermarkIsForced
         || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
@@ -240,7 +221,7 @@ public class InitAppPresenter extends VimojoPresenter {
     }
   }
 
-  private void checkShowAds(boolean showAds) {
+  private void setupAds() {
     if (showAds) {
       initAppView.initializeAdMob();
     }

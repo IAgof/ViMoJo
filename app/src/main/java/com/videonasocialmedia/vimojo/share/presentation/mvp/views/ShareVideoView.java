@@ -57,5 +57,5 @@ public interface ShareVideoView {
 
   void showAdsView();
 
-  void hideAdsCardView();
+  void hideAdsView();
 }

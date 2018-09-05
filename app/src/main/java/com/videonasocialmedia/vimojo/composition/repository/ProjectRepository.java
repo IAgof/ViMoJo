@@ -11,6 +11,7 @@ import com.videonasocialmedia.vimojo.composition.repository.datasource.Compositi
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
 import com.videonasocialmedia.vimojo.repository.DataPersistanceType;
 import com.videonasocialmedia.vimojo.repository.DeletePolicy;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -77,6 +78,11 @@ public class ProjectRepository extends VimojoRepository<Project> {
     if (policy.useRemote()) {
       this.compositionApiDataSource.remove(item);
     }
+  }
+
+  @Override
+  public Project getById(String id, ReadPolicy readPolicy) {
+    return getById(id, ReadPolicy.READ_ALL);
   }
 
   @Override

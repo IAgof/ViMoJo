@@ -10,21 +10,19 @@ import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
@@ -32,13 +30,13 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by ruth on 13/09/16.
  */
 public class GalleryProjectListPresenter extends VimojoPresenter {
   private static final String LOG_TAG = GalleryProjectListPresenter.class.getSimpleName();
-  private final GetCurrentUserFeatures getCurrentUserFeatures;
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
   private SharedPreferences sharedPreferences;
@@ -50,18 +48,18 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private UpdateComposition updateComposition;
   private GetCompositions getCompositions;
   private GetCompositionAssets getCompositionAssets;
-  private UserFeatures userFeatures;
+  private boolean watermarkIsForced;
 
   @Inject
   public GalleryProjectListPresenter(
-      GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
-      ProjectRepository projectRepository,
-      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      DuplicateProjectUseCase duplicateProjectUseCase,
-      DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
-      SaveComposition saveComposition, UpdateComposition updateComposition,
-      GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
-      GetCurrentUserFeatures getCurrentUserFeatures) {
+          GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
+          ProjectRepository projectRepository,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          DuplicateProjectUseCase duplicateProjectUseCase,
+          DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
+          SaveComposition saveComposition, UpdateComposition updateComposition,
+          GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
+          @Named("watermarkIsForced") boolean watermarkIsForced) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -73,11 +71,10 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.updateComposition = updateComposition;
     this.getCompositions = getCompositions;
     this.getCompositionAssets = getCompositionAssets;
-    this.getCurrentUserFeatures = getCurrentUserFeatures;
+    this.watermarkIsForced = watermarkIsForced;
   }
 
   public void init() {
-    userFeatures = getCurrentUserFeatures.get();
     updateProjectList();
   }
 
@@ -182,7 +179,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   }
 
   private boolean isWatermarkActivated() {
-    return userFeatures.isForceWatermark()
+    return watermarkIsForced
         || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, false);
   }
 

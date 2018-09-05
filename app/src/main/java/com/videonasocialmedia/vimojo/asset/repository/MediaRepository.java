@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.asset.repository.datasource.MediaApiDataSou
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.MediaToMediaDtoMapper;
 import com.videonasocialmedia.vimojo.repository.DeletePolicy;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
 import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
@@ -81,6 +82,11 @@ public class MediaRepository extends VimojoRepository<Media> {
     if (policy.useRemote()) {
       mediaApiDataSource.remove(item);
     }
+  }
+
+  @Override
+  public Media getById(String id, ReadPolicy readPolicy) {
+    return getById(id, ReadPolicy.READ_ALL);
   }
 
   @Override

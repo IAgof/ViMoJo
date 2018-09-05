@@ -62,13 +62,13 @@ public interface PreferencesView {
 
     void hideFtpsViews();
 
-    void hideWatermarkView();
+    void hideWatermarkPreference();
 
     void itemDarkThemePurchased();
 
     void itemWatermarkPurchased();
 
-    void vimojoStoreSupported();
+    void setVimojoStoreAvailable();
 
     void deactivateDarkTheme();
 

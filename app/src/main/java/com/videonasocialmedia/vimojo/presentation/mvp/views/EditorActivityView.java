@@ -16,13 +16,13 @@ public interface EditorActivityView {
 
     void itemWatermarkPurchased();
 
-    void watermarkFeatureAvailable();
+    void showWatermarkSwitch(boolean watermarkIsSelected);
 
     void hideWatermarkSwitch();
 
-    void setIconsFeatures();
+    void setDefaultIconsForStoreItems();
 
-    void setIconsPurchaseInApp();
+    void setLockIconsForStoreItems();
 
     void hideVimojoStoreViews();
 

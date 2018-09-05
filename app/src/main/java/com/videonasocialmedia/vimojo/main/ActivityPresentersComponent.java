@@ -4,6 +4,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
+import com.videonasocialmedia.vimojo.main.modules.FeatureToggleModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
@@ -32,7 +33,8 @@ import dagger.Component;
  */
 
 @PerActivity
-@Component(dependencies = {SystemComponent.class}, modules = {ActivityPresentersModule.class})
+@Component(dependencies = {SystemComponent.class},
+        modules = {ActivityPresentersModule.class, FeatureToggleModule.class })
 public interface ActivityPresentersComponent {
   void inject(VimojoActivity activity);
   void inject(MusicDetailActivity activity);

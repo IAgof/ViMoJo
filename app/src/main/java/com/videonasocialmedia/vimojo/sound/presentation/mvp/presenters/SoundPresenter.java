@@ -1,23 +1,21 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by ruth on 13/09/16.
@@ -31,26 +29,24 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   private static final float VOLUME_MUTE = 0f;
   protected Project currentProject;
   private UpdateComposition updateComposition;
-  private final GetCurrentUserFeatures getCurrentUserFeatures;
-  private UserFeatures userFeatures;
+  private boolean voiceOverAvailable;
 
   @Inject
-  public SoundPresenter(SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
-                        ProjectInstanceCache projectInstanceCache,
-                        UpdateComposition updateComposition, GetCurrentUserFeatures
-                        getCurrentUserFeatures) {
+  public SoundPresenter(
+          SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
+          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+          @Named("voiceOverAvailable") boolean voiceOverAvailable) {
     this.soundView = soundView;
     this.projectInstanceCache = projectInstanceCache;
     this.modifyTrackUseCase = modifyTrackUseCase;
     this.updateComposition = updateComposition;
-    this.getCurrentUserFeatures = getCurrentUserFeatures;
+    this.voiceOverAvailable = voiceOverAvailable;
   }
 
     public void updatePresenter() {
       this.currentProject = projectInstanceCache.getCurrentProject();
       this.currentProject.addListener(this);
-      this.userFeatures = getCurrentUserFeatures.get();
-      checkVoiceOverFeatureToggle(userFeatures.isVoiceOver());
+      checkVoiceOverFeatureToggle();
       // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
       // VMComposition
       retrieveTracks();
@@ -92,15 +88,16 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
     updatePlayerMute(track.getId(), track.isMuted());
   }
 
-  protected void checkVoiceOverFeatureToggle(boolean featureVoiceOver) {
-    if(featureVoiceOver){
+  protected void checkVoiceOverFeatureToggle() {
+//    voiceOverAvailable = userFeatures.isVoiceOver();
+    if (voiceOverAvailable) {
       soundView.addVoiceOverOptionToFab();
     } else {
-      soundView.hideVoiceOverCardView();
+      soundView.hideVoiceOverTrack();
     }
   }
 
-  public void setTrackVolume(int id, int seekBarProgress){
+  public void setTrackVolume(int id, int seekBarProgress) {
     Track track = getTrackById(id);
     float volume = (float) (seekBarProgress * 0.01);
     modifyTrackUseCase.setTrackVolume(track, volume);
@@ -123,7 +120,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   }
 
   private Track getTrackById(int id) {
-    switch (id){
+    switch (id) {
       case Constants.INDEX_MEDIA_TRACK:
         return currentProject.getVMComposition().getMediaTrack();
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
@@ -135,7 +132,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
     }
   }
 
-  public void setTrackMute(int id, boolean isMute){
+  public void setTrackMute(int id, boolean isMute) {
     Track track = getTrackById(id);
     modifyTrackUseCase.setTrackMute(track, isMute);
     updatePlayerMute(id, isMute);
@@ -145,21 +142,21 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   private void updatePlayerMute(int id, boolean isMute) {
     switch (id) {
       case Constants.INDEX_MEDIA_TRACK:
-        if(isMute){
+        if (isMute) {
           soundView.setVideoVolume(VOLUME_MUTE);
         } else {
           soundView.setVideoVolume(getTrackById(id).getVolume());
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
-        if(isMute){
+        if (isMute) {
           soundView.setMusicVolume(VOLUME_MUTE);
         } else {
           soundView.setMusicVolume(getTrackById(id).getVolume());
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        if(isMute){
+        if (isMute) {
           soundView.setVoiceOverVolume(VOLUME_MUTE);
         } else {
           soundView.setVoiceOverVolume(getTrackById(id).getVolume());
@@ -181,7 +178,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
 
   public void updateClipPlayed(int trackId) {
     Track track = getTrackById(trackId);
-    switch (trackId){
+    switch (trackId) {
       case Constants.INDEX_MEDIA_TRACK:
         if (track.isMuted()) {
           soundView.setVideoVolume(VOLUME_MUTE);

@@ -17,4 +17,6 @@ import com.videonasocialmedia.vimojo.repository.datasource.DataSource;
 public abstract class VimojoRepository<T> implements DataSource<T> {
 
   public abstract void remove(T item, DeletePolicy policy);
+
+  public abstract T getById(String id, ReadPolicy readPolicy);
 }

@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.asset.domain.helper.HashCountGenerator;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.AssetApiDataSource;
 import com.videonasocialmedia.vimojo.repository.DeletePolicy;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.VimojoRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -75,6 +76,11 @@ public class AssetRepository extends VimojoRepository<Asset> {
   @Override
   public void remove(Asset item, DeletePolicy policy) {
     // TODO(jliarte): 16/08/18 method implementation
+  }
+
+  @Override
+  public Asset getById(String id, ReadPolicy readPolicy) {
+    return getById(id, ReadPolicy.READ_ALL);
   }
 
 }

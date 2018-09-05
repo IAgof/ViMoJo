@@ -95,7 +95,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   SwitchCompat switchTheme;
   @Nullable
   @BindView(R.id.switch_watermark)
-  SwitchCompat switchWatermark;
+  SwitchCompat watermarkSwitch;
   @Nullable
   @BindView(R.id.videona_player)
   VideonaPlayerExo videonaPlayer;
@@ -114,7 +114,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
               if (isWatermarkAvailable()) {
                 editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
               } else {
-                switchWatermark.setChecked(true);
+                watermarkSwitch.setChecked(true);
                 navigateTo(VimojoStoreActivity.class);
               }
             }
@@ -269,10 +269,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     return editorPresenter.getPreferenceThemeApp();
   }
 
-  private boolean checkIfWatermarkIsSelected() {
-    return editorPresenter.getPreferenceWaterMark();
-  }
-
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -374,17 +370,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     return watermarkPurchased || !isVimojoStoreAvailable;
   }
 
-  private void setupSwitchWatermarkIntoDrawer() {
-    switchWatermark = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
-            .getActionView();
-    if (switchWatermark != null) {
-      boolean watermarkIsSelected = checkIfWatermarkIsSelected();
-      switchWatermark.setOnCheckedChangeListener(null);
-      switchWatermark.setChecked(watermarkIsSelected);
-      switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
-    }
-  }
-
   private void updateNavigationIcon(int identifier, int resourceId) {
     navigationView.getMenu().findItem(identifier).setIcon(this.getDrawable(resourceId));
   }
@@ -429,9 +414,15 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void watermarkFeatureAvailable() {
+  public void showWatermarkSwitch(boolean watermarkIsSelected) {
     runOnUiThread(() -> {
-      setupSwitchWatermarkIntoDrawer();
+      watermarkSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
+              .getActionView();
+      if (watermarkSwitch != null) {
+        watermarkSwitch.setOnCheckedChangeListener(null);
+        watermarkSwitch.setChecked(watermarkIsSelected);
+        watermarkSwitch.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
+      }
     });
   }
 
@@ -454,7 +445,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void setIconsFeatures() {
+  public void setDefaultIconsForStoreItems() {
     runOnUiThread(() -> {
       updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
       updateNavigationIcon(R.id.switch_watermark, R.drawable.activity_editor_drawer_watermark);
@@ -462,7 +453,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void setIconsPurchaseInApp() {
+  public void setLockIconsForStoreItems() {
     runOnUiThread(() -> {
       updateNavigationIcon(R.id.switch_theme_dark, R.drawable.ic_locked);
       updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_locked);
@@ -511,9 +502,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void activateWatermark() {
-    switchWatermark.setOnCheckedChangeListener(null);
-    switchWatermark.setChecked(true);
-    switchWatermark.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
+    watermarkSwitch.setOnCheckedChangeListener(null);
+    watermarkSwitch.setChecked(true);
+    watermarkSwitch.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
   }
 
   @Override

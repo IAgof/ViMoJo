@@ -9,9 +9,17 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
-import com.videonasocialmedia.vimojo.auth0.GetUserId;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
@@ -19,29 +27,9 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionIn
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQuality;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
-import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
-import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
-import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
-import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
-import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
-import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetByIdUserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SaveLocalUserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.SetMemoryCacheUserFeatures;
-import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -51,55 +39,56 @@ import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCas
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ReorderMediaItemUseCase;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.GalleryPagerPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.InitAppPresenter;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepositoryFromCameraSettings;
-import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
-import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
-import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
-import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseDetailPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
-import com.videonasocialmedia.vimojo.store.billing.BillingManager;
-import com.videonasocialmedia.vimojo.store.presentation.mvp.presenters.VimojoStorePresenter;
-import com.videonasocialmedia.vimojo.store.presentation.mvp.views.VimojoStoreView;
+import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
+import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
+import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
+import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
+import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
+import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicListPresenter;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
@@ -108,6 +97,11 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOver
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
+import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.presenters.VimojoStorePresenter;
+import com.videonasocialmedia.vimojo.store.presentation.mvp.views.VimojoStoreView;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
@@ -116,9 +110,13 @@ import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPrevie
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
@@ -218,10 +216,10 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   SoundPresenter provideSoundPresenter(
-      ModifyTrackUseCase modifyTrackUseCase, UpdateComposition updateComposition,
-      GetCurrentUserFeatures getCurrentUserFeatures) {
+          ModifyTrackUseCase modifyTrackUseCase, UpdateComposition updateComposition,
+          @Named("voiceOverAvailable") boolean voiceOverAvailable) {
     return new SoundPresenter((SoundActivity) activity, modifyTrackUseCase, projectInstanceCache,
-        updateComposition, getCurrentUserFeatures);
+        updateComposition, voiceOverAvailable);
   }
 
   @Provides @PerActivity
@@ -341,26 +339,30 @@ public class ActivityPresentersModule {
           GetFtpListUseCase getFtpListUseCase, UploadToPlatform uploadToPlatform,
           RunSyncAdapterHelper runSyncAdapterHelper,
           UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
-          GetCurrentUserFeatures getCurrentUserFeatures) {
+          FetchUserFeatures fetchUserFeatures,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+          @Named("showAds") boolean showAds) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
             sharedPreferences, addLastVideoExportedProjectUseCase,
             exportProjectUseCase, obtainNetworksToShareUseCase, getFtpListUseCase,
             uploadToPlatform, runSyncAdapterHelper, projectInstanceCache,
-            userAuth0Helper, updateComposition, getCurrentUserFeatures);
+            userAuth0Helper, updateComposition,
+            fetchUserFeatures, vimojoPlatformAvailable, ftpPublishingAvailable, showAds);
   }
 
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
-      SharedPreferences sharedPreferences,
-      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      CameraSettingsDataSource cameraSettingsRepository,
-      RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition,
-      GetByIdUserFeatures getUserFeatures, SaveLocalUserFeatures saveUserFeatures,
-      SetMemoryCacheUserFeatures setMemoryCacheUserFeatures, GetUserId getUserId) {
+          SharedPreferences sharedPreferences,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          CameraSettingsDataSource cameraSettingsRepository,
+          RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition,
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("showAds") boolean showAds) {
     return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
             createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
-            (ProjectInstanceCache) activity.getApplication(), saveComposition, getUserFeatures,
-            saveUserFeatures, setMemoryCacheUserFeatures, getUserId);
+            (ProjectInstanceCache) activity.getApplication(), saveComposition,
+            watermarkIsForced, showAds);
   }
 
   @Provides @PerActivity
@@ -376,14 +378,18 @@ public class ActivityPresentersModule {
           NewClipImporter newClipImporter, BillingManager billingManager,
           SaveComposition saveComposition, UpdateComposition updateComposition,
           RemoveMedia removeMedia, UpdateCompositionWatermark updateWatermark,
-          GetCurrentUserFeatures getCurrentUserFeatures) {
+          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("watermarkIsForced") boolean watermarkIsForced) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
             getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             relaunchTranscoderTempBackgroundUseCase, newClipImporter,
             billingManager, projectInstanceCache, saveComposition, removeMedia,
-            updateWatermark, updateComposition, getCurrentUserFeatures);
+            updateWatermark, updateComposition, showWaterMarkSwitch,
+            vimojoStoreAvailable, vimojoPlatformAvailable, watermarkIsForced);
   }
 
   @Provides @PerActivity
@@ -394,11 +400,11 @@ public class ActivityPresentersModule {
           DeleteComposition deleteComposition, SaveComposition saveComposition,
           UpdateComposition updateComposition, GetCompositions getCompositions,
           GetCompositionAssets getCompositionAssets,
-          GetCurrentUserFeatures getCurrentUserFeatures) {
+          @Named("watermarkIsForced") boolean watermarkIsForced) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteComposition, (ProjectInstanceCache) activity.getApplication(), saveComposition,
-            updateComposition, getCompositions, getCompositionAssets, getCurrentUserFeatures);
+            updateComposition, getCompositions, getCompositionAssets, watermarkIsForced);
   }
 
   @Provides @PerActivity
@@ -423,9 +429,11 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
-          UserAuth0Helper userAuth0Helper, GetCurrentUserFeatures getCurrentUserFeatures) {
-    return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, userAuth0Helper, getCurrentUserFeatures);
+          UserAuth0Helper userAuth0Helper, FetchUserFeatures fetchUserFeatures,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable) {
+    return new  UserProfilePresenter((UserProfileView) activity, sharedPreferences,
+        obtainLocalVideosUseCase, userAuth0Helper,
+            fetchUserFeatures, vimojoPlatformAvailable);
   }
 
   @Provides
@@ -605,4 +613,5 @@ public class ActivityPresentersModule {
   DownloadManager provideDownloadManager() {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
+
 }

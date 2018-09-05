@@ -65,7 +65,7 @@ public class InitAppPresenterTest {
   private InitAppPresenter getInitAppPresenter() {
     return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
         mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
-        mockedProjectInstanceCache, mockedSaveComposition);
+        mockedProjectInstanceCache, mockedSaveComposition, watermarkIsForced, showAds);
   }
 
   public void getAProject() {

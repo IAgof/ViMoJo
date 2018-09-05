@@ -112,7 +112,7 @@ public class SoundPresenterTest {
 
     soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
 
-    verify(mockedSoundView).hideVoiceOverCardView();
+    verify(mockedSoundView).hideVoiceOverTrack();
   }
 
   @Test
@@ -151,7 +151,7 @@ public class SoundPresenterTest {
   @NonNull
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
-        mockedProjectInstantCache, mockedCompositionApiClient, updateComposition);
+        mockedProjectInstantCache, mockedCompositionApiClient, voiceOverAvailable);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

@@ -19,17 +19,17 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
@@ -37,8 +37,6 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -52,6 +50,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
@@ -72,7 +71,6 @@ public class EditorPresenter extends VimojoPresenter
   private final String THEME_DARK = "dark";
   private final String THEME_LIGHT = "light";
   private final BillingManager billingManager;
-  private final GetCurrentUserFeatures getCurrentUserFeatures;
   private EditorActivityView editorActivityView;
   private VideonaPlayerView videonaPlayerView;
   private SharedPreferences sharedPreferences;
@@ -92,22 +90,29 @@ public class EditorPresenter extends VimojoPresenter
   private RemoveMedia removeMedia;
   private UpdateCompositionWatermark updateCompositionWatermark;
   private UpdateComposition updateComposition;
-  private UserFeatures userFeatures;
+  private boolean showWaterMarkSwitch;
+  private boolean vimojoStoreAvailable;
+  private boolean vimojoPlatformAvailable;
+  private boolean watermarkIsForced;
 
   @Inject
   public EditorPresenter(
-      EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
-      SharedPreferences sharedPreferences, Activity context, UserEventTracker userEventTracker,
-      CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-      GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      NewClipImporter newClipImporter, BillingManager billingManager,
-      ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
-      RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
-      UpdateComposition updateComposition, GetCurrentUserFeatures getCurrentUserFeatures) {
+          EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
+          SharedPreferences sharedPreferences, Activity context, UserEventTracker userEventTracker,
+          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          NewClipImporter newClipImporter, BillingManager billingManager,
+          ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
+          RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
+          UpdateComposition updateComposition,
+          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("watermarkIsForced") boolean watermarkIsForced) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -127,16 +132,21 @@ public class EditorPresenter extends VimojoPresenter
     this.removeMedia = removeMedia;
     this.updateCompositionWatermark = updateCompositionWatermark;
     this.updateComposition = updateComposition;
-    this.getCurrentUserFeatures = getCurrentUserFeatures;
+    this.showWaterMarkSwitch = showWaterMarkSwitch;
+    this.vimojoStoreAvailable = vimojoStoreAvailable;
+    this.vimojoPlatformAvailable = vimojoPlatformAvailable;
+    this.watermarkIsForced = watermarkIsForced;
   }
 
   public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath,
                                              String currentAppliedTheme) {
     return this.executeUseCaseCall(() -> {
       currentProject = projectInstanceCache.getCurrentProject();
-      userFeatures = getCurrentUserFeatures.get();
       updateTheme(currentAppliedTheme);
-      checkFeaturesAvailable();
+      setupWatermarkDrawerSwitch();
+      setupVimojoStore();
+      setupVimojoPlatformLink();
+      setupTutorial();
       updateDrawerHeaderWithCurrentProject();
       setupPlayer(hasBeenProjectExported, videoPath);
     });
@@ -163,43 +173,36 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   public void onPause() {
-    if (userFeatures.isVimojoStore()) {
+    if (vimojoStoreAvailable) {
       billingManager.destroy();
     }
   }
 
-  private void checkFeaturesAvailable() {
-    checkWatermark();
-    checkVimojoStore();
-    checkVimojoPlatform();
-    checkShowTutorial();
-  }
-
-  private void checkVimojoPlatform() {
-    if (!userFeatures.isVimojoPlatform()) {
+  private void setupVimojoPlatformLink() {
+    if (!vimojoPlatformAvailable) {
       editorActivityView.hideLinkToVimojoPlatform();
     }
   }
 
-  private void checkVimojoStore() {
-    if (userFeatures.isVimojoStore()) {
+  private void setupVimojoStore() {
+    if (vimojoStoreAvailable) {
       playStoreBillingDelegate.initBilling((Activity) context);
-      editorActivityView.setIconsPurchaseInApp();
+      editorActivityView.setLockIconsForStoreItems();
     } else {
-      editorActivityView.setIconsFeatures();
+      editorActivityView.setDefaultIconsForStoreItems();
       editorActivityView.hideVimojoStoreViews();
     }
   }
 
-  private void checkWatermark() {
-    if (userFeatures.isWatermark() && !userFeatures.isForceWatermark()) {
-      editorActivityView.watermarkFeatureAvailable();
+  private void setupWatermarkDrawerSwitch() {
+    if (showWaterMarkSwitch) {
+      editorActivityView.showWatermarkSwitch(watermarkIsSelected());
     } else {
       editorActivityView.hideWatermarkSwitch();
     }
   }
 
-  private void checkShowTutorial() {
+  private void setupTutorial() {
     if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
       editorActivityView.hideTutorialViews();
     }
@@ -237,7 +240,7 @@ public class EditorPresenter extends VimojoPresenter
   private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
                                             Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            getPreferenceWaterMark(), drawableFadeTransitionVideo,
+            watermarkIsSelected(), drawableFadeTransitionVideo,
             BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectInstanceCache.setCurrentProject(project);
     return executeUseCaseCall(() -> saveComposition.saveComposition(project));
@@ -415,11 +418,8 @@ public class EditorPresenter extends VimojoPresenter
     return currentTheme;
   }
 
-  public boolean getPreferenceWaterMark() {
-    if (userFeatures.isForceWatermark()) {
-      return true;
-    }
-    return currentProject.hasWatermark();
+  private boolean watermarkIsSelected() {
+    return watermarkIsForced || currentProject.hasWatermark();
   }
 
   private void activateWatermarkPreference() {

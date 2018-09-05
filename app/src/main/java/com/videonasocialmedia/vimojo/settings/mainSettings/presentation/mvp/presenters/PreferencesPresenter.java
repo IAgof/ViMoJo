@@ -13,17 +13,13 @@ package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.pre
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
-import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -32,15 +28,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
@@ -50,8 +46,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.view
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
-import com.videonasocialmedia.vimojo.userfeatures.domain.model.UserFeatures;
-import com.videonasocialmedia.vimojo.userfeatures.domain.usecase.GetCurrentUserFeatures;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -62,91 +57,96 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+
 /**
  * This class is used to show the setting menu.
  */
 public class PreferencesPresenter extends VimojoPresenter
-    implements SharedPreferences.OnSharedPreferenceChangeListener,
-    OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
+        implements SharedPreferences.OnSharedPreferenceChangeListener,
+        OnRelaunchTemporalFileListener, PlayStoreBillingDelegate.BillingDelegateView {
   private static final String LOG_TAG = PreferencesPresenter.class.getSimpleName();
   private final BillingManager billingManager;
   private UserAuth0Helper userAuth0Helper;
   private final UploadDataSource uploadRepository;
   private final ProjectInstanceCache projectInstanceCache;
-  private GetCurrentUserFeatures getCurrentUserFeatures;
   private PlayStoreBillingDelegate playStoreBillingDelegate;
   private Context context;
   private UserEventTracker userEventTracker;
   private SharedPreferences sharedPreferences;
   private PreferencesView preferencesView;
-  private Preference transitionVideoPref;
-  private Preference transitionAudioPref;
-  private Preference watermarkPref;
-  private Preference themeApp;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
   private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
   private UpdateAudioTransitionPreferenceToProjectUseCase
-      updateAudioTransitionPreferenceToProjectUseCase;
+          updateAudioTransitionPreferenceToProjectUseCase;
   private UpdateVideoTransitionPreferenceToProjectUseCase
-      updateVideoTransitionPreferenceToProjectUseCase;
+          updateVideoTransitionPreferenceToProjectUseCase;
   private UpdateIntermediateTemporalFilesTransitionsUseCase
-      updateIntermediateTemporalFilesTransitionsUseCase;
+          updateIntermediateTemporalFilesTransitionsUseCase;
   private UpdateCompositionWatermark updateCompositionWatermark;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
   private GetAccount getAccount;
   private Project currentProject;
   private UpdateComposition updateComposition;
-  private UserFeatures userFeatures;
+  private FetchUserFeatures fetchUserFeatures;
+  private boolean vimojoStoreAvailable;
+  private boolean showWaterMarkSwitch;
+  private boolean vimojoPlatformAvailable;
+  private boolean ftpPublishingAvailable;
 
   /**
    * Constructor
+   *
    * @param preferencesView
    * @param context
    * @param sharedPreferences
    * @param userAuth0Helper
    * @param updateComposition
-   * @param getCurrentUserFeatures
+   * @param fetchUserFeatures
+   * @param vimojoStoreAvailable
+   * @param showWaterMarkSwitch
+   * @param vimojoPlatformAvailable
+   * @param ftpPublishingAvailable
    */
   public PreferencesPresenter(
-      PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
-      Preference transitionVideoPref, Preference themeApp, Preference transitionAudioPref,
-      Preference watermarkPref, GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      UpdateAudioTransitionPreferenceToProjectUseCase
+          PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
+          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-      UpdateVideoTransitionPreferenceToProjectUseCase
+          UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-      UpdateIntermediateTemporalFilesTransitionsUseCase
+          UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-      UpdateCompositionWatermark updateCompositionWatermark,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
-      GetAccount getAccount, UpdateComposition updateComposition, GetCurrentUserFeatures
-          getCurrentUserFeatures) {
+          UpdateCompositionWatermark updateCompositionWatermark,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+          UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
+          GetAccount getAccount, UpdateComposition updateComposition,
+          FetchUserFeatures fetchUserFeatures,
+          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable) {
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;
-    this.transitionVideoPref = transitionVideoPref;
-    this.transitionAudioPref = transitionAudioPref;
-    this.watermarkPref = watermarkPref;
-    this.themeApp = themeApp;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.getPreferencesTransitionFromProjectUseCase =
-        getPreferencesTransitionFromProjectUseCase;
+            getPreferencesTransitionFromProjectUseCase;
     this.updateAudioTransitionPreferenceToProjectUseCase =
-        updateAudioTransitionPreferenceToProjectUseCase;
+            updateAudioTransitionPreferenceToProjectUseCase;
     this.updateVideoTransitionPreferenceToProjectUseCase =
-        updateVideoTransitionPreferenceToProjectUseCase;
+            updateVideoTransitionPreferenceToProjectUseCase;
     this.updateIntermediateTemporalFilesTransitionsUseCase =
-        updateIntermediateTemporalFilesTransitionsUseCase;
+            updateIntermediateTemporalFilesTransitionsUseCase;
     this.updateCompositionWatermark = updateCompositionWatermark;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     userEventTracker = UserEventTracker.getInstance(MixpanelAPI
-        .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
+            .getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_TOKEN));
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
@@ -154,14 +154,17 @@ public class PreferencesPresenter extends VimojoPresenter
     this.userAuth0Helper = userAuth0Helper;
     this.getAccount = getAccount;
     this.updateComposition = updateComposition;
-    this.getCurrentUserFeatures = getCurrentUserFeatures;
+    this.fetchUserFeatures = fetchUserFeatures;
+    this.vimojoStoreAvailable = vimojoStoreAvailable;
+    this.showWaterMarkSwitch = showWaterMarkSwitch;
+    this.vimojoPlatformAvailable = vimojoPlatformAvailable;
+    this.ftpPublishingAvailable = ftpPublishingAvailable;
   }
 
   public void updatePresenter(Activity activity) {
     this.currentProject = projectInstanceCache.getCurrentProject();
-    this.userFeatures = getCurrentUserFeatures.get();
     checkAvailablePreferences();
-    checkVimojoStore(activity);
+    setupVimojoStore(activity);
     setupUserAuthPreference();
     setupMoreApps();
   }
@@ -175,7 +178,7 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   public void pausePresenter() {
-    if (userFeatures.isVimojoStore()) {
+    if (vimojoStoreAvailable) {
       billingManager.destroy();
     }
   }
@@ -185,7 +188,14 @@ public class PreferencesPresenter extends VimojoPresenter
    */
 
   public void checkAvailablePreferences() {
-    if (userFeatures.isFtp()) {
+    setupFtpPreferences();
+    checkTransitions();
+    setupWatermarkPreference();
+    checkThemeApp(ConfigPreferences.THEME_APP_DARK);
+  }
+
+  private void setupFtpPreferences() {
+    if (ftpPublishingAvailable) {
       checkUserFTP1Data();
       // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
       //checkUserFTP2Data();
@@ -193,9 +203,6 @@ public class PreferencesPresenter extends VimojoPresenter
       // Visibility FTP gone
       preferencesView.hideFtpsViews();
     }
-    checkTransitions();
-    checkWatermark();
-    checkThemeApp(ConfigPreferences.THEME_APP_DARK);
   }
 
   private void checkThemeApp(String key) {
@@ -220,12 +227,12 @@ public class PreferencesPresenter extends VimojoPresenter
     }
   }
 
-  private void checkWatermark() {
-    if (userFeatures.isWatermark() && !userFeatures.isForceWatermark()) {
+  private void setupWatermarkPreference() {
+    if (showWaterMarkSwitch) {
       boolean data = currentProject.hasWatermark();
       preferencesView.setWatermarkSwitchPref(data);
     } else {
-      preferencesView.hideWatermarkView();
+      preferencesView.hideWatermarkPreference();
     }
   }
 
@@ -272,14 +279,14 @@ public class PreferencesPresenter extends VimojoPresenter
       case ConfigPreferences.TRANSITION_AUDIO:
         boolean dataTransitionAudio = sharedPreferences.getBoolean(key, false);
         updateAudioTransitionPreferenceToProjectUseCase
-            .setAudioFadeTransitionActivated(currentProject, dataTransitionAudio);
+                .setAudioFadeTransitionActivated(currentProject, dataTransitionAudio);
         executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
         updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
         break;
       case ConfigPreferences.TRANSITION_VIDEO:
         boolean dataTransitionVideo = sharedPreferences.getBoolean(key, false);
         updateVideoTransitionPreferenceToProjectUseCase
-            .setVideoFadeTransitionActivated(currentProject, dataTransitionVideo);
+                .setVideoFadeTransitionActivated(currentProject, dataTransitionVideo);
         executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
         updateIntermediateTemporalFilesTransitionsUseCase.execute(currentProject, this);
         break;
@@ -289,7 +296,7 @@ public class PreferencesPresenter extends VimojoPresenter
           Utils.copyWatermarkResourceToDevice();
         }
         updateCompositionWatermark.updateCompositionWatermark(currentProject,
-            data);
+                data);
         preferencesView.setWatermarkSwitchPref(data);
       default:
     }
@@ -303,7 +310,7 @@ public class PreferencesPresenter extends VimojoPresenter
 
   private Video getVideo(String videoId) {
     GetMediaListFromProjectUseCase getMediaListFromProjectUseCase =
-        new GetMediaListFromProjectUseCase();
+            new GetMediaListFromProjectUseCase();
     List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
     if (videoList != null) {
       for (Media video : videoList) {
@@ -351,15 +358,15 @@ public class PreferencesPresenter extends VimojoPresenter
     sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
   }
 
-  public void checkVimojoStore(Activity activity) {
-    if (userFeatures.isVimojoStore()) {
+  public void setupVimojoStore(Activity activity) {
+    if (vimojoStoreAvailable) {
       initBilling(activity);
-      preferencesView.vimojoStoreSupported();
+      preferencesView.setVimojoStoreAvailable();
     }
   }
 
   public void setupUserAuthPreference() {
-    if (!userFeatures.isVimojoPlatform()) {
+    if (!vimojoPlatformAvailable) {
       preferencesView.hideRegisterLoginView();
       return;
     }
@@ -394,6 +401,7 @@ public class PreferencesPresenter extends VimojoPresenter
           am.removeAccount(account, null, null);
         }
       }
+
       @Override
       public void onFailure(Throwable t) {
         // (jliarte): 22/01/18 no account present? do nothing
@@ -402,33 +410,27 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void deletePendingVideosToUpload() {
-    if(uploadRepository.getAllVideosToUpload().size() > 0) {
+    if (uploadRepository.getAllVideosToUpload().size() > 0) {
       uploadRepository.removeAllVideosToUpload();
     }
   }
 
   public void performLoginAndSaveAccount(Activity activity) {
-    userAuth0Helper.performLogin(activity, new AuthCallback() {
-          @Override
-          public void onFailure(@NonNull Dialog dialog) {
-            Log.d(LOG_TAG, "Error performLogin onFailure ");
-            preferencesView.showError(R.string.auth0_error_login_failure);
-          }
+    userAuth0Helper.performLogin(activity, new UserAuth0Helper.AuthCallback() {
+      @Override
+      public void onFailure(AuthenticationException exception) {
+        preferencesView.showError(R.string.auth0_error_authentication);
+      }
 
-          @Override
-          public void onFailure(AuthenticationException exception) {
-            Log.d(LOG_TAG, "Error performLogin AuthenticationException "
-                + exception.getMessage());
-            Crashlytics.log("Error performLogin AuthenticationException: " + exception);
-            preferencesView.showError(R.string.auth0_error_authentication);
-          }
+      @Override
+      public void onSuccess(@NonNull Credentials credentials) {
+        fetchUserFeatures();
+        preferencesView.setupUserAuthentication(true);
+      }
+    });
+  }
 
-          @Override
-          public void onSuccess(@NonNull Credentials credentials) {
-            Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
-            userAuth0Helper.saveCredentials(credentials);
-            preferencesView.setupUserAuthentication(true);
-          }
-        });
+  private void fetchUserFeatures() {
+    fetchUserFeatures.fetch();
   }
 }

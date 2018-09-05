@@ -5,14 +5,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
-import com.auth0.android.provider.AuthCallback;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
-import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -99,7 +97,7 @@ public class UserProfilePresenterTest {
 
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
-    return new UserProfilePresenter(mockedContext, mockedUserProfileView, mockedSharedPreferences,
+    return new UserProfilePresenter(mockedUserProfileView, mockedSharedPreferences,
             mockedObtainLocalVideosUseCase, mockedUserAuth0Helper);
   }
 }

@@ -68,7 +68,7 @@ public class SettingsFragment extends PreferenceFragment implements
   protected MixpanelAPI mixpanel;
   private boolean darkThemePurchased = false;
   private boolean watermarkPurchased = false;
-  private boolean isVimojoStoreSupported = false;
+  private boolean vimojoStoreAvailable = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -100,8 +100,7 @@ public class SettingsFragment extends PreferenceFragment implements
   private FragmentPresentersComponent initComponent() {
     return DaggerFragmentPresentersComponent.builder()
             .fragmentPresentersModule(new FragmentPresentersModule(this, context, sharedPreferences,
-                    transitionsVideoPref, transitionsAudioPref, watermarkSwitchPref,
-                    themeappSwitchPref, this.getActivity()))
+                    this.getActivity()))
             .systemComponent(((VimojoApplication) getActivity().getApplication()).getSystemComponent())
             .build();
   }
@@ -255,7 +254,7 @@ public class SettingsFragment extends PreferenceFragment implements
   }
 
   @Override
-  public void hideWatermarkView() {
+  public void hideWatermarkPreference() {
     watermarkPrefCategory = (PreferenceCategory)
             findPreference(getString(R.string.title_watermark_section));
     if (watermarkPrefCategory != null) {
@@ -276,8 +275,8 @@ public class SettingsFragment extends PreferenceFragment implements
   }
 
   @Override
-  public void vimojoStoreSupported() {
-    isVimojoStoreSupported = true;
+  public void setVimojoStoreAvailable() {
+    vimojoStoreAvailable = true;
   }
 
   @Override
@@ -294,18 +293,15 @@ public class SettingsFragment extends PreferenceFragment implements
 
   @Override
   public void setupUserAuthentication(final boolean userLoggedIn) {
-    getActivity().runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        final Preference authSetting = findPreference("auth");
-        if (userLoggedIn) {
-          authSetting.setTitle(R.string.sign_out);
-        } else {
-          authSetting.setTitle(R.string.sign_in_register);
-        }
-        authSetting.setOnPreferenceClickListener(
-                new AuthPreferenceClickListener(userLoggedIn));
+    getActivity().runOnUiThread(() -> {
+      final Preference authSetting = findPreference("auth");
+      if (userLoggedIn) {
+        authSetting.setTitle(R.string.sign_out);
+      } else {
+        authSetting.setTitle(R.string.sign_in_register);
       }
+      authSetting.setOnPreferenceClickListener(
+              new AuthPreferenceClickListener(userLoggedIn));
     });
   }
 
@@ -423,11 +419,11 @@ public class SettingsFragment extends PreferenceFragment implements
   }
 
   private boolean isDarkThemeAvailable() {
-    return darkThemePurchased || !isVimojoStoreSupported;
+    return darkThemePurchased || !vimojoStoreAvailable;
   }
 
   private boolean isWatermarkAvailable() {
-    return watermarkPurchased || !isVimojoStoreSupported;
+    return watermarkPurchased || !vimojoStoreAvailable;
   }
 
   private void restartActivity() {
