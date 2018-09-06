@@ -81,7 +81,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(
                 mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                updateComposition);
+                updateComposition, amIAVerticalApp);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -134,7 +134,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(
                 mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                updateComposition);
+                updateComposition, amIAVerticalApp);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }

@@ -34,6 +34,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 
 /**
@@ -56,6 +57,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
     private ModifyTrackUseCase modifyTrackUseCase;
     private GetMusicListUseCase getMusicListUseCase;
     private UpdateComposition updateComposition;
+    private boolean amIVerticalApp;
 
     @Inject
     public MusicDetailPresenter(
@@ -65,7 +67,8 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
             ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -79,6 +82,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
         this.getMusicListUseCase = getMusicListUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.amIVerticalApp = amIAVerticalApp;
         musicSelected = new Music("", 0);
     }
 
@@ -94,6 +98,9 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
         if (getPreferencesTransitionFromProjectUseCase
                 .isVideoFadeTransitionActivated(currentProject)) {
             musicDetailView.setVideoFadeTransitionAmongVideos();
+        }
+        if(amIVerticalApp) {
+            musicDetailView.setAspectRatioVerticalVideos();
         }
     }
 

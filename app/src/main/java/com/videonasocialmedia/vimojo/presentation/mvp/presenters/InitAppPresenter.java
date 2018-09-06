@@ -9,7 +9,6 @@ import android.util.Range;
 import android.util.Size;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
@@ -38,8 +37,6 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
@@ -60,15 +57,20 @@ public class InitAppPresenter extends VimojoPresenter {
   private CameraSettings cameraSettings;
   private boolean watermarkIsForced;
   private boolean showAds;
+  private boolean amIAVerticalApp;
+  private String defaultResolutionSetting;
+  private boolean isAppOutOfDate;
 
   @Inject
   public InitAppPresenter(
-          Context context, InitAppView initAppView, SharedPreferences sharedPreferences,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          CameraSettingsDataSource cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition, @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("showAds") boolean showAds) {
+      Context context, InitAppView initAppView, SharedPreferences sharedPreferences,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      CameraSettingsDataSource cameraSettingsRepository,
+      RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+      SaveComposition saveComposition, @Named("watermarkIsForced") boolean watermarkIsForced,
+      @Named("showAds") boolean showAds, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+      @Named("defaultResolutionSetting") String defaultResolutionSetting,
+      @Named("isAppOutOfDate") boolean isAppOutOfDate) {
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
@@ -79,6 +81,9 @@ public class InitAppPresenter extends VimojoPresenter {
     this.saveComposition = saveComposition;
     this.watermarkIsForced = watermarkIsForced;
     this.showAds = showAds;
+    this.amIAVerticalApp = amIAVerticalApp;
+    this.defaultResolutionSetting = defaultResolutionSetting;
+    this.isAppOutOfDate = isAppOutOfDate;
   }
 
   public void onAppPathsCheckSuccess(String rootPath, String privatePath,
@@ -86,8 +91,7 @@ public class InitAppPresenter extends VimojoPresenter {
     if (projectInstanceCache.getCurrentProject() == null) {
       // TODO(jliarte): 23/04/18 in fact, there will be always a project instance, consider removing
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-              isWatermarkActivated(), drawableFadeTransitionVideo,
-              BuildConfig.FEATURE_VERTICAL_VIDEOS);
+              isWatermarkActivated(), drawableFadeTransitionVideo, amIAVerticalApp);
       projectInstanceCache.setCurrentProject(project);
       saveComposition.saveComposition(project);
     }
@@ -116,7 +120,7 @@ public class InitAppPresenter extends VimojoPresenter {
 
   private void checkCamera2ResolutionSupported(Camera2Settings camera2Settings)
           throws CameraAccessException {
-    String defaultResolution = Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
+
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
 
     boolean resolutionBack720pSupported = false;
@@ -152,12 +156,6 @@ public class InitAppPresenter extends VimojoPresenter {
       }
     }
 
-    if(!resolutionBack1080pSupported){
-      defaultResolution = BuildConfig.FEATURE_VERTICAL_VIDEOS ? CAMERA_SETTING_RESOLUTION_V_720
-          : CAMERA_SETTING_RESOLUTION_H_720;
-      //resolutionBack1080pSupported = true;
-    }
-
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, resolutionBack720pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, resolutionBack1080pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID, resolutionBack2160pSupported);
@@ -165,7 +163,7 @@ public class InitAppPresenter extends VimojoPresenter {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, resolutionFront1080pSupported);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, resolutionFront2160pSupported);
 
-    ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolution,
+    ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolutionSetting,
             resolutionsSupportedMap);
 
     cameraSettings = cameraSettingsRepository.getCameraSettings();
@@ -214,7 +212,7 @@ public class InitAppPresenter extends VimojoPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       initAppView.screenOrientationPortrait();
     } else {
       initAppView.screenOrientationLandscape();
@@ -224,6 +222,14 @@ public class InitAppPresenter extends VimojoPresenter {
   private void setupAds() {
     if (showAds) {
       initAppView.initializeAdMob();
+    }
+  }
+
+  public void checkAppOutOfDateToContinue() {
+    if (isAppOutOfDate) {
+      initAppView.showDialogOutOfDate();
+    } else {
+      initAppView.appContinueWorkflow();
     }
   }
 }

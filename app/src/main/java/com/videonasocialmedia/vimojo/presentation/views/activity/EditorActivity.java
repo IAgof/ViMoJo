@@ -150,16 +150,14 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     super.onStart();
     videonaPlayer.setListener(this);
     videonaPlayer.onShown(this);
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-      videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-    }
   }
 
   @Override
   protected void onResume() {
     super.onResume();
     setupDrawer();
-    editorPresenter.updatePresenter(projectHasBeenExported, videoExportedPath, getCurrentAppliedTheme());
+    editorPresenter.updatePresenter(projectHasBeenExported, videoExportedPath,
+        getCurrentAppliedTheme());
   }
 
   @Override
@@ -442,6 +440,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       MenuItem target = menu.findItem(R.id.menu_navview_tutorial);
       target.setVisible(false);
     });
+  }
+
+  @Override
+  public void setAspectRatioVerticalVideos() {
+    videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
   }
 
   @Override

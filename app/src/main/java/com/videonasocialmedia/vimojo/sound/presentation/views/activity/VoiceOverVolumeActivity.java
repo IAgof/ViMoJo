@@ -7,14 +7,13 @@ import android.support.v7.app.AlertDialog;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -83,9 +82,6 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
     }
 
     @Override
@@ -233,6 +229,11 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     @Override
     public void muteMusic() {
         videonaPlayer.setMusicVolume(0.0f);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
     @Override

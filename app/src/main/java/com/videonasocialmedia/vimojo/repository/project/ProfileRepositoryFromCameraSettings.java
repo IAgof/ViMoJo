@@ -46,10 +46,11 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private HashMap<String, VideoResolution.Resolution> resolutionMap;
 
   public ProfileRepositoryFromCameraSettings(CameraSettingsDataSource cameraSettingsRepository,
-                                             int defaultCameraIdSelected, boolean showCameraPro) {
+                                             int defaultCameraIdSelected, boolean showCameraPro,
+                                             String defaultResolutionSetting) {
     this.cameraSettingsRepository = cameraSettingsRepository;
     if (this.cameraSettingsRepository.getCameraSettings() == null) {
-      createDefaultCameraSettings(defaultCameraIdSelected, showCameraPro);
+      createDefaultCameraSettings(defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
     }
     setupVideoQualityMap();
     setupFrameRateMap();
@@ -87,7 +88,8 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   }
 
   // TODO(jliarte): 29/11/17 seems not to be responsibility of this repo, check for suitable class
-  private void createDefaultCameraSettings(int defaultCameraIdSelected, boolean showCameraPro) {
+  private void createDefaultCameraSettings(int defaultCameraIdSelected, boolean showCameraPro,
+                                           String defaultResolutionSetting) {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, false);
@@ -96,8 +98,8 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, false);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
 
-    ResolutionSetting resolutionSetting = new ResolutionSetting(
-            Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, resolutionsSupportedMap);
+    ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolutionSetting,
+        resolutionsSupportedMap);
 
     HashMap<Integer, Boolean> frameRateSupportedMap = new HashMap<>();
     frameRateSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);

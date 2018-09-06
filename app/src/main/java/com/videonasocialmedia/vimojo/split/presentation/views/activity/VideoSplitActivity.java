@@ -19,17 +19,15 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
@@ -110,9 +108,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
         presenter.updatePresenter();
     }
 
@@ -306,6 +301,11 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     @Override
     public void updateProject() {
         presenter.updatePresenter();
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
 }

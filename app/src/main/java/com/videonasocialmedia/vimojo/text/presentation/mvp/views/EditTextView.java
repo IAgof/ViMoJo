@@ -36,4 +36,6 @@ public interface EditTextView {
     void updateTextToThemeDark();
 
     void updateTextToThemeLight();
+
+  void setAspectRatioVerticalVideos();
 }

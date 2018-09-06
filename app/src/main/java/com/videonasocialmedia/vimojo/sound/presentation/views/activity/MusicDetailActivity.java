@@ -15,17 +15,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
-
+import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.MusicDetailPresenter;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import java.util.List;
@@ -95,9 +93,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
             //TODO show snackbar with error message
         }
         presenter.updatePresenter(musicPath);
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
     }
 
     @Override
@@ -208,6 +203,11 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Override
     public void updateProject() {
         presenter.updatePresenter(musicPath);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
     @Optional @OnClick(R.id.select_music)

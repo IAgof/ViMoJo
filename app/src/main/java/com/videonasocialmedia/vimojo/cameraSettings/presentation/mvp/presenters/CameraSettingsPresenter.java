@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
@@ -26,6 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution.Resolution.*;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_BACK_ID;
@@ -58,19 +58,25 @@ public class CameraSettingsPresenter extends VimojoPresenter {
   private boolean showCameraPro;
   private boolean allowSelectFrameRate;
   private boolean allowSelectResolution;
+  private boolean amIAVerticalApp;
+  private String defaultResolutionSetting;
+  private VideoResolution.Resolution defaultVideoResolution;
 
   @Inject
   public CameraSettingsPresenter(
-          CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
-          GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
-          CameraSettingsDataSource cameraSettingsRepository,
-          UpdateComposition updateComposition, ProjectInstanceCache projectInstanceCache,
-          SetCompositionQuality setCompositionQuality,
-          SetCompositionFrameRate setCompositionFrameRate,
-          SetCompositionResolution setCompositionResolution,
-          @Named("showCameraProAvailable") boolean showCameraPro,
-          @Named("selectFrameRateAvailable") boolean allowSelectFrameRate,
-          @Named("selectResolutionAvailable") boolean allowSelectResolution){
+      CameraSettingsView cameraSettingsListView, UserEventTracker userEventTracker,
+      GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase,
+      CameraSettingsDataSource cameraSettingsRepository,
+      UpdateComposition updateComposition, ProjectInstanceCache projectInstanceCache,
+      SetCompositionQuality setCompositionQuality,
+      SetCompositionFrameRate setCompositionFrameRate,
+      SetCompositionResolution setCompositionResolution,
+      @Named("showCameraProAvailable") boolean showCameraPro,
+      @Named("selectFrameRateAvailable") boolean allowSelectFrameRate,
+      @Named("selectResolutionAvailable") boolean allowSelectResolution,
+      @Named("amIAVerticalApp") boolean amIAVerticalApp,
+      @Named("defaultResolutionSetting") String defaultResolutionSetting,
+      @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;
@@ -84,6 +90,9 @@ public class CameraSettingsPresenter extends VimojoPresenter {
     this.showCameraPro = showCameraPro;
     this.allowSelectFrameRate = allowSelectFrameRate;
     this.allowSelectResolution = allowSelectResolution;
+    this.amIAVerticalApp = amIAVerticalApp;
+    this.defaultResolutionSetting = defaultResolutionSetting;
+    this.defaultVideoResolution = defaultVideoResolution;
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
@@ -92,11 +101,12 @@ public class CameraSettingsPresenter extends VimojoPresenter {
 
   public void updatePresenter() {
     this.currentProject = projectInstanceCache.getCurrentProject();
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       cameraSettingsListView.screenOrientationPortrait();
     } else {
       cameraSettingsListView.screenOrientationLandscape();
     }
+    cameraSettingsListView.initCameraSettingsRecycler(amIAVerticalApp);
   }
 
   private void setupProInterfaceMappers() {
@@ -106,7 +116,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
   }
 
   private void setupResolutionMappers() {
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       setupVerticalResolutions();
     } else {
       setupHorizontalResolutions();
@@ -130,17 +140,17 @@ public class CameraSettingsPresenter extends VimojoPresenter {
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-        VideoResolution.Resolution.HD720);
+        HD720);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-        VideoResolution.Resolution.HD1080);
+        HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-        VideoResolution.Resolution.HD4K);
+        HD4K);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
-        VideoResolution.Resolution.HD720);
+        HD720);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
-        VideoResolution.Resolution.HD1080);
+        HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
-        VideoResolution.Resolution.HD4K);
+        HD4K);
   }
 
   private void setupHorizontalResolutions() {
@@ -160,17 +170,17 @@ public class CameraSettingsPresenter extends VimojoPresenter {
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-            VideoResolution.Resolution.HD720);
+            HD720);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-            VideoResolution.Resolution.HD1080);
+            HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-            VideoResolution.Resolution.HD4K);
+            HD4K);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
-        VideoResolution.Resolution.HD720);
+        HD720);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
-        VideoResolution.Resolution.HD1080);
+        HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
-        VideoResolution.Resolution.HD4K);
+        HD4K);
   }
 
   private void setupFrameRateMappers() {
@@ -226,12 +236,12 @@ public class CameraSettingsPresenter extends VimojoPresenter {
 
   public void setCameraResolutionSetting(int resolutionSelectedId) {
     String resolution = resolutionNames.get(resolutionSelectedId);
-    if (resolution == null) { resolution = DEFAULT_CAMERA_SETTING_RESOLUTION; }
+    if (resolution == null) { resolution = defaultResolutionSetting; }
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setResolutionSetting(cameraSettings, resolution);
     userEventTracker.trackChangeResolution(resolution);
     VideoResolution.Resolution videoResolution = videoResolutionValues.get(resolutionSelectedId);
-    if (videoResolution == null) { videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION; }
+    if (videoResolution == null) { videoResolution = defaultVideoResolution; }
     setCompositionResolution.setResolution(currentProject, videoResolution);
     executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }

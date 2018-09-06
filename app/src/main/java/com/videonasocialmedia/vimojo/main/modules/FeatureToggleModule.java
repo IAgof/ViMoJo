@@ -7,6 +7,7 @@ package com.videonasocialmedia.vimojo.main.modules;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.featuresToggles.FeatureDecisions;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -120,4 +121,24 @@ public class FeatureToggleModule {
     return featureDecisions.hideTutorials();
   }
 
+  @Provides @Named("amIAVerticalApp")
+  boolean provideAmIAVerticalAppDecision(FeatureDecisions featureDecisions) {
+    // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability
+    return featureDecisions.amIAVerticalApp();
+  }
+
+  @Provides @Named("defaultResolutionSetting")
+  String provideDefaultResolutionSetting(FeatureDecisions featureDecisions) {
+    return featureDecisions.defaultResolutionSetting();
+  }
+
+  @Provides @Named("defaultVideoResolution")
+  VideoResolution.Resolution provideDefaultVideoResolution (FeatureDecisions featureDecisions) {
+    return featureDecisions.defaultVideoResolution();
+  }
+
+  @Provides @Named("isAppOutOfDate")
+  boolean provideIsAppOutOfDate(FeatureDecisions featureDecisions, Context context) {
+    return featureDecisions.isAppOutOfDate(context);
+  }
 }

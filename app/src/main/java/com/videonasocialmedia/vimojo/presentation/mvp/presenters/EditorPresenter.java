@@ -95,6 +95,7 @@ public class EditorPresenter extends VimojoPresenter
   private boolean vimojoPlatformAvailable;
   private boolean watermarkIsForced;
   private boolean hideTutorials;
+  private boolean amIAVerticalApp;
 
   @Inject
   public EditorPresenter(
@@ -114,7 +115,8 @@ public class EditorPresenter extends VimojoPresenter
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("hideTutorials") boolean hideTutorials) {
+          @Named("hideTutorials") boolean hideTutorials,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -139,6 +141,7 @@ public class EditorPresenter extends VimojoPresenter
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.watermarkIsForced = watermarkIsForced;
     this.hideTutorials = hideTutorials;
+    this.amIAVerticalApp = amIAVerticalApp;
   }
 
   public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath,
@@ -160,6 +163,9 @@ public class EditorPresenter extends VimojoPresenter
       initPreviewFromProject();
     } else {
       initPreviewFromVideoExported(videoPath);
+    }
+    if (amIAVerticalApp) {
+      editorActivityView.setAspectRatioVerticalVideos();
     }
   }
 
@@ -243,8 +249,7 @@ public class EditorPresenter extends VimojoPresenter
   private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
                                             Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            watermarkIsSelected(), drawableFadeTransitionVideo,
-            BuildConfig.FEATURE_VERTICAL_VIDEOS);
+            watermarkIsSelected(), drawableFadeTransitionVideo, amIAVerticalApp);
     projectInstanceCache.setCurrentProject(project);
     return executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }

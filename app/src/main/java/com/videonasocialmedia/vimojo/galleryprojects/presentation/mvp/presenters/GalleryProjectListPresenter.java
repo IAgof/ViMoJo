@@ -8,7 +8,6 @@ import android.util.Log;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
@@ -49,6 +48,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private GetCompositions getCompositions;
   private GetCompositionAssets getCompositionAssets;
   private boolean watermarkIsForced;
+  private boolean amIVerticalApp;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -59,7 +59,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
           DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
           SaveComposition saveComposition, UpdateComposition updateComposition,
           GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
-          @Named("watermarkIsForced") boolean watermarkIsForced) {
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -72,6 +73,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.getCompositions = getCompositions;
     this.getCompositionAssets = getCompositionAssets;
     this.watermarkIsForced = watermarkIsForced;
+    this.amIVerticalApp = amIAVerticalApp;
   }
 
   public void init() {
@@ -172,8 +174,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void createNewProject(String rootPath, String privatePath,
                                Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            isWatermarkActivated(), drawableFadeTransitionVideo,
-            BuildConfig.FEATURE_VERTICAL_VIDEOS);
+            isWatermarkActivated(), drawableFadeTransitionVideo, amIVerticalApp);
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }

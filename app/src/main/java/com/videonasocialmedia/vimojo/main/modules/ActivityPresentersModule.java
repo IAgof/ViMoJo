@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
@@ -168,11 +169,11 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
                   modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase,
-            projectInstanceCache, updateComposition);
+            projectInstanceCache, updateComposition, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -180,11 +181,12 @@ public class ActivityPresentersModule {
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-          UserEventTracker userEventTracker, UpdateComposition updateComposition) {
+          UserEventTracker userEventTracker, UpdateComposition updateComposition,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache,
-            updateComposition);
+            updateComposition, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -195,11 +197,12 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new MusicDetailPresenter((MusicDetailView) activity, activity, userEventTracker,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
-            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition);
+            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition,
+            amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -207,11 +210,12 @@ public class ActivityPresentersModule {
                                      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
                                      RemoveVideoFromProjectUseCase removeVideosFromProjectUseCase,
                                      ReorderMediaItemUseCase reorderMediaItemUseCase,
-                                     UpdateComposition updateComposition, RemoveMedia removeMedia) {
+                                     UpdateComposition updateComposition, RemoveMedia removeMedia,
+                                     @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new EditPresenter((EditActivity) activity, activity, (EditActivity) activity,
             userEventTracker, getMediaListFromProjectUseCase, removeVideosFromProjectUseCase,
             reorderMediaItemUseCase, projectInstanceCache, updateComposition,
-            removeMedia);
+            removeMedia, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -227,10 +231,11 @@ public class ActivityPresentersModule {
           GetMusicListUseCase getMusicListUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase) {
+          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new MusicListPresenter((MusicListView) activity, activity, getMusicListUseCase,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
-            getPreferencesTransitionFromProjectUseCase, projectInstanceCache);
+            getPreferencesTransitionFromProjectUseCase, projectInstanceCache, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -242,19 +247,23 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   CameraSettingsPresenter provideCameraSettingPresenter(
-          UserEventTracker userEventTracker,
-          GetCameraSettingsMapperSupportedListUseCase getCameraSettingsMapperSupportedListUseCase,
-          CameraSettingsDataSource cameraSettingsRepository,
-          SetCompositionQuality setCompositionQuality, UpdateComposition updateComposition,
-          SetCompositionFrameRate setCompositionFrameRate,
-          SetCompositionResolution setCompositionResolution,
-          @Named("showCameraProAvailable") boolean showCameraPro,
-          @Named("selectFrameRateAvailable") boolean allowSelectFrameRate,
-          @Named("selectResolutionAvailable") boolean allowSelectResolution) {
+      UserEventTracker userEventTracker,
+      GetCameraSettingsMapperSupportedListUseCase getCameraSettingsMapperSupportedListUseCase,
+      CameraSettingsDataSource cameraSettingsRepository,
+      SetCompositionQuality setCompositionQuality, UpdateComposition updateComposition,
+      SetCompositionFrameRate setCompositionFrameRate,
+      SetCompositionResolution setCompositionResolution,
+      @Named("showCameraProAvailable") boolean showCameraPro,
+      @Named("selectFrameRateAvailable") boolean allowSelectFrameRate,
+      @Named("selectResolutionAvailable") boolean allowSelectResolution,
+      @Named("amIAVerticalApp") boolean amIAVerticalApp,
+      @Named("defaultResolutionSetting") String defaultResolutionSetting,
+      @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution) {
     return new CameraSettingsPresenter((CameraSettingsView) activity, userEventTracker,
         getCameraSettingsMapperSupportedListUseCase, cameraSettingsRepository,
             updateComposition, projectInstanceCache, setCompositionQuality, setCompositionFrameRate,
-            setCompositionResolution, showCameraPro, allowSelectFrameRate, allowSelectResolution);
+            setCompositionResolution, showCameraPro, allowSelectFrameRate, allowSelectResolution,
+            amIAVerticalApp, defaultResolutionSetting, defaultVideoResolution);
   }
 
   @Provides @PerActivity
@@ -273,10 +282,10 @@ public class ActivityPresentersModule {
   DuplicatePreviewPresenter provideDuplicatePresenter(
           UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
             addVideoToProjectUseCase, getMediaListFromProjectUseCase, projectInstanceCache,
-            updateComposition);
+            updateComposition, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -308,21 +317,22 @@ public class ActivityPresentersModule {
           NewClipImporter newClipImporter, CameraSettingsDataSource cameraSettingsRepository,
           UpdateComposition updateComposition,
           @Named("hideRecordAudioGain") boolean hideRecordAudioGain,
-          @Named("hideTutorials") boolean hideTutorials) {
+          @Named("hideTutorials") boolean hideTutorials,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new RecordCamera2Presenter(activity, (RecordCamera2Activity) activity, userEventTracker,
             sharedPreferences, addVideoToProjectUseCase, newClipImporter, camera2wrapper,
             cameraSettingsRepository, projectInstanceCache, updateComposition, hideRecordAudioGain,
-            hideTutorials);
+            hideTutorials, amIAVerticalApp);
   }
 
   @Provides @PerActivity
   SplitPreviewPresenter provideSplitPresenter(
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker,
             splitVideoUseCase, getMediaListFromProjectUseCase, projectInstanceCache,
-            updateComposition);
+            updateComposition, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -330,10 +340,10 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
-        projectInstanceCache, updateComposition);
+        projectInstanceCache, updateComposition, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -364,11 +374,13 @@ public class ActivityPresentersModule {
           CameraSettingsDataSource cameraSettingsRepository,
           RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition,
           @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("showAds") boolean showAds) {
+          @Named("showAds") boolean showAds, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          @Named("defaultResolutionSetting") String defaultResolutionSetting,
+          @Named("isAppOutOfDate") boolean isAppOutOfDate) {
     return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
             createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
             (ProjectInstanceCache) activity.getApplication(), saveComposition,
-            watermarkIsForced, showAds);
+            watermarkIsForced, showAds, amIAVerticalApp, defaultResolutionSetting, isAppOutOfDate);
   }
 
   @Provides @PerActivity
@@ -388,7 +400,8 @@ public class ActivityPresentersModule {
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("hideTutorials") boolean hideTutorials) {
+          @Named("hideTutorials") boolean hideTutorials,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
             sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
             getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
@@ -396,7 +409,8 @@ public class ActivityPresentersModule {
             relaunchTranscoderTempBackgroundUseCase, newClipImporter,
             billingManager, projectInstanceCache, saveComposition, removeMedia,
             updateWatermark, updateComposition, showWaterMarkSwitch,
-            vimojoStoreAvailable, vimojoPlatformAvailable, watermarkIsForced, hideTutorials);
+            vimojoStoreAvailable, vimojoPlatformAvailable, watermarkIsForced, hideTutorials,
+            amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -407,11 +421,13 @@ public class ActivityPresentersModule {
           DeleteComposition deleteComposition, SaveComposition saveComposition,
           UpdateComposition updateComposition, GetCompositions getCompositions,
           GetCompositionAssets getCompositionAssets,
-          @Named("watermarkIsForced") boolean watermarkIsForced) {
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteComposition, (ProjectInstanceCache) activity.getApplication(), saveComposition,
-            updateComposition, getCompositions, getCompositionAssets, watermarkIsForced);
+            updateComposition, getCompositions, getCompositionAssets, watermarkIsForced,
+            amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -427,10 +443,11 @@ public class ActivityPresentersModule {
   EditTextPreviewPresenter provideEditTextPreviewPresenter(
               UserEventTracker userEventTracker,
               GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-              ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase) {
+              ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
+              @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
         userEventTracker, getMediaListFromProjectUseCase,
-        modifyVideoTextAndPositionUseCase, projectInstanceCache);
+        modifyVideoTextAndPositionUseCase, projectInstanceCache, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -586,9 +603,10 @@ public class ActivityPresentersModule {
 
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsDataSource cameraSettingsRepository,
-          @Named("showCameraProAvailable") boolean showCameraPro) {
+          @Named("showCameraProAvailable") boolean showCameraPro,
+          @Named("defaultResolutionSetting") String defaultResolutionSetting) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository,
-        defaultCameraIdSelected, showCameraPro);
+        defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
   }
 
   @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {

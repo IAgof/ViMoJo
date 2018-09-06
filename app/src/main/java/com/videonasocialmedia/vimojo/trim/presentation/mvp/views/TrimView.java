@@ -44,4 +44,6 @@ public interface TrimView {
     void updateRadioButtonToThemeDark(RadioButton buttonNoSelected);
 
     void updateRadioButtonToThemeLight(RadioButton buttonNoSelected);
+
+  void setAspectRatioVerticalVideos();
 }

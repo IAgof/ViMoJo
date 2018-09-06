@@ -25,16 +25,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePreviewPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
-
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.List;
@@ -106,9 +104,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
         presenter.updatePresenter();
     }
 
@@ -240,6 +235,11 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Override
     public void updateProject() {
         presenter.loadProjectVideo(videoIndexOnTrack);
+    }
+
+    @Override
+    public void setAspectRatioVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
     private void showThumbVideo(ImageView imageThumbLeft) {

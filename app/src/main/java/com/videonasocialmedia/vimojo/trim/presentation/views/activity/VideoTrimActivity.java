@@ -21,16 +21,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
@@ -124,9 +123,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
         presenter.updatePresenter();
     }
 
@@ -525,5 +521,10 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     public void updateRadioButtonToThemeLight(RadioButton radioButton) {
         radioButton.setTextColor(ContextCompat.getColorStateList(this,
             R.color.button_trim_color_theme_light));
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 }

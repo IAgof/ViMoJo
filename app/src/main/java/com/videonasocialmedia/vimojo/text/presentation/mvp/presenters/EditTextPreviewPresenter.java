@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by ruth on 1/09/16.
@@ -48,6 +49,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     protected Project currentProject;
     private final String THEME_DARK = "dark";
     private int videoToEditTextIndex;
+    private boolean amIAVerticalApp;
 
 
     @Inject
@@ -55,13 +57,15 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
             EditTextView editTextView, Context context, UserEventTracker userEventTracker,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.editTextView = editTextView;
         this.context = context;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.amIAVerticalApp = amIAVerticalApp;
     }
 
     public void init(int videoToEditTextIndex) {
@@ -78,6 +82,10 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
             v.add(videoToEdit);
             onVideosRetrieved(v);
         }
+        if (amIAVerticalApp) {
+            editTextView.setAspectRatioVerticalVideos();
+        }
+
     }
 
     @Override

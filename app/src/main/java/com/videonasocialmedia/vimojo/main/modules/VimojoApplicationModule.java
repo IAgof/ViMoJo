@@ -41,9 +41,10 @@ public class VimojoApplicationModule {
   @Provides
   ProfileRepository provideProfileRepository(
           CameraSettingsDataSource cameraSettingsRepository,
-          @Named("showCameraProAvailable") boolean showCameraPro) {
+          @Named("showCameraProAvailable") boolean showCameraPro,
+          @Named("defaultResolutionSetting") String defaultResolutionSetting) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository,
-            defaultCameraIdSelected, showCameraPro);
+            defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
   }
 
   @Provides @Singleton

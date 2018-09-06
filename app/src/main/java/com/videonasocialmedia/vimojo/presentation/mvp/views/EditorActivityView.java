@@ -37,4 +37,6 @@ public interface EditorActivityView {
     void hideLinkToVimojoPlatform();
 
     void hideTutorialViews();
+
+  void setAspectRatioVerticalVideos();
 }

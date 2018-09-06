@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
 import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
@@ -56,6 +57,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
     protected Project currentProject;
     private int videoToTrimIndex;
     private UpdateComposition updateComposition;
+    private boolean amIVerticalApp;
 
     @Inject
     public TrimPreviewPresenter(
@@ -63,7 +65,8 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
             UserEventTracker userEventTracker,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
@@ -71,6 +74,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.amIVerticalApp = amIAVerticalApp;
     }
 
     public void init(int videoToTrimIndex) {
@@ -87,6 +91,9 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
             videoToEdit = (Video) videoList.get(videoToTrimIndex);
             v.add(videoToEdit);
             onVideosRetrieved(v);
+        }
+        if (amIVerticalApp) {
+            trimView.setAspectRatioVerticalVideos();
         }
     }
 

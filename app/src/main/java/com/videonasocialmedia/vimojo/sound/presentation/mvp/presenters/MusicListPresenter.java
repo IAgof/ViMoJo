@@ -18,6 +18,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by ruth on 13/09/16.
@@ -32,6 +33,7 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
     private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+    private boolean amIVerticalApp;
 
     @Inject
     public MusicListPresenter(
@@ -39,7 +41,8 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             GetAudioFromProjectUseCase getAudioFromProjectUseCase,
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+            ProjectInstanceCache projectInstanceCache,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.context = context;
         availableMusic = getMusicListUseCase.getAppMusic();
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -47,6 +50,7 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
         this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
         this.musicListView = musicListView;
         this.projectInstanceCache = projectInstanceCache;
+        this.amIVerticalApp = amIAVerticalApp;
     }
 
     public void updatePresenter() {
@@ -56,6 +60,9 @@ public class MusicListPresenter implements OnVideosRetrieved, GetMusicFromProjec
         if (getPreferencesTransitionFromProjectUseCase
                 .isVideoFadeTransitionActivated(currentProject)) {
             musicListView.setVideoFadeTransitionAmongVideos();
+        }
+        if (amIVerticalApp) {
+            musicListView.setAspectRatioVerticalVideos();
         }
     }
 

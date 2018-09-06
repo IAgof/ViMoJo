@@ -16,4 +16,8 @@ public interface InitAppView {
     void screenOrientationLandscape();
 
   void initializeAdMob();
+
+  void showDialogOutOfDate();
+
+  void appContinueWorkflow();
 }

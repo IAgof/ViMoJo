@@ -54,9 +54,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -127,50 +125,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
     }
 
-    private boolean isBetaAppOutOfDate() {
-        Calendar endOfBeta = Calendar.getInstance();
-        Calendar today = Calendar.getInstance();
-
-        // TODO:(alvaro.martinez) 8/11/16 get this date from flavor config
-        String str= getResources().getString(R.string.app_out_of_date);
-        Date dateBeta = null;
-        try {
-            dateBeta = new SimpleDateFormat("yyyy-MM-dd").parse(str);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        endOfBeta.setTime(dateBeta);
-        today.setTime(new Date());
-
-        return today.after(endOfBeta);
-    }
-
-    private void showDialogOutOfDate() {
-        android.support.v7.app.AlertDialog.Builder dialog = new
-            android.support.v7.app.AlertDialog.Builder(this);
-        dialog.setMessage(R.string.app_out_of_date_message);
-        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-        dialog.show();
-    }
-
     private void requestPermissionsAndPerformSetup() {
       // TODO: 30/7/18 Ask get account permission when it would be needed, user wants to register or login account
       Dexter.checkPermissions(compositePermissionsListener, Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.GET_ACCOUNTS);
-    }
-
-    private void startSplashThread() {
-        SplashScreenTask splashScreenTask = new SplashScreenTask(this);
-        splashScreenTask.execute();
     }
 
     private void createPermissionListeners() {
@@ -455,6 +415,29 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         MobileAds.initialize(this, getString(R.string.admob_app_id));
     }
 
+    @Override
+    public void showDialogOutOfDate() {
+        android.support.v7.app.AlertDialog.Builder dialog = new
+            android.support.v7.app.AlertDialog.Builder(this);
+        dialog.setMessage(R.string.app_out_of_date_message);
+        dialog.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        dialog.show();
+    }
+
+    @Override
+    public void appContinueWorkflow() {
+        SplashScreenTask splashScreenTask = new SplashScreenTask(this);
+        splashScreenTask.execute();
+    }
+
+
+
     /**
      * Shows the splash screen
      */
@@ -524,11 +507,7 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         @Override
         public void onPermissionsChecked(MultiplePermissionsReport report) {
             if (report.areAllPermissionsGranted()) {
-                if (isBetaAppOutOfDate() && !BuildConfig.DEBUG && BuildConfig.FEATURE_OUT_OF_DATE) {
-                    showDialogOutOfDate();
-                } else {
-                    activity.startSplashThread();
-                }
+                presenter.checkAppOutOfDateToContinue();
             }
         }
 

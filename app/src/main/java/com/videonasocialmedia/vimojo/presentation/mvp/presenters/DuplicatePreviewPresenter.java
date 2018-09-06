@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by vlf on 7/7/15.
@@ -45,6 +46,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
     protected Project currentProject;
     private int videoIndexOnTrack;
     private UpdateComposition updateComposition;
+    private boolean amIVerticalApp;
 
     /**
      * Get media list from project use case
@@ -54,13 +56,15 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
             AddVideoToProjectUseCase addVideoToProjectUseCase,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ProjectInstanceCache projectInstanceCache,
-            UpdateComposition updateComposition) {
+            UpdateComposition updateComposition,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.amIVerticalApp = amIAVerticalApp;
     }
 
     public void init(int videoIndexOnTrack) {
@@ -71,6 +75,9 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
         loadProjectVideo(videoIndexOnTrack);
+        if (amIVerticalApp) {
+            duplicateView.setAspectRatioVideos();
+        }
     }
 
     public void loadProjectVideo(int videoIndex) {

@@ -19,7 +19,6 @@ import com.videonasocialmedia.camera.camera2.Camera2Wrapper;
 import com.videonasocialmedia.camera.camera2.Camera2WrapperListener;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
@@ -111,6 +110,7 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
   private UpdateComposition updateComposition;
   private boolean hideRecordAudioGain;
   private boolean hideTutorials;
+  private boolean amIAVerticalApp;
 
   public RecordCamera2Presenter(
       Context context, RecordCamera2View recordView, UserEventTracker userEventTracker,
@@ -119,7 +119,8 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
       CameraSettingsDataSource cameraSettingsRepository,
       ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
       @Named("hideRecordAudioGain") boolean hideRecordAudioGain,
-      @Named("hideTutorials") boolean hideTutorialsDecision) {
+      @Named("hideTutorials") boolean hideTutorialsDecision,
+      @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;
@@ -136,6 +137,7 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
     this.newClipImporter = newClipImporter;
     this.hideRecordAudioGain = hideRecordAudioGain;
     this.hideTutorials = hideTutorialsDecision;
+    this.amIAVerticalApp = amIAVerticalApp;
   }
 
   public void updatePresenter() {
@@ -152,7 +154,8 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
   }
 
   public void initViews() {
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    recordView.setupAmIAVerticalApp(amIAVerticalApp);
+    if (amIAVerticalApp) {
       recordView.screenOrientationPortrait();
     } else {
       recordView.screenOrientationLandscape();

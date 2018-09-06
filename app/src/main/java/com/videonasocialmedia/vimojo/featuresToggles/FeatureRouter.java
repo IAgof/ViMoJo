@@ -78,7 +78,10 @@ class FeatureRouter {
             BuildConfig.FEATURE_SHOW_MORE_APPS));
     releaseMap.put(Constants.FEATURE_SHOW_TUTORIALS,
         new FeatureToggle(Constants.FEATURE_SHOW_TUTORIALS, BuildConfig.FEATURE_SHOW_TUTORIALS));
-
+    releaseMap.put(Constants.FEATURE_VERTICAL_VIDEOS,
+        new FeatureToggle(Constants.FEATURE_VERTICAL_VIDEOS, BuildConfig.FEATURE_VERTICAL_VIDEOS));
+    releaseMap.put(Constants.FEATURE_OUT_OF_DATE,
+        new FeatureToggle(Constants.FEATURE_OUT_OF_DATE, BuildConfig.FEATURE_OUT_OF_DATE));
   }
 
   public boolean isEnabled(String feature) {

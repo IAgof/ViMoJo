@@ -24,4 +24,6 @@ public interface SplitView {
     void updateSplitSeekbar(int progress);
 
     void updateProject();
+
+  void setAspectRatioVerticalVideos();
 }

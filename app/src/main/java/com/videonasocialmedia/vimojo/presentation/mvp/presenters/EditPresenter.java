@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class EditPresenter extends VimojoPresenter implements ElementChangedListener {
     private static final String LOG_TAG = EditPresenter.class.getSimpleName();
@@ -70,6 +71,7 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
     protected UserEventTracker userEventTracker;
     private UpdateComposition updateComposition;
     private RemoveMedia removeMedia;
+    private boolean amIAVerticalApp;
 
     @Inject
     public EditPresenter(
@@ -80,7 +82,8 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
             RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
             ReorderMediaItemUseCase reorderMediaItemUseCase,
             ProjectInstanceCache projectInstanceCache,
-            UpdateComposition updateComposition, RemoveMedia removeMedia) {
+            UpdateComposition updateComposition, RemoveMedia removeMedia,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;
@@ -91,6 +94,7 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
         this.removeMedia = removeMedia;
+        this.amIAVerticalApp = amIAVerticalApp;
     }
 
     private void addElementChangedListener() {
@@ -119,7 +123,7 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
                             editActivityView.updateVideoList(videoCopy);
                             videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
                                     checkedVideoList, videoTranscodingErrorNotifier);
-                            if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+                            if (amIAVerticalApp) {
                                 editActivityView.disableEditTextAction();
                             }
                         }

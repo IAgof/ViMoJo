@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.model;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
@@ -374,7 +375,8 @@ public class VimojoMigration implements RealmMigration {
                       .transform(new RealmObjectSchema.Function() {
                         @Override
                         public void apply(DynamicRealmObject obj) {
-                          obj.setString("resolution", DEFAULT_CAMERA_SETTING_RESOLUTION);
+                          obj.setString("resolution",
+                              ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720);
                         }
                       })
                     .addField("quality", String.class, FieldAttribute.REQUIRED)

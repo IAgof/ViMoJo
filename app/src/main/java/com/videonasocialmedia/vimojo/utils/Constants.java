@@ -15,11 +15,9 @@ import android.os.Environment;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 
 import java.io.File;
 
@@ -99,6 +97,7 @@ public class Constants {
     public static final int MAX_NUM_TRIES_TO_EXPORT_VIDEO = 4;
     public static final int EXPORT_ERROR_UNKNOWN = 10;
     public static final int EXPORT_ERROR_NO_SPACE_LEFT = 11;
+
   public enum ERROR_TRANSCODING_TEMP_FILE_TYPE {SPLIT, TRIM, TEXT, AVTRANSITION, APP_CRASH;}
 
     public enum BATTERY_STATUS {CHARGING, CRITICAL, LOW, MEDIUM, FULL, UNKNOW;}
@@ -108,22 +107,16 @@ public class Constants {
     public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
 
   public static final float MS_CORRECTION_FACTOR = 1000f;
+
   public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
   public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
   public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
-    public static final String IN_APP_BILLING_ITEM_WATERMARK = "inappitem_watermark";
-
+  public static final String IN_APP_BILLING_ITEM_WATERMARK = "inappitem_watermark";
   public static final String IN_APP_BILLING_ITEM_DARK_THEME = "inappitem_darktheme";
-    public static final boolean DEFAULT_THEME_DARK_STATE = false;
 
+  public static final boolean DEFAULT_THEME_DARK_STATE = false;
   public static final boolean DEFAULT_WATERMARK_STATE = true;
-  // TODO: 30/7/18 Delete BuildConfig dependency and default values from Constants.java
-  public static final String DEFAULT_CAMERA_SETTING_RESOLUTION =
-      BuildConfig.FEATURE_VERTICAL_VIDEOS ? ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720
-          : ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
-  public static final VideoResolution.Resolution DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION =
-      BuildConfig.FEATURE_VERTICAL_VIDEOS ? VideoResolution.Resolution.V_720P
-          : VideoResolution.Resolution.HD720;
+
   public static final String DEFAULT_CAMERA_SETTING_QUALITY = CameraSettings.CAMERA_SETTING_QUALITY_16;
   public static final VideoQuality.Quality DEFAULT_CAMERA_SETTING_VIDEO_QUALITY =
           VideoQuality.Quality.LOW;
@@ -132,13 +125,13 @@ public class Constants {
           VideoFrameRate.FrameRate.FPS30;
   public static final int BACK_CAMERA_ID = 0;
   public static final int FRONT_CAMERA_ID = 1;
-
   public static final int CAMERA_SETTING_INTERFACE_PRO_ID = 1;
 
   public static final String CAMERA_SETTING_INTERFACE_PRO = "Camera pro";
-  public static final int CAMERA_SETTING_INTERFACE_BASIC_ID = 2;
 
+  public static final int CAMERA_SETTING_INTERFACE_BASIC_ID = 2;
   public static final String CAMERA_SETTING_INTERFACE_BASIC = "Camera basic";
+
   public static final String DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED = CAMERA_SETTING_INTERFACE_PRO;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED = BACK_CAMERA_ID;
   public static final int DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP = FRONT_CAMERA_ID;
@@ -162,6 +155,8 @@ public class Constants {
   public static final String FEATURE_SHARE_SHOW_SOCIAL_NETWORKS = "feature-show-social-networks";
   public static final String FEATURE_SHOW_MORE_APPS = "feature-show-more-apps";
   public static final String FEATURE_SHOW_TUTORIALS = "feature-show-tutorials";
+  public static final String FEATURE_VERTICAL_VIDEOS = "feature-vertical-videos";
+  public static final String FEATURE_OUT_OF_DATE = "feature-out-of-date";
 
   /**
    * Default User features values

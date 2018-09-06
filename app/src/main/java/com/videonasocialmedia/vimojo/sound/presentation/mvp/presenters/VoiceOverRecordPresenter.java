@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import omrecorder.AudioChunk;
 import omrecorder.AudioRecordConfig;
@@ -76,6 +77,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
 //  private final RunSyncAdapterHelper runSyncAdapterHelper;
 //  private CompositionApiClient compositionApiClient;
   private UpdateComposition updateComposition;
+  private boolean amIAVerticalApp;
 
   @Inject
   public VoiceOverRecordPresenter(
@@ -84,7 +86,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
       UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
-      UpdateComposition updateComposition) {
+      UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -95,6 +97,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
     this.userEventTracker = userEventTracker;
     this.projectInstanceCache = projectInstanceCache;
     this.updateComposition = updateComposition;
+    this.amIAVerticalApp = amIAVerticalApp;
   }
 
   public void updatePresenter() {
@@ -111,6 +114,9 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
         .isAudioFadeTransitionActivated(currentProject)
         && !currentProject.getVMComposition().hasMusic()) {
       voiceOverRecordView.setAudioFadeTransitionAmongVideos();
+    }
+    if (amIAVerticalApp) {
+      voiceOverRecordView.setAspectRatioVerticalVideos();
     }
   }
 

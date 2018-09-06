@@ -25,6 +25,7 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 
@@ -43,6 +44,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
     private ModifyTrackUseCase modifyTrackUseCase;
     private RemoveAudioUseCase removeAudioUseCase;
     private UpdateComposition updateComposition;
+    private boolean amIAVerticalApp;
 
     @Inject
     public VoiceOverVolumePresenter(
@@ -51,7 +53,8 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             GetAudioFromProjectUseCase getAudioFromProjectUseCase,
             ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -62,6 +65,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
         this.removeAudioUseCase = removeAudioUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.amIAVerticalApp = amIAVerticalApp;
     }
 
     public void updatePresenter() {
@@ -74,6 +78,9 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
         if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated(currentProject) &&
             !currentProject.getVMComposition().hasMusic()) {
             voiceOverVolumeView.setAudioFadeTransitionAmongVideos();
+        }
+        if (amIAVerticalApp) {
+            voiceOverVolumeView.setAspectRatioVerticalVideos();
         }
     }
 

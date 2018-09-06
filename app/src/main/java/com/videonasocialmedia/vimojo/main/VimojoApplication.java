@@ -76,6 +76,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     @Inject SharedPreferences sharedPreferences;
     @Inject SaveComposition saveComposition;
     @Inject @Named("watermarkIsForced") boolean watermarkIsForced;
+    @Inject @Named("amIAVerticalApp") boolean amIAVerticalApp;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -180,7 +181,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
 
     public VimojoApplicationModule getVimojoApplicationModule() {
         int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        if (amIAVerticalApp) {
             defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
         }
         if (vimojoApplicationModule == null) {
@@ -240,7 +241,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
-                    drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
+                    drawableFadeTransitionVideo, amIAVerticalApp);
             ListeningExecutorService executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
             executorPool.submit(() -> saveComposition.saveComposition(project));
             return project;

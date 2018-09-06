@@ -4,7 +4,18 @@ package com.videonasocialmedia.vimojo.featuresToggles;
  * Created by jliarte on 3/09/18.
  */
 
+import android.content.Context;
+
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.utils.Constants;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -78,4 +89,49 @@ public class FeatureDecisions {
   public boolean hideTutorials() {
     return !features.isEnabled(Constants.FEATURE_SHOW_TUTORIALS);
   }
+
+  public boolean amIAVerticalApp(){
+    return features.isEnabled(Constants.FEATURE_VERTICAL_VIDEOS);
+  }
+
+  public String defaultResolutionSetting() {
+    if (features.isEnabled(Constants.FEATURE_VERTICAL_VIDEOS)) {
+      return ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
+    } else {
+      return ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+    }
+  }
+
+  public VideoResolution.Resolution defaultVideoResolution() {
+    if (features.isEnabled(Constants.FEATURE_VERTICAL_VIDEOS)) {
+      return VideoResolution.Resolution.V_720P;
+    } else {
+      return VideoResolution.Resolution.HD720;
+    }
+  }
+
+  public boolean isAppOutOfDate(Context context) {
+    return features.isEnabled(Constants.FEATURE_OUT_OF_DATE) && isBetaAppOutOfDate(context)
+        && !BuildConfig.DEBUG;
+  }
+
+  private boolean isBetaAppOutOfDate(Context context) {
+    Calendar endOfBeta = Calendar.getInstance();
+    Calendar today = Calendar.getInstance();
+
+    // TODO:(alvaro.martinez) 8/11/16 get this date from flavor config
+    String str= context.getResources().getString(R.string.app_out_of_date);
+    Date dateBeta = null;
+    try {
+      dateBeta = new SimpleDateFormat("yyyy-MM-dd").parse(str);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    endOfBeta.setTime(dateBeta);
+    today.setTime(new Date());
+
+    return today.after(endOfBeta);
+  }
+
 }

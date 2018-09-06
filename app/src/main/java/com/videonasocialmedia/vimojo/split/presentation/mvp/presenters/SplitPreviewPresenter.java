@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by vlf on 7/7/15.
@@ -47,19 +48,22 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     private int maxSeekBarSplit;
     private int videoIndexOnTrack;
     private UpdateComposition updateComposition;
+    private boolean amIAVerticalApp;
 
     @Inject
     public SplitPreviewPresenter(
-            SplitView splitView, UserEventTracker userEventTracker,
-            SplitVideoUseCase splitVideoUseCase,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+        SplitView splitView, UserEventTracker userEventTracker,
+        SplitVideoUseCase splitVideoUseCase,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.amIAVerticalApp = amIAVerticalApp;
     }
 
     public void init(int videoIndexOnTrack) {
@@ -70,6 +74,9 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
         loadProjectVideo(this.videoIndexOnTrack);
+        if (amIAVerticalApp) {
+            splitView.setAspectRatioVerticalVideos();
+        }
     }
 
     public void loadProjectVideo(int videoToTrimIndex) {

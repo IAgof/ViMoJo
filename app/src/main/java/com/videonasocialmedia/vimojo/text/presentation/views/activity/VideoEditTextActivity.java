@@ -15,18 +15,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.text.presentation.views.customviews.MaxCharPerLineInputFilter;
-import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;
@@ -114,9 +113,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
         presenter.updatePresenter();
         clipText.requestFocus();
         showKeyboard();
@@ -211,7 +207,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     private void createDrawableFromText(String text, TextEffect.TextPosition textPosition) {
         text = getTextFromEditText();
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+        // TODO: 6/9/18 Implement edit text feature for vertical videos app and move logic to presenters
+        /**
+         * if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
             if (videonaPlayer.getWidth() > 0) {
                 presenter.createDrawableWithText(text, textPosition.name(),
                     videonaPlayer.getVideoPreview().getWidth(),
@@ -220,7 +218,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         } else {
             presenter.createDrawableWithText(text, textPosition.name(),
                 Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
-        }
+        }*/
+        presenter.createDrawableWithText(text, textPosition.name(),
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
     @NonNull
@@ -362,6 +362,11 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     public void updateTextToThemeLight() {
         tintText(R.color.textColorLight);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
     private void tintText(int textColor) {
