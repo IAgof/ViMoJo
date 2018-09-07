@@ -5,19 +5,20 @@ import android.support.annotation.NonNull;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
-
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
@@ -26,10 +27,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
-import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,15 +64,13 @@ public class MusicDetailPresenterTest {
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
     @Mock private GetMusicListUseCase mockedGetMusicListUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
-    @Mock AssetUploadQueue mockedAssetUploadQueue;
-    @Mock RunSyncAdapterHelper mockedRunSyncAdapter;
-    @Mock CompositionApiClient mockedCompositionApiClient;
 
     @Mock Music mockedMusic;
 
     private Project currentProject;
     private String musicPath = "music/path";
     private List<Music> musicList = new ArrayList<>();
+    @Mock UpdateComposition mockedUpdateComposition;
 
     @Before
     public void injectMocks() {
@@ -105,7 +101,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackSuccess() {
+    public void addMusicCallsGoToSoundTranckingAndUpdateOnAddMediaItemFromTrackSuccess() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         final Music music = new Music(1, "Music title", 2,
@@ -126,10 +122,11 @@ public class MusicDetailPresenterTest {
 
         verify(mockedMusicDetailView).goToSoundActivity();
         verify(mockedUserEventTracker).trackMusicSet(currentProject);
+        verify(mockedUpdateComposition).updateComposition(currentProject);
     }
 
     @Test
-    public void addMusicCallsGoToSoundActivityOnAddMediaItemFromTrackError() {
+    public void addMusicCallsShowErrorOnAddMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         final Music music = new Music(1, "Music title", 2,
@@ -161,6 +158,8 @@ public class MusicDetailPresenterTest {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 OnRemoveMediaFinishedListener listener = invocation.getArgument(3);
+                // TODO: 7/9/18 Fix today this test
+                List<Media> removedMedias = null;
                 listener.onRemoveMediaItemFromTrackSuccess(removedMedias);
                 return null;
             }
@@ -172,6 +171,7 @@ public class MusicDetailPresenterTest {
 
         verify(mockedMusicDetailView).goToSoundActivity();
         verify(mockedUserEventTracker).trackMusicSet(currentProject);
+        verify(mockedUpdateComposition).updateComposition(currentProject);
     }
 
     @Test
@@ -230,8 +230,7 @@ public class MusicDetailPresenterTest {
                 mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
                 mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
                 mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
-                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedAssetUploadQueue,
-                mockedRunSyncAdapter, mockedCompositionApiClient, updateComposition);
+                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
@@ -106,6 +107,7 @@ public class RecordCamera2PresenterTest {
 
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
   private Project currentProject;
+  @Mock UpdateComposition mockedUpdateComposition;
 
   @Before
   public void injectMocks() {
@@ -369,7 +371,7 @@ public class RecordCamera2PresenterTest {
     RecordCamera2Presenter recordCamera2Presenter = new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedCameraSettingsRepository, mockedProjectInstanceCache, updateComposition);
+            mockedCameraSettingsRepository, mockedProjectInstanceCache, mockedUpdateComposition);
     recordCamera2Presenter.currentProject = currentProject;
     return recordCamera2Presenter;
   }

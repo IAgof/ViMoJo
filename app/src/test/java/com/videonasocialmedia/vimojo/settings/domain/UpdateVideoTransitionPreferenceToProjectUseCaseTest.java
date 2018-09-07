@@ -41,13 +41,6 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
   }
 
   @Test
-  public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    injectedUseCase.setVideoFadeTransitionActivated(currentProject, false);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void shouldUpdateVideoTransitionPreferenceProjectAfterUseCase(){
     boolean videoTransitionActivated = true;
     assertThat("project videoTransitionPreference false by default ",

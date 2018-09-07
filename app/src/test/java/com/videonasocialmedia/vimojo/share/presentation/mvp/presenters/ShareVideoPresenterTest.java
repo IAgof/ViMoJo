@@ -20,6 +20,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
@@ -57,6 +58,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -88,6 +90,7 @@ public class ShareVideoPresenterTest {
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
+    @Mock UpdateComposition mockedUpdateComposition;
 
     @Before
     public void injectMocks() {
@@ -119,7 +122,7 @@ public class ShareVideoPresenterTest {
                 mockedAddLastVideoExportedUseCase,
                 mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
                 mockedUploadToPlatform, mockedRunSyncAdapterHelper, mockedProjectInstanceCache,
-                mockedUserAuth0Helper, updateComposition);
+                mockedUserAuth0Helper, mockedUpdateComposition);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -375,6 +378,18 @@ public class ShareVideoPresenterTest {
         verify(mockedShareVideoView).showIntentOtherNetwork(videoExportedPath);
     }
 
+    @Test
+    public void addVideoExportedToProjectCallsUseCaseAndUpdateProject() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        String videoPath = "someVideoPath";
+
+        shareVideoPresenter.addVideoExportedToProject(videoPath);
+
+        verify(mockedAddLastVideoExportedUseCase).addLastVideoExportedToProject(any(Project.class),
+            anyString(),anyString());
+        verify(mockedUpdateComposition).updateComposition(currentProject);
+    }
+
     private void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
@@ -391,7 +406,7 @@ public class ShareVideoPresenterTest {
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase,
             mockedUploadToPlatform, mockedRunSyncAdapterHelper,
-            mockedProjectInstanceCache, mockedUserAuth0Helper, updateComposition);
+            mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUpdateComposition);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

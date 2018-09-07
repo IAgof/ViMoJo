@@ -25,7 +25,8 @@ public class RemoveAudioUseCase {
   private final int RESET_POSITION = 0;
 
   @Inject
-  public RemoveAudioUseCase() {
+  public RemoveAudioUseCase(TrackDataSource trackRepository) {
+    this.trackRepository = trackRepository;
   }
 
   // Remove audio only delete track if it is not music track.
