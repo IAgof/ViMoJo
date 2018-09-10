@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 import android.util.Log;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
@@ -41,10 +42,10 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Inject
   public CompositionApiDataSource(CompositionApiClient compositionApiClient,
-                                  UserAuth0Helper userAuth0Helper,
+                                  UserAuth0Helper userAuth0Helper, JobManager jobManager,
                                   AssetApiDataSource assetApiDataSource, GetUserId getUserId,
                                   CompositionToCompositionDtoMapper mapper) {
-    super(userAuth0Helper, getUserId);
+    super(userAuth0Helper, getUserId, jobManager);
     this.compositionApiClient = compositionApiClient;
     this.assetApiDataSource = assetApiDataSource;
     this.mapper = mapper;
@@ -53,19 +54,21 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
   @Override
   public void add(Project item) {
     // create composition -> create track -> create media -> (mediaId)link with asset(assetID) <- asset upload
-    try {
-      String accessToken = getApiAccessToken().get().getAccessToken();
-      String userId = getUserId();
-      CompositionDto createdComposition = this.compositionApiClient
-              .addComposition(mapper.map(item), accessToken);
-      updateTrackMediaAssets(item, createdComposition, userId);
-      Log.d(LOG_TAG, "Composition added to platform!");
-    } catch (VimojoApiException apiError) {
-      processApiError(apiError);
-    } catch (InterruptedException | ExecutionException e) {
-      // TODO(jliarte): 12/07/18 manage this error
-      e.printStackTrace();
-    }
+    CompositionDto compositionDto = mapper.map(item);
+    this.schedule(() -> {
+      addCompositionDto(item, compositionDto);
+      return null;
+    });
+  }
+
+  private void addCompositionDto(Project item, CompositionDto compositionDto)
+          throws ExecutionException, InterruptedException, VimojoApiException {
+    String accessToken = getApiAccessToken().get().getAccessToken();
+    String userId = getUserId();
+    CompositionDto createdComposition = this.compositionApiClient
+            .addComposition(compositionDto, accessToken);
+    updateTrackMediaAssets(item, createdComposition, userId);
+    Log.d(LOG_TAG, "Composition added to platform!");
   }
 
   /**
@@ -74,37 +77,30 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
    * @param createdComposition
    * @param userId API user id
    */
-  private void updateTrackMediaAssets(Project project, CompositionDto createdComposition,
-                                      String userId) {
-    try {
-      String accessToken = getApiAccessToken().get().getAccessToken();
-      CompositionDto composition = this.compositionApiClient
-              .get(createdComposition.getId(), accessToken);
-      if (composition.tracks != null && composition.tracks.size() > 0) {
-        for (TrackDto trackDto : composition.tracks) {
-          if (trackDto.mediaItems != null && trackDto.mediaItems.size() > 0) {
-            for (MediaDto mediaDto : trackDto.mediaItems) {
-              if (mediaDto.getAssetId() == null
-                      || (mediaDto.getAssetId() != null && mediaDto.getAssetId().equals("")) ) {
-                // TODO(jliarte): 18/07/18 set Media id and persist on media repo?
-                Media mediaFromProjectTrack = getMediaFromProjectTrack(project, mediaDto.getId());
-                if (mediaFromProjectTrack != null) {
-                  // TODO(jliarte): 20/07/18 set project Id
-                  Asset asset = new Asset("confiHack", mediaFromProjectTrack);
-                  asset.createdBy = userId;
-                  assetApiDataSource.add(asset);
-                }
+  private void updateTrackMediaAssets(
+          Project project, CompositionDto createdComposition, String userId)
+          throws ExecutionException, InterruptedException, VimojoApiException {
+    String accessToken = getApiAccessToken().get().getAccessToken();
+    CompositionDto composition = this.compositionApiClient
+            .get(createdComposition.getId(), accessToken);
+    if (composition.tracks != null && composition.tracks.size() > 0) {
+      for (TrackDto trackDto : composition.tracks) {
+        if (trackDto.mediaItems != null && trackDto.mediaItems.size() > 0) {
+          for (MediaDto mediaDto : trackDto.mediaItems) {
+            if (mediaDto.getAssetId() == null
+                    || (mediaDto.getAssetId() != null && mediaDto.getAssetId().equals("")) ) {
+              // TODO(jliarte): 18/07/18 set Media id and persist on media repo?
+              Media mediaFromProjectTrack = getMediaFromProjectTrack(project, mediaDto.getId());
+              if (mediaFromProjectTrack != null) {
+                // TODO(jliarte): 20/07/18 set project Id
+                Asset asset = new Asset("confiHack", mediaFromProjectTrack);
+                asset.createdBy = userId;
+                assetApiDataSource.add(asset);
               }
             }
           }
         }
       }
-
-    } catch (VimojoApiException apiError) {
-      processApiError(apiError);
-    } catch (InterruptedException | ExecutionException e) {
-      // TODO(jliarte): 12/07/18 manage this error
-      e.printStackTrace();
     }
   }
 
@@ -134,32 +130,36 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
   @Override
   public void update(Project item) {
     // update composition -> update/create track -> update/create media -> (mediaId)link with asset(assetID) <- asset upload
-    try {
-      String accessToken = getApiAccessToken().get().getAccessToken();
-      String userId = getUserId();
-      CompositionDto createdComposition = this.compositionApiClient
-              .updateComposition(mapper.map(item), accessToken);
-      updateTrackMediaAssets(item, createdComposition, userId);
-      Log.d(LOG_TAG, "Composition added to platform!");
-    } catch (VimojoApiException apiError) {
-      processApiError(apiError);
-    } catch (InterruptedException | ExecutionException e) {
-      // TODO(jliarte): 12/07/18 manage this error
-      e.printStackTrace();
-    }
+    CompositionDto compositionDto = mapper.map(item);
+    schedule(() -> {
+      updateCompositionDto(item, compositionDto);
+      return null;
+    });
+  }
+
+  private void updateCompositionDto(Project item, CompositionDto compositionDto)
+          throws ExecutionException, InterruptedException, VimojoApiException {
+    String accessToken = getApiAccessToken().get().getAccessToken();
+    String userId = getUserId();
+    CompositionDto createdComposition = this.compositionApiClient
+            .updateComposition(compositionDto, accessToken);
+    updateTrackMediaAssets(item, createdComposition, userId);
+    Log.d(LOG_TAG, "Composition updated with platform!");
   }
 
   @Override
   public void remove(Project item) {
-    try {
-      String accessToken = getApiAccessToken().get().getAccessToken();
-      this.compositionApiClient.remove(item.getUuid(), accessToken);
-    } catch (VimojoApiException apiError) {
-      processApiError(apiError);
-    } catch (InterruptedException | ExecutionException e) {
-      // TODO(jliarte): 12/07/18 manage this error
-      e.printStackTrace();
-    }
+    String compositionId = item.getUuid();
+    schedule(() -> {
+      removeCompositionById(compositionId);
+      return null;
+    });
+  }
+
+  private void removeCompositionById(String compositionId)
+          throws ExecutionException, InterruptedException, VimojoApiException {
+    String accessToken = getApiAccessToken().get().getAccessToken();
+    this.compositionApiClient.remove(compositionId, accessToken);
   }
 
   @Override
@@ -169,7 +169,7 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Override
   public List<Project> query(Specification specification) {
-    return null;
+    return Collections.emptyList();
   }
 
   @Override

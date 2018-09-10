@@ -132,7 +132,9 @@ public class ProjectRepository extends VimojoRepository<Project> {
                                           List<Project> apiCompositions) {
     HashMap<String, Project> compositionHash = new HashMap<>();
     for (Project project : realmProjects) {
-      compositionHash.put(project.getUuid(), project);
+      if (project != null) { // TODO(jliarte): 7/09/18 workarround for fixing local null project NPE - research reason
+        compositionHash.put(project.getUuid(), project);
+      }
     }
     for (Project apiComposition : apiCompositions) {
       if (compositionHash.get(apiComposition.getUuid()) != null) {

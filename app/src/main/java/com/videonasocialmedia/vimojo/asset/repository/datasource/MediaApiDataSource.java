@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import android.util.Log;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.MediaToMediaDtoMapper;
@@ -34,8 +35,9 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
 
   @Inject
   protected MediaApiDataSource(UserAuth0Helper userAuth0Helper, MediaApiClient mediaApiClient,
-                               AssetApiDataSource assetApiDataSource, GetUserId getUserId) {
-    super(userAuth0Helper, getUserId);
+                               JobManager jobManager, AssetApiDataSource assetApiDataSource,
+                               GetUserId getUserId) {
+    super(userAuth0Helper, getUserId, jobManager);
     this.mediaApiClient = mediaApiClient;
     this.assetApiDataSource = assetApiDataSource;
   }
@@ -52,18 +54,19 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
 
   @Override
   public void update(Media item) {
-    try {
-      String accessToken = getApiAccessToken().get().getAccessToken();
-      MediaDto mediaDto = mediaApiClient.update(mapper.map(item), accessToken);
-      // TODO(jliarte): 23/07/18 set asset by asset hash
-      addOrUpdateAsset(item, mediaDto);
-    } catch (InterruptedException | ExecutionException e) {
-      // TODO(jliarte): 12/07/18 manage this error - unable to get access token
-      Log.d(LOG_TAG, "media ApiDS.update - unable to get access token");
-      e.printStackTrace();
-    } catch (VimojoApiException e) {
-      e.printStackTrace();
-    }
+    MediaDto mediaDtoToUpdate = mapper.map(item);
+    schedule(() -> {
+      updateMediaDto(item, mediaDtoToUpdate);
+      return null;
+    });
+  }
+
+  private void updateMediaDto(Media item, MediaDto mediaDtoToUpdate)
+          throws ExecutionException, InterruptedException, VimojoApiException {
+    String accessToken = getApiAccessToken().get().getAccessToken();
+    MediaDto mediaDto = mediaApiClient.update(mediaDtoToUpdate, accessToken);
+    // TODO(jliarte): 23/07/18 set asset by asset hash
+    addOrUpdateAsset(item, mediaDto);
   }
 
   private void addOrUpdateAsset(Media media, MediaDto mediaDto) {
@@ -75,16 +78,17 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
 
   @Override
   public void remove(Media item) {
-    try {
-      String accessToken = getApiAccessToken().get().getAccessToken();
-      mediaApiClient.remove(mapper.map(item), accessToken);
-    } catch (InterruptedException | ExecutionException e) {
-      // TODO(jliarte): 12/07/18 manage this error - unable to get access token
-      Log.d(LOG_TAG, "media api data source get - unable to get access token");
-      e.printStackTrace();
-    } catch (VimojoApiException e) {
-      e.printStackTrace();
-    }
+    MediaDto mediaDto = mapper.map(item);
+    schedule(() -> {
+      removeMediaDto(mediaDto);
+      return null;
+    });
+  }
+
+  private void removeMediaDto(MediaDto mediaDto)
+          throws ExecutionException, InterruptedException, VimojoApiException {
+    String accessToken = getApiAccessToken().get().getAccessToken();
+    mediaApiClient.remove(mediaDto, accessToken);
   }
 
   @Override

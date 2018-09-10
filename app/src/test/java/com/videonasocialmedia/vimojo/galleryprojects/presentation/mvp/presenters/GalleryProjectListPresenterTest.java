@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters;
 
-import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;

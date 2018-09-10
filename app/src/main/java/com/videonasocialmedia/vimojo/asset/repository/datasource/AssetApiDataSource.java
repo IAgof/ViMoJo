@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import android.util.Log;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.AssetToAssetDtoMapper;
@@ -18,7 +19,6 @@ import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetDto;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.AssetQuery;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,9 +39,9 @@ public class AssetApiDataSource extends ApiDataSource<Asset> {
 
   @Inject
   public AssetApiDataSource(UserAuth0Helper userAuth0Helper, AssetUploadQueue assetUploadQueue,
-                            RunSyncAdapterHelper runSyncAdapterHelper,
+                            RunSyncAdapterHelper runSyncAdapterHelper, JobManager jobManager,
                             AssetApiClient assetApiClient, GetUserId getUserId) {
-    super(userAuth0Helper, getUserId);
+    super(userAuth0Helper, getUserId, jobManager);
     this.assetUploadQueue = assetUploadQueue;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.assetApiClient = assetApiClient;
