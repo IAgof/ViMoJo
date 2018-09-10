@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.vimojoapiclient.AssetApiClient;
@@ -39,9 +40,10 @@ public class AssetApiDataSource extends ApiDataSource<Asset> {
 
   @Inject
   public AssetApiDataSource(UserAuth0Helper userAuth0Helper, AssetUploadQueue assetUploadQueue,
-                            RunSyncAdapterHelper runSyncAdapterHelper, JobManager jobManager,
-                            AssetApiClient assetApiClient, GetUserId getUserId) {
-    super(userAuth0Helper, getUserId, jobManager);
+                            RunSyncAdapterHelper runSyncAdapterHelper,
+                            AssetApiClient assetApiClient, GetUserId getUserId,
+                            BackgroundScheduler backgroundScheduler) {
+    super(userAuth0Helper, getUserId, backgroundScheduler);
     this.assetUploadQueue = assetUploadQueue;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.assetApiClient = assetApiClient;
