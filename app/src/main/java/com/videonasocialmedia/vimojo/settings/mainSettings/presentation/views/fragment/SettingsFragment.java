@@ -121,29 +121,14 @@ public class SettingsFragment extends PreferenceFragment implements
     setupLicense();
     setupLegalNotice();
     setupThemeApp();
+    setupTransitions();
   }
 
-  @Override
-  public void setupTransitions(boolean hideTransitionPreference) {
+  private void setupTransitions() {
     transitionsVideoPref = (SwitchPreference)
-            findPreference(ConfigPreferences.TRANSITION_VIDEO);
+        findPreference(ConfigPreferences.TRANSITION_VIDEO);
     transitionsAudioPref = (SwitchPreference)
-            findPreference(ConfigPreferences.TRANSITION_AUDIO);
-    if (hideTransitionPreference) {
-      hideTransitions();
-    }
-  }
-
-  private void hideTransitions() {
-    transitionCategory = (PreferenceCategory)
-            findPreference(getString(R.string.title_fade_transition));
-    if (transitionCategory != null) {
-      getPreferenceScreen().removePreference(transitionCategory);
-    }
-  }
-
-  private void activeTransitions() {
-
+        findPreference(ConfigPreferences.TRANSITION_AUDIO);
   }
 
   private void setupWatermark() {
@@ -339,6 +324,15 @@ public class SettingsFragment extends PreferenceFragment implements
             findPreference(getString(R.string.title_more_apps_section));
     if (moreAppsPrefCategory != null) {
       getPreferenceScreen().removePreference(moreAppsPrefCategory);
+    }
+  }
+
+  @Override
+  public void hideTransitions() {
+    transitionCategory = (PreferenceCategory)
+        findPreference(getString(R.string.title_fade_transition));
+    if (transitionCategory != null) {
+      getPreferenceScreen().removePreference(transitionCategory);
     }
   }
 

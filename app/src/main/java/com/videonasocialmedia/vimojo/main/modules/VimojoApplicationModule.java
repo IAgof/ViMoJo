@@ -22,12 +22,6 @@ import dagger.Provides;
 @Module
 public class VimojoApplicationModule {
   private final VimojoApplication vimojoApplication;
-  private int defaultCameraIdSelected;
-
-  public VimojoApplicationModule(VimojoApplication application, int defaultCameraIdSelected) {
-    vimojoApplication = application;
-    this.defaultCameraIdSelected = defaultCameraIdSelected;
-  }
 
   public VimojoApplicationModule(VimojoApplication application) {
     vimojoApplication = application;
@@ -41,10 +35,11 @@ public class VimojoApplicationModule {
   @Provides
   ProfileRepository provideProfileRepository(
           CameraSettingsDataSource cameraSettingsRepository,
-          @Named("showCameraProAvailable") boolean showCameraPro,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          //@Named("showCameraProAvailable") boolean showCameraPro,
           @Named("defaultResolutionSetting") String defaultResolutionSetting) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository,
-            defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
+            amIAVerticalApp, false, defaultResolutionSetting);
   }
 
   @Provides @Singleton

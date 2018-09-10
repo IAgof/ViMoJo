@@ -77,6 +77,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "http://35.174.99.151/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
@@ -145,6 +146,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
@@ -182,6 +184,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://market4news.com/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
@@ -221,6 +224,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
@@ -242,6 +246,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
@@ -263,6 +268,7 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"

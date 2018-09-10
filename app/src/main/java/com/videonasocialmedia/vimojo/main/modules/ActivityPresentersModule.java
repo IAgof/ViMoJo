@@ -117,10 +117,14 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.AuthApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 
 /**
  * Created by jliarte on 1/12/16.
@@ -153,14 +157,13 @@ public class ActivityPresentersModule {
   public ActivityPresentersModule(RecordCamera2Activity activity,
                                   String directorySaveVideos,
                                   AutoFitTextureView textureView,
-                                  long freeStorage, int defaultCameraIdSelected) {
+                                  long freeStorage) {
     this.activity = activity;
     this.textureView = textureView;
     this.directorySaveVideos = directorySaveVideos;
     this.freeStorage = freeStorage;
     this.currentProject = ((VimojoApplication)this.activity.getApplication()).getCurrentProject();
     this.projectInstanceCache = (ProjectInstanceCache) this.activity.getApplication();
-    this.defaultCameraIdSelected = defaultCameraIdSelected;
   }
 
   @Provides @PerActivity
@@ -604,9 +607,10 @@ public class ActivityPresentersModule {
   @Provides ProfileRepository provideProfileRepository(
           CameraSettingsDataSource cameraSettingsRepository,
           @Named("showCameraProAvailable") boolean showCameraPro,
-          @Named("defaultResolutionSetting") String defaultResolutionSetting) {
+          @Named("defaultResolutionSetting") String defaultResolutionSetting,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new ProfileRepositoryFromCameraSettings(cameraSettingsRepository,
-        defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
+        amIAVerticalApp, showCameraPro, defaultResolutionSetting);
   }
 
   @Provides ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {

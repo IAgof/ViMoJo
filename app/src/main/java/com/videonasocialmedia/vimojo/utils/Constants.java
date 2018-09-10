@@ -164,7 +164,6 @@ public class Constants {
   public static final boolean DEFAULT_FORCE_WATERMARK = false;
   public static final boolean DEFAULT_FTP = false;
   public static final boolean DEFAULT_SHOW_ADS = true;
-  public static final boolean DEFAULT_VIMOJO_PLATFORM = false;
   public static final boolean DEFAULT_VIMOJO_STORE = true;
   public static final boolean DEFAULT_VOICE_OVER = false;
   public static final boolean DEFAULT_WATERMARK = true;

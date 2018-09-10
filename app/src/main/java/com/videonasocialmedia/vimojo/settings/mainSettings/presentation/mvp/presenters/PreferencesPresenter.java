@@ -177,7 +177,9 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void setupTransitions() {
-    preferencesView.setupTransitions(hideTransitionPreference);
+    if (hideTransitionPreference) {
+      preferencesView.hideTransitions();
+    }
   }
 
   private void setupMoreApps() {

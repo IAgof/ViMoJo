@@ -23,6 +23,8 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 
 /**
  * Created by jliarte on 28/11/17.
@@ -46,9 +48,13 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private HashMap<String, VideoResolution.Resolution> resolutionMap;
 
   public ProfileRepositoryFromCameraSettings(CameraSettingsDataSource cameraSettingsRepository,
-                                             int defaultCameraIdSelected, boolean showCameraPro,
+                                             boolean amIAVerticalApp, boolean showCameraPro,
                                              String defaultResolutionSetting) {
     this.cameraSettingsRepository = cameraSettingsRepository;
+    int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    if (amIAVerticalApp) {
+      defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
+    }
     if (this.cameraSettingsRepository.getCameraSettings() == null) {
       createDefaultCameraSettings(defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
     }

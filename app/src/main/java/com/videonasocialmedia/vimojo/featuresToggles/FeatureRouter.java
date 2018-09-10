@@ -19,7 +19,6 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FTP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SELECT_FRAME_RATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SELECT_RESOLUTION;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SHOW_ADS;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_VIMOJO_PLATFORM;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_VIMOJO_STORE;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_VOICE_OVER;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK;
@@ -47,8 +46,6 @@ class FeatureRouter {
             new FeatureToggle(Constants.USER_FEATURE_WATERMARK, DEFAULT_WATERMARK));
     defaultMap.put(Constants.FEATURE_VIMOJO_STORE,
             new FeatureToggle(Constants.FEATURE_VIMOJO_STORE, DEFAULT_VIMOJO_STORE));
-    defaultMap.put(Constants.FEATURE_VIMOJO_PLATFORM,
-            new FeatureToggle(Constants.FEATURE_VIMOJO_PLATFORM, DEFAULT_VIMOJO_PLATFORM));
     defaultMap.put(Constants.USER_FEATURE_FTP_PUBLISHING,
             new FeatureToggle(Constants.USER_FEATURE_FTP_PUBLISHING, DEFAULT_FTP));
     defaultMap.put(Constants.FEATURE_ADS_ENABLED,
@@ -82,6 +79,8 @@ class FeatureRouter {
         new FeatureToggle(Constants.FEATURE_VERTICAL_VIDEOS, BuildConfig.FEATURE_VERTICAL_VIDEOS));
     releaseMap.put(Constants.FEATURE_OUT_OF_DATE,
         new FeatureToggle(Constants.FEATURE_OUT_OF_DATE, BuildConfig.FEATURE_OUT_OF_DATE));
+    releaseMap.put(Constants.FEATURE_VIMOJO_PLATFORM,
+        new FeatureToggle(Constants.FEATURE_VIMOJO_PLATFORM, BuildConfig.FEATURE_VIMOJO_PLATFORM));
   }
 
   public boolean isEnabled(String feature) {

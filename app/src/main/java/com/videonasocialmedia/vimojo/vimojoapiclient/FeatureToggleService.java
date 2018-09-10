@@ -25,10 +25,10 @@ import retrofit2.http.QueryMap;
  * Class describing feature toggle vimojo API services.
  */
 public interface FeatureToggleService {
-  @GET("user/{userId}/feature")
+  @GET("user/{userId}/userFeature")
   Call<List<FeatureToggleDto>> getUserFeatures(@Path("userId") String userId);
 
-  @GET("user/{userId}/feature")
+  @GET("user/{userId}/userFeature")
   Call<List<FeatureToggleDto>> getUserFeature(@Path("userId") String userId,
                                         @QueryMap Map<String, Object> query);
 }

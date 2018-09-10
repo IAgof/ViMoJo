@@ -407,13 +407,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
-    int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-    if (amIAVerticalApp) {
-      defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
-    }
     return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
-        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())),
-        defaultCameraIdSelected);
+        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())));
   }
 
   private void keepScreenOn() {

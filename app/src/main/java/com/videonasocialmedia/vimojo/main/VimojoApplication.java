@@ -33,6 +33,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.featuresToggles.FeatureDecisions;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
@@ -75,8 +76,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
     @Inject SharedPreferences sharedPreferences;
     @Inject SaveComposition saveComposition;
-    @Inject @Named("watermarkIsForced") boolean watermarkIsForced;
-    @Inject @Named("amIAVerticalApp") boolean amIAVerticalApp;
+    @Inject FeatureDecisions featureDecisions;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -180,13 +180,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     public VimojoApplicationModule getVimojoApplicationModule() {
-        int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-        if (amIAVerticalApp) {
-            defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
-        }
         if (vimojoApplicationModule == null) {
-            vimojoApplicationModule = new VimojoApplicationModule(this,
-                defaultCameraIdSelected);
+            vimojoApplicationModule = new VimojoApplicationModule(this);
         }
         return vimojoApplicationModule;
     }
@@ -206,7 +201,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
 
     private void fetchFeatureToggles() {
         // TODO(jliarte): 3/09/18 should we call fetch use case?
-        featureRepository.fetch();
+        ListeningExecutorService executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        executorPool.submit(() -> featureRepository.fetch());
     }
 
     protected void attachBaseContext(Context base) {
@@ -241,7 +237,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
-                    drawableFadeTransitionVideo, amIAVerticalApp);
+                    drawableFadeTransitionVideo, featureDecisions.amIAVerticalApp());
             ListeningExecutorService executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
             executorPool.submit(() -> saveComposition.saveComposition(project));
             return project;
@@ -251,7 +247,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     private boolean isWatermarkActivated() {
-        return watermarkIsForced
+        return featureDecisions.watermarkIsForced()
             || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
     }
 
