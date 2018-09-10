@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 
@@ -38,6 +39,8 @@ public class UserProfilePresenterTest {
   @Mock ObtainLocalVideosUseCase mockedObtainLocalVideosUseCase;
   @Mock Activity mockedActivity;
   @Mock UserAuth0Helper mockedUserAuth0Helper;
+  @Mock FetchUserFeatures mockedFetchUserFeatures;
+  private boolean vimojoPlatformAvailable;
 
   @Before
   public void injectMocks() {
@@ -98,6 +101,7 @@ public class UserProfilePresenterTest {
   @NonNull
   private UserProfilePresenter getUserProfilePresenter() {
     return new UserProfilePresenter(mockedUserProfileView, mockedSharedPreferences,
-            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper);
+            mockedObtainLocalVideosUseCase, mockedUserAuth0Helper, mockedFetchUserFeatures,
+            vimojoPlatformAvailable);
   }
 }

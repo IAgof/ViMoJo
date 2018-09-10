@@ -57,7 +57,7 @@ public class UserProfilePresenter extends VimojoPresenter {
     setupUserInfo();
   }
 
-  private void getInfoVideosRecordedEditedShared() {
+  protected void getInfoVideosRecordedEditedShared() {
     userProfileView.showLoading();
 
     int videosRecorded = sharedPreferences

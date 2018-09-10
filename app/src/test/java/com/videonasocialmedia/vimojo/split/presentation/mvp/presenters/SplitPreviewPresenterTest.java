@@ -66,6 +66,7 @@ public class SplitPreviewPresenterTest {
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
     @Mock UpdateComposition mockedUpdateComposition;
+    private boolean amIAVerticalApp;
 
     @Before
     public void injectMocks() {
@@ -83,8 +84,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(
                 mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                mockedUpdateComposition);
-                updateComposition, amIAVerticalApp);
+                mockedUpdateComposition, amIAVerticalApp);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -137,8 +137,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(
                 mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                updateComposition, amIAVerticalApp);
-                mockedUpdateComposition);
+                mockedUpdateComposition, amIAVerticalApp);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }

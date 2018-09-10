@@ -56,6 +56,8 @@ public class GalleryProjectListPresenterTest {
   @Mock DeleteComposition mockedDeleteComposition;
   @Mock SaveComposition mockedSaveComposition;
   private Project currentProject;
+  private boolean amIAVerticalApp;
+  private boolean watermarkIsForced;
 
   @Before
   public void injectMocks() {
@@ -146,6 +148,7 @@ public class GalleryProjectListPresenterTest {
     return new GalleryProjectListPresenter(mockedGalleryProjectListView, mockedSharedPreferences,
         mockedProjectRepository, mockedCreateDefaultUseCase, mockedDuplicateProjectUseCase,
         mockedDeleteComposition, mockedProjectInstanceCache, mockedSaveComposition,
-        mockedUpdateComposition, mockedGetCompositions, mockedGetCompositionAssets);
+        mockedUpdateComposition, mockedGetCompositions, mockedGetCompositionAssets,
+        watermarkIsForced, amIAVerticalApp);
   }
 }

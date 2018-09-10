@@ -63,7 +63,6 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
@@ -108,6 +107,9 @@ public class RecordCamera2PresenterTest {
   @InjectMocks private RecordCamera2Presenter injectedPresenter;
   private Project currentProject;
   @Mock UpdateComposition mockedUpdateComposition;
+  private boolean hideRecordAudioGain;
+  private boolean hideTutorialsDecision;
+  private boolean amIAVerticalApp;
 
   @Before
   public void injectMocks() {
@@ -371,7 +373,8 @@ public class RecordCamera2PresenterTest {
     RecordCamera2Presenter recordCamera2Presenter = new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedCameraSettingsRepository, mockedProjectInstanceCache, mockedUpdateComposition);
+            mockedCameraSettingsRepository, mockedProjectInstanceCache, mockedUpdateComposition,
+            hideRecordAudioGain, hideTutorialsDecision, amIAVerticalApp);
     recordCamera2Presenter.currentProject = currentProject;
     return recordCamera2Presenter;
   }
@@ -384,7 +387,8 @@ public class RecordCamera2PresenterTest {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
-    ResolutionSetting resolutionSetting = new ResolutionSetting(DEFAULT_CAMERA_SETTING_RESOLUTION,
+    ResolutionSetting resolutionSetting = new
+        ResolutionSetting(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720,
         resolutionsSupportedMap);
     HashMap<Integer, Boolean> frameRatesSupportedMap = new HashMap<>();
     frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);

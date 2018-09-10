@@ -26,7 +26,6 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -39,6 +38,9 @@ import static org.mockito.Matchers.any;
  */
 
 public class CameraSettingsRealmDataSourceTest {
+
+  private String DEFAULT_CAMERA_SETTING_RESOLUTION =
+      ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
 
   @Before
   public void init() {

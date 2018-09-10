@@ -11,6 +11,7 @@ package com.videonasocialmedia.vimojo.featuresToggles.repository.datasource;
  * Created by alvaro on 30/8/18.
  */
 
+import com.birbit.android.jobqueue.JobManager;
 import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.Specification;
@@ -39,8 +40,9 @@ public class FeatureApiDataSource extends ApiDataSource<FeatureToggle> {
   @Inject
   protected FeatureApiDataSource(UserAuth0Helper userAuth0Helper, GetUserId getUserId,
                                  FeatureToggleApiClient featureToggleApiClient,
-                                 FeatureToggleToFeatureToggleDtoMapper mapper) {
-    super(userAuth0Helper, getUserId);
+                                 FeatureToggleToFeatureToggleDtoMapper mapper,
+                                 JobManager jobManager) {
+    super(userAuth0Helper, getUserId, jobManager);
     this.featureToggleApiClient = featureToggleApiClient;
     this.mapper = mapper;
   }

@@ -24,7 +24,9 @@ public class MockedVimojoApplicationModule extends VimojoApplicationModule {
   }
 
   @Override
-  ProfileRepository provideProfileRepository(CameraSettingsDataSource cameraSettingsRepository) {
+  ProfileRepository provideProfileRepository(CameraSettingsDataSource cameraSettingsRepository,
+                                             boolean amIAVerticalApp,
+                                             String defaultResolutionSetting) {
     return mock(ProfileRepository.class);
   }
 

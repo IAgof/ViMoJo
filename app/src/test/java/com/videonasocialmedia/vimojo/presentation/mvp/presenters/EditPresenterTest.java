@@ -64,7 +64,7 @@ public class EditPresenterTest {
   @Mock UpdateComposition mockedUpdateComposition;
   @Mock RemoveMedia mockedRemoveMedia;
   private Project currentProject;
-
+  private boolean amIAVerticalApp;
 
   @Before
   public void injectTestDoubles() {
@@ -171,7 +171,7 @@ public class EditPresenterTest {
             mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
             mockedMediaItemReorderer, mockedProjectInstantCache, mockedUpdateComposition,
-            mockedRemoveMedia);
+            mockedRemoveMedia, amIAVerticalApp);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

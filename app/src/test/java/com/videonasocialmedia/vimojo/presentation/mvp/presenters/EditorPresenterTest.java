@@ -100,6 +100,12 @@ public class EditorPresenterTest {
   private boolean hasBeenProjectExported = false;
   private String videoExportedPath = "videoExportedPath";
   private String currentAppliedTheme = "dark";
+  private boolean showWaterMarkSwitch;
+  private boolean vimojoStoreAvailable;
+  private boolean vimojoPlatformAvailable;
+  private boolean watermarkIsForced;
+  private boolean hideTutorials;
+  private boolean amIAVerticalApp;
 
   @Before
   public void injectMocks() {
@@ -121,7 +127,8 @@ public class EditorPresenterTest {
             mockedRelaunchTranscoderTempBackgroundUseCase,
             mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
             mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
-            mockedUpdateComposition);
+            mockedUpdateComposition, showWaterMarkSwitch, vimojoStoreAvailable,
+            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
@@ -444,7 +451,8 @@ public class EditorPresenterTest {
             mockedRelaunchTranscoderTempBackgroundUseCase,
             mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
             mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
-            mockedUpdateComposition);
+            mockedUpdateComposition,showWaterMarkSwitch, vimojoStoreAvailable,
+            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp );
     editorPresenter.currentProject = currentProject;
     return editorPresenter;
   }

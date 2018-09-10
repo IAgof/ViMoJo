@@ -65,6 +65,7 @@ public class VoiceOverRecordPresenterTest {
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
+  private boolean amIAVerticalApp;
 
   @Before
   public void injectTestDoubles() {
@@ -193,7 +194,7 @@ public class VoiceOverRecordPresenterTest {
             mockedContext, mockedVoiceOverRecordView, mockedGetMediaListFromProjectUseCase,
             mockedGetPreferencesTransitionFromProjectUseCase, mockedAddAudioUseCase,
             mockedRemoveAudioUseCase, mockedUserEventTracker, mockedProjectInstanceCache,
-            mockedUpdateComposition);
+            mockedUpdateComposition, amIAVerticalApp);
     voiceOverRecordPresenter.currentProject = currentProject;
     return voiceOverRecordPresenter;
   }

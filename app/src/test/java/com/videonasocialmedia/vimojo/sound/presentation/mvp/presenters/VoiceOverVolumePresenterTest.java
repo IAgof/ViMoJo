@@ -52,6 +52,7 @@ public class VoiceOverVolumePresenterTest {
   @Mock UpdateComposition mockedUpdateComposition;
 
   private Project currentProject;
+  private boolean amIAVerticalApp;
 
   @Before
   public void injectTestDoubles() {
@@ -92,7 +93,7 @@ public class VoiceOverVolumePresenterTest {
         mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
-        mockedProjectInstanceCache, mockedUpdateComposition);
+        mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

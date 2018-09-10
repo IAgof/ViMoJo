@@ -29,7 +29,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   private static final float VOLUME_MUTE = 0f;
   protected Project currentProject;
   private UpdateComposition updateComposition;
-  private boolean voiceOverAvailable;
+  protected boolean voiceOverAvailable;
 
   @Inject
   public SoundPresenter(
@@ -89,7 +89,6 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   }
 
   protected void checkVoiceOverFeatureToggle() {
-//    voiceOverAvailable = userFeatures.isVoiceOver();
     if (voiceOverAvailable) {
       soundView.addVoiceOverOptionToFab();
     } else {

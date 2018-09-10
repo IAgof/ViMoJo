@@ -51,6 +51,7 @@ public class TimeLineBugEditPresenterTest {
   @Mock UpdateComposition updateComposition;
   @Mock RemoveMedia removeMedia;
   private Project currentProject;
+  private boolean amIAVerticalApp;
 
 
   @Before
@@ -73,7 +74,8 @@ public class TimeLineBugEditPresenterTest {
     EditPresenter editPresenter = new EditPresenter(
             mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
-            mockedMediaItemReorderer, mockedProjectInstanceCache, updateComposition, removeMedia);
+            mockedMediaItemReorderer, mockedProjectInstanceCache, updateComposition, removeMedia,
+            amIAVerticalApp);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

@@ -44,6 +44,11 @@ public class InitAppPresenterTest {
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock SaveComposition mockedSaveComposition;
   private Project currentProject;
+  private boolean watermarkIsForced;
+  private boolean showAds;
+  private boolean amIAVerticalApp;
+  private String defaultResolutionSetting;
+  private boolean isAppOutOfDate;
 
 
   @Before
@@ -65,7 +70,8 @@ public class InitAppPresenterTest {
   private InitAppPresenter getInitAppPresenter() {
     return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
         mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
-        mockedProjectInstanceCache, mockedSaveComposition, watermarkIsForced, showAds);
+        mockedProjectInstanceCache, mockedSaveComposition, watermarkIsForced, showAds,
+        amIAVerticalApp, defaultResolutionSetting, isAppOutOfDate);
   }
 
   public void getAProject() {

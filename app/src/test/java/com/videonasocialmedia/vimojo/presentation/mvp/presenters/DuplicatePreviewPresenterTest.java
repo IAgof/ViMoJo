@@ -54,6 +54,7 @@ public class DuplicatePreviewPresenterTest {
     @Mock UpdateComposition mockedUpdateComposition;
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
+    private boolean amIAVerticalApp;
 
     @Before
     public void injectMocks() {
@@ -72,7 +73,7 @@ public class DuplicatePreviewPresenterTest {
                 new DuplicatePreviewPresenter(
                         mockedDuplicateView, userEventTracker, mockedAddVideoToProjectUseCase,
                         mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                        mockedUpdateComposition);
+                        mockedUpdateComposition, amIAVerticalApp);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -111,7 +112,7 @@ public class DuplicatePreviewPresenterTest {
         DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(
                 mockedDuplicateView, mockedUserEventTracker, mockedAddVideoToProjectUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                mockedUpdateComposition);
+                mockedUpdateComposition, amIAVerticalApp);
         duplicatePreviewPresenter.currentProject = currentProject;
         return  duplicatePreviewPresenter;
     }

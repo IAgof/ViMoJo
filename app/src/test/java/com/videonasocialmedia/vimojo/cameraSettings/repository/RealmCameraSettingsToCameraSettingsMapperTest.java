@@ -19,6 +19,9 @@ import static org.junit.Assert.assertThat;
 
 public class RealmCameraSettingsToCameraSettingsMapperTest {
 
+  private String DEFAULT_CAMERA_SETTING_RESOLUTION =
+      ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+
   @Test
   public void testMapReturnsCameraSettingsObject() {
     RealmCameraSettings realmCameraSettings = new RealmCameraSettings();
@@ -33,7 +36,7 @@ public class RealmCameraSettingsToCameraSettingsMapperTest {
   public void testMapReturnsCameraSettingsWithFieldsMapped() {
     RealmCameraSettings defaultRealmCameraSettings = new RealmCameraSettings("cameraSettingsId",
         Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED,
-        Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, Constants.DEFAULT_CAMERA_SETTING_QUALITY,
+        DEFAULT_CAMERA_SETTING_RESOLUTION, Constants.DEFAULT_CAMERA_SETTING_QUALITY,
         Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE, true, true, false, true, true, false, false,
         false, true, Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED);
     RealmCameraSettingsToCameraSettingsMapper mapper = new RealmCameraSettingsToCameraSettingsMapper();
@@ -46,7 +49,7 @@ public class RealmCameraSettingsToCameraSettingsMapperTest {
     assertThat(cameraSettings.getFrameRateSetting().getFrameRate(),
         is(Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE));
     assertThat(cameraSettings.getResolutionSetting().getResolution(),
-        is(Constants.DEFAULT_CAMERA_SETTING_RESOLUTION));
+        is(DEFAULT_CAMERA_SETTING_RESOLUTION));
     assertThat(cameraSettings.getResolutionSetting().getResolutionsSupportedMap()
                     .get(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID), is(true));
     assertThat(cameraSettings.getResolutionSetting().getResolutionsSupportedMap()

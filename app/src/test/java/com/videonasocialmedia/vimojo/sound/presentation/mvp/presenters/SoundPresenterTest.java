@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class SoundPresenterTest {
   @Mock ProjectInstanceCache mockedProjectInstantCache;
   @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
+  private boolean voiceOverAvailable;
 
   @Before
   public void init() {
@@ -106,22 +108,20 @@ public class SoundPresenterTest {
 
   @Test
   public void ifProjectHasNotEnableVoiceOverCallsHideVoiceOverCardView() {
-    // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
-    boolean FEATURE_TOGGLE_VOICE_OVER = false;
-    SoundPresenter soundPresenter = getSoundPresenter();
+    SoundPresenter spySoundPresenter = Mockito.spy(getSoundPresenter());
+    spySoundPresenter.voiceOverAvailable = false;
 
-    soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    spySoundPresenter.checkVoiceOverFeatureToggle();
 
     verify(mockedSoundView).hideVoiceOverTrack();
   }
 
   @Test
   public void ifProjectHasEnableVoiceOverCallsAddVoiceOverToFabButton() {
-    // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
-    boolean FEATURE_TOGGLE_VOICE_OVER = true;
-    SoundPresenter soundPresenter = getSoundPresenter();
+    SoundPresenter spySoundPresenter = Mockito.spy(getSoundPresenter());
+    spySoundPresenter.voiceOverAvailable = true;
 
-    soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    spySoundPresenter.checkVoiceOverFeatureToggle();
 
     verify(mockedSoundView).addVoiceOverOptionToFab();
   }
@@ -151,8 +151,7 @@ public class SoundPresenterTest {
   @NonNull
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
-        mockedProjectInstantCache, mockedCompositionApiClient, voiceOverAvailable);
-        mockedProjectInstantCache, mockedUpdateComposition);
+        mockedProjectInstantCache, mockedUpdateComposition, voiceOverAvailable);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

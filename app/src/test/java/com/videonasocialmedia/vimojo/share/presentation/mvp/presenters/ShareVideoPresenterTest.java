@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositio
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -91,6 +92,11 @@ public class ShareVideoPresenterTest {
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
     @Mock UpdateComposition mockedUpdateComposition;
+    @Mock FetchUserFeatures mockedFetchUserFeatures;
+    private boolean vimojoPlatformAvailable;
+    private boolean ftpPublishingAvailable;
+    private boolean showAds;
+    private boolean showSocialNetworksDecision;
 
     @Before
     public void injectMocks() {
@@ -119,10 +125,11 @@ public class ShareVideoPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
                 mockedShareVideoView, userEventTracker, mockedSharedPreferences,
-                mockedAddLastVideoExportedUseCase,
-                mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedUploadToPlatform, mockedRunSyncAdapterHelper, mockedProjectInstanceCache,
-                mockedUserAuth0Helper, mockedUpdateComposition);
+                mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
+                mockedShareNetworksProvider, mockedFtpListUseCase, mockedUploadToPlatform,
+                mockedRunSyncAdapterHelper, mockedProjectInstanceCache, mockedUserAuth0Helper,
+                mockedUpdateComposition, mockedFetchUserFeatures, vimojoPlatformAvailable,
+                ftpPublishingAvailable, showAds, showSocialNetworksDecision);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -406,7 +413,9 @@ public class ShareVideoPresenterTest {
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase,
             mockedUploadToPlatform, mockedRunSyncAdapterHelper,
-            mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUpdateComposition);
+            mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUpdateComposition,
+            mockedFetchUserFeatures, vimojoPlatformAvailable,
+            ftpPublishingAvailable, showAds, showSocialNetworksDecision);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

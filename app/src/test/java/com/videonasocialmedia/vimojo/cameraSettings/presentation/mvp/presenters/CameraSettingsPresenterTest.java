@@ -41,7 +41,6 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,6 +68,14 @@ public class CameraSettingsPresenterTest {
   @Mock SetCompositionQuality mockedSetCompositionQuality;
   @Mock SetCompositionFrameRate mockedSetCompositionFrameRate;
   @Mock SetCompositionResolution mockedSetCompositionResolution;
+  private String DEFAULT_CAMERA_SETTING_RESOLUTION =
+      ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+  private boolean showCameraPro;
+  private boolean allowSelectFrameRate;
+  private boolean allowSelectResolution;
+  private boolean amIAVerticalApp;
+  private String defaultResolutionSetting;
+  private VideoResolution.Resolution defaultVideoResolution;
 
   @Before
   public void injectMocks() {
@@ -83,7 +90,9 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
         mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
-        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution);
+        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution,
+        showCameraPro, allowSelectFrameRate, allowSelectResolution, amIAVerticalApp,
+        defaultResolutionSetting, defaultVideoResolution);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -154,7 +163,9 @@ public class CameraSettingsPresenterTest {
     CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, mockedUserEventTracker, mockedGetSettingListUseCase,
         mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
-        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution);
+        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution,
+        showCameraPro, allowSelectFrameRate, allowSelectResolution, amIAVerticalApp,
+        defaultResolutionSetting, defaultVideoResolution);
     cameraSettingsPresenter.currentProject = currentProject;
     return cameraSettingsPresenter;
   }

@@ -71,6 +71,7 @@ public class MusicDetailPresenterTest {
     private String musicPath = "music/path";
     private List<Music> musicList = new ArrayList<>();
     @Mock UpdateComposition mockedUpdateComposition;
+    private boolean amIAVerticalApp;
 
     @Before
     public void injectMocks() {
@@ -230,7 +231,8 @@ public class MusicDetailPresenterTest {
                 mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
                 mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
                 mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
-                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition);
+                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
+                amIAVerticalApp);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

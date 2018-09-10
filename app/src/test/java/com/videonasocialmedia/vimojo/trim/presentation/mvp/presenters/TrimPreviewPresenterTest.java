@@ -62,6 +62,7 @@ public class TrimPreviewPresenterTest {
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
     @Mock UpdateComposition mockedUpdateComposition;
+    private boolean amIAVerticalApp;
 
     @Before
     public void injectMocks() {
@@ -79,7 +80,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, userEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, mockedUpdateComposition);
+                mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -201,7 +202,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, mockedUserEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, mockedUpdateComposition);
+                mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }
