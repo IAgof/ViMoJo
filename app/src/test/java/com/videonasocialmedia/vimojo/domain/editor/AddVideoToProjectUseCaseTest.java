@@ -53,28 +53,6 @@ public class AddVideoToProjectUseCaseTest {
   }
 
   @Test
-  public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    Video video = new Video("media/path", 1f);
-
-    injectedUseCase.addVideoToProjectAtPosition(currentProject, video, 0,
-        mockedOnAddMediaFinishedListener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
-  public void testAddVideoListToTrackCallsUpdateProject() {
-    Video video = new Video("media/path", 1f);
-    List<Video> videoList = Collections.singletonList(video);
-    OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
-        getOnLaunchAVTransitionTempFileListener();
-
-    injectedUseCase.addVideoListToTrack(currentProject, videoList, listener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void ifAudioTransitionActivatedAddVideoToProjectCallsApplyAVTransitions() {
     currentProject.getVMComposition().setAudioFadeTransitionActivated(true);
     assertThat("Audio transition is activated ",
