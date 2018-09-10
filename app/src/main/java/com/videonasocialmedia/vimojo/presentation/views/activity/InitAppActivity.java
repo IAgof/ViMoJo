@@ -165,9 +165,11 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     }
 
     private void requestPermissionsAndPerformSetup() {
-        Dexter.checkPermissions(compositePermissionsListener, Manifest.permission.CAMERA,
+      // TODO: 30/7/18 Ask get account permission when it would be needed, user wants to register or login account
+      Dexter.checkPermissions(compositePermissionsListener, Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.GET_ACCOUNTS);
     }
 
     private void startSplashThread() {

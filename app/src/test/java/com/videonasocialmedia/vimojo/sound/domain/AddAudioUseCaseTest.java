@@ -152,20 +152,6 @@ public class AddAudioUseCaseTest {
   }
 
   @Test
-  public void addAudioUpdateRepositories() {
-    float defaultVolume = 0.7f;
-    int defaultDuration = 100;
-    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
-
-    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
-        mockedOnAddMediaFinishedListener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void addAudioInsertMusicToTrack() {
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
@@ -216,7 +202,7 @@ public class AddAudioUseCaseTest {
 
 
   private AddAudioUseCase getAddAudioUseCase() {
-    return new AddAudioUseCase(mockedProjectRepository);
+    return new AddAudioUseCase();
   }
   
   private void getAProject() {

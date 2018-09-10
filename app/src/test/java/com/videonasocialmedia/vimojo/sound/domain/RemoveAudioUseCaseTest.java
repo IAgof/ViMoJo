@@ -156,9 +156,7 @@ public class RemoveAudioUseCaseTest {
     removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
         mockedOnRemoveMediaFinishedListener);
 
-    verify(mockedProjectRepository).update(currentProject);
     verify(mockedTrackRepository).update(musicTrack);
-    verify(mockedMusicRepository).remove(music);
   }
 
   @Test
@@ -212,7 +210,7 @@ public class RemoveAudioUseCaseTest {
   }
 
   private RemoveAudioUseCase getRemoveAudioUseCase() {
-    return new RemoveAudioUseCase(mockedProjectRepository, mockedTrackRepository, mockedMusicRepository);
+    return new RemoveAudioUseCase(mockedTrackRepository);
   }
 
   private void getAProject() {

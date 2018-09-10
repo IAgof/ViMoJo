@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -64,6 +65,7 @@ public class SplitPreviewPresenterTest {
     @Mock CompositionApiClient mockedCompositionApiClient;
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
+    @Mock UpdateComposition mockedUpdateComposition;
 
     @Before
     public void injectMocks() {
@@ -81,7 +83,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(
                 mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                updateComposition);
+                mockedUpdateComposition);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -134,7 +136,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(
                 mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                updateComposition);
+                mockedUpdateComposition);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }

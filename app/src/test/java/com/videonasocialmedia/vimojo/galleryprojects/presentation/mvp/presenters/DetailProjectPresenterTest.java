@@ -8,6 +8,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionInfo;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -35,13 +37,14 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DetailProjectPresenterTest {
 
-  @Mock
-  ProjectRepository mockedProjectRepo;
   @Mock DetailProjectView mockedDetailProjectView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock Context mockedContext;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
+  @Mock UpdateComposition mockedUpdateComposition;
+  @Mock SetCompositionInfo mockedSetCompositionInfo;
+  @Mock ProjectRepository mockedProjectRepository;
 
   @Before
   public void initDoubles() {
@@ -69,7 +72,7 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void setProjectInfoCallsProjectRepository() {
+  public void setProjectInfoCallsUseCasesAndTracking() {
 
     DetailProjectPresenter spyPresenter = Mockito.spy(getDetailProjectPresenter());
     String titleProject = "titleProject";
@@ -79,15 +82,16 @@ public class DetailProjectPresenterTest {
 
     spyPresenter.setProjectInfo(titleProject, descriptionProject, productTypeList);
 
-    verify(mockedProjectRepo).setProjectInfo(currentProject, titleProject, descriptionProject,
-        productTypeList);
+    verify(mockedSetCompositionInfo).setCompositionInfo(currentProject, titleProject,
+        descriptionProject, productTypeList);
     verify(mockedUserEventTracker).trackProjectInfo(currentProject);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
     return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
-            mockedProjectInstanceCache, updateComposition, setCompositionInfo);
+            mockedProjectInstanceCache, mockedUpdateComposition, mockedSetCompositionInfo);
   }
 
   private void getAProject() {

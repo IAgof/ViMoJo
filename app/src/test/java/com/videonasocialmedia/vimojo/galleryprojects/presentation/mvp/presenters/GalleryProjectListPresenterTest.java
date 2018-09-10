@@ -4,6 +4,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.GalleryProjectListView;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -40,6 +41,7 @@ public class GalleryProjectListPresenterTest {
   @Mock GalleryProjectListView mockedGalleryProjectListView;
 
   private Project currentProject;
+  @Mock UpdateComposition mockedUpdateComposition;
 
   @Before
   public void injectMocks() {
@@ -76,8 +78,8 @@ public class GalleryProjectListPresenterTest {
 
     injectedPresenter.goToEdit(currentProject);
 
-    verify(mockedProjectRepository).update(currentProject);
-    verify(mockedGalleryProjectListView).navigateTo(EditActivity.class);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
+    verify(mockedGalleryProjectListView).showUpdateAssetsProgressDialog();
   }
 
   @Test

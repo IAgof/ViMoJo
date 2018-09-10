@@ -17,7 +17,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
@@ -87,11 +90,12 @@ public class EditorPresenterTest {
   @Mock NewClipImporter mockedNewClipImporter;
   @Mock BillingManager mockedBillingManager;
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
-  @Mock
-  ProjectRepository mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
-  @Mock
-  SaveComposition mockedSaveComposition;
+  @Mock SaveComposition mockedSaveComposition;
+  @Mock RemoveMedia mockedRemoveMedia;
+  @Mock UpdateCompositionWatermark mockedUpdateCompositionWatermark;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
   private boolean hasBeenProjectExported = false;
   private String videoExportedPath = "videoExportedPath";
@@ -103,6 +107,7 @@ public class EditorPresenterTest {
     PowerMockito.mockStatic(Log.class);
     setAProject();
     when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -114,13 +119,15 @@ public class EditorPresenterTest {
             mockedRemoveVideoFromProjectUseCase, mockedGetAudioFromProjectUseCase,
             mocekdGetPreferencesTransitionFromProjectUseCase,
             mockedRelaunchTranscoderTempBackgroundUseCase,
-            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveComposition, updateComposition, removeMedia, updateWatermark);
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
+            mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
+            mockedUpdateComposition);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
 
   @Test
-  public void switchPreferenceWatermarkUpdateProjectAndRepository() {
+  public void switchPreferenceWatermarkCallsUseCaseAndUpdateProject() {
     EditorPresenter editorPresenter = getEditorPresenter();
     boolean watermarkActivated = true;
     when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
@@ -128,7 +135,9 @@ public class EditorPresenterTest {
 
     editorPresenter.switchPreference(watermarkActivated, ConfigPreferences.WATERMARK);
 
-    verify(mockedProjectRepository).setWatermarkActivated(currentProject, watermarkActivated);
+    verify(mockedUpdateCompositionWatermark).updateCompositionWatermark(currentProject,
+        watermarkActivated);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @Test
@@ -433,7 +442,9 @@ public class EditorPresenterTest {
             mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
             mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
             mockedRelaunchTranscoderTempBackgroundUseCase,
-            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache, mockedSaveComposition, updateComposition, removeMedia, updateWatermark);
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
+            mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
+            mockedUpdateComposition);
     editorPresenter.currentProject = currentProject;
     return editorPresenter;
   }

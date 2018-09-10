@@ -17,6 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -60,6 +61,7 @@ public class TrimPreviewPresenterTest {
     @Mock CompositionApiClient mockedCompositionApiClient;
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
+    @Mock UpdateComposition mockedUpdateComposition;
 
     @Before
     public void injectMocks() {
@@ -77,7 +79,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, userEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, updateComposition);
+                mockedProjectInstanceCache, mockedUpdateComposition);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -199,7 +201,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, mockedUserEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, updateComposition);
+                mockedProjectInstanceCache, mockedUpdateComposition);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }

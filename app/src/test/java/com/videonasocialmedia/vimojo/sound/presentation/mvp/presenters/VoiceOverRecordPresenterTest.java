@@ -11,9 +11,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
@@ -21,10 +22,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
-import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
-import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,9 +63,7 @@ public class VoiceOverRecordPresenterTest {
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
-  @Mock AssetUploadQueue mockedAssetUploadQueue;
-  @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
-  @Mock CompositionApiClient mockedCompositionApiClient;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
 
   @Before
@@ -197,7 +193,7 @@ public class VoiceOverRecordPresenterTest {
             mockedContext, mockedVoiceOverRecordView, mockedGetMediaListFromProjectUseCase,
             mockedGetPreferencesTransitionFromProjectUseCase, mockedAddAudioUseCase,
             mockedRemoveAudioUseCase, mockedUserEventTracker, mockedProjectInstanceCache,
-            mockedAssetUploadQueue, mockedRunSyncAdapterHelper, mockedCompositionApiClient);
+            mockedUpdateComposition);
     voiceOverRecordPresenter.currentProject = currentProject;
     return voiceOverRecordPresenter;
   }
