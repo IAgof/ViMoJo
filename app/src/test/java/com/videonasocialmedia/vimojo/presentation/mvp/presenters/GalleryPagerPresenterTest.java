@@ -156,9 +156,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
-    // TODO: 7/9/18 Resolve today this test
-    //verify(mockedProjectRepository, never())
-      //      .updateResolution(Mockito.any(Project.class), Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedSetCompositionResolution, never())
+            .setResolution(Mockito.any(Project.class), Mockito.any(VideoResolution.Resolution.class));
     verify(mockedPreferencesEditor, never())
             .putString(eq(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION),
             Mockito.anyString());
@@ -181,9 +180,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(currentProject, videoList);
 
-    // TODO: 7/9/18 Resolve today this test
-    //verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
-    //    Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedSetCompositionResolution, never()).setResolution(Mockito.any(Project.class),
+        Mockito.any(VideoResolution.Resolution.class));
   }
 
   @Test
@@ -198,9 +196,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(currentProject, videoList);
 
-    // TODO: 7/9/18 Resolve today this test
-    //verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
-    //    Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedSetCompositionResolution, never()).setResolution(Mockito.any(Project.class),
+        Mockito.any(VideoResolution.Resolution.class));
   }
 
   private GalleryPagerPresenter getGalleryPresenter() {

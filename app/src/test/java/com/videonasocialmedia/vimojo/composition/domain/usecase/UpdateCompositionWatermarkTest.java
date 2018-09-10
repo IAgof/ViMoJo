@@ -42,12 +42,6 @@ public class UpdateCompositionWatermarkTest {
   }
 
   @Test
-  public void updateWatermarkPreferenceCallsUpdateRepository(){
-    injectedUseCase.updateCompositionWatermark(currentProject, true);
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void shouldUpdateWatermarkPreferenceAfterUseCase(){
     assertThat("Add watermark is false by default", currentProject.hasWatermark(),
         CoreMatchers.is(false));

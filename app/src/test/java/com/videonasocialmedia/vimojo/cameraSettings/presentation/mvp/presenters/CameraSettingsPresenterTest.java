@@ -151,9 +151,10 @@ public class CameraSettingsPresenterTest {
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {
-    CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(mockedCameraSettingsListView,
-        mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
-        mockedUpdateComposition, mockedProjectInstanceCache, mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution);
+    CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(
+        mockedCameraSettingsListView, mockedUserEventTracker, mockedGetSettingListUseCase,
+        mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
+        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution);
     cameraSettingsPresenter.currentProject = currentProject;
     return cameraSettingsPresenter;
   }
