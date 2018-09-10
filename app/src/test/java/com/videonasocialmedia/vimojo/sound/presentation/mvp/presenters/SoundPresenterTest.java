@@ -12,13 +12,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class SoundPresenterTest {
   @Mock SoundView mockedSoundView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock ProjectInstanceCache mockedProjectInstantCache;
-  @Mock CompositionApiClient mockedCompositionApiClient;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
 
   @Before
@@ -152,6 +152,7 @@ public class SoundPresenterTest {
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
         mockedProjectInstantCache, mockedCompositionApiClient, voiceOverAvailable);
+        mockedProjectInstantCache, mockedUpdateComposition);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

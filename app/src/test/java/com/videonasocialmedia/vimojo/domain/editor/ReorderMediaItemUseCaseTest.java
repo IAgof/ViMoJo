@@ -48,19 +48,6 @@ public class ReorderMediaItemUseCaseTest {
   }
 
   @Test
-  public void testMoveMediaItemCallsUpdateProject() throws IllegalItemOnTrack {
-    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
-    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
-    currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
-    currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
-    OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
-
-    injectedUseCase.moveMediaItem(currentProject, 1, 0, onReorderMediaListener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void testSwap2Items() throws IllegalItemOnTrack {
     Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
     video0.setPosition(0);

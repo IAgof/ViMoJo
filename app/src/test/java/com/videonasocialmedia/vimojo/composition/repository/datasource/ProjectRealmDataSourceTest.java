@@ -47,6 +47,7 @@ public class ProjectRealmDataSourceTest {
   private File mockedStorageDir;
   @Mock private Context mockedContext;
   private Project currentProject;
+  @Mock TrackRealmDataSource mockedTrackDataSource;
 
   @Before
   public void injectDoubles() {
@@ -81,7 +82,7 @@ public class ProjectRealmDataSourceTest {
   @Ignore
   @Test
   public void testGetCurrentProjectReturnsLastSavedProject() {
-    ProjectRealmDataSource repo = new ProjectRealmDataSource(trackDataSource);
+    ProjectRealmDataSource repo = new ProjectRealmDataSource(mockedTrackDataSource);
     RealmQuery<RealmProject> mockedRealmQuery = PowerMockito.mock(RealmQuery.class);
     when(mockedRealm.where(RealmProject.class)).thenReturn(mockedRealmQuery);
 
@@ -92,7 +93,7 @@ public class ProjectRealmDataSourceTest {
 
   @Test
   public void testConstructorsSetsMappers() {
-    ProjectRealmDataSource repo = new ProjectRealmDataSource(trackDataSource);
+    ProjectRealmDataSource repo = new ProjectRealmDataSource(mockedTrackDataSource);
 
     assertThat(repo.toRealmProjectMapper, is(notNullValue()));
     assertThat(repo.toProjectMapper, is(notNullValue()));
@@ -115,41 +116,8 @@ public class ProjectRealmDataSourceTest {
 //  }
 
   @Test
-  public void testUpdateResolutionUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
-    VideoResolution.Resolution videoResolution = DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION;
-    Mockito.doNothing().when(repo).update(any(Project.class));
-
-    repo.updateResolution(currentProject, videoResolution);
-
-    assertThat(currentProject.getProfile().getResolution(), is(videoResolution));
-  }
-
-  @Test
-  public void testUpdateFrameRateUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
-    VideoFrameRate.FrameRate videoFrameRate = DEFAULT_CAMERA_SETTING_VIDEO_FRAME_RATE;
-    Mockito.doNothing().when(repo).update(any(Project.class));
-
-    repo.updateFrameRate(currentProject, videoFrameRate);
-
-    assertThat(currentProject.getProfile().getFrameRate(), is(videoFrameRate));
-  }
-
-  @Test
-  public void testUpdateQualityUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
-    VideoQuality.Quality videoQuality = DEFAULT_CAMERA_SETTING_VIDEO_QUALITY;
-    Mockito.doNothing().when(repo).update(any(Project.class));
-
-    repo.updateQuality(currentProject, videoQuality);
-
-    assertThat(currentProject.getProfile().getQuality(), is(videoQuality));
-  }
-
-  @Test
   public void testSetWatermarkActivatedUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
+    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(mockedTrackDataSource));
     Mockito.doNothing().when(repo).update(any(Project.class));
     boolean watermarkActivated = true;
     assert(!currentProject.hasWatermark());
@@ -159,23 +127,6 @@ public class ProjectRealmDataSourceTest {
     assertThat(currentProject.hasWatermark(), is(watermarkActivated));
   }
 
-  @Test
-  public void testSetProjectInfoUpdateProject() {
-    ProjectRealmDataSource repo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
-    Mockito.doNothing().when(repo).update(any(Project.class));
-    String title = "title";
-    String description = "description";
-    List<String> productTypeList = new ArrayList<>();
-    productTypeList.add(ProductTypeProvider.Types.LIVE_ON_TAPE.name());
-    productTypeList.add(ProductTypeProvider.Types.B_ROLL.name());
-    productTypeList.add(ProductTypeProvider.Types.NAT_VO.name());
-
-    repo.setProjectInfo(currentProject, title, description, productTypeList);
-
-    assertThat(currentProject.getProjectInfo().getTitle(), is(title));
-    assertThat(currentProject.getProjectInfo().getDescription(), is(description));
-    assertThat(currentProject.getProjectInfo().getProductTypeList(), is(productTypeList));
-  }
 
   public void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,

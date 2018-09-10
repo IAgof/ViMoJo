@@ -48,19 +48,6 @@ public class RemoveVideoFromProjectUseCaseTest {
   }
 
   @Test
-  public void testRemoveMediaItemsFromProjectCallsUpdateProject() {
-    currentProject.setMediaTrack(mockedMediaTrack);
-    Video video = new Video("media/path", 1f);
-    ArrayList<Media> videos = new ArrayList<Media>();
-    videos.add(video);
-    OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
-
-    injectedUseCase.removeMediaItemsFromProject(currentProject, videos, listener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void testRemoveMediaItemFromProjectCallsUpdateProject() throws IllegalItemOnTrack {
     Video video = new Video("media/path", 1f);
     int positionVideoToRemove = 0;

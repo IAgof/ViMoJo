@@ -49,15 +49,6 @@ public class AddLastVideoExportedToProjectUseCaseTest {
         currentProject.getLastModification(), is(currentProject.getDateLastVideoExported()));
   }
 
-  @Test
-  public void testAddLastVideoExportedToProjectUpdateProjectRepository() {
-    String date = DateUtils.getDateRightNow();
-
-    injectedUseCase.addLastVideoExportedToProject(currentProject, "somePath", date);
-
-    verify(mockedProjectRepository).updateWithDate(currentProject, date);
-  }
-
   private void getAProject() {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);

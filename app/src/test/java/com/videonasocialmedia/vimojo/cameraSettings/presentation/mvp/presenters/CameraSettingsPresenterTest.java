@@ -11,6 +11,10 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQuality;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -57,11 +61,14 @@ public class CameraSettingsPresenterTest {
   @Mock
   CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
-  @Mock
-  ProjectRepository mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private MixpanelAPI mockedMixpanelAPI;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
+  @Mock SetCompositionQuality mockedSetCompositionQuality;
+  @Mock SetCompositionFrameRate mockedSetCompositionFrameRate;
+  @Mock SetCompositionResolution mockedSetCompositionResolution;
 
   @Before
   public void injectMocks() {
@@ -75,7 +82,8 @@ public class CameraSettingsPresenterTest {
     UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
-            mockedCameraSettingsRepository, updateComposition, mockedProjectInstanceCache, setCompositionQuality, setCompositionFrameRate, setCompositionResolution);
+        mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
+        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -105,7 +113,8 @@ public class CameraSettingsPresenterTest {
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
     verify(mockedCameraSettingsRepository).setResolutionSetting(any(CameraSettings.class), anyString());
-    verify(mockedProjectRepository).updateResolution(any(Project.class), any(VideoResolution.Resolution.class));
+    verify(mockedSetCompositionResolution).setResolution(any(Project.class), any(VideoResolution.Resolution.class));
+    verify(mockedUpdateComposition).updateComposition(any(Project.class));
     verify(mockedUserEventTracker).trackChangeResolution(anyString());
   }
 
@@ -119,7 +128,9 @@ public class CameraSettingsPresenterTest {
     presenter.setCameraFrameRateSetting(frameRatePreferenceId);
 
     verify(mockedCameraSettingsRepository).setFrameRateSetting(cameraSettings, "30 fps");
-    verify(mockedProjectRepository).updateFrameRate(currentProject, VideoFrameRate.FrameRate.FPS30);
+    verify(mockedSetCompositionFrameRate).updateFrameRate(currentProject,
+        VideoFrameRate.FrameRate.FPS30);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
   }
 
@@ -134,14 +145,16 @@ public class CameraSettingsPresenterTest {
     presenter.setCameraQualitySetting(qualityPreferenceId);
 
     verify(mockedCameraSettingsRepository).setQualitySetting(cameraSettings, "16 Mbps");
-    verify(mockedProjectRepository).updateQuality(currentProject, VideoQuality.Quality.LOW);
+    verify(mockedSetCompositionQuality).setQuality(currentProject, VideoQuality.Quality.LOW);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
     verify(mockedUserEventTracker).trackChangeQuality("16 Mbps");
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {
-    CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(mockedCameraSettingsListView,
-        mockedUserEventTracker, mockedGetSettingListUseCase, mockedCameraSettingsRepository,
-            updateComposition, mockedProjectInstanceCache, setCompositionQuality, setCompositionFrameRate, setCompositionResolution);
+    CameraSettingsPresenter cameraSettingsPresenter = new CameraSettingsPresenter(
+        mockedCameraSettingsListView, mockedUserEventTracker, mockedGetSettingListUseCase,
+        mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
+        mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution);
     cameraSettingsPresenter.currentProject = currentProject;
     return cameraSettingsPresenter;
   }

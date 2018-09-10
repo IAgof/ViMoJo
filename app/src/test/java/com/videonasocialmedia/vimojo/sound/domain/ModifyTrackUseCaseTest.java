@@ -47,16 +47,6 @@ public class ModifyTrackUseCaseTest {
   }
 
   @Test
-  public void setTrackVolumeUpdateProjectRepository(){
-    AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    float volumeTrack = 0.85f;
-
-    injectedUseCase.setTrackVolume(track, volumeTrack);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void setTrackVolumeUpdateTrackVolume(){
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     float volumeTrack = 0.85f;

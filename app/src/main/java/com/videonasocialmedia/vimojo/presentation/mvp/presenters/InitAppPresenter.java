@@ -93,7 +93,7 @@ public class InitAppPresenter extends VimojoPresenter {
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
               isWatermarkActivated(), drawableFadeTransitionVideo, amIAVerticalApp);
       projectInstanceCache.setCurrentProject(project);
-      saveComposition.saveComposition(project);
+      executeUseCaseCall(() -> saveComposition.saveComposition(project));
     }
     setupAds();
   }

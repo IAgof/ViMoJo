@@ -1,4 +1,11 @@
-package com.videonasocialmedia.vimojo.repository.video.datasource;
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
+package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;

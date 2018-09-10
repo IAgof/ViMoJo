@@ -227,7 +227,7 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
         });
     }
 
-    private void onProjectUpdated() {
+    protected void onProjectUpdated() {
         if (currentProject.getVMComposition().hasVideos()) {
             editActivityView.updatePlayerVideoListChanged();
             updatePresenter();

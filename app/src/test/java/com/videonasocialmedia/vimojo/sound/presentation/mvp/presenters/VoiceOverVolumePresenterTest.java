@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -48,6 +49,7 @@ public class VoiceOverVolumePresenterTest {
   @Mock GetAudioFromProjectUseCase mockedGetAudioFromProjectUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock UpdateComposition mockedUpdateComposition;
 
   private Project currentProject;
 
@@ -58,38 +60,23 @@ public class VoiceOverVolumePresenterTest {
   }
 
   @Test
-  public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack {
+  public void setVolumeCallsNavigateToSoundTrackingAndUpdateProject() throws IllegalItemOnTrack {
     float volume = 0.7f;
     int defaultDuration = 100;
     String mediaPath = "somePath";
     Music voiceOver = new Music(mediaPath, volume, defaultDuration);
     currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     AudioTrack voiceOverTrack = currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
-    voiceOverTrack.insertItem(voiceOver);
-    VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
-
-    voiceOverVolumePresenter.setVoiceOverVolume(volume);
-
-    verify(mockedModifyTrackUseCase).setTrackVolume(currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
-  }
-
-  @Test
-  public void setVolumeNavigateToSoundActivity() throws IllegalItemOnTrack {
-    float volume = 0.7f;
-    int defaultDuration = 100;
-    String mediaPath = "somePath";
-    Music voiceOver = new Music(mediaPath, volume, defaultDuration);
-    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AudioTrack voiceOverTrack = currentProject.getAudioTracks()
-            .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
+        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
 
     voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
     verify(mockedVoiceOverVolumeView).goToSoundActivity();
+    verify(mockedModifyTrackUseCase).setTrackVolume(currentProject.getAudioTracks()
+        .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   private void setAProject() {
@@ -105,7 +92,7 @@ public class VoiceOverVolumePresenterTest {
         mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
-        mockedProjectInstanceCache, updateComposition);
+        mockedProjectInstanceCache, mockedUpdateComposition);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }
