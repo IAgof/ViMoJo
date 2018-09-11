@@ -6,7 +6,6 @@ package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import android.util.Log;
 
-import com.birbit.android.jobqueue.JobManager;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.MediaToMediaDtoMapper;
@@ -14,6 +13,7 @@ import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 import com.videonasocialmedia.vimojo.vimojoapiclient.MediaApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.MediaDto;
@@ -35,9 +35,9 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
 
   @Inject
   protected MediaApiDataSource(UserAuth0Helper userAuth0Helper, MediaApiClient mediaApiClient,
-                               JobManager jobManager, AssetApiDataSource assetApiDataSource,
-                               GetUserId getUserId) {
-    super(userAuth0Helper, getUserId, jobManager);
+                               AssetApiDataSource assetApiDataSource,
+                               GetUserId getUserId, BackgroundScheduler backgroundScheduler) {
+    super(userAuth0Helper, getUserId, backgroundScheduler);
     this.mediaApiClient = mediaApiClient;
     this.assetApiDataSource = assetApiDataSource;
   }

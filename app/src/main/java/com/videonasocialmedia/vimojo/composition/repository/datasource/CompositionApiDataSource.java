@@ -6,7 +6,6 @@ package com.videonasocialmedia.vimojo.composition.repository.datasource;
 
 import android.util.Log;
 
-import com.birbit.android.jobqueue.JobManager;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
@@ -17,6 +16,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.mapper.CompositionToCompositionDtoMapper;
 import com.videonasocialmedia.vimojo.repository.Specification;
 import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.CompositionDto;
@@ -42,10 +42,11 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
 
   @Inject
   public CompositionApiDataSource(CompositionApiClient compositionApiClient,
-                                  UserAuth0Helper userAuth0Helper, JobManager jobManager,
+                                  UserAuth0Helper userAuth0Helper,
                                   AssetApiDataSource assetApiDataSource, GetUserId getUserId,
-                                  CompositionToCompositionDtoMapper mapper) {
-    super(userAuth0Helper, getUserId, jobManager);
+                                  CompositionToCompositionDtoMapper mapper,
+                                  BackgroundScheduler backgroundScheduler) {
+    super(userAuth0Helper, getUserId, backgroundScheduler);
     this.compositionApiClient = compositionApiClient;
     this.assetApiDataSource = assetApiDataSource;
     this.mapper = mapper;
@@ -55,7 +56,7 @@ public class CompositionApiDataSource extends ApiDataSource<Project> {
   public void add(Project item) {
     // create composition -> create track -> create media -> (mediaId)link with asset(assetID) <- asset upload
     CompositionDto compositionDto = mapper.map(item);
-    this.schedule(() -> {
+    schedule(() -> {
       addCompositionDto(item, compositionDto);
       return null;
     });
