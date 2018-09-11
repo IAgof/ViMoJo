@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
@@ -113,7 +114,8 @@ public class CameraSettingsPresenterTest {
   }
 
   @Test
-  public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking() {
+  public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking()
+      throws InterruptedException {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int resolutionPreferenceId = ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
     CameraSettings cameraSettings = getCameraSettings();
@@ -123,12 +125,14 @@ public class CameraSettingsPresenterTest {
 
     verify(mockedCameraSettingsRepository).setResolutionSetting(any(CameraSettings.class), anyString());
     verify(mockedSetCompositionResolution).setResolution(any(Project.class), any(VideoResolution.Resolution.class));
-    verify(mockedUpdateComposition).updateComposition(any(Project.class));
     verify(mockedUserEventTracker).trackChangeResolution(anyString());
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+    verify(mockedUpdateComposition).updateComposition(any(Project.class));
   }
 
   @Test
-  public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking() {
+  public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking()
+      throws InterruptedException {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int frameRatePreferenceId = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
     CameraSettings cameraSettings = getCameraSettings();
@@ -139,13 +143,15 @@ public class CameraSettingsPresenterTest {
     verify(mockedCameraSettingsRepository).setFrameRateSetting(cameraSettings, "30 fps");
     verify(mockedSetCompositionFrameRate).updateFrameRate(currentProject,
         VideoFrameRate.FrameRate.FPS30);
-    verify(mockedUpdateComposition).updateComposition(currentProject);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
 
   @Test
-  public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking() {
+  public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking()
+      throws InterruptedException {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int qualityPreferenceId = CameraSettings.CAMERA_SETTING_QUALITY_16_ID;
     CameraSettings cameraSettings = getCameraSettings();
@@ -155,8 +161,9 @@ public class CameraSettingsPresenterTest {
 
     verify(mockedCameraSettingsRepository).setQualitySetting(cameraSettings, "16 Mbps");
     verify(mockedSetCompositionQuality).setQuality(currentProject, VideoQuality.Quality.LOW);
-    verify(mockedUpdateComposition).updateComposition(currentProject);
     verify(mockedUserEventTracker).trackChangeQuality("16 Mbps");
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   private CameraSettingsPresenter getCameraSettingsPresenter() {

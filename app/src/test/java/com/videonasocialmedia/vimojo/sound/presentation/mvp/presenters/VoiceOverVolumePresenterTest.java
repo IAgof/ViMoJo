@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +62,8 @@ public class VoiceOverVolumePresenterTest {
   }
 
   @Test
-  public void setVolumeCallsNavigateToSoundTrackingAndUpdateProject() throws IllegalItemOnTrack {
+  public void setVolumeCallsNavigateToSoundTrackingAndUpdateProject()
+      throws IllegalItemOnTrack, InterruptedException {
     float volume = 0.7f;
     int defaultDuration = 100;
     String mediaPath = "somePath";
@@ -77,6 +79,7 @@ public class VoiceOverVolumePresenterTest {
     verify(mockedVoiceOverVolumeView).goToSoundActivity();
     verify(mockedModifyTrackUseCase).setTrackVolume(currentProject.getAudioTracks()
         .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 

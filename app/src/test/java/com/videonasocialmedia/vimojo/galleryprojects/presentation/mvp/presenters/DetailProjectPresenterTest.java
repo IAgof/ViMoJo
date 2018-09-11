@@ -15,6 +15,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
@@ -72,7 +73,7 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void setProjectInfoCallsUseCasesAndTracking() {
+  public void setProjectInfoCallsUseCasesAndTracking() throws InterruptedException {
 
     DetailProjectPresenter spyPresenter = Mockito.spy(getDetailProjectPresenter());
     String titleProject = "titleProject";
@@ -85,6 +86,7 @@ public class DetailProjectPresenterTest {
     verify(mockedSetCompositionInfo).setCompositionInfo(currentProject, titleProject,
         descriptionProject, productTypeList);
     verify(mockedUserEventTracker).trackProjectInfo(currentProject);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 

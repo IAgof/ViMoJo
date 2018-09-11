@@ -11,13 +11,13 @@ package com.videonasocialmedia.vimojo.featuresToggles.repository.datasource;
  * Created by alvaro on 30/8/18.
  */
 
-import com.birbit.android.jobqueue.JobManager;
 import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
-import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.model.FeatureToggle;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.mapper.FeatureToggleToFeatureToggleDtoMapper;
+import com.videonasocialmedia.vimojo.repository.Specification;
+import com.videonasocialmedia.vimojo.repository.datasource.ApiDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 import com.videonasocialmedia.vimojo.vimojoapiclient.FeatureToggleApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.FeatureToggleDto;
@@ -41,8 +41,8 @@ public class FeatureApiDataSource extends ApiDataSource<FeatureToggle> {
   protected FeatureApiDataSource(UserAuth0Helper userAuth0Helper, GetUserId getUserId,
                                  FeatureToggleApiClient featureToggleApiClient,
                                  FeatureToggleToFeatureToggleDtoMapper mapper,
-                                 JobManager jobManager) {
-    super(userAuth0Helper, getUserId, jobManager);
+                                 BackgroundScheduler backgroundScheduler) {
+    super(userAuth0Helper, getUserId, backgroundScheduler);
     this.featureToggleApiClient = featureToggleApiClient;
     this.mapper = mapper;
   }
@@ -83,7 +83,8 @@ public class FeatureApiDataSource extends ApiDataSource<FeatureToggle> {
     try {
       String accessToken = getApiAccessToken().get().getAccessToken();
       String userId = getUserId();
-      FeatureToggleDto featureToggleDto = this.featureToggleApiClient.getUserFeature(accessToken, userId, id);
+      FeatureToggleDto featureToggleDto =
+          this.featureToggleApiClient.getUserFeature(accessToken, userId, id);
       return mapper.reverseMap(featureToggleDto);
     } catch (VimojoApiException apiError) {
       processApiError(apiError);

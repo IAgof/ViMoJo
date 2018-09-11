@@ -186,11 +186,11 @@ public class GalleryPagerPresenter extends VimojoPresenter
 
             if (resolutionForWidth != null) {
                 setCompositionResolution.setResolution(currentProject, resolutionForWidth);
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                         getPreferenceResolutionForWidth(videoWidth));
                 preferencesEditor.apply();
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
             }
         }
     }

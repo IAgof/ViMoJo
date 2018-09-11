@@ -37,6 +37,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.hamcrest.Matchers;
@@ -134,7 +135,8 @@ public class EditorPresenterTest {
   }
 
   @Test
-  public void switchPreferenceWatermarkCallsUseCaseAndUpdateProject() {
+  public void switchPreferenceWatermarkCallsUseCaseAndUpdateProject()
+      throws InterruptedException {
     EditorPresenter editorPresenter = getEditorPresenter();
     boolean watermarkActivated = true;
     when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
@@ -144,6 +146,7 @@ public class EditorPresenterTest {
 
     verify(mockedUpdateCompositionWatermark).updateCompositionWatermark(currentProject,
         watermarkActivated);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 

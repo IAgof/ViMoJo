@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.featuresToggles.domain.model.FeatureToggle;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.FeatureApiDataSource;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.FeatureInMemoryDataSource;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.FeatureSharedPreferencesDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ public class FeatureRepositoryTest {
   @Mock private FeatureApiDataSource mockedRemoteDS;
   @Mock private FeatureSharedPreferencesDataSource mockedLocalDs;
   @Mock private FeatureInMemoryDataSource mockedCacheDS;
+  @Mock private BackgroundScheduler mockedBackgroundScheduler;
   private FeatureRepository featureRepository;
   private List<FeatureToggle> remoteResponse;
   private List<FeatureToggle> localResponse;
@@ -37,7 +39,7 @@ public class FeatureRepositoryTest {
 
   private void setupUserFeaturesRepository() {
     featureRepository = new FeatureRepository(mockedRemoteDS,
-            mockedLocalDs, mockedCacheDS);
+            mockedLocalDs, mockedCacheDS, mockedBackgroundScheduler);
     Mockito.doReturn(remoteResponse).when(mockedRemoteDS).getById(ArgumentMatchers.anyString());
     Mockito.doReturn(localResponse).when(mockedLocalDs).getById(ArgumentMatchers.anyString());
     Mockito.doReturn(cacheResponse).when(mockedCacheDS).getById(ArgumentMatchers.anyString());

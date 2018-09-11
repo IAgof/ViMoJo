@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,8 @@ public class GalleryProjectListPresenterTest {
   }
 
   @Test
-  public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow() {
+  public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow()
+      throws InterruptedException {
     List<Project> projectList = new ArrayList<>();
     projectList.add(currentProject);
     doReturn(projectList).when(mockedGetCompositions)
@@ -76,11 +78,13 @@ public class GalleryProjectListPresenterTest {
 
     spyGalleryProjectListPresenter.updateProjectList();
 
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedGalleryProjectListView).showProjectList(projectList);
   }
 
   @Test
-  public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject() {
+  public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject()
+      throws InterruptedException {
     List<Project> projectList = new ArrayList<>();
     doReturn(projectList).when(mockedGetCompositions)
             .getListProjectsByLastModificationDescending();
@@ -89,11 +93,12 @@ public class GalleryProjectListPresenterTest {
 
     spyGalleryProjectListPresenter.updateProjectList();
 
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedGalleryProjectListView).createDefaultProject();
   }
 
   @Test
-  public void goToEditUpdateRepositoryAndNavigate() {
+  public void goToEditUpdateRepositoryAndNavigate() throws InterruptedException {
     doAnswer(invocation -> {
       GetCompositionAssets.UpdateAssetFilesListener listener = invocation.getArgument(1);
       listener.onCompletion();
@@ -104,13 +109,14 @@ public class GalleryProjectListPresenterTest {
 
     galleryProjectListPresenter.goToEdit(currentProject);
 
-    verify(mockedUpdateComposition).updateComposition(currentProject);
     verify(mockedGalleryProjectListView).showUpdateAssetsProgressDialog();
     verify(mockedGalleryProjectListView).navigateTo(EditActivity.class);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @Test
-  public void goToShareUpdateRepositoryAndNavigate() {
+  public void goToShareUpdateRepositoryAndNavigate() throws InterruptedException {
     doAnswer(invocation -> {
       GetCompositionAssets.UpdateAssetFilesListener listener = invocation.getArgument(1);
       listener.onCompletion();
@@ -122,8 +128,9 @@ public class GalleryProjectListPresenterTest {
 
     galleryProjectListPresenter.goToShare(currentProject);
 
-    verify(mockedUpdateComposition).updateComposition(currentProject);
     verify(mockedGalleryProjectListView).navigateTo(ShareActivity.class);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @Test

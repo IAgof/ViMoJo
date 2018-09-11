@@ -26,6 +26,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -100,7 +101,8 @@ public class GalleryPagerPresenterTest {
 //  }
 
   @Test
-  public void updateProfileForEmptyProjectChangeProjectResolutionIfNoVideos() {
+  public void updateProfileForEmptyProjectChangeProjectResolutionIfNoVideos()
+      throws InterruptedException {
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
     VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
@@ -126,12 +128,12 @@ public class GalleryPagerPresenterTest {
             ArgumentCaptor.forClass(VideoResolution.Resolution.class);
     verify(mockedSetCompositionResolution).setResolution(any(Project.class),
         resolutionCaptor.capture());
-    verify(mockedUpdateComposition).updateComposition(any(Project.class));
     VideoResolution.Resolution resolutionCaptorValue = resolutionCaptor.getValue();
     assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.HD720));
-
     verify(mockedPreferencesEditor).putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
             preferenceResolutionString);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+    verify(mockedUpdateComposition).updateComposition(any(Project.class));
   }
 
   @Test

@@ -27,11 +27,11 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
@@ -42,6 +42,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
@@ -102,7 +103,7 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundTranckingAndUpdateOnAddMediaItemFromTrackSuccess() {
+    public void addMusicCallsGoToSoundTranckingAndUpdateOnAddMediaItemFromTrackSuccess() throws InterruptedException {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         final Music music = new Music(1, "Music title", 2,
@@ -117,12 +118,13 @@ public class MusicDetailPresenterTest {
             }
         }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(music),
             eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
-            Matchers.any(OnAddMediaFinishedListener.class));
+            any(OnAddMediaFinishedListener.class));
 
         musicDetailPresenter.addMusic(music, volumeMusic);
 
         verify(mockedMusicDetailView).goToSoundActivity();
         verify(mockedUserEventTracker).trackMusicSet(currentProject);
+        Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
         verify(mockedUpdateComposition).updateComposition(currentProject);
     }
 
@@ -142,7 +144,7 @@ public class MusicDetailPresenterTest {
             }
         }).when(mockedAddAudioUseCase).addMusic(eq(currentProject), eq(music),
             eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
-            Matchers.any(OnAddMediaFinishedListener.class));
+            any(OnAddMediaFinishedListener.class));
 
         musicDetailPresenter.addMusic(music, volumeMusic);
 
@@ -150,7 +152,8 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess() {
+    public void removeMusicCallsGoToSoundActivityOnRemoveMediaItemFromTrackSuccess()
+        throws InterruptedException {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         Music music = new Music(1, "Music title", 2,
@@ -166,12 +169,13 @@ public class MusicDetailPresenterTest {
             }
         }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(music),
             eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
-            Matchers.any(OnRemoveMediaFinishedListener.class));
+            any(OnRemoveMediaFinishedListener.class));
 
         musicDetailPresenter.removeMusic(music);
 
         verify(mockedMusicDetailView).goToSoundActivity();
         verify(mockedUserEventTracker).trackMusicSet(currentProject);
+        Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
         verify(mockedUpdateComposition).updateComposition(currentProject);
     }
 
@@ -190,7 +194,7 @@ public class MusicDetailPresenterTest {
             }
         }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(music),
             eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
-            Matchers.any(OnRemoveMediaFinishedListener.class));
+            any(OnRemoveMediaFinishedListener.class));
 
         musicDetailPresenter.removeMusic(music);
 
@@ -209,9 +213,8 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack {
-        MusicDetailPresenter musicDetailPresenter =
-            getMusicDetailPresenter(mockedUserEventTracker);
+    public void setVolumeCallsModifyTrackUseCase() throws IllegalItemOnTrack, InterruptedException {
+        MusicDetailPresenter musicDetailPresenter = getMusicDetailPresenter();
         AudioTrack musicTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
         Music music = new Music(1, "Music title", 2,
@@ -223,16 +226,29 @@ public class MusicDetailPresenterTest {
         musicDetailPresenter.setVolume(volumeMusic);
 
         verify(mockedModifyTrackUseCase).setTrackVolume(musicTrack, volumeMusic);
+        Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
+        verify(mockedUpdateComposition).updateComposition(currentProject);
     }
 
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(mockedMusicDetailView,
-                mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
-                mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
-                mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
-                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
-                amIAVerticalApp);
+            mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
+            mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
+            mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
+            amIAVerticalApp);
+        musicDetailPresenter.currentProject = currentProject;
+        return musicDetailPresenter;
+    }
+
+    private MusicDetailPresenter getMusicDetailPresenter() {
+        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(mockedMusicDetailView,
+            mockedContext, mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
+            mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
+            mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
+            mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
+            amIAVerticalApp);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

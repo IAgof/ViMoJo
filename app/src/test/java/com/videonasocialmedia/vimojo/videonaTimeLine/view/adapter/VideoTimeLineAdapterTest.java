@@ -60,7 +60,8 @@ public class VideoTimeLineAdapterTest {
 
   @Test
   public void adapterImplementsVideoTimeLineTouchHelperCallbackAdapter() {
-    assertThat(videoTimeLineAdapter, is(instanceOf(VideoTimeLineTouchHelperCallbackAdapterListener.class)));
+    assertThat(videoTimeLineAdapter,
+        is(instanceOf(VideoTimeLineTouchHelperCallbackAdapterListener.class)));
   }
 
   @Test

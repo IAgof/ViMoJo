@@ -11,14 +11,15 @@ package com.videonasocialmedia.vimojo.featuresToggles.repository;
  * Created by alvaro on 30/8/18.
  */
 
-import com.videonasocialmedia.vimojo.repository.DeletePolicy;
-import com.videonasocialmedia.vimojo.repository.ReadPolicy;
-import com.videonasocialmedia.vimojo.repository.Specification;
-import com.videonasocialmedia.vimojo.repository.VimojoRepository;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.model.FeatureToggle;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.FeatureApiDataSource;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.FeatureInMemoryDataSource;
 import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.FeatureSharedPreferencesDataSource;
+import com.videonasocialmedia.vimojo.repository.DeletePolicy;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
+import com.videonasocialmedia.vimojo.repository.Specification;
+import com.videonasocialmedia.vimojo.repository.VimojoRepository;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 
 import java.util.List;
 
@@ -35,15 +36,18 @@ public class FeatureRepository extends VimojoRepository<FeatureToggle> {
   private final FeatureApiDataSource remoteDataSource;
   private final FeatureSharedPreferencesDataSource localDataSource;
   private final FeatureInMemoryDataSource cacheDataSource;
+  private final BackgroundScheduler backgroundScheduler;
 
   @Inject
   public FeatureRepository(
           FeatureApiDataSource featureApiDataSourceDataSource,
           FeatureSharedPreferencesDataSource featureSharedPreferencesDataSourceDataSource,
-          FeatureInMemoryDataSource featureCacheDataSourceDataSource) {
+          FeatureInMemoryDataSource featureCacheDataSourceDataSource,
+          BackgroundScheduler backgroundScheduler) {
     this.remoteDataSource = featureApiDataSourceDataSource;
     this.localDataSource = featureSharedPreferencesDataSourceDataSource;
     this.cacheDataSource = featureCacheDataSourceDataSource;
+    this.backgroundScheduler = backgroundScheduler;
   }
 
   @Override
@@ -102,60 +106,19 @@ public class FeatureRepository extends VimojoRepository<FeatureToggle> {
         cacheDataSource.update(featureToggle);
       }
     }
-
     if (featureToggle == null && readPolicy.useRemote()) {
-      featureToggle = remoteDataSource.getById(userId);
-      localDataSource.update(featureToggle);
-      cacheDataSource.update(featureToggle);
+      backgroundScheduler.schedule(() -> {
+        FeatureToggle apifeatureToggle = remoteDataSource.getById(userId);;
+        localDataSource.update(apifeatureToggle);
+        cacheDataSource.update(apifeatureToggle);
+        return apifeatureToggle;
+      });
     }
-
     return featureToggle;
-//
-//    remoteDataSource.getById(userId);
-//    this.getById(userId, ReadPolicy.API_ONLY);
-//
-//    switch (readPolicy) {
-//      case API_ONLY:
-//        return this.remoteDataSource.getById(userId);
-//      case LOCAL_ONLY:
-//        return this.localDataSource.getById(userId);
-//      case CACHE_ONLY:
-//        return this.cacheDataSource.getById(userId);
-//      case READ_ALL:
-//        default:
-//          // TODO(jliarte): 3/09/18 implement cache first data policy
-//          UserFeatures userFeatures = cacheDataSource.getById(userId);
-//          if (userFeatures == null) {
-//            userFeatures = getFromLocal(userId);
-//            cacheDataSource.update(userFeatures);
-//          }
-//          return userFeatures;
-//    }
   }
-//
-//  private UserFeatures getFromLocal(String userId) {
-//    UserFeatures userFeatures = localDataSource.getById(userId);
-//    if (userFeatures == null) {
-//      userFeatures = getFromRemote(userId);
-//      localDataSource.update(userFeatures);
-//    }
-//    return userFeatures;
-//  }
-
-//  private UserFeatures getFromRemote(String userId) {
-//    return remoteDataSource.getById(userId);
-//  }
 
   public List<FeatureToggle> fetch() {
     return this.getAll(ReadPolicy.API_ONLY);
-    // (jliarte): 3/09/18 local data sources already populated in getById method
-//    populateLocalDS(userFeatures);
-//    populateCacheDS(userFeatures);
-
-//    Object userFeatures = this.getById(userId, ReadPolicy.API_ONLY);
-//    userFeatures = getById.getUserFeatures(userId);
-//    setMemoryCache.setUserFeatures(userFeatures);
-//    saveLocal.saveUserFeatures(userFeatures);
   }
 
   // TODO(jliarte): 4/09/18 pull member up
@@ -168,14 +131,14 @@ public class FeatureRepository extends VimojoRepository<FeatureToggle> {
         cacheDataSource.update(features);
       }
     }
-
     if (features == null && readPolicy.useRemote()) {
-      features = remoteDataSource.getAll();
-      // TODO(jliarte): 4/09/18 shall we empty DSs before calling update?
-      localDataSource.update(features);
-      cacheDataSource.update(features);
+      backgroundScheduler.schedule(() -> {
+        List<FeatureToggle> apiFeatures = remoteDataSource.getAll();
+        cacheDataSource.update(apiFeatures);
+        localDataSource.update(apiFeatures);
+        return apiFeatures;
+      });
     }
-
     return features;
   }
 }

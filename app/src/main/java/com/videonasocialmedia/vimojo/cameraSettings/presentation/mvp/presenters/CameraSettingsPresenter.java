@@ -254,8 +254,8 @@ public class CameraSettingsPresenter extends VimojoPresenter {
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
     setCompositionFrameRate.updateFrameRate(currentProject, videoFrameRate);
-    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     userEventTracker.trackChangeFrameRate(frameRate);
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   public void setCameraQualitySetting(int qualitySelectedId) {
@@ -266,8 +266,8 @@ public class CameraSettingsPresenter extends VimojoPresenter {
     CameraSettings cameraSettings = cameraSettingsRepository.getCameraSettings();
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
     setCompositionQuality.setQuality(currentProject, videoQuality);
-    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     userEventTracker.trackChangeQuality(quality);
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   public void settingChanged(int settingId) {

@@ -99,12 +99,10 @@ public class RecordCamera2PresenterTest {
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
   @Mock private VideoDataSource mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
-  @Mock
-  CameraSettingsDataSource mockedCameraSettingsRepository;
+  @Mock CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
-  @InjectMocks private RecordCamera2Presenter injectedPresenter;
   private Project currentProject;
   @Mock UpdateComposition mockedUpdateComposition;
   private boolean hideRecordAudioGain;
@@ -121,7 +119,9 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    assertThat(injectedPresenter.userEventTracker, is(mockedUserEventTracker));
+    RecordCamera2Presenter recordCamera2Presenter = getRecordCamera2Presenter();
+
+    assertThat(recordCamera2Presenter.userEventTracker, is(mockedUserEventTracker));
   }
 
   @Test

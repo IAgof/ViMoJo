@@ -44,7 +44,6 @@ public class BackgroundScheduler {
     schedule(callable, null);
   }
 
-
   public ListenableFuture scheduleWithFuture(Callable callable) {
     SettableFuture futureResult = SettableFuture.create();
     schedule(callable, new ResultListener() {
