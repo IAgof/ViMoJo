@@ -68,16 +68,45 @@ android {
     def FABRIC_VIDEONA_ORG_APIKEY = "eba78720f87307ca48dfa4200dd90914ff6653f2"
     def FABRIC_VIDEONA_ORG_APISECRET = "1636d8a8a8c633c8ba87f5a67ca26a5cc354c414b108ef565df202f07f393ae9"
     productFlavors {
-        vimojo {
+//        vimojo {
+//            applicationId "com.videonasocialmedia.vimojo.main"
+//            versionCode 127 // 20180710
+//            versionName "0.20.5" // 20180710
+//            resValue "string", "app_out_of_date", "2018-06-30" // 20170731
+//            resValue "string", "app_name", "Vimojo"
+//            resValue "string", "content_authority", applicationId + '.provider'
+//            resValue "string", "account_type", applicationId + ".auth0"
+//            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
+//            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+//            buildConfigField "boolean", "FEATURE_FTP", "true"
+//            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
+//            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
+//            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
+//            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+//            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
+//            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
+//            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
+//            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
+//            buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
+//            buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
+//            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
+//            buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
+//            buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
+//            ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
+//            ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
+//            manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
+//        }
+        vimojo { /* vimojo setup for shonezi to demo and sell. Toggle this setup with vimojo std
+        to generate a vimojo apk for them. Remind to change also go to platform strings!! */
             applicationId "com.videonasocialmedia.vimojo.main"
             versionCode 127 // 20180710
             versionName "0.20.5" // 20180710
-            resValue "string", "app_out_of_date", "2018-06-30" // 20170731
+            resValue "string", "app_out_of_date", "2018-11-01" // 20170912
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
-            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+            ext.api_base_url = [debug: "https://shonezi.vimojo.co/api/v1/", release: "https://shonezi.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_FTP", "true"
             buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
             buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
@@ -92,9 +121,9 @@ android {
             buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
-            ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
-            ext.fabricApiSecret = "c529f00d2df71a2bc5215e4a75166cec6733c4781ea9e8df57d0c752e909701d"
-            manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "1f6610673faf2f5fcde5824176e94c8f4570aa2c"]
+            ext.fabricApiKey = "0f7a756b102e67c5246274d5b03affeabfd3ed99"
+            ext.fabricApiSecret = "20e26fc652147efbe747fbca02170e884c01a74d7c3eb2718fd73d363e77341d"
+            manifestPlaceholders = [vimojoAppName: "Vimojo", fabricApiKey: "0f7a756b102e67c5246274d5b03affeabfd3ed99"]
         }
         /*hispanopost {
             applicationId "com.videonasocialmedia.vimojo.hispanopost"

@@ -21,6 +21,8 @@ import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
+import java.util.List;
+
 /**
  * Created by alvaro on 31/1/18.
  */
@@ -57,14 +59,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     this.context = context;
     this.uploadToPlatform = uploadToPlatform;
     this.uploadRepository = uploadRepository;
-    Log.d(LOG_TAG, "created SyncAdapter...");
+    Log.i(LOG_TAG, "created SyncAdapter...");
   }
 
 
   @Override
   public void onPerformSync(Account account, Bundle bundle, String s,
                             ContentProviderClient contentProviderClient, SyncResult syncResult) {
-    Log.d(LOG_TAG, "onPerformSync");
+    Log.i(LOG_TAG, "onPerformSync");
     if (bundle.getBoolean(IntentConstants.ACTION_PAUSE_UPLOAD)) {
       Log.d(LOG_TAG, "onPerformSync ACTION_PAUSE_UPLOAD");
       String videoUploadUuid = bundle.getString(IntentConstants.VIDEO_UPLOAD_UUID);
@@ -94,7 +96,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             uploadToPlatform.removeUploadByUser();
           } else {
             // Pending videos to upload.
-            for (VideoUpload video : uploadRepository.getAllVideosToUpload()) {
+            List<VideoUpload> allVideosToUpload = uploadRepository.getAllVideosToUpload();
+            Log.i(LOG_TAG, "Uploading videos to platform, " + allVideosToUpload.size()
+                    + " pending videos");
+            for (VideoUpload video : allVideosToUpload) {
               Log.d(LOG_TAG, "video to upload: " + video.getUuid());
               if (!video.isUploading() && (video.getNumTries() < VideoUpload.MAX_NUM_TRIES_UPLOAD)) {
                 Log.d(LOG_TAG, "launching video to upload: ");

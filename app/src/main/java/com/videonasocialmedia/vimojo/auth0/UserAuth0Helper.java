@@ -93,6 +93,7 @@ public class UserAuth0Helper {
   }
 
   public void saveCredentials(Credentials credentials) {
+    Log.i(LOG_TAG, "Saving user credentials...");
     // save credentials, user logged
     manager.saveCredentials(credentials);
 
@@ -101,7 +102,7 @@ public class UserAuth0Helper {
         new BaseCallback<UserProfile, AuthenticationException>() {
           @Override
           public void onFailure(AuthenticationException error) {
-
+            Log.e(LOG_TAG, "Error Saving user credentials!!", error);
           }
 
           @Override
@@ -113,7 +114,8 @@ public class UserAuth0Helper {
               registerAccount(userProfile.getEmail(), "fakePassword",
                   "fakeToken", userId);
             } catch (VimojoApiException vimojoApiException) {
-              Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
+              Log.e(LOG_TAG, "Error saving user credentials while geting user id");
+              Log.d(LOG_TAG, "VimojoApiException " + vimojoApiException.getApiErrorCode());
               Crashlytics.log("Error process getting UserId vimojoApiException");
               Crashlytics.logException(vimojoApiException);
             }
@@ -124,17 +126,19 @@ public class UserAuth0Helper {
 
   public void getUserProfile(String accessToken,
                              BaseCallback<UserProfile, AuthenticationException> baseCallBack) {
-    authenticator.userInfo(accessToken)
-        .start(baseCallBack);
+    Log.i(LOG_TAG, "getUserProfile");
+    authenticator.userInfo(accessToken).start(baseCallBack);
   }
 
-  public void registerAccount(String email, String fakePassword, String accessToken, String id) {
+  private void registerAccount(String email, String fakePassword, String accessToken, String id) {
+    Log.i(LOG_TAG, "Registering new user account");
     Account account = new Account(email, AccountConstants.VIMOJO_ACCOUNT_TYPE);
     AccountManager am = AccountManager.get(context);
     final Bundle extraData = new Bundle();
     extraData.putString(AccountConstants.USER_ID, id);
     am.addAccountExplicitly(account, fakePassword, extraData);
     am.setAuthToken(account, AccountConstants.VIMOJO_AUTH_TOKEN_TYPE, accessToken);
+    Log.i(LOG_TAG, "done");
   }
 
   public void getAccessToken(BaseCallback<Credentials, CredentialsManagerException> baseCallback) {
