@@ -5,19 +5,21 @@ import android.content.Context;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.config.Configuration;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRealmDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSource;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
-import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
-import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackRealmDataSource;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
+import com.videonasocialmedia.vimojo.repository.datasource.JobManagerBackgroundScheduler;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
 
 import javax.inject.Singleton;
 
@@ -74,6 +76,11 @@ public class DataRepositoriesModule {
             .loadFactor(LOAD_FACTOR)
             .build();
     return new JobManager(config);
+  }
+
+  @Singleton @Provides
+  BackgroundScheduler provideBackgroundScheduler(JobManager jobManager) {
+    return new JobManagerBackgroundScheduler(jobManager);
   }
 
 }

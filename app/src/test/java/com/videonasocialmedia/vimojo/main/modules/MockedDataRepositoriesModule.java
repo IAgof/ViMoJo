@@ -1,10 +1,13 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
+import com.birbit.android.jobqueue.JobManager;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.CompositionApiDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
+import com.videonasocialmedia.vimojo.repository.datasource.FakeBackgroundScheduler;
 
 import static org.mockito.Mockito.mock;
 
@@ -28,4 +31,9 @@ public class MockedDataRepositoriesModule extends DataRepositoriesModule {
   CameraSettingsDataSource provideDefaultCameraRepository() {
     return mock(CameraSettingsDataSource.class);
   }
+
+  @Override BackgroundScheduler provideBackgroundScheduler(JobManager jobManager) {
+    return new FakeBackgroundScheduler();
+  }
+
 }

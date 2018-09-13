@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
@@ -43,6 +44,7 @@ public interface SystemComponent {
   SharedPreferences getSharedPreferences();
   CameraSettingsDataSource getCameraRepository();
   JobManager provideAPIJobManager();
+  BackgroundScheduler provideBackgroundScheduler();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
   void inject(UploadBroadcastReceiver uploadBroadcastReceiver);

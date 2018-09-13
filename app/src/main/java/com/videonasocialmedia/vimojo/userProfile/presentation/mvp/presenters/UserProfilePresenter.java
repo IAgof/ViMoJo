@@ -36,7 +36,7 @@ public class UserProfilePresenter extends VimojoPresenter {
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   protected final UserAuth0Helper userAuth0Helper;
   private FetchUserFeatures fetchUserFeatures;
-  private boolean vimojoPlatformAvailable;
+  protected boolean vimojoPlatformAvailable;
 
   @Inject
   public UserProfilePresenter(

@@ -86,6 +86,7 @@ public class MusicDetailPresenterTest {
     @Test
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+
         MusicDetailPresenter musicDetailPresenter =
                 getMusicDetailPresenter(userEventTracker);
 
@@ -103,7 +104,8 @@ public class MusicDetailPresenterTest {
     }
 
     @Test
-    public void addMusicCallsGoToSoundTranckingAndUpdateOnAddMediaItemFromTrackSuccess() throws InterruptedException {
+    public void addMusicCallsGoToSoundTranckingAndUpdateOnAddMediaItemFromTrackSuccess()
+        throws InterruptedException {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
         final Music music = new Music(1, "Music title", 2,

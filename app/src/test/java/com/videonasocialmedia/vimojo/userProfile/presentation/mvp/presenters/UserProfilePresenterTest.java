@@ -81,21 +81,21 @@ public class UserProfilePresenterTest {
   @Test
   public void clickUserEmailCallsUserAuthIfEmptyField(){
     UserProfilePresenter presenterSpy = Mockito.spy(getUserProfilePresenter());
+    presenterSpy.vimojoPlatformAvailable = true;
 
     presenterSpy.onClickEmail(mockedActivity, true);
 
-    if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
-      verify(presenterSpy).performLoginAndSaveAccount(mockedActivity);
+    verify(presenterSpy).performLoginAndSaveAccount(mockedActivity);
   }
 
   @Test
   public void clickUserNameCallsUserAuthIfEmptyField(){
     UserProfilePresenter presenterSpy = Mockito.spy(getUserProfilePresenter());
+    presenterSpy.vimojoPlatformAvailable = true;
 
     presenterSpy.onClickUsername(mockedActivity, true);
 
-    if (BuildConfig.FEATURE_VIMOJO_PLATFORM)
-      verify(presenterSpy).performLoginAndSaveAccount(mockedActivity);
+    verify(presenterSpy).performLoginAndSaveAccount(mockedActivity);
   }
 
   @NonNull

@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -47,6 +48,7 @@ public class RemoveVideoFromProjectUseCaseTest {
     getAProject();
   }
 
+  @Ignore // Move this test to EditPresenter, it should be in charge of update video.
   @Test
   public void testRemoveMediaItemFromProjectCallsUpdateProject() throws IllegalItemOnTrack {
     Video video = new Video("media/path", 1f);

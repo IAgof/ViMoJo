@@ -11,6 +11,8 @@ import com.videonasocialmedia.vimojo.featuresToggles.repository.datasource.Featu
 import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
 
 import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -37,13 +39,18 @@ public class FeatureRepositoryTest {
     setupUserFeaturesRepository();
   }
 
+  @Ignore
+  @Test
+  public void emptyTest(){
+
+  }
+
   private void setupUserFeaturesRepository() {
     featureRepository = new FeatureRepository(mockedRemoteDS,
-            mockedLocalDs, mockedCacheDS, mockedBackgroundScheduler);
+        mockedLocalDs, mockedCacheDS, mockedBackgroundScheduler);
     Mockito.doReturn(remoteResponse).when(mockedRemoteDS).getById(ArgumentMatchers.anyString());
     Mockito.doReturn(localResponse).when(mockedLocalDs).getById(ArgumentMatchers.anyString());
     Mockito.doReturn(cacheResponse).when(mockedCacheDS).getById(ArgumentMatchers.anyString());
   }
-
 
 }

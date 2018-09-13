@@ -41,22 +41,22 @@ public abstract class ApiDataSource<T> implements DataSource<T> {
 
   protected SettableFuture<Credentials> getApiAccessToken() {
     SettableFuture<Credentials> credentialsListenableFuture = SettableFuture.create();
-    userAuth0Helper.getAccessToken(new BaseCallback<Credentials, CredentialsManagerException>() {
-      @Override
-      public void onFailure(CredentialsManagerException error) {
-        // No credentials were previously saved or they couldn't be refreshed
-        Log.e(LOG_TAG, "processAsyncUpload, getApiAccessToken onFailure No credentials were " +
-                "previously saved or they couldn't be refreshed");
-        Crashlytics.log("Error processAsyncUpload getApiAccessToken");
-        Crashlytics.logException(error);
-        credentialsListenableFuture.setException(error);
-      }
+      userAuth0Helper.getAccessToken(new BaseCallback<Credentials, CredentialsManagerException>() {
+        @Override
+        public void onFailure(CredentialsManagerException error) {
+          // No credentials were previously saved or they couldn't be refreshed
+          Log.e(LOG_TAG, "processAsyncUpload, getApiAccessToken onFailure No credentials were " +
+              "previously saved or they couldn't be refreshed");
+          Crashlytics.log("Error processAsyncUpload getApiAccessToken");
+          Crashlytics.logException(error);
+          credentialsListenableFuture.setException(error);
+        }
 
-      @Override
-      public void onSuccess(Credentials credentials) {
-        credentialsListenableFuture.set(credentials);
-      }
-    });
+        @Override
+        public void onSuccess(Credentials credentials) {
+          credentialsListenableFuture.set(credentials);
+        }
+      });
     return credentialsListenableFuture;
   }
 
