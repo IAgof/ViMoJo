@@ -193,7 +193,7 @@ public class VoiceOverRecordPresenterTest {
             mockedContext, mockedVoiceOverRecordView, mockedGetMediaListFromProjectUseCase,
             mockedGetPreferencesTransitionFromProjectUseCase, mockedAddAudioUseCase,
             mockedRemoveAudioUseCase, mockedUserEventTracker, mockedProjectInstanceCache,
-            mockedUpdateComposition);
+            mockedUpdateComposition, updateTrack, removeTrack);
     voiceOverRecordPresenter.currentProject = currentProject;
     return voiceOverRecordPresenter;
   }

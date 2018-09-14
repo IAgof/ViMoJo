@@ -33,6 +33,10 @@ public class MediaDto {
   @SerializedName("creation_date") public String creationDate;
   @SerializedName("modification_date") public String modificationDate;
   @SerializedName("created_by") public String createdBy;
+  @SerializedName("duration") public int duration;
+  @SerializedName("title") public String title;
+  @SerializedName("author") public String author;
+  @SerializedName("iconResorceId") public int iconResourceId;
 
   public String getId() {
     return id;
@@ -104,6 +108,22 @@ public class MediaDto {
 
   public AssetDto getAsset() {
     return asset;
+  }
+
+  public int getDuration() {
+    return duration;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getAuthor() {
+    return author;
+  }
+
+  public int getIconResourceId() {
+    return iconResourceId;
   }
 
   public String getCreationDate() {

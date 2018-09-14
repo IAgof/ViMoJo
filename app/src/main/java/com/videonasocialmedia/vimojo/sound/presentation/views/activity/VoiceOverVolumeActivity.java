@@ -221,8 +221,10 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
 
     @Override
     public void showError(String message) {
-        String title = getString(R.string.alert_dialog_title_voice_over);
-        super.showAlertDialog(title, message);
+        runOnUiThread(() -> {
+            String title = getString(R.string.alert_dialog_title_voice_over);
+            super.showAlertDialog(title, message);
+        });
     }
 
     @Override

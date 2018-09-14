@@ -230,7 +230,7 @@ public class MusicDetailPresenterTest {
                 mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
                 mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
                 mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
-                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition);
+                mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition, removeMedia, updateTrack, deleteTrack);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

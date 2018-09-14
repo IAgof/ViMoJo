@@ -22,10 +22,11 @@ public class GetAudioFromProjectUseCase {
                                       int indexAudioTrack) {
         Music music = null;
         try {
-            music = (Music) project.getAudioTracks()
-                .get(indexAudioTrack).getItems().get(0);
+            music = (Music) project.getAudioTracks().get(indexAudioTrack).getItems().get(0);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            // (jliarte): 14/09/18 no elements
+            // TODO(jliarte): 14/09/18 on no music retrieved?
         }
         listener.onMusicRetrieved(music);
     }

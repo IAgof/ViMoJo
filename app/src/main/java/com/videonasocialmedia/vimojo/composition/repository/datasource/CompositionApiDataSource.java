@@ -31,7 +31,7 @@ import javax.inject.Inject;
 
 /**
  * API DataSource for projects. Provide remote persistence of Projects using vimojo API
- * via {@link com.videonasocialmedia.vimojo.vimojoapiclient.model.ProjectDto} class.
+ * via {@link CompositionDto} class.
  */
 public class CompositionApiDataSource extends ApiDataSource<Project> {
   private static final String LOG_TAG = CompositionApiDataSource.class.getSimpleName();

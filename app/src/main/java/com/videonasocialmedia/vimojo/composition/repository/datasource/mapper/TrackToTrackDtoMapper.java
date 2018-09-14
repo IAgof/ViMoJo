@@ -23,7 +23,7 @@ import javax.inject.Inject;
 /**
  * Class to provide model conversions between {@link Track} and {@link TrackDto}
  */
-class TrackToTrackDtoMapper extends KarumiMapper<Track, TrackDto> {
+public class TrackToTrackDtoMapper extends KarumiMapper<Track, TrackDto> {
   // TODO(jliarte): 13/07/18 maybe inject this?
   private MediaToMediaDtoMapper mediaToMediaDtoMapper = new MediaToMediaDtoMapper();
   private Comparator<? super MediaDto> orderComparator = (Comparator<MediaDto>)

@@ -12,6 +12,7 @@ import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
@@ -21,6 +22,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionRe
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -166,11 +168,11 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
                   modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, UpdateTrack updateTrack, RemoveTrack removeTrack) {
     return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase,
-            projectInstanceCache, updateComposition);
+            projectInstanceCache, updateComposition, updateTrack, removeTrack);
   }
 
   @Provides @PerActivity
@@ -178,11 +180,12 @@ public class ActivityPresentersModule {
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-          UserEventTracker userEventTracker, UpdateComposition updateComposition) {
+          UserEventTracker userEventTracker, UpdateComposition updateComposition,
+          UpdateTrack updateTrack, RemoveTrack removeTrack) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache,
-            updateComposition);
+            updateComposition, updateTrack, removeTrack);
   }
 
   @Provides @PerActivity
@@ -193,11 +196,13 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-          UpdateComposition updateComposition) {
+          UpdateComposition updateComposition, RemoveMedia removeMedia, UpdateTrack updateTrack,
+          RemoveTrack removeTrack) {
     return new MusicDetailPresenter((MusicDetailView) activity, activity, userEventTracker,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
-            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition);
+            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition,
+            removeMedia, updateTrack, removeTrack);
   }
 
   @Provides @PerActivity

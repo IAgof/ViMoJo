@@ -210,7 +210,7 @@ public class RemoveAudioUseCaseTest {
   }
 
   private RemoveAudioUseCase getRemoveAudioUseCase() {
-    return new RemoveAudioUseCase(mockedTrackRepository);
+    return new RemoveAudioUseCase();
   }
 
   private void getAProject() {

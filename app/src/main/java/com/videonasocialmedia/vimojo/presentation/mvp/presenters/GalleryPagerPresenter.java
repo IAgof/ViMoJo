@@ -16,17 +16,16 @@ import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
-import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -40,7 +39,8 @@ import javax.inject.Inject;
  * This class is used for adding new videos to the project.
  */
 public class GalleryPagerPresenter extends VimojoPresenter
-        implements OnRemoveMediaFinishedListener {
+//        implements OnRemoveMediaFinishedListener
+{
     private final String LOG_TAG = "GalleryPagerPresenter";
 
     private final SharedPreferences preferences;
@@ -225,12 +225,22 @@ public class GalleryPagerPresenter extends VimojoPresenter
         }
     }
 
-    @Override
-    public void onRemoveMediaItemFromTrackError() {
-    }
-
-    @Override
-    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
-    }
+//    @Override
+//    public void onRemoveMediaItemFromTrackError() {
+//    }
+//
+//  @Override
+//  public void onTrackUpdated(Track track) {
+//
+//  }
+//
+//    @Override
+//    public void onTrackRemoved(Track track) {
+//
+//    }
+//
+//    @Override
+//    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+//    }
 
 }

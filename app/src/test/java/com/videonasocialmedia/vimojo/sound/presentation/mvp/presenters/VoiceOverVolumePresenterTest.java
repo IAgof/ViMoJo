@@ -92,7 +92,7 @@ public class VoiceOverVolumePresenterTest {
         mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
-        mockedProjectInstanceCache, mockedUpdateComposition);
+        mockedProjectInstanceCache, mockedUpdateComposition, updateTrack, removeTrack);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

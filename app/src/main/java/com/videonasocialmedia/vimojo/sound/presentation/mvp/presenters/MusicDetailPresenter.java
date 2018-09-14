@@ -3,9 +3,13 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
@@ -56,6 +60,9 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
     private ModifyTrackUseCase modifyTrackUseCase;
     private GetMusicListUseCase getMusicListUseCase;
     private UpdateComposition updateComposition;
+    private RemoveMedia removeMedia;
+    private UpdateTrack updateTrack;
+    private RemoveTrack removeTrack;
 
     @Inject
     public MusicDetailPresenter(
@@ -65,7 +72,8 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
             ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -79,6 +87,9 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
         this.getMusicListUseCase = getMusicListUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.removeMedia = removeMedia;
+        this.updateTrack = updateTrack;
+        this.removeTrack = removeTrack;
         musicSelected = new Music("", 0);
     }
 
@@ -109,7 +120,10 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
                 userEventTracker.trackMusicSet(currentProject);
                 Futures.addCallback(
-                        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject)),
+                        executeUseCaseCall(() -> {
+                            removeMedia.removeMedias(removedMedias);
+                            updateComposition.updateComposition(currentProject);
+                        }),
                         new FutureCallback<Object>() {
                             @Override
                             public void onSuccess(@Nullable Object result) {
@@ -127,6 +141,16 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             public void onRemoveMediaItemFromTrackError() {
                 musicDetailView.showError(context
                     .getString(R.string.alert_dialog_title_message_removing_music));
+            }
+
+              @Override
+              public void onTrackUpdated(Track track) {
+                updateTrack.update(track);
+              }
+
+              @Override
+              public void onTrackRemoved(Track track) {
+                removeTrack.remove(track);
             }
         });
     }

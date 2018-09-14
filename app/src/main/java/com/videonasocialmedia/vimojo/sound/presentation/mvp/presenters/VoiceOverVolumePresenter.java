@@ -8,7 +8,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -43,6 +45,8 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
     private ModifyTrackUseCase modifyTrackUseCase;
     private RemoveAudioUseCase removeAudioUseCase;
     private UpdateComposition updateComposition;
+    private UpdateTrack updateTrack;
+    private RemoveTrack removeTrack;
 
     @Inject
     public VoiceOverVolumePresenter(
@@ -51,7 +55,8 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
             GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
             GetAudioFromProjectUseCase getAudioFromProjectUseCase,
             ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            UpdateTrack updateTrack, RemoveTrack removeTrack) {
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -62,6 +67,8 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
         this.removeAudioUseCase = removeAudioUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.updateTrack = updateTrack;
+        this.removeTrack = removeTrack;
     }
 
     public void updatePresenter() {
@@ -116,20 +123,32 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
     }
 
     public void deleteVoiceOver() {
-        removeAudioUseCase.removeMusic(currentProject, (Music) currentProject.getAudioTracks()
-                .get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0),
-            INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
-                @Override
-                public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+        executeUseCaseCall(() -> {
+            Music voiceOver = currentProject.getVoiceOver();
+            removeAudioUseCase.removeMusic(currentProject, voiceOver,
+                    INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
+                        @Override
+                        public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 
-                }
+                        }
 
-                @Override
-                public void onRemoveMediaItemFromTrackError() {
-                    voiceOverVolumeView.showError(context.getString(R.string
-                        .alert_dialog_title_message_adding_voice_over));
-                }
-            });
+                        @Override
+                        public void onRemoveMediaItemFromTrackError() {
+                            voiceOverVolumeView.showError(context.getString(R.string
+                                    .alert_dialog_title_message_adding_voice_over));
+                        }
+
+                        @Override
+                        public void onTrackUpdated(Track track) {
+                            updateTrack.update(track);
+                        }
+
+                        @Override
+                        public void onTrackRemoved(Track track) {
+                            removeTrack.remove(track);
+                        }
+                    });
+        });
     }
 
 }

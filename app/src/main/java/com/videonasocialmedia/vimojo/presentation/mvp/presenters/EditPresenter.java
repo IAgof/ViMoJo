@@ -19,6 +19,7 @@ import android.util.TypedValue;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -233,19 +234,32 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
     }
 
     public void removeVideoFromProject(int selectedVideoRemove) {
-        removeVideoFromProjectUseCase.removeMediaItemFromProject(currentProject,
-            selectedVideoRemove, new OnRemoveMediaFinishedListener() {
-                    @Override
-                    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
-                        onMediaRemoved(removedMedias);
-                    }
+        executeUseCaseCall(() -> {
+            removeVideoFromProjectUseCase.removeMediaItemFromProject(currentProject,
+                    selectedVideoRemove, new OnRemoveMediaFinishedListener() {
+                @Override
+                public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+                    onMediaRemoved(removedMedias);
+                }
 
-                    @Override
-                    public void onRemoveMediaItemFromTrackError() {
-                        // TODO(jliarte): 18/07/18 if a list of medias has been passed to UC and just one fails, we reach here and project is not updated!
-                        onMediaRemovedError();
-                    }
-                });
+                @Override
+                public void onRemoveMediaItemFromTrackError() {
+                    // TODO(jliarte): 18/07/18 if a list of medias has been passed to UC and just
+                    // one fails, we reach here and project is not updated!
+                    onMediaRemovedError();
+                }
+
+                @Override
+                public void onTrackUpdated(Track track) {
+                    // TODO(jliarte): 14/09/18 no track will be updated on removeMediaItemFromProject
+                }
+
+                @Override
+                public void onTrackRemoved(Track track) {
+                    // TODO(jliarte): 14/09/18 no track will be removed on removeMediaItemFromProject
+                }
+            });
+        });
     }
 
     private void onMediaRemovedError() {
