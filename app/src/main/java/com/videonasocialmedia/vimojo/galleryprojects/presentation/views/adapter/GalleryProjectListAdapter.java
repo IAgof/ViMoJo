@@ -68,14 +68,13 @@ public class GalleryProjectListAdapter extends
     } catch (Exception ignored) {}
     // TODO(jliarte): 9/08/18 FIXME it seems that onBindViewHolder is called multiple times for a
     //                item, resulting in appending data from several projects in the same viewholder
-    holder.durationProject.append(" " +
-        TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
-    holder.numClipsProject.append((" " + project.numberOfClips()));
+    holder.durationProject.setText(TimeUtils.toFormattedTimeWithMinutesAndSeconds(project.getDuration()));
+    holder.numClipsProject.setText(String.valueOf(project.numberOfClips()));
     holder.titleProject.setText(project.getProjectInfo().getTitle());
 
     double projectSizeMb = project.getProjectSizeMbVideoToExport();
     double formatProjectSizeMb = Math.round(projectSizeMb * 100.0) / 100.0;
-    holder.sizeMbProject.append(" " + formatProjectSizeMb + " Mb");
+    holder.sizeMbProject.setText(formatProjectSizeMb + " Mb");
   }
 
   private void drawVideoThumbnail(ImageView thumbnailView, Project project) {
