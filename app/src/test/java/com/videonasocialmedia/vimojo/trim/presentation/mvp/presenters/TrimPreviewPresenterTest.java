@@ -80,7 +80,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, userEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp);
+                mockedProjectInstanceCache, amIAVerticalApp);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -202,7 +202,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, mockedUserEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp);
+                mockedProjectInstanceCache, amIAVerticalApp);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }

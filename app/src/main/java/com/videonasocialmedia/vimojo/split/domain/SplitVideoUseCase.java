@@ -8,11 +8,11 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -33,16 +33,16 @@ public class SplitVideoUseCase {
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
     Video endVideo;
-    private VideoDataSource videoRepository;
     private Project currentProject;
+    private MediaRepository mediaRepository;
 
     @Inject
     public SplitVideoUseCase(AddVideoToProjectUseCase addVideoToProjectUseCase,
                              ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-                             VideoDataSource videoRepository) {
+                             MediaRepository mediaRepository) {
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
-        this.videoRepository = videoRepository;
+        this.mediaRepository = mediaRepository;
     }
 
     public void splitVideo(Project currentProject, final Video initialVideo, int positionInAdapter,
@@ -66,12 +66,11 @@ public class SplitVideoUseCase {
 
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {
-                // TODO(jliarte): 19/07/18 handle composition update
                 runTrimTasks(initialVideo, endVideo);
-                listener.onSuccessSplittingVideo();
+                // TODO(jliarte): 19/07/18 handle composition update
+                listener.onSuccessSplittingVideo(initialVideo, endVideo);
             }
         });
-
     }
 
     protected void runTrimTasks(Video initialVideo, Video endVideo) {
@@ -110,7 +109,11 @@ public class SplitVideoUseCase {
 
     private void handleTaskSuccess(Video video) {
         Log.d(LOG_TAG, "onSuccessTranscoding after trim in split " + video.getTempPath());
-        videoRepository.setSuccessTranscodingVideo(video);
+        // TODO(jliarte): 10/09/18 should we move this code to caller?
+        video.resetNumTriesToExportVideo();
+        video.setTranscodingTempFileFinished(true);
+        video.setVideoError(null);
+        mediaRepository.update(video); // TODO(jliarte): 13/09/18 this is needed to set success on transcoding. check that this is ran in background!
     }
 
     void handleTaskError(Video video, String message, Project currentProject) {
@@ -119,14 +122,14 @@ public class SplitVideoUseCase {
             video.increaseNumTriesToExportVideo();
             // TODO(jliarte): 23/10/17 modify here trim times
             randomizeSplitTime(video, endVideo);
-            videoRepository.update(video);
-            videoRepository.update(endVideo);
+            mediaRepository.update(video); // TODO(jliarte): 13/09/18 split times change. check this is ran in background!
+            mediaRepository.update(endVideo);
             runTrimTasks(video, endVideo);
         } else {
             //trimView.showError(message);
             video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.SPLIT.name());
             video.setTranscodingTempFileFinished(true);
-            videoRepository.update(video);
+            mediaRepository.update(video); // TODO(jliarte): 13/09/18 needed to set error to video. check that this is ran in background!
         }
     }
 

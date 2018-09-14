@@ -117,7 +117,7 @@ public class ModifyVideoDurationUseCaseTest {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     injectedUseCase.transcoderHelper = mockedTranscoderHelper;
     // TODO(jliarte): 19/09/17 dunno why automatically injected video repo is not mockedVideoRepository
-    injectedUseCase.videoRepository = mockedVideoRepository;
+//    injectedUseCase.videoDataSource = mockedVideoRepository;
     ListenableFuture<Video> mockedTask = Mockito.mock(ListenableFuture.class);
     doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),

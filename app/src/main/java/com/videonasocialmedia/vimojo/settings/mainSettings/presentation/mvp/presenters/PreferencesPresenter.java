@@ -318,7 +318,8 @@ public class PreferencesPresenter extends VimojoPresenter
   @Override
   public void videoToRelaunch(String videoUuid, String intermediatesTempAudioFadeDirectory) {
     final Video video = getVideo(videoUuid);
-    relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
+    executeUseCaseCall(() -> relaunchTranscoderTempBackgroundUseCase
+            .relaunchExport(video, currentProject));
   }
 
   private Video getVideo(String videoId) {
@@ -327,7 +328,7 @@ public class PreferencesPresenter extends VimojoPresenter
     List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
     if (videoList != null) {
       for (Media video : videoList) {
-        if (((Video) video).getUuid().compareTo(videoId) == 0) {
+        if (video.getUuid().compareTo(videoId) == 0) {
           return (Video) video;
         }
       }

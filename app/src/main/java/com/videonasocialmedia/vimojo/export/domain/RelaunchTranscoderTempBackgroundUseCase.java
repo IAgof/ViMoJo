@@ -10,6 +10,7 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
@@ -24,7 +25,6 @@ import java.io.IOException;
 public class RelaunchTranscoderTempBackgroundUseCase {
   private static final String LOG_TAG = RelaunchTranscoderTempBackgroundUseCase.class
           .getSimpleName();
-  private final VideoDataSource videoRepository;
   private final TextToDrawable drawableGenerator =
           new TextToDrawable(VimojoApplication.getAppContext());
   private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
@@ -32,10 +32,10 @@ public class RelaunchTranscoderTempBackgroundUseCase {
           mediaTranscoder);
 
   private final Project currentProject;
+  private MediaRepository mediaRepository;
 
-  public RelaunchTranscoderTempBackgroundUseCase(Project project,
-                                                 VideoDataSource videoRepository) {
-    this.videoRepository = videoRepository;
+  public RelaunchTranscoderTempBackgroundUseCase(Project project, MediaRepository mediaRepository) {
+    this.mediaRepository = mediaRepository;
     this.currentProject = project;
   }
 
@@ -57,7 +57,7 @@ public class RelaunchTranscoderTempBackgroundUseCase {
   private void runTranscodingTask(Video videoToEdit, Project project) throws IOException {
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
-    videoRepository.update(videoToEdit);
+    mediaRepository.update(videoToEdit); // TODO(jliarte): 12/09/18 needed to set temp path and transcoding finished
     // TODO(jliarte): 28/07/17 wait for adapt video tasks to end
     ListenableFuture<Video> transcodingTask = transcoderHelper.updateIntermediateFile(
             project.getVMComposition().getDrawableFadeTransitionVideo(),
@@ -70,7 +70,11 @@ public class RelaunchTranscoderTempBackgroundUseCase {
 
   private void handleTranscodingSuccess(Video video) {
     Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-    videoRepository.setSuccessTranscodingVideo(video);
+    // TODO(jliarte): 10/09/18 should we move this code to caller?
+    video.resetNumTriesToExportVideo();
+    video.setTranscodingTempFileFinished(true);
+    video.setVideoError(null);
+    mediaRepository.update(video); // TODO(jliarte): 12/09/18 needed to set video error
   }
 
   private void handleTranscodingError(Video video, String message) {
@@ -79,8 +83,10 @@ public class RelaunchTranscoderTempBackgroundUseCase {
       video.increaseNumTriesToExportVideo();
       relaunchExport(video, currentProject);
     } else {
-      videoRepository.setErrorTranscodingVideo(video,
-              Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
+      // TODO(jliarte): 10/09/18 should we move this code to caller?
+      video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
+      video.setTranscodingTempFileFinished(true);
+      mediaRepository.update(video); // TODO(jliarte): 12/09/18 needed to set error
     }
   }
 

@@ -75,7 +75,7 @@ public class RelaunchTranscoderTempBackgroundUseCaseTest {
     Video video = new Video("media/path", Video.DEFAULT_VOLUME);
     assertThat(video.getClipText(), is(nullValue()));
 
-    new RelaunchTranscoderTempBackgroundUseCase(mockedProject, mockedVideoRepository)
+    new RelaunchTranscoderTempBackgroundUseCase(mockedProject, mediaRepository)
             .relaunchExport(video, currentProject);
   }
 

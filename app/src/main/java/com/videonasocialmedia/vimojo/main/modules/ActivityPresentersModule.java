@@ -9,6 +9,7 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
@@ -343,10 +344,11 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+          UpdateComposition updateComposition, UpdateMedia updateMedia,
+    @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
-        projectInstanceCache, updateComposition, amIAVerticalApp);
+        projectInstanceCache, updateComposition, updateMedia, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -469,12 +471,12 @@ public class ActivityPresentersModule {
     return new AddVideoToProjectUseCase(launchTranscoderAddAVTransitionUseCase);
   }
 
-  @Provides
-  SplitVideoUseCase provideVideoSplitter(AddVideoToProjectUseCase addVideoToProjectUseCase,
-                                         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-                                         VideoDataSource videoRepository) {
+  @Provides SplitVideoUseCase provideVideoSplitter(
+          AddVideoToProjectUseCase addVideoToProjectUseCase,
+          ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+          MediaRepository mediaRepository) {
     return new SplitVideoUseCase(addVideoToProjectUseCase, modifyVideoDurationUseCase,
-            videoRepository);
+            mediaRepository);
   }
 
   @Provides
@@ -532,22 +534,23 @@ public class ActivityPresentersModule {
   }
 
   @Provides ModifyVideoDurationUseCase provideModifyVideoDurationUseCase(
-          VideoDataSource videoRepository, VideoToAdaptDataSource videoToAdaptRepository) {
-    return new ModifyVideoDurationUseCase(videoRepository, videoToAdaptRepository);
+          VideoToAdaptDataSource videoToAdaptRepository,
+          MediaRepository mediaRepository) {
+    return new ModifyVideoDurationUseCase(videoToAdaptRepository, mediaRepository);
   }
 
   @Provides ModifyVideoTextAndPositionUseCase provideModifyVideoTextAndPositionUseCase(
           VideoDataSource videoRepository,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoToAdaptDataSource videoToAdaptRepository) {
-    return new ModifyVideoTextAndPositionUseCase(videoRepository,
-            relaunchTranscoderTempBackgroundUseCase, videoToAdaptRepository);
+          VideoToAdaptDataSource videoToAdaptRepository, MediaRepository mediaRepository) {
+    return new ModifyVideoTextAndPositionUseCase(
+            relaunchTranscoderTempBackgroundUseCase, videoToAdaptRepository, mediaRepository);
   }
 
   @Provides
   ApplyAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
-          VideoDataSource videoRepository) {
-   return  new ApplyAVTransitionsUseCase(currentProject, videoRepository);
+          MediaRepository mediaRepository) {
+   return  new ApplyAVTransitionsUseCase(currentProject, mediaRepository);
   }
 
   @Provides GetVideoFormatFromCurrentProjectUseCase
@@ -562,8 +565,8 @@ public class ActivityPresentersModule {
   }
 
   @Provides RelaunchTranscoderTempBackgroundUseCase
-  provideRelaunchTranscoderTempBackgroundUseCase(VideoDataSource videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(currentProject, videoRepository);
+  provideRelaunchTranscoderTempBackgroundUseCase(MediaRepository mediaRepository) {
+    return new RelaunchTranscoderTempBackgroundUseCase(currentProject, mediaRepository);
   }
 
   @Provides ExportProjectUseCase provideProjectExporter(
@@ -644,5 +647,4 @@ public class ActivityPresentersModule {
   DownloadManager provideDownloadManager() {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
-
 }

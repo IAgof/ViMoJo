@@ -254,7 +254,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
         videoToAdaptRepo);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
-            new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
+            new ModifyVideoDurationUseCase(videoToAdaptRepo, mediaRepository);
 
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);

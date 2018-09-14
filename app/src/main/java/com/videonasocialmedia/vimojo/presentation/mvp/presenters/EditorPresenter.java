@@ -381,7 +381,8 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
-    relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
+    executeUseCaseCall(() -> relaunchTranscoderTempBackgroundUseCase
+            .relaunchExport(video, currentProject));
   }
 
   public void switchPreference(final boolean isChecked, String preference) {
