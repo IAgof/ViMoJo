@@ -3,21 +3,20 @@ package com.videonasocialmedia.vimojo.split.domain;
 import android.util.Log;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
@@ -47,12 +46,11 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class})
 public class SplitVideoUseCaseTest {
-  @Mock
-  ProjectRepository mockedProjectRepository;
+
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
+  @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
+  @Mock MediaRepository mockedMediaRepository;
   @Mock private OnSplitVideoListener mockedSpliListener;
-  @Mock private VideoDataSource videoRepository;
-  @InjectMocks SplitVideoUseCase injectedUseCase;
   private Project currentProject;
 
   @Before
@@ -64,14 +62,16 @@ public class SplitVideoUseCaseTest {
   @Test
   public void splitVideoCallsAddVideoToProjectAtPosition() {
     Video video = new Video("media/path", 1f);
+    SplitVideoUseCase splitVideoUseCase = getSplitVideoUseCase();
 
-    injectedUseCase.splitVideo(currentProject, video, 0, 10, mockedSpliListener);
+    splitVideoUseCase.splitVideo(currentProject, video, 0, 10, mockedSpliListener);
 
     ArgumentCaptor<Video> videoCaptor = ArgumentCaptor.forClass(Video.class);
     verify(mockedAddVideoToProjectUseCase).addVideoToProjectAtPosition(eq(currentProject),
         videoCaptor.capture(), eq(1), any(OnAddMediaFinishedListener.class));
     assertThat(videoCaptor.getValue().getMediaPath(), is(video.getMediaPath()));
   }
+
 
   @Test
   public void handleTaskErrorModifiesVideoTrimmingTimes() throws IOException {
@@ -81,7 +81,7 @@ public class SplitVideoUseCaseTest {
     int splitTime = 1250;
     video.setStopTime(splitTime);
     doReturn(5000).when(video).getFileDuration();
-    SplitVideoUseCase useCaseSpy = spy(injectedUseCase);
+    SplitVideoUseCase useCaseSpy = spy(getSplitVideoUseCase());
     Video endVideo = new Video(video);
     endVideo.setStartTime(splitTime);
     endVideo.setStopTime(5000);
@@ -107,5 +107,8 @@ public class SplitVideoUseCaseTest {
   private void getAProject() {
     currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
+  }
+  private SplitVideoUseCase getSplitVideoUseCase() {
+    return new SplitVideoUseCase(mockedAddVideoToProjectUseCase, mockedModifyVideoDurationUseCase, mockedMediaRepository);
   }
 }

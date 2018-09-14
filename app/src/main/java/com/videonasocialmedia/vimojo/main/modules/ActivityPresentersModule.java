@@ -344,11 +344,10 @@ public class ActivityPresentersModule {
           SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-          UpdateComposition updateComposition, UpdateMedia updateMedia,
-    @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
         userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
-        projectInstanceCache, updateComposition, updateMedia, amIAVerticalApp);
+        projectInstanceCache, amIAVerticalApp);
   }
 
   @Provides @PerActivity

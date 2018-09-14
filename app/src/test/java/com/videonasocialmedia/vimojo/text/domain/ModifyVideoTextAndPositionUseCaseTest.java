@@ -7,22 +7,22 @@ import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.transcoder.video.overlay.Image;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
@@ -33,10 +33,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 /**
  * Created by jliarte on 19/10/16.
@@ -45,13 +46,11 @@ import static org.mockito.Mockito.verify;
 public class ModifyVideoTextAndPositionUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
-  @Mock
-  VideoDataSource mockedVideoRepository;
-  @Mock
-  VideoToAdaptDataSource mockedVideoToAdaptRepository;
+  @Mock VideoToAdaptDataSource mockedVideoToAdaptRepository;
   @Mock TranscoderHelper mockedTranscoderHelper;
-  @InjectMocks ModifyVideoTextAndPositionUseCase injectedUseCase;
   private Project currentProject;
+  @Mock RelaunchTranscoderTempBackgroundUseCase mockedRelaunchTranscoderTempBackgroundUseCase;
+  @Mock MediaRepository mockedMediaRepository;
 
   @Before
   public void injectDoubles() throws Exception {
@@ -66,10 +65,12 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     Video video = getVideoTrimmedWithText();
     // TODO(jliarte): 19/10/16 should not use a boolean here
     assert video.isTrimmedVideo();
-    injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
+    ModifyVideoTextAndPositionUseCase spyModifyVideoTextAndPositionUseCase =
+        spy(getModifyTextAndPositionUseCase());
+    spyModifyVideoTextAndPositionUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition());
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition());
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -83,7 +84,9 @@ public class ModifyVideoTextAndPositionUseCaseTest {
           throws IOException {
     Video video = getVideoTrimmedWithText();
     assert video.isTrimmedVideo();
-    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
+    ModifyVideoTextAndPositionUseCase spyModifyVideoTextAndPositionUseCase =
+        spy(getModifyTextAndPositionUseCase());
+    spyModifyVideoTextAndPositionUseCase.transcoderHelper = mockedTranscoderHelper;
     ListenableFuture<Video> mockedTask = mock(ListenableFuture.class);
     doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -91,7 +94,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(),
         video.getClipTextPosition());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
@@ -108,10 +111,12 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     Video video = getVideoUntrimmedWithText();
     assert video.hasText();
     assert ! video.isTrimmedVideo();
-    injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
+    ModifyVideoTextAndPositionUseCase spyModifyVideoTextAndPositionUseCase =
+        spy(getModifyTextAndPositionUseCase());
+    spyModifyVideoTextAndPositionUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(),
         video.getClipTextPosition());
 
     verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(
@@ -127,7 +132,9 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     Video video = getVideoUntrimmedWithText();
     assert video.hasText();
     assert ! video.isTrimmedVideo();
-    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
+    ModifyVideoTextAndPositionUseCase spyModifyVideoTextAndPositionUseCase =
+        spy(getModifyTextAndPositionUseCase());
+    spyModifyVideoTextAndPositionUseCase.transcoderHelper = mockedTranscoderHelper;
     ListenableFuture<Video> mockedTask = mock(ListenableFuture.class);
     doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -135,7 +142,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(),
         video.getClipTextPosition());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
@@ -150,7 +157,9 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   public void addTextToVideoCallsVideoRepositoryUpdate() throws IOException {
     Video video = new Video("media/path", 1f);
     String textPosition = TextEffect.TextPosition.BOTTOM.name();
-    injectedUseCase.transcoderHelper = mockedTranscoderHelper;
+    ModifyVideoTextAndPositionUseCase spyModifyVideoTextAndPositionUseCase =
+        spy(getModifyTextAndPositionUseCase());
+    spyModifyVideoTextAndPositionUseCase.transcoderHelper = mockedTranscoderHelper;
     ListenableFuture<Video> mockedTask = mock(ListenableFuture.class);
     doReturn(mockedTask).when(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -158,9 +167,9 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(currentProject, video, "text", textPosition);
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, "text", textPosition);
 
-    verify(mockedVideoRepository, atLeastOnce()).update(video);
+    verify(mockedMediaRepository, atLeastOnce()).update(video);
     assertThat(video.getClipText(), is("text"));
     assertThat(video.getClipTextPosition(), is(textPosition));
   }
@@ -187,4 +196,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
   }
 
+  private ModifyVideoTextAndPositionUseCase getModifyTextAndPositionUseCase() {
+    return new ModifyVideoTextAndPositionUseCase(mockedRelaunchTranscoderTempBackgroundUseCase,
+        mockedVideoToAdaptRepository, mockedMediaRepository);
+  }
 }

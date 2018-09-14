@@ -124,10 +124,10 @@ public class MusicDetailPresenterTest {
 
         musicDetailPresenter.addMusic(music, volumeMusic);
 
-        verify(mockedMusicDetailView).goToSoundActivity();
         verify(mockedUserEventTracker).trackMusicSet(currentProject);
         Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
         verify(mockedUpdateComposition).updateComposition(currentProject);
+        verify(mockedMusicDetailView).goToSoundActivity();
     }
 
     @Test

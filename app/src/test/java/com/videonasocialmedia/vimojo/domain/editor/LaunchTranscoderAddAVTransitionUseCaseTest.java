@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.domain.editor;
 
 import android.graphics.drawable.Drawable;
 
-import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -11,14 +10,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.pipeline.ApplyAudioFadeInFadeOutToVideo;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
-import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -42,26 +40,18 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 
 public class LaunchTranscoderAddAVTransitionUseCaseTest {
-  @Mock TextToDrawable mockedDrawableGenerator;
-  @Mock MediaTranscoder mockedMediaTranscoder;
-  @Mock ApplyAudioFadeInFadeOutToVideo mockedApplyAudioFadeInFadeOutToVideo;
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock Drawable mockedDrawableFadeTransition;
   @Mock TranscoderHelperListener mockedTranscoderHelperListener;
 
   private final VideonaFormat videonaFormat = new VideonaFormat();
-
-  @Mock
-  VideoDataSource mockVideoRepository;
-  @Mock Video mockedVideo;
   @Mock Project mockedProject;
   @Mock private ApplyAVTransitionsUseCase.AVTransitionsApplierListener mockedAVTransitionsApplierListener;
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @Mock
-  VideoDataSource mockedVideoRepository;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock VideoDataSource mockedVideoRepository;
 
   private Project currentProject;
+  @Mock MediaRepository mockedMediaRepository;
 
   @Before
   public void injectDoubles() throws Exception {
@@ -93,7 +83,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
             any(TranscoderHelperListener.class));
     verify(mockedTranscoderHelper, never()).generateOutputVideoWithAudioTransitionAsync(video,
         currentProject.getProjectPathIntermediateFileAudioFade(), mockedTranscoderHelperListener);
-    verify(mockedVideoRepository).update(video);
+    verify(mockedMediaRepository).update(video);
   }
 
   // Ignore test, verify not working, mock not used. Unify audio transcoder tasks in mediaTranscoder
@@ -138,7 +128,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   }
 
   private ApplyAVTransitionsUseCase getInjectedApplyAVTransitionsUseCase() {
-    return new ApplyAVTransitionsUseCase(currentProject, mediaRepository);
+    return new ApplyAVTransitionsUseCase(currentProject, mockedMediaRepository);
   }
 
   public void getAProject() {
