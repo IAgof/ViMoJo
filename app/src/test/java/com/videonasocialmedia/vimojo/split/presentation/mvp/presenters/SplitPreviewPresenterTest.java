@@ -52,6 +52,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 // TODO(jliarte): 15/06/16 I need to use robolectric here as Video is being copied in the presenter
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest=Config.NONE)
 public class SplitPreviewPresenterTest {
     @Mock private SplitView mockedSplitView;
     @Mock private MixpanelAPI mockedMixpanelAPI;
