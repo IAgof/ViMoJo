@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.SwitchPreference;
 
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
@@ -116,13 +117,13 @@ public class FragmentPresentersModule {
 
   @Provides
   RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(
-          VideoDataSource videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(currentProject, videoRepository);
+          MediaRepository mediaRepository) {
+    return new RelaunchTranscoderTempBackgroundUseCase(currentProject, mediaRepository);
   }
 
   @Provides
-  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectRepository
-                                                                       projectRepository) {
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(
+          ProjectRepository projectRepository) {
     return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
 

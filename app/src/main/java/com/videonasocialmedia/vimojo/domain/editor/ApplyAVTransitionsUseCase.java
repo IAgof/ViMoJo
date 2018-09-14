@@ -9,6 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
@@ -26,22 +27,20 @@ public class ApplyAVTransitionsUseCase {
   protected MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(drawableGenerator,
       mediaTranscoder);
-  protected VideoDataSource videoRepository;
   private Project currentProject;
   private WeakReference<AVTransitionsApplierListener> applierListener;
+  private MediaRepository mediaRepository; // TODO(jliarte): 12/09/18 explore how to decouple use case from repository calls
 
-  public ApplyAVTransitionsUseCase(Project project,
-                                   VideoDataSource videoRepository) {
+  public ApplyAVTransitionsUseCase(Project project, MediaRepository mediaRepository) {
     this.currentProject = project;
-    this.videoRepository = videoRepository;
+    this.mediaRepository = mediaRepository;
   }
 
 
-  public void applyAVTransitions(Drawable drawableFadeTransition, Video videoToEdit,
-                                 VideonaFormat videoTranscoderFormat,
-                                 String intermediatesTempAudioFadeDirectory,
-                                 AVTransitionsApplierListener
-                                 avTransitionsApplierListener) {
+  public void applyAVTransitions(
+          Drawable drawableFadeTransition, Video videoToEdit, VideonaFormat videoTranscoderFormat,
+          String intermediatesTempAudioFadeDirectory,
+          AVTransitionsApplierListener avTransitionsApplierListener) {
     this.applierListener = new WeakReference<>(avTransitionsApplierListener);
     boolean isVideoFadeTransitionActivated = currentProject.getVMComposition()
             .isVideoFadeTransitionActivated();
@@ -54,7 +53,7 @@ public class ApplyAVTransitionsUseCase {
             new AVTransitionsListener(drawableFadeTransition, isVideoFadeTransitionActivated,
                     isAudioFadeTransitionActivated, videoTranscoderFormat,
                     intermediatesTempAudioFadeDirectory));
-    videoRepository.update(videoToEdit);
+    mediaRepository.update(videoToEdit); // (jliarte): 12/09/18 this update is needed cause videoToEdit.setTranscodingTempFileFinished, is it really needed to persist this field?
   }
 
   private void updateGeneratedVideo(Drawable drawableFadeTransition,
@@ -98,7 +97,12 @@ public class ApplyAVTransitionsUseCase {
     @Override
     public void onSuccessTranscoding(Video video) {
       Log.d(TAG, "onSuccessTranscoding " + video.getTempPath());
-      videoRepository.setSuccessTranscodingVideo(video);
+      // TODO(jliarte): 10/09/18 should move this code to listener?
+      video.resetNumTriesToExportVideo();
+      video.setTranscodingTempFileFinished(true);
+      video.setVideoError(null);
+      mediaRepository.update(video); // TODO(jliarte): 12/09/18 needed mainly to set video error, could be moved to listener
+
       AVTransitionsApplierListener listener = applierListener.get();
       if (listener != null) {
         listener.onSuccessApplyAVTransitions(video);
@@ -118,8 +122,10 @@ public class ApplyAVTransitionsUseCase {
                 isAudioFadeTransitionActivated, video, videoTranscoderFormat,
                 intermediatesTempAudioFadeDirectory, this);
       } else {
-        videoRepository.setErrorTranscodingVideo(video,
-                Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+        // TODO(jliarte): 10/09/18 should we move this code to caller?
+        video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.AVTRANSITION.name());
+        video.setTranscodingTempFileFinished(true);
+        mediaRepository.update(video); // TODO(jliarte): 12/09/18 needed mainly to set video error, could be moved to listener
         AVTransitionsApplierListener listener = applierListener.get();
         if (listener != null) {
           listener.onErrorApplyAVTransitions(video, message);

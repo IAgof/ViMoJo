@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
+import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
@@ -16,6 +17,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.text.domain.ClipTextResultCallback;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
@@ -23,6 +25,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -98,10 +102,10 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     }
 
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
-        VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-
-        modifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, videoToEdit, text,
-                textPositionSelected.name());
+        Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
+        Futures.addCallback(modifyVideoTextAndPositionUseCase
+                .addTextToVideo(currentProject, videoToEdit, text, textPositionSelected.name()),
+                new ClipTextResultCallback(), backgroundExecutor);
 
         userEventTracker.trackClipAddedText("center", text.length(), currentProject);
     }

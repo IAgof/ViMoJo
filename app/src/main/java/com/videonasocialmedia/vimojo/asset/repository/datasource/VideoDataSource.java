@@ -17,7 +17,4 @@ public interface VideoDataSource extends DataSource<Video> {
 
   void removeAllVideos();
 
-  void setSuccessTranscodingVideo(Video video);
-
-  void setErrorTranscodingVideo(Video video, String cause);
 }

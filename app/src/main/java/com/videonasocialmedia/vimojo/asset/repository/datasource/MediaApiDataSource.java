@@ -44,12 +44,15 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
 
   @Override
   public void add(Media item) {
-
+    MediaDto mediaDtoToUpdate = mapper.map(item);
+    schedule(() -> {
+      updateMediaDto(item, mediaDtoToUpdate); // TODO(jliarte): 13/09/18 update to addMediaDto when uuid collissions are handled in backend and routes are different
+      return null;
+    });
   }
 
   @Override
   public void add(Iterable items) {
-
   }
 
   @Override
@@ -133,4 +136,5 @@ public class MediaApiDataSource extends ApiDataSource<Media> {
     }
     return null; // TODO(jliarte): 20/07/18 check this path
   }
+
 }

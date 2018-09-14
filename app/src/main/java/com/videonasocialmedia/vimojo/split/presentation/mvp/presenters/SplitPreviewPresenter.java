@@ -9,7 +9,6 @@ package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -17,7 +16,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
-import com.videonasocialmedia.vimojo.split.domain.OnSplitVideoListener;
+import com.videonasocialmedia.vimojo.split.domain.VideoAndCompositionUpdaterOnSplitSuccess;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -95,23 +94,14 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     }
 
     public void splitVideo(int positionInAdapter, int timeMs) {
-        splitVideoUseCase.splitVideo(currentProject, videoToEdit, positionInAdapter, timeMs,
-                new OnSplitVideoListener() {
-            @Override
-            public void onSuccessSplittingVideo() {
-                // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
-            }
-
-            @Override
-            public void showErrorSplittingVideo() {
-                splitView.showError(R.string.addMediaItemToTrackError);
-            }
-        });
+        // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
+        executeUseCaseCall(() -> splitVideoUseCase
+                .splitVideo(currentProject, videoToEdit, positionInAdapter, timeMs,
+                        new VideoAndCompositionUpdaterOnSplitSuccess(currentProject)));
         trackSplitVideo();
     }
 
-    public void trackSplitVideo() {
+    void trackSplitVideo() {
         userEventTracker.trackClipSplitted(currentProject);
     }
 

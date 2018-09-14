@@ -46,12 +46,21 @@ public class MediaRepository extends VimojoRepository<Media> {
 
   @Override
   public void add(Media item) {
-
+    if (item instanceof Video) {
+      videoRealmDataSource.add((Video) item);
+    } else if (item instanceof Music) {
+      musicRealmDataSource.add((Music) item);
+    } else {
+      Log.e(LOG_TAG, "Trying to update media that is not video or music " + item.toString());
+    }
+    mediaApiDataSource.add(item);
   }
 
   @Override
   public void add(Iterable<Media> items) {
-
+    for (Media media : items) {
+      add(media);
+    }
   }
 
   @Override

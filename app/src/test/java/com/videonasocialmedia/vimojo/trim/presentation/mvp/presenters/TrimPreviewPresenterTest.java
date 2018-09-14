@@ -79,7 +79,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, userEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, mockedUpdateComposition);
+                mockedProjectInstanceCache);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -201,7 +201,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, mockedUserEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, mockedUpdateComposition);
+                mockedProjectInstanceCache);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }

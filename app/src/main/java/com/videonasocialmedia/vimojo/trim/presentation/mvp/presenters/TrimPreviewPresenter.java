@@ -10,16 +10,16 @@ package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 import android.content.SharedPreferences;
 import android.widget.RadioButton;
 
-import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-
-import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
+import com.videonasocialmedia.vimojo.trim.domain.TrimResultCallback;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -27,6 +27,8 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -55,7 +57,6 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private int videoToTrimIndex;
-    private UpdateComposition updateComposition;
 
     @Inject
     public TrimPreviewPresenter(
@@ -63,14 +64,13 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
             UserEventTracker userEventTracker,
             GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
             ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition) {
+            ProjectInstanceCache projectInstanceCache) {
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
-        this.updateComposition = updateComposition;
     }
 
     public void init(int videoToTrimIndex) {
@@ -104,11 +104,11 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
     }
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-        modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
-            currentProject);
+        Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
+        Futures.addCallback(modifyVideoDurationUseCase
+                        .trimVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject),
+                new TrimResultCallback(videoToEdit, currentProject), backgroundExecutor);
         trackVideoTrimmed();
-        // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
-        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     }
 
     void trackVideoTrimmed() {
@@ -198,4 +198,5 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
         return sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
+
 }

@@ -2,8 +2,6 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 
 import javax.inject.Inject;
 

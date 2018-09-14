@@ -66,7 +66,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     Project project = setupProjectPath();
     project.getVMComposition().getMediaTrack().insertItem(video);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
-            new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
+            new ModifyVideoDurationUseCase(videoToAdaptRepo, mediaRepository);
 
     modifyVideoDurationUseCase.trimVideo(video, 100, 600, project);
 
@@ -97,7 +97,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
-            new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
+            new ModifyVideoDurationUseCase(videoToAdaptRepo, mediaRepository);
 
     adaptVideoToFormatUseCase.adaptVideo(project, videoToAdapt, videoFormat, mockedAdaptListener);
     ListenableFuture<Video> adaptTask = video.getTranscodingTask();

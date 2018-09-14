@@ -138,7 +138,7 @@ public class LaunchTranscoderAddAVTransitionUseCaseTest {
   }
 
   private ApplyAVTransitionsUseCase getInjectedApplyAVTransitionsUseCase() {
-    return new ApplyAVTransitionsUseCase(currentProject, mockedVideoRepository);
+    return new ApplyAVTransitionsUseCase(currentProject, mediaRepository);
   }
 
   public void getAProject() {
