@@ -10,7 +10,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -54,6 +56,8 @@ public class VoiceOverVolumePresenterTest {
 
   private Project currentProject;
   private boolean amIAVerticalApp;
+  @Mock UpdateTrack mockedUpdateTrack;
+  @Mock RemoveTrack mockedRemoveTrack;
 
   @Before
   public void injectTestDoubles() {
@@ -96,7 +100,8 @@ public class VoiceOverVolumePresenterTest {
         mockedVoiceOverVolumeView,
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
-        mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp);
+        mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack,
+        mockedRemoveTrack);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

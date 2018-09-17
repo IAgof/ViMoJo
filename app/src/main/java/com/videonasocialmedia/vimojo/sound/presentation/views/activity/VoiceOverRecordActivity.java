@@ -242,7 +242,8 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar.make(videonaPlayer, errorMessage, Snackbar.LENGTH_LONG).show();
+        runOnUiThread(() -> Snackbar
+                .make(videonaPlayer, errorMessage, Snackbar.LENGTH_LONG).show());
     }
 
     @Override

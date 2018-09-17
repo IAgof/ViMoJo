@@ -12,10 +12,15 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -78,6 +83,8 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
 //  private CompositionApiClient compositionApiClient;
   private UpdateComposition updateComposition;
   private boolean amIAVerticalApp;
+  private UpdateTrack updateTrack;
+  private RemoveTrack removeTrack;
 
   @Inject
   public VoiceOverRecordPresenter(
@@ -86,7 +93,8 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
       UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
-      UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+      UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+      UpdateTrack updateTrack, RemoveTrack removeTrack) {
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -98,6 +106,8 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
     this.projectInstanceCache = projectInstanceCache;
     this.updateComposition = updateComposition;
     this.amIAVerticalApp = amIAVerticalApp;
+    this.updateTrack = updateTrack;
+    this.removeTrack = removeTrack;
   }
 
   public void updatePresenter() {
@@ -272,20 +282,33 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
   }
 
   protected void deletePreviousVoiceOver() {
-    removeAudioUseCase.removeMusic(currentProject, (Music) currentProject.getAudioTracks()
-            .get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0),
-        INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
-          @Override
-          public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+//    Music voiceOver = (Music) currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0);
+    Music voiceOver = currentProject.getVoiceOver();
+    executeUseCaseCall(() -> {
+      removeAudioUseCase.removeMusic(currentProject, voiceOver, INDEX_AUDIO_TRACK_VOICE_OVER,
+              new OnRemoveMediaFinishedListener() {
+                @Override
+                public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 
-          }
+                }
 
-          @Override
-          public void onRemoveMediaItemFromTrackError() {
-            voiceOverRecordView.showError(context.getString(R.string
-                .alert_dialog_title_message_adding_voice_over));
-          }
-        });
+                @Override
+                public void onRemoveMediaItemFromTrackError() {
+                  voiceOverRecordView.showError(context.getString(R.string
+                          .alert_dialog_title_message_adding_voice_over));
+                }
+
+                @Override
+                public void onTrackUpdated(Track track) {
+                  updateTrack.update(track);
+                }
+
+                @Override
+                public void onTrackRemoved(Track track) {
+                  removeTrack.remove(track);
+                }
+              });
+    });
   }
 
   @NonNull

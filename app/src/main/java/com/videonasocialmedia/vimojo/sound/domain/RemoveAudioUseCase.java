@@ -8,7 +8,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 
 import java.util.Collections;
 
@@ -20,13 +19,11 @@ import javax.inject.Inject;
 
 public class RemoveAudioUseCase {
   private Project currentProject;
-  private TrackDataSource trackRepository;
   private final int FIRST_POSITION = 1;
   private final int RESET_POSITION = 0;
 
   @Inject
-  public RemoveAudioUseCase(TrackDataSource trackRepository) {
-    this.trackRepository = trackRepository;
+  public RemoveAudioUseCase() {
   }
 
   // Remove audio only delete track if it is not music track.
@@ -34,41 +31,51 @@ public class RemoveAudioUseCase {
                           OnRemoveMediaFinishedListener listener) {
     this.currentProject = currentProject;
     Track audioTrack = currentProject.getAudioTracks().get(trackIndex);
-    updateTrackPosition(audioTrack, trackIndex);
+    updateTrackPosition(audioTrack, trackIndex, listener);
     removeMusicInTrack(music, listener, audioTrack);
-    updateTrackDefaultValues(audioTrack);
-    if (audioTrack.getItems().size() == 0
-        && audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER) {
+    removeEmptyVoiceOverTrack(audioTrack, currentProject, listener);
+  }
+
+  private void removeEmptyVoiceOverTrack(Track audioTrack, Project currentProject, OnRemoveMediaFinishedListener listener) {
+    if (trackIsEmpty(audioTrack) && isVoiceOverTrack(audioTrack)) {
       currentProject.getAudioTracks().remove(audioTrack);
+      listener.onTrackRemoved(audioTrack);
     }
   }
 
+  private boolean trackIsEmpty(Track audioTrack) {
+    return audioTrack.getItems().size() == 0;
+  }
+
+  private boolean isVoiceOverTrack(Track audioTrack) {
+    return audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
+  }
+
   // TODO:(alvaro.martinez) 19/06/17 delete this when vimojo support multiple audio items.
-  private void updateTrackDefaultValues(Track audioTrack) {
+  private void updateTrackDefaultVolume(Track audioTrack) {
     audioTrack.setVolume(Music.DEFAULT_VOLUME);
     audioTrack.setMute(false);
   }
 
-  private void updateTrackPosition(Track audioTrack, int trackIndex) {
+  private void updateTrackPosition(Track audioTrack, int trackIndex,
+                                   OnRemoveMediaFinishedListener listener) {
     audioTrack.setPosition(RESET_POSITION);
-    trackRepository.update(audioTrack);
     switch (trackIndex) {
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
         if (currentProject.hasVoiceOver()) {
           Track voiceOverTrack = currentProject.getAudioTracks()
               .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
           voiceOverTrack.setPosition(FIRST_POSITION);
-          trackRepository.update(voiceOverTrack);
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
         if (currentProject.hasMusic()) {
           Track musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
           musicTrack.setPosition(FIRST_POSITION);
-          trackRepository.update(musicTrack);
         }
         break;
     }
+    listener.onTrackUpdated(audioTrack);
   }
 
   private void removeMusicInTrack(Music music, OnRemoveMediaFinishedListener listener,
@@ -82,6 +89,10 @@ public class RemoveAudioUseCase {
           listener.onRemoveMediaItemFromTrackError();
         }
       }
+    }
+    if (trackIsEmpty(audioTrack)) {
+      updateTrackDefaultVolume(audioTrack);
+      listener.onTrackUpdated(audioTrack);
     }
   }
 

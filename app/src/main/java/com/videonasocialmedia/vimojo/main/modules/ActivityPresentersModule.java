@@ -22,6 +22,8 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DeleteComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.DuplicateProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.GetCompositions;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
@@ -30,6 +32,13 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQu
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
@@ -173,11 +182,12 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
                   modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          UpdateTrack updateTrack, RemoveTrack removeTrack) {
     return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase,
-            projectInstanceCache, updateComposition, amIAVerticalApp);
+            projectInstanceCache, updateComposition, amIAVerticalApp, updateTrack, removeTrack);
   }
 
   @Provides @PerActivity
@@ -186,11 +196,12 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           UserEventTracker userEventTracker, UpdateComposition updateComposition,
-          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+          @Named("amIAVerticalApp") boolean amIAVerticalApp, UpdateTrack updateTrack,
+          RemoveTrack removeTrack) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
             getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache,
-            updateComposition, amIAVerticalApp);
+            updateComposition, amIAVerticalApp, updateTrack, removeTrack);
   }
 
   @Provides @PerActivity
@@ -201,12 +212,14 @@ public class ActivityPresentersModule {
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          RemoveMedia removeMedia, UpdateTrack updateTrack,
+          RemoveTrack removeTrack) {
     return new MusicDetailPresenter((MusicDetailView) activity, activity, userEventTracker,
             getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
             modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition,
-            amIAVerticalApp);
+            amIAVerticalApp, removeMedia, updateTrack, removeTrack);
   }
 
   @Provides @PerActivity

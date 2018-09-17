@@ -143,23 +143,6 @@ public class RemoveAudioUseCaseTest {
   }
 
   @Test
-  public void removeMusicUpdateRepositories() throws IllegalItemOnTrack {
-    float defaultVolume = 0.5f;
-    int defaultDuration = 100;
-    Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    musicTrack.insertItem(music);
-    musicTrack.setPosition(1);
-    assertThat("Project has music ", currentProject.hasMusic(), is(true));
-    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
-
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
-
-    verify(mockedTrackRepository).update(musicTrack);
-  }
-
-  @Test
   public void removeVoiceOverWithOneItemDeleteVoiceOverTrack() throws IllegalItemOnTrack {
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
@@ -210,7 +193,7 @@ public class RemoveAudioUseCaseTest {
   }
 
   private RemoveAudioUseCase getRemoveAudioUseCase() {
-    return new RemoveAudioUseCase(mockedTrackRepository);
+    return new RemoveAudioUseCase();
   }
 
   private void getAProject() {

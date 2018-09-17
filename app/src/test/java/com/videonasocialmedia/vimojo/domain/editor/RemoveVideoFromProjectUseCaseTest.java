@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -66,6 +67,16 @@ public class RemoveVideoFromProjectUseCaseTest {
     return new OnRemoveMediaFinishedListener() {
       @Override
       public void onRemoveMediaItemFromTrackError() {
+
+      }
+
+      @Override
+      public void onTrackUpdated(Track track) {
+
+      }
+
+      @Override
+      public void onTrackRemoved(Track track) {
 
       }
 

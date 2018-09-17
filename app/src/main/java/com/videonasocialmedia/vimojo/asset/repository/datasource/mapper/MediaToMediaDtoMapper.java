@@ -61,7 +61,10 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
     mediaDto.mediaType = MediaDto.MEDIA_TYPE_MUSIC;
     mediaDto.id = music.getUuid();
     mediaDto.uuid = music.getUuid();
-    // TODO(jliarte): 13/07/18 implement music specific mapping
+    mediaDto.title = music.getTitle();
+    mediaDto.author = music.getAuthor();
+    mediaDto.iconResourceId = music.getIconResourceId(); // (jliarte): 14/09/18 same fields than realm music
+    mediaDto.duration = music.getDuration();
   }
 
   @Override
@@ -82,13 +85,12 @@ public class MediaToMediaDtoMapper extends KarumiMapper<Media, MediaDto> {
         ((Video) media).setTranscodingTempFileFinished(value.isTranscodeFinished());
         return media;
       case MediaDto.MEDIA_TYPE_MUSIC:
-        // TODO(jliarte): 23/07/18 map music items
-//        media = new Music(value.getMediaPath(), value.volume, value.getDuration());
-//        media.setUuid(value.getUuid());
-//        music.setMusicTitle(value.title);
-//        music.setMusicAuthor(value.author);
-//        music.setIconResourceId(value.iconResourceId);
-        return null;
+        media = new Music(value.getMediaPath(), value.volume, value.getDuration());
+        media.setUuid(value.getUuid());
+        ((Music)media).setMusicTitle(value.getTitle());
+        ((Music)media).setMusicAuthor(value.getAuthor());
+        ((Music)media).setIconResourceId(value.getIconResourceId());
+        return media;
       default:
         // TODO(jliarte): 23/07/18 will we have default case?
         media = new Media() {
