@@ -38,7 +38,7 @@ import javax.inject.Inject;
 /**
  * This class is used for adding new videos to the project.
  */
-public class GalleryPagerPresenter extends VimojoPresenter
+public class GalleryPagerPresenter
 //        implements OnRemoveMediaFinishedListener
 {
     private final String LOG_TAG = "GalleryPagerPresenter";
@@ -57,22 +57,23 @@ public class GalleryPagerPresenter extends VimojoPresenter
     MediaMetadataRetriever metadataRetriever;
     private final UpdateComposition updateComposition;
     private SetCompositionResolution setCompositionResolution;
-
+    private VimojoPresenter vimojoPresenter;
     /**
      * Constructor.
      */
     @Inject public GalleryPagerPresenter(
-            GalleryPagerView galleryPagerView, Context context,
-            AddVideoToProjectUseCase addVideoToProjectUseCase,
-            ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-            SetCompositionResolution setCompositionResolution) {
+        GalleryPagerView galleryPagerView, Context context,
+        AddVideoToProjectUseCase addVideoToProjectUseCase,
+        ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        SetCompositionResolution setCompositionResolution, VimojoPresenter vimojoPresenter) {
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
         this.preferences = preferences;
         this.setCompositionResolution = setCompositionResolution;
+        this.vimojoPresenter = vimojoPresenter;
         // TODO(jliarte): 23/04/18 inject this dependency? maybe abstracting from android with an interface
         metadataRetriever = new MediaMetadataRetriever();
         this.projectInstanceCache = projectInstanceCache;
@@ -113,7 +114,8 @@ public class GalleryPagerPresenter extends VimojoPresenter
             public void onAddMediaItemToTrackSuccess(Media video) {
                 // TODO(jliarte): 18/07/18 check if this UC call should be inside if
                 // TODO(jliarte): 18/07/18 should update project or add new media to project?
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+                vimojoPresenter.executeUseCaseCall(()
+                    -> updateComposition.updateComposition(currentProject));
                 if (!differentVideoFormat) {
                     galleryPagerView.navigate();
                 }
@@ -190,7 +192,8 @@ public class GalleryPagerPresenter extends VimojoPresenter
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                         getPreferenceResolutionForWidth(videoWidth));
                 preferencesEditor.apply();
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+                vimojoPresenter.executeUseCaseCall(()
+                    -> updateComposition.updateComposition(currentProject));
             }
         }
     }

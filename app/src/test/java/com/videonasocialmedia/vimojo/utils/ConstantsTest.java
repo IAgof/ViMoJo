@@ -13,5 +13,5 @@ package com.videonasocialmedia.vimojo.utils;
 
 public class ConstantsTest {
 
-  public static final long SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS = 50;
+  public static final long SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS = 111;
 }

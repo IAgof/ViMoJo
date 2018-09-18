@@ -15,8 +15,9 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.FakeBackgroundExecute;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,12 +47,14 @@ public class DetailProjectPresenterTest {
   @Mock UpdateComposition mockedUpdateComposition;
   @Mock SetCompositionInfo mockedSetCompositionInfo;
   @Mock ProjectRepository mockedProjectRepository;
+  @Mock VimojoPresenter mockedVimojoPresenter;
 
   @Before
   public void initDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
     when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+    mockedVimojoPresenter = new FakeBackgroundExecute();
   }
 
   @Test
@@ -73,7 +76,7 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void setProjectInfoCallsUseCasesAndTracking() throws InterruptedException {
+  public void setProjectInfoCallsUseCasesAndTracking() {
 
     DetailProjectPresenter spyPresenter = Mockito.spy(getDetailProjectPresenter());
     String titleProject = "titleProject";
@@ -86,14 +89,15 @@ public class DetailProjectPresenterTest {
     verify(mockedSetCompositionInfo).setCompositionInfo(currentProject, titleProject,
         descriptionProject, productTypeList);
     verify(mockedUserEventTracker).trackProjectInfo(currentProject);
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
-    return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
-            mockedProjectInstanceCache, mockedUpdateComposition, mockedSetCompositionInfo);
+    DetailProjectPresenter detailProjectPresenter = new
+        DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
+            mockedProjectInstanceCache, mockedUpdateComposition, mockedSetCompositionInfo, mockedVimojoPresenter);
+    return detailProjectPresenter;
   }
 
   private void getAProject() {

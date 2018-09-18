@@ -17,7 +17,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
@@ -63,8 +62,7 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
  * This class it's also the one in charge handling
  * {@link com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer}.
  */
-public class EditorPresenter extends VimojoPresenter
-        implements PlayStoreBillingDelegate.BillingDelegateView {
+public class EditorPresenter implements PlayStoreBillingDelegate.BillingDelegateView {
   public static final float VOLUME_MUTE = 0f;
   private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
   private final PlayStoreBillingDelegate playStoreBillingDelegate;
@@ -96,27 +94,28 @@ public class EditorPresenter extends VimojoPresenter
   private boolean watermarkIsForced;
   private boolean hideTutorials;
   private boolean amIAVerticalApp;
+  private VimojoPresenter vimojoPresenter;
 
   @Inject
   public EditorPresenter(
-          EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
-          SharedPreferences sharedPreferences, Activity context, UserEventTracker userEventTracker,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          NewClipImporter newClipImporter, BillingManager billingManager,
-          ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
-          RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
-          UpdateComposition updateComposition,
-          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
-          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("hideTutorials") boolean hideTutorials,
-          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+      EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
+      SharedPreferences sharedPreferences, Activity context, UserEventTracker userEventTracker,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+      GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      NewClipImporter newClipImporter, BillingManager billingManager,
+      ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
+      RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
+      UpdateComposition updateComposition,
+      @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+      @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      @Named("watermarkIsForced") boolean watermarkIsForced,
+      @Named("hideTutorials") boolean hideTutorials,
+      @Named("amIAVerticalApp") boolean amIAVerticalApp, VimojoPresenter vimojoPresenter) {
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -142,11 +141,12 @@ public class EditorPresenter extends VimojoPresenter
     this.watermarkIsForced = watermarkIsForced;
     this.hideTutorials = hideTutorials;
     this.amIAVerticalApp = amIAVerticalApp;
+    this.vimojoPresenter = vimojoPresenter;
   }
 
   public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath,
                                              String currentAppliedTheme) {
-    return this.executeUseCaseCall(() -> {
+    return this.vimojoPresenter.executeUseCaseCall(() -> {
       currentProject = projectInstanceCache.getCurrentProject();
       updateTheme(currentAppliedTheme);
       setupWatermarkDrawerSwitch();
@@ -251,7 +251,7 @@ public class EditorPresenter extends VimojoPresenter
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             watermarkIsSelected(), drawableFadeTransitionVideo, amIAVerticalApp);
     projectInstanceCache.setCurrentProject(project);
-    return executeUseCaseCall(() -> saveComposition.saveComposition(project));
+    return vimojoPresenter.executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
@@ -265,7 +265,7 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   public ListenableFuture<?> obtainVideoFromProject() {
-    return this.executeUseCaseCall(() -> {
+    return this.vimojoPresenter.executeUseCaseCall(() -> {
       getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
         @Override
         public void onVideosRetrieved(List<Video> videosRetrieved) {
@@ -381,7 +381,7 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
-    executeUseCaseCall(() -> relaunchTranscoderTempBackgroundUseCase
+    vimojoPresenter.executeUseCaseCall(() -> relaunchTranscoderTempBackgroundUseCase
             .relaunchExport(video, currentProject));
   }
 
@@ -396,7 +396,7 @@ public class EditorPresenter extends VimojoPresenter
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
       updateCompositionWatermark.updateCompositionWatermark(currentProject, isChecked);
-      executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+      vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
       // TODO(jliarte): 21/08/18 should we chain this?
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
@@ -469,6 +469,6 @@ public class EditorPresenter extends VimojoPresenter
   public void updateTitleCurrentProject(String title) {
     ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
-    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 }

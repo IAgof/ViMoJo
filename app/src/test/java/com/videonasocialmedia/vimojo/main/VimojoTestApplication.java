@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.main;
 
-import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.MockedDataRepositoriesModule;
 import com.videonasocialmedia.vimojo.main.modules.MockedVimojoApplicationModule;

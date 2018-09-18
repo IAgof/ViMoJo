@@ -34,7 +34,7 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
 /**
  * Created by ruth on 19/09/16.
  */
-public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideosRetrieved {
+public class VoiceOverVolumePresenter implements OnVideosRetrieved {
     private final ProjectInstanceCache projectInstanceCache;
     private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     private VoiceOverVolumeView voiceOverVolumeView;
@@ -49,17 +49,18 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
     private UpdateTrack updateTrack;
     private RemoveTrack removeTrack;
     private boolean amIAVerticalApp;
+    private VimojoPresenter vimojoPresenter;
 
     @Inject
     public VoiceOverVolumePresenter(
-            Context context, VoiceOverVolumeView voiceOverVolumeView,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-            ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp,
-            UpdateTrack updateTrack, RemoveTrack removeTrack) {
+        Context context, VoiceOverVolumeView voiceOverVolumeView,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+        ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        UpdateTrack updateTrack, RemoveTrack removeTrack, VimojoPresenter vimojoPresenter) {
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -73,6 +74,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
         this.amIAVerticalApp = amIAVerticalApp;
         this.updateTrack = updateTrack;
         this.removeTrack = removeTrack;
+        this.vimojoPresenter = vimojoPresenter;
     }
 
     public void updatePresenter() {
@@ -126,11 +128,11 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
         modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
                 .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
         voiceOverVolumeView.goToSoundActivity();
-        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+        vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     }
 
     public void deleteVoiceOver() {
-        executeUseCaseCall(() -> {
+        vimojoPresenter.executeUseCaseCall(() -> {
             Music voiceOver = currentProject.getVoiceOver();
             removeAudioUseCase.removeMusic(currentProject, voiceOver,
                     INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {

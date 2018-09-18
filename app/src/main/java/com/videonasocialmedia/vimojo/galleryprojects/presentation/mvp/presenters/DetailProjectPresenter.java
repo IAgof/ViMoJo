@@ -27,7 +27,7 @@ import javax.inject.Inject;
  * Created by alvaro on 19/12/16.
  */
 
-public class DetailProjectPresenter extends VimojoPresenter {
+public class DetailProjectPresenter {
   private final Context context;
   private DetailProjectView detailProjectView;
   private UserEventTracker userEventTracker;
@@ -45,18 +45,20 @@ public class DetailProjectPresenter extends VimojoPresenter {
   private final int PIECE_ID = 5;
   private UpdateComposition updateComposition;
   private SetCompositionInfo setCompositionInfo;
+  private VimojoPresenter vimojoPresenter;
 
   @Inject
   public DetailProjectPresenter(
-          Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
-          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-          SetCompositionInfo setCompositionInfo) {
+      Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
+      ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+      SetCompositionInfo setCompositionInfo, VimojoPresenter vimojoPresenter) {
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;
     this.projectInstanceCache = projectInstanceCache;
     this.updateComposition = updateComposition;
     this.setCompositionInfo = setCompositionInfo;
+    this.vimojoPresenter = vimojoPresenter;
   }
 
   public void init() {
@@ -146,7 +148,7 @@ public class DetailProjectPresenter extends VimojoPresenter {
     userEventTracker.trackProjectInfo(currentProject);
     setCompositionInfo.setCompositionInfo(currentProject, projectTitle, projectDescription,
         getProjectInfoProductTypeSelectedInOrder(projectInfoProductTypeSelected));
-    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   // Product list is added/removed item by item without order. Needed sort list to show it properly in activity.

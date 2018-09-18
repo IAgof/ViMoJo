@@ -24,8 +24,9 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
-import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.FakeBackgroundExecute;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -71,11 +72,13 @@ public class VoiceOverRecordPresenterTest {
   private boolean amIAVerticalApp;
   @Mock UpdateTrack mockedUpdateTrack;
   @Mock RemoveTrack mockedRemoveTrack;
+  @Mock VimojoPresenter mockedVimojoPresenter;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
     setAProject();
+    mockedVimojoPresenter = new FakeBackgroundExecute();
   }
 
   @Test
@@ -148,7 +151,7 @@ public class VoiceOverRecordPresenterTest {
 
   @Test
   public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError()
-      throws IllegalItemOnTrack, InterruptedException {
+      throws IllegalItemOnTrack {
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
@@ -169,7 +172,6 @@ public class VoiceOverRecordPresenterTest {
 
     injectedPresenter.deletePreviousVoiceOver();
 
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedVoiceOverRecordView).showError(null);
   }
 
@@ -200,7 +202,8 @@ public class VoiceOverRecordPresenterTest {
             mockedContext, mockedVoiceOverRecordView, mockedGetMediaListFromProjectUseCase,
             mockedGetPreferencesTransitionFromProjectUseCase, mockedAddAudioUseCase,
             mockedRemoveAudioUseCase, mockedUserEventTracker, mockedProjectInstanceCache,
-            mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack);
+            mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack,
+            mockedVimojoPresenter);
     voiceOverRecordPresenter.currentProject = currentProject;
     return voiceOverRecordPresenter;
   }

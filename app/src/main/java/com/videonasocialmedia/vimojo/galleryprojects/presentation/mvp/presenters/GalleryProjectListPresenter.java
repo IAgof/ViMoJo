@@ -34,7 +34,7 @@ import javax.inject.Named;
 /**
  * Created by ruth on 13/09/16.
  */
-public class GalleryProjectListPresenter extends VimojoPresenter {
+public class GalleryProjectListPresenter {
   private static final String LOG_TAG = GalleryProjectListPresenter.class.getSimpleName();
   private ProjectRepository projectRepository;
   private GalleryProjectListView galleryProjectListView;
@@ -49,18 +49,19 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private GetCompositionAssets getCompositionAssets;
   private boolean watermarkIsForced;
   private boolean amIVerticalApp;
+  private VimojoPresenter vimojoPresenter;
 
   @Inject
   public GalleryProjectListPresenter(
-          GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
-          ProjectRepository projectRepository,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          DuplicateProjectUseCase duplicateProjectUseCase,
-          DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition, UpdateComposition updateComposition,
-          GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
-          @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+      GalleryProjectListView galleryProjectListView, SharedPreferences sharedPreferences,
+      ProjectRepository projectRepository,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      DuplicateProjectUseCase duplicateProjectUseCase,
+      DeleteComposition deleteComposition, ProjectInstanceCache projectInstanceCache,
+      SaveComposition saveComposition, UpdateComposition updateComposition,
+      GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
+      @Named("watermarkIsForced") boolean watermarkIsForced,
+      @Named("amIAVerticalApp") boolean amIAVerticalApp, VimojoPresenter vimojoPresenter) {
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;
@@ -74,6 +75,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.getCompositionAssets = getCompositionAssets;
     this.watermarkIsForced = watermarkIsForced;
     this.amIVerticalApp = amIAVerticalApp;
+    this.vimojoPresenter = vimojoPresenter;
   }
 
   public void init() {
@@ -85,7 +87,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     try {
       Project newProject = duplicateProjectUseCase.duplicate(project);
       // TODO(jliarte): 11/07/18 change to runnable
-      Futures.addCallback(executeUseCaseCall(() -> saveComposition.saveComposition(newProject)),
+      Futures.addCallback(vimojoPresenter.executeUseCaseCall(()
+              -> saveComposition.saveComposition(newProject)),
               new FutureCallback<Object>() {
         @Override
         public void onSuccess(@Nullable Object result) {
@@ -106,7 +109,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
 
   public void deleteProject(Project project) {
     // TODO(jliarte): 10/08/18 from both
-    Futures.addCallback(executeUseCaseCall(() -> deleteComposition.delete(project)),
+    Futures.addCallback(vimojoPresenter.executeUseCaseCall(() -> deleteComposition.delete(project)),
             new FutureCallback<Object>() {
       @Override
       public void onSuccess(@Nullable Object result) {
@@ -124,7 +127,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
 
   public void deleteLocalProject(Project project) {
     // TODO(jliarte): 10/08/18 only local
-    Futures.addCallback(executeUseCaseCall(() -> deleteComposition.deleteOnlyLocal(project)),
+    Futures.addCallback(vimojoPresenter.executeUseCaseCall(()
+            -> deleteComposition.deleteOnlyLocal(project)),
             new FutureCallback<Object>() {
       @Override
       public void onSuccess(@Nullable Object result) {
@@ -151,7 +155,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void updateProjectList() {
     galleryProjectListView.showLoading();
     Futures.addCallback(
-            executeUseCaseCall(() -> getCompositions.getListProjectsByLastModificationDescending()),
+        vimojoPresenter.executeUseCaseCall(()
+            -> getCompositions.getListProjectsByLastModificationDescending()),
             new FutureCallback<List<Project>>() {
               @Override
               public void onSuccess(@Nullable List<Project> projectList) {
@@ -176,7 +181,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
             isWatermarkActivated(), drawableFadeTransitionVideo, amIVerticalApp);
     projectInstanceCache.setCurrentProject(project);
-    executeUseCaseCall(() -> saveComposition.saveComposition(project));
+    vimojoPresenter.executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 
   private boolean isWatermarkActivated() {
@@ -186,13 +191,13 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
 
   public void goToEdit(Project project) {
     projectInstanceCache.setCurrentProject(project);
-    executeUseCaseCall(() -> updateComposition.updateComposition(project));
+    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(project));
     downloadAssetsAndNavigate(project, EditActivity.class);
   }
 
   public void goToShare(Project project) {
     projectInstanceCache.setCurrentProject(project);
-    executeUseCaseCall(() -> updateComposition.updateComposition(project));
+    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(project));
     downloadAssetsAndNavigate(project, ShareActivity.class);
   }
 

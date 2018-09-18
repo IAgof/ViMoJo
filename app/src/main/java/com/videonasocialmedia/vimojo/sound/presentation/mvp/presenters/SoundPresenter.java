@@ -20,7 +20,7 @@ import javax.inject.Named;
 /**
  * Created by ruth on 13/09/16.
  */
-public class SoundPresenter extends VimojoPresenter implements VideoTranscodingErrorNotifier,
+public class SoundPresenter implements VideoTranscodingErrorNotifier,
     ElementChangedListener {
   private String LOG_TAG = getClass().getSimpleName();
   private SoundView soundView;
@@ -30,6 +30,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   protected Project currentProject;
   private UpdateComposition updateComposition;
   protected boolean voiceOverAvailable;
+  @Inject VimojoPresenter vimojoPresenter;
 
   @Inject
   public SoundPresenter(
@@ -101,7 +102,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
     float volume = (float) (seekBarProgress * 0.01);
     modifyTrackUseCase.setTrackVolume(track, volume);
     updatePlayerVolume(id, volume);
-    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   private void updatePlayerVolume(int id, float volume) {
@@ -135,7 +136,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
     Track track = getTrackById(id);
     modifyTrackUseCase.setTrackMute(track, isMute);
     updatePlayerMute(id, isMute);
-    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   private void updatePlayerMute(int id, boolean isMute) {
