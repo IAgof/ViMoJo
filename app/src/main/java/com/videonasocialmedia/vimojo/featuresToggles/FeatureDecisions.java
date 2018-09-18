@@ -33,7 +33,7 @@ public class FeatureDecisions {
     return features.isEnabled(Constants.USER_FEATURE_FORCE_WATERMARK);
   }
 
-  public boolean showWaterMarkSwitch() {
+  public boolean showWatermarkSwitch() {
     return features.isEnabled(Constants.USER_FEATURE_WATERMARK)
             && !features.isEnabled(Constants.USER_FEATURE_FORCE_WATERMARK);
   }

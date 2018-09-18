@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -76,7 +75,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Log.class})
 public class EditorPresenterTest {
 
-  @Mock private MixpanelAPI mockedMixpanelAPI;
   @Mock EditorActivityView mockedEditorActivityView;
   @Mock VideonaPlayerView mockedVideonaPlayerView;
   @Mock SharedPreferences mockedSharedPreferences;
@@ -101,7 +99,7 @@ public class EditorPresenterTest {
   private boolean hasBeenProjectExported = false;
   private String videoExportedPath = "videoExportedPath";
   private String currentAppliedTheme = "dark";
-  private boolean showWaterMarkSwitch;
+  private boolean showWatermarkSwitch;
   private boolean vimojoStoreAvailable;
   private boolean vimojoPlatformAvailable;
   private boolean watermarkIsForced;
@@ -119,7 +117,7 @@ public class EditorPresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+    UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditorPresenter editorPresenter = new EditorPresenter(mockedEditorActivityView,
             mockedVideonaPlayerView, mockedSharedPreferences, mockedContext, userEventTracker,
             mockedCreateDefaultProjectUseCase, mockedGetMediaListFromProjectUseCase,
@@ -128,7 +126,7 @@ public class EditorPresenterTest {
             mockedRelaunchTranscoderTempBackgroundUseCase,
             mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
             mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
-            mockedUpdateComposition, showWaterMarkSwitch, vimojoStoreAvailable,
+            mockedUpdateComposition, showWatermarkSwitch, vimojoStoreAvailable,
             vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
@@ -454,7 +452,7 @@ public class EditorPresenterTest {
             mockedRelaunchTranscoderTempBackgroundUseCase,
             mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
             mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
-            mockedUpdateComposition,showWaterMarkSwitch, vimojoStoreAvailable,
+            mockedUpdateComposition, showWatermarkSwitch, vimojoStoreAvailable,
             vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp );
     editorPresenter.currentProject = currentProject;
     return editorPresenter;

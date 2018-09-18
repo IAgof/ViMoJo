@@ -12,6 +12,12 @@
 
     <string name="app_out_of_date_message">Time for testing app expired</string>
 
+    <!-- Init Register Login Activity -->
+    <string name="textview_init_register_login_title">Record, edit and share your video news</string>
+    <string name="textview_init_register_login_message">Vimojo enables mobile journalists and professional video producers to tell thrilling stories whenever they need.</string>
+    <string name="button_text_init_register">Free register</string>
+    <string name="button_text_init_login">Log in</string>
+
     <!-- Record Activity -->
     <string name="chronometerDefault">00:00</string>
     <string name="toast_exit">Press back to exit</string>
@@ -1118,6 +1124,13 @@ limitations under the License. \n
         LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.\n\n
+    </string>
+
+    <string name="licenseIntroRegisterLoginVideo">
+        Intro video for register or login. \n\n
+
+        Video from https://pixabay.com/ \n\n
+        Music, Benjamin Tissot https://www.bensound.com/royalty-free-music/track/energy \n\n
     </string>
 
 
@@ -2528,6 +2541,5 @@ and Conditions.\n\n
 
     <string name="vimojo_platform_base_debug">https://beta.viday.co</string>
     <string name="com_auth0_audience_debug">https://vimojo.auth/api</string>
-
 
 </resources>

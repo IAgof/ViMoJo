@@ -39,9 +39,9 @@ public class FeatureToggleModule {
     return featureDecisions.watermarkIsForced();
   }
 
-  @Provides @Named("showWaterMarkSwitch")
-  boolean provideShowWaterMarkSwitchDecision(FeatureDecisions featureDecisions) {
-    return featureDecisions.showWaterMarkSwitch();
+  @Provides @Named("showWatermarkSwitch")
+  boolean provideShowWatermarkSwitchDecision(FeatureDecisions featureDecisions) {
+    return featureDecisions.showWatermarkSwitch();
   }
 
   @Provides @Named("vimojoStoreAvailable")

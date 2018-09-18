@@ -12,7 +12,12 @@ package com.videonasocialmedia.vimojo.utils;
 
 public class ConfigPreferences {
     public final static String FIRST_TIME = "first_time";
+    public final static String FIRST_APP_VERSION = "first_app_version";
+    public final static String FIRST_APP_RUN = "first_app_run";
+    public final static String PREHISTERIC_USER = "prehisteric";
     public final static String SETTINGS_SHARED_PREFERENCES_FILE_NAME = "SETTINGS_SHARED_PREFERENCES_CAMERA";
+    public final static String SETTINGS_SHARED_PREFERENCES_TRACKING_USER_PROPERTIES = "tracking_user_props";
+    public final static String SETTINGS_SHARED_PREFERENCES_TRACKING_SUPER_PROPERTIES = "tracking_super_props";
     public final static String SETTINGS_SHARED_PREFERENCES_FEATURE_TOGGLE_LOCAL_DS = "feature_toggle_local_datasource";
     public final static String NAME = "name";
     public final static String USERNAME = "username";
@@ -31,7 +36,6 @@ public class ConfigPreferences {
     public final static String EMAIL = "email";
     public final static int BACK_CAMERA = 0;
     public final static int FRONT_CAMERA = 1;
-    public final static String CAMERA_ID = "camera_id";
     public final static String PRIVATE_PATH = "private_path";
     public final static String FRONT_CAMERA_FLASH_SUPPORTED = "front_camera_flash_supported";
     public final static String BACK_CAMERA_FLASH_SUPPORTED = "back_camera_flash_supported";
@@ -72,5 +76,5 @@ public class ConfigPreferences {
     public static final String LEGAL_NOTICE = "legalNotice";
     public static final String THEME_APP_DARK = "themeAppDark";
     public static final String VIMOJO_NETWORK = "vimojo_platform";
-
+    public static final String USER_ALIASED = "user_aliased";
 }

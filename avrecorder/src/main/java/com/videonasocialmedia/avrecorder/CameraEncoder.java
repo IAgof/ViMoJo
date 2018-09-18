@@ -412,7 +412,7 @@ public class CameraEncoder implements SurfaceTexture.OnFrameAvailableListener, R
             mDisplayRenderer.setWatermark(watermark);
     }
 
-    public void removeWaterMark() {
+    public void removeWatermark() {
         watermark = null;
         mDisplayRenderer.removeWatermark();
     }

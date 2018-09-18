@@ -17,7 +17,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
@@ -90,7 +89,7 @@ public class EditorPresenter extends VimojoPresenter
   private RemoveMedia removeMedia;
   private UpdateCompositionWatermark updateCompositionWatermark;
   private UpdateComposition updateComposition;
-  private boolean showWaterMarkSwitch;
+  private boolean showWatermarkSwitch;
   private boolean vimojoStoreAvailable;
   private boolean vimojoPlatformAvailable;
   private boolean watermarkIsForced;
@@ -111,7 +110,7 @@ public class EditorPresenter extends VimojoPresenter
           ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
           RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
           UpdateComposition updateComposition,
-          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("watermarkIsForced") boolean watermarkIsForced,
@@ -136,7 +135,7 @@ public class EditorPresenter extends VimojoPresenter
     this.removeMedia = removeMedia;
     this.updateCompositionWatermark = updateCompositionWatermark;
     this.updateComposition = updateComposition;
-    this.showWaterMarkSwitch = showWaterMarkSwitch;
+    this.showWatermarkSwitch = showWatermarkSwitch;
     this.vimojoStoreAvailable = vimojoStoreAvailable;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.watermarkIsForced = watermarkIsForced;
@@ -204,7 +203,7 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   private void setupWatermarkDrawerSwitch() {
-    if (showWaterMarkSwitch) {
+    if (showWatermarkSwitch) {
       editorActivityView.showWatermarkSwitch(watermarkIsSelected());
     } else {
       editorActivityView.hideWatermarkSwitch();

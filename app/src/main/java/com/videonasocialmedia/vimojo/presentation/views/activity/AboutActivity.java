@@ -50,35 +50,4 @@ public class AboutActivity extends VimojoActivity {
         versionName.setText(version);
 
     }
-
-    /**
-     * Tracks when user clicks the link to go to Videona web page
-     */
-    @OnClick({R.id.videona_web})
-    public void clickListener(View view) {
-        sendButtonTracked(view.getId());
-    }
-
-    /**
-     * Sends button clicks to Google Analytics
-     *
-     * @param id the identifier of the clicked button
-     */
-    private void sendButtonTracked(int id) {
-        String label;
-        switch (id) {
-            case R.id.videona_web:
-                label = "Go to Videona web page from App";
-                break;
-            default:
-                label = "Other";
-        }
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("AboutActivity")
-                .setAction("link clicked")
-                .setLabel(label)
-                .build());
-        GoogleAnalytics.getInstance(this.getApplication().getBaseContext()).dispatchLocalHits();
-    }
-
 }

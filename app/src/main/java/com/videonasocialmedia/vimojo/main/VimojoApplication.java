@@ -34,6 +34,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultPro
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.featuresToggles.FeatureDecisions;
+import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
@@ -41,21 +42,20 @@ import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
-import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.FirebaseTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.MixpanelTracker;
 
 import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 
 public class VimojoApplication extends Application implements ProjectInstanceCache {
@@ -98,6 +98,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         setupCrashlytics();
         context = getApplicationContext();
         setupGoogleAnalytics();
+        setupUserEventTracker();
 //        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         Dexter.initialize(this);
         setupLeakCanary();
@@ -107,6 +108,14 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .build().inject(this);
         fetchFeatureToggles();
+    }
+
+    private void setupUserEventTracker() {
+        UserEventTracker userEventTracker = new UserEventTracker.Builder(context)
+                .use(FirebaseTracker.FACTORY)
+                .use(MixpanelTracker.FACTORY)
+                .build();
+        UserEventTracker.setSingletonInstance(userEventTracker);
     }
 
     void initSystemComponent() {
@@ -127,7 +136,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     private TrackerModule getTrackerModule() {
-        return new TrackerModule(this);
+        return new TrackerModule();
     }
 
     private UploadToPlatformModule getUploadToPlatformModule() {

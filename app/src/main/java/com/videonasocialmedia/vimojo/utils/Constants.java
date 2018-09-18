@@ -22,7 +22,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import java.io.File;
 
 public class Constants {
-
+  public static final String SAAS_LAUNCH_DATE = "2018-09-01";
     //TODO cambiar el endpoint a la dirección de producción
     public static final String API_ENDPOINT = "http://192.168.0.22/Videona/web/app_dev.php/api";
     //OAuth

@@ -11,20 +11,18 @@ package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
-import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -40,8 +38,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -53,7 +51,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class TrimPreviewPresenterTest {
     @Mock private TrimView mockedTrimView;
     @Mock private SharedPreferences mockedSharedPreferences;
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
@@ -76,7 +73,7 @@ public class TrimPreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, userEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,

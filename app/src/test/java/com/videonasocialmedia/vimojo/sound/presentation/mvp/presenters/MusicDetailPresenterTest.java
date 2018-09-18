@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -56,7 +55,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 public class MusicDetailPresenterTest {
     @Mock private MusicDetailView mockedMusicDetailView;
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private Context mockedContext;
     @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
@@ -91,8 +89,7 @@ public class MusicDetailPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         MusicDetailPresenter musicDetailPresenter =
                 getMusicDetailPresenter(userEventTracker);
 
@@ -134,6 +131,7 @@ public class MusicDetailPresenterTest {
         Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
         verify(mockedUpdateComposition).updateComposition(currentProject);
         verify(mockedMusicDetailView).goToSoundActivity();
+        verify(mockedUserEventTracker).trackMusicSet(currentProject);
     }
 
     @Test

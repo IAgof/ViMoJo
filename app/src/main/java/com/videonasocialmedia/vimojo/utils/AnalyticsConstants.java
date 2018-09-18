@@ -17,12 +17,14 @@ public class AnalyticsConstants {
     public static final String TIME_IN_ACTIVITY = "Time in Activity";
     public final static String BETA_LEAVED = "Beta Leaved";
     public final static String APP_SHARED = "App Shared";
-    public final static String LINK_CLICK = "Link Click";
+    public final static String LINK_CLICKED = "Link Clicked";
     public final static String PROJECT_EDITED = "Project Edited";
+    public final static String USER_LOGGED_IN = "User Logged In";
 
     /**
      * User Traits
      */
+    public final static String PREHISTERIC = "prehisteric";
     public final static String CREATED = "created";
     public final static String TYPE = "type";
     public static final String APP_USE_COUNT = "appUseCount";
@@ -81,6 +83,10 @@ public class AnalyticsConstants {
     public static final String CAMERA_BACK = "back";
     public static final String CAMERA_FRONT = "front";
     public static final String SOCIAL_NETWORK = "socialNetwork";
+    public static final String SOCIAL_NETWORK_PLATFORM = "VimojoPlatform";
+    public static final String SOCIAL_NETWORK_FTP = "Ftp";
+    public static final String SOCIAL_NETWORK_UNKNOWN = "Unknown";
+    public static final String SOCIAL_NETWORK_OTHER = "Other network";
     public static final String CLEAR_FILTER = "clearFilter";
     public static final String SET_FILTER_GROUP = "setFilterGroup";
     public static final String FILTER_GROUP_OVERLAY = "overlay";
@@ -156,4 +162,16 @@ public class AnalyticsConstants {
     public static final String PROJECT_ACTION_DESCRIPTION = "Project description";
     public static final String PROJECT_ACTION_PRODUCT_TYPE = "Project product type";
 
+    /**
+     * Interaction values
+     */
+    public final static String INTERACTION_CLICK_LOGIN = "loginClick";
+    public final static String INTERACTION_CLICK_REGISTER = "registerClick";
+
+    /**
+     * User logged values
+     */
+    public static final String USER_WAS_LOGGED_IN = "userWasLoggedIn";
+    public static final String AUTH0_ID = "auth0Id";
+    public static final String USER_ID = "userId";
 }

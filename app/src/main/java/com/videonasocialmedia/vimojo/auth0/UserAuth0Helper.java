@@ -12,6 +12,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -32,6 +33,8 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.AccountConstants;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
@@ -48,18 +51,21 @@ import javax.inject.Inject;
  */
 
 public class UserAuth0Helper {
-
   private String LOG_TAG = UserAuth0Helper.class.getCanonicalName();
   private final String AUTH0_PARAMETER_MAIN_COLOR = "main_color";
   private final String AUTH0_PARAMETER_FLAVOUR = "flavour";
+  private final String AUTH0_PREHISTERIC_USER = "prehisteric_user";
   private Auth0 account;
   private AuthenticationAPIClient authenticator;
   private SecureCredentialsManager manager;
   private Context context;
   private final UserApiClient userApiClient;
+  private SharedPreferences sharedPreferences;
+  private UserEventTracker userEventTracker;
 
   @Inject
-  public UserAuth0Helper(UserApiClient userApiClient) {
+  public UserAuth0Helper(UserApiClient userApiClient, SharedPreferences sharedPreferences,
+                         UserEventTracker userEventTracker) {
     this.context = VimojoApplication.getAppContext();
     account = new Auth0(context);
     // Configure the account in OIDC conformant mode
@@ -68,6 +74,8 @@ public class UserAuth0Helper {
     manager = new SecureCredentialsManager(context, authenticator,
         new SharedPreferencesStorage(context));
     this.userApiClient = userApiClient;
+    this.sharedPreferences = sharedPreferences;
+    this.userEventTracker = userEventTracker;
   }
 
   public void signOut() {
@@ -87,6 +95,9 @@ public class UserAuth0Helper {
     extraConfigParams.put(AUTH0_PARAMETER_MAIN_COLOR, String.format("#%06x",
         ContextCompat.getColor(context, R.color.colorAccent) & 0xffffff));
     extraConfigParams.put(AUTH0_PARAMETER_FLAVOUR, BuildConfig.FLAVOR);
+    // TODO: 29/8/18 Move prehisteric user check to initRegisterLoginPresenter when we only have one access to perform login
+    extraConfigParams.put(AUTH0_PREHISTERIC_USER,
+        sharedPreferences.getBoolean(ConfigPreferences.PREHISTERIC_USER, false));
     //Use the account in the API clients
     WebAuthProvider.init(account)
         .withScheme("https")
@@ -120,13 +131,20 @@ public class UserAuth0Helper {
   public void saveCredentials(Credentials credentials) {
     // save credentials, user logged
     manager.saveCredentials(credentials);
-
+    // TODO: 29/8/18 Move tracking to initRegisterLoginPresenter when we only have one access to perform login
+    userEventTracker.trackUserLoggedIn(false);
+    userEventTracker.trackUserAuth0Id(credentials.getIdToken());
     // save account, save platform user id
     getUserProfile(credentials.getAccessToken(),
         new BaseCallback<UserProfile, AuthenticationException>() {
           @Override
           public void onFailure(AuthenticationException error) {
             // TODO(jliarte): 10/07/18 handle this error!
+
+            Log.d(LOG_TAG, "onFailure getting user profile AuthenticationException "
+                + error.getMessage());
+            Crashlytics.log("Failure getting user profile AuthenticationException "
+                + error.getMessage());
           }
 
           @Override
@@ -137,6 +155,16 @@ public class UserAuth0Helper {
               userId = userApiClient.getUserId(credentials.getAccessToken()).getId();
               registerAccount(userProfile.getEmail(), "fakePassword",
                   "fakeToken", userId);
+              // TODO: 29/8/18 Move tracking to initRegisterLoginPresenter when we only have one access to perform login
+              userEventTracker.trackUserEmailSet(userProfile.getEmail());
+              userEventTracker.trackUserId(userId);
+              boolean userAliased = sharedPreferences.getBoolean(ConfigPreferences.USER_ALIASED,
+                  false);
+              if (!userAliased) {
+                userEventTracker.aliasUser(userProfile.getEmail());
+                sharedPreferences.edit().putBoolean(ConfigPreferences.USER_ALIASED, true).apply();
+              }
+
             } catch (VimojoApiException vimojoApiException) {
               // TODO(jliarte): 10/07/18 notify user an error authenticating!!!
               Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
@@ -145,7 +173,6 @@ public class UserAuth0Helper {
             }
           }
         });
-
   }
 
   public void getUserProfile(String accessToken, BaseCallback<UserProfile,

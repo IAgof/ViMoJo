@@ -5,10 +5,8 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-
-import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
-import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -19,6 +17,7 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -32,7 +31,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTra
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
-import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import javax.inject.Named;
@@ -80,10 +79,11 @@ public class FragmentPresentersModule {
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, GetAccount getAccount,
-          UpdateComposition updateComposition, FetchUserFeatures fetchUserFeatures,
+          UploadDataSource uploadDataSource, GetAccount getAccount,
+          UserEventTracker userEventTracker, UpdateComposition updateComposition,
+          FetchUserFeatures fetchUserFeatures,
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
-          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
           @Named("hideTransitionPreference") boolean hideTransitionPreference,
@@ -97,10 +97,9 @@ public class FragmentPresentersModule {
             updateIntermediateTemporalFilesTransitionsUseCase,
             updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache, getAccount, updateComposition,
-            fetchUserFeatures, vimojoStoreAvailable,
-            showWaterMarkSwitch, vimojoPlatformAvailable, ftpPublishingAvailable,
-            hideTransitionPreference, showMoreAppsPreference);
+            uploadDataSource, projectInstanceCache, getAccount, userEventTracker, updateComposition,
+            fetchUserFeatures, vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
+            ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference);
   }
 
   @Provides
@@ -147,8 +146,10 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
-    return new UserAuth0Helper(userApiClient);
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient,
+                                          SharedPreferences sharedPreferences,
+                                          UserEventTracker userEventTracker) {
+    return new UserAuth0Helper(userApiClient, sharedPreferences, userEventTracker);
   }
 
   @Provides

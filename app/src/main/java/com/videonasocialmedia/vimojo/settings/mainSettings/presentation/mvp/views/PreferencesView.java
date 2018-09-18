@@ -18,8 +18,7 @@ import java.util.ArrayList;
  * This interface is used to show the setting menu.
  */
 public interface PreferencesView {
-
-  /**
+    /**
      * This method sets the available settings supported by the device
      *
      * @param preference
@@ -84,4 +83,6 @@ public interface PreferencesView {
     void hideMoreAppsSection();
 
     void hideTransitions();
+
+  void navigateToInitRegisterLogin();
 }

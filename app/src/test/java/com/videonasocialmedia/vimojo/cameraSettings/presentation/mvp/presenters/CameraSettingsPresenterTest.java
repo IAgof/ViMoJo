@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -11,14 +10,13 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQuality;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -54,16 +52,11 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 
 public class CameraSettingsPresenterTest {
-
   @Mock CameraSettingsView mockedCameraSettingsListView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock GetCameraSettingsMapperSupportedListUseCase mockedGetSettingListUseCase;
-  @Mock
-  CameraSettingsDataSource mockedCameraSettingsRepository;
-  @Mock CameraSettings mockedCameraSettings;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
-  @Mock private MixpanelAPI mockedMixpanelAPI;
   @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
   @Mock SetCompositionQuality mockedSetCompositionQuality;
@@ -87,7 +80,7 @@ public class CameraSettingsPresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+    UserEventTracker userEventTracker = UserEventTracker.getInstance();
     CameraSettingsPresenter presenter = new CameraSettingsPresenter(
         mockedCameraSettingsListView, userEventTracker, mockedGetSettingListUseCase,
         mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
