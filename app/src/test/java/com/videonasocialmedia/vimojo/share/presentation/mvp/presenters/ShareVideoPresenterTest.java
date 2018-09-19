@@ -38,9 +38,8 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-import com.videonasocialmedia.vimojo.view.FakeBackgroundExecute;
-import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -99,7 +98,6 @@ public class ShareVideoPresenterTest {
     private boolean ftpPublishingAvailable;
     private boolean showAds;
     private boolean showSocialNetworksDecision;
-    @Mock VimojoPresenter mockedVimojoPresenter;
 
     @Before
     public void injectMocks() {
@@ -112,7 +110,6 @@ public class ShareVideoPresenterTest {
         PowerMockito.mockStatic(TextUtils.class);
         setAProject();
         when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
-        mockedVimojoPresenter = new FakeBackgroundExecute();
     }
 
     @Test
@@ -133,7 +130,7 @@ public class ShareVideoPresenterTest {
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedUploadToPlatform,
                 mockedRunSyncAdapterHelper, mockedProjectInstanceCache, mockedUserAuth0Helper,
                 mockedUpdateComposition, mockedFetchUserFeatures, vimojoPlatformAvailable,
-                ftpPublishingAvailable, showAds, showSocialNetworksDecision, mockedVimojoPresenter);
+                ftpPublishingAvailable, showAds, showSocialNetworksDecision);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -390,7 +387,8 @@ public class ShareVideoPresenterTest {
     }
 
     @Test
-    public void addVideoExportedToProjectCallsUseCaseAndUpdateProject() {
+    public void addVideoExportedToProjectCallsUseCaseAndUpdateProject()
+        throws InterruptedException {
         ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
         String videoPath = "someVideoPath";
 
@@ -398,6 +396,7 @@ public class ShareVideoPresenterTest {
 
         verify(mockedAddLastVideoExportedUseCase).addLastVideoExportedToProject(any(Project.class),
             anyString(),anyString());
+        Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
         verify(mockedUpdateComposition).updateComposition(currentProject);
     }
 
@@ -419,7 +418,7 @@ public class ShareVideoPresenterTest {
             mockedUploadToPlatform, mockedRunSyncAdapterHelper,
             mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUpdateComposition,
             mockedFetchUserFeatures, vimojoPlatformAvailable,
-            ftpPublishingAvailable, showAds, showSocialNetworksDecision, mockedVimojoPresenter);
+            ftpPublishingAvailable, showAds, showSocialNetworksDecision);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

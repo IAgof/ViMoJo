@@ -11,19 +11,18 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
-import com.videonasocialmedia.vimojo.view.FakeBackgroundExecute;
-import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 
 /**
@@ -58,17 +58,16 @@ public class VoiceOverVolumePresenterTest {
   private boolean amIAVerticalApp;
   @Mock UpdateTrack mockedUpdateTrack;
   @Mock RemoveTrack mockedRemoveTrack;
-  @Mock VimojoPresenter mockedVimojoPresenter;
 
   @Before
   public void injectTestDoubles() {
     MockitoAnnotations.initMocks(this);
     setAProject();
-    mockedVimojoPresenter = new FakeBackgroundExecute();
   }
 
   @Test
-  public void setVolumeCallsNavigateToSoundTrackingAndUpdateProject() throws IllegalItemOnTrack {
+  public void setVolumeCallsNavigateToSoundTrackingAndUpdateProject()
+      throws IllegalItemOnTrack, InterruptedException {
     float volume = 0.7f;
     int defaultDuration = 100;
     String mediaPath = "somePath";
@@ -84,6 +83,7 @@ public class VoiceOverVolumePresenterTest {
     verify(mockedVoiceOverVolumeView).goToSoundActivity();
     verify(mockedModifyTrackUseCase).setTrackVolume(currentProject.getAudioTracks()
         .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
@@ -101,7 +101,7 @@ public class VoiceOverVolumePresenterTest {
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
         mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack,
-        mockedRemoveTrack, mockedVimojoPresenter);
+        mockedRemoveTrack);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

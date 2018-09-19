@@ -44,7 +44,7 @@ import javax.inject.Named;
 /**
  *
  */
-public class MusicDetailPresenter implements OnVideosRetrieved,
+public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRetrieved,
     GetMusicFromProjectCallback, ElementChangedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
@@ -65,19 +65,18 @@ public class MusicDetailPresenter implements OnVideosRetrieved,
     private RemoveMedia removeMedia;
     private UpdateTrack updateTrack;
     private RemoveTrack removeTrack;
-    private VimojoPresenter vimojoPresenter;
 
     @Inject
     public MusicDetailPresenter(
-        MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-        AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-        ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-        @Named("amIAVerticalApp") boolean amIAVerticalApp,
-        RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack, VimojoPresenter vimojoPresenter) {
+            MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
+            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+            AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+            ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
+            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+            @Named("amIAVerticalApp") boolean amIAVerticalApp,
+            RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack) {
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -95,7 +94,6 @@ public class MusicDetailPresenter implements OnVideosRetrieved,
         this.removeMedia = removeMedia;
         this.updateTrack = updateTrack;
         this.removeTrack = removeTrack;
-        this.vimojoPresenter = vimojoPresenter;
         musicSelected = new Music("", 0);
     }
 
@@ -125,42 +123,42 @@ public class MusicDetailPresenter implements OnVideosRetrieved,
     public void removeMusic(final Music music) {
         removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
             new OnRemoveMediaFinishedListener() {
-                @Override
-                public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
-                    userEventTracker.trackMusicSet(currentProject);
-                    Futures.addCallback(
-                        vimojoPresenter.executeUseCaseCall(() -> {
-                                removeMedia.removeMedias(removedMedias);
-                                updateComposition.updateComposition(currentProject);
-                            }),
-                            new FutureCallback<Object>() {
-                                @Override
-                                public void onSuccess(@Nullable Object result) {
-                                    musicDetailView.goToSoundActivity();
-                                }
+            @Override
+            public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+                userEventTracker.trackMusicSet(currentProject);
+                Futures.addCallback(
+                        executeUseCaseCall(() -> {
+                            removeMedia.removeMedias(removedMedias);
+                            updateComposition.updateComposition(currentProject);
+                        }),
+                        new FutureCallback<Object>() {
+                            @Override
+                            public void onSuccess(@Nullable Object result) {
+                                musicDetailView.goToSoundActivity();
+                            }
 
-                                @Override
-                                public void onFailure(Throwable t) {
-                                    Log.e(LOG_TAG, "Error updating composition on removeMusic.success", t);
-                                    musicDetailView.goToSoundActivity();
-                                }
-                            });
-                }
-                @Override
-                public void onRemoveMediaItemFromTrackError() {
-                    musicDetailView.showError(context
-                        .getString(R.string.alert_dialog_title_message_removing_music));
-                }
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.e(LOG_TAG, "Error updating composition on removeMusic.success", t);
+                                musicDetailView.goToSoundActivity();
+                            }
+                        });
+            }
+            @Override
+            public void onRemoveMediaItemFromTrackError() {
+                musicDetailView.showError(context
+                    .getString(R.string.alert_dialog_title_message_removing_music));
+            }
 
-                @Override
-                public void onTrackUpdated(Track track) {
-                    updateTrack.update(track);
-                  }
+              @Override
+              public void onTrackUpdated(Track track) {
+                updateTrack.update(track);
+              }
 
-                @Override
-                public void onTrackRemoved(Track track) {
-                    removeTrack.remove(track);
-                }
+              @Override
+              public void onTrackRemoved(Track track) {
+                removeTrack.remove(track);
+            }
         });
     }
 
@@ -182,7 +180,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved,
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {
                 userEventTracker.trackMusicSet(currentProject);
-                vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
                 musicDetailView.goToSoundActivity();
             }
 
@@ -230,7 +228,7 @@ public class MusicDetailPresenter implements OnVideosRetrieved,
         // Now setVolume update MusicTrackVolume until Vimojo support setVolume by clip.
         modifyTrackUseCase.setTrackVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC), volume);
-        vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+        executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
     }
 
     @Override

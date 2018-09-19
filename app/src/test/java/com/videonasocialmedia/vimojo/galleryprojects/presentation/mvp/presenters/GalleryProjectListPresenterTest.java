@@ -21,11 +21,9 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.view.FakeBackgroundExecute;
-import com.videonasocialmedia.vimojo.view.VimojoPresenter;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -58,7 +56,6 @@ public class GalleryProjectListPresenterTest {
   @Mock DuplicateProjectUseCase mockedDuplicateProjectUseCase;
   @Mock DeleteComposition mockedDeleteComposition;
   @Mock SaveComposition mockedSaveComposition;
-  @Mock VimojoPresenter mockedVimojoPresenter;
   private Project currentProject;
   private boolean amIAVerticalApp;
   private boolean watermarkIsForced;
@@ -67,12 +64,11 @@ public class GalleryProjectListPresenterTest {
   public void injectMocks() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-    mockedVimojoPresenter = new FakeBackgroundExecute();
   }
 
-  @Ignore // TODO: 18/9/18 Resolve NPE Futures.addCallback for testing
   @Test
-  public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow() {
+  public void ifProjectRepositoryHasProjectsUpdateProjectListCallsGalleryProjectListViewShow()
+      throws InterruptedException {
     List<Project> projectList = new ArrayList<>();
     projectList.add(currentProject);
     doReturn(projectList).when(mockedGetCompositions)
@@ -82,24 +78,27 @@ public class GalleryProjectListPresenterTest {
 
     spyGalleryProjectListPresenter.updateProjectList();
 
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedGalleryProjectListView).showProjectList(projectList);
   }
 
-  @Ignore // TODO: 18/9/18 Resolve NPE Futures.addCallback for testing
   @Test
-  public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject() {
+  public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject()
+      throws InterruptedException {
     List<Project> projectList = new ArrayList<>();
     doReturn(projectList).when(mockedGetCompositions)
             .getListProjectsByLastModificationDescending();
-    GalleryProjectListPresenter galleryProjectListPresenter = getGalleryProjectListPresenter();
+    GalleryProjectListPresenter spyGalleryProjectListPresenter =
+        Mockito.spy(getGalleryProjectListPresenter());
 
-    galleryProjectListPresenter.updateProjectList();
+    spyGalleryProjectListPresenter.updateProjectList();
 
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedGalleryProjectListView).createDefaultProject();
   }
 
   @Test
-  public void goToEditUpdateRepositoryAndNavigate() {
+  public void goToEditUpdateRepositoryAndNavigate() throws InterruptedException {
     doAnswer(invocation -> {
       GetCompositionAssets.UpdateAssetFilesListener listener = invocation.getArgument(1);
       listener.onCompletion();
@@ -112,12 +111,12 @@ public class GalleryProjectListPresenterTest {
 
     verify(mockedGalleryProjectListView).showUpdateAssetsProgressDialog();
     verify(mockedGalleryProjectListView).navigateTo(EditActivity.class);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
-  @Ignore // TODO: 18/9/18 Resolve NPE Futures.addCallback for testing
   @Test
-  public void goToShareUpdateRepositoryAndNavigate() {
+  public void goToShareUpdateRepositoryAndNavigate() throws InterruptedException {
     doAnswer(invocation -> {
       GetCompositionAssets.UpdateAssetFilesListener listener = invocation.getArgument(1);
       listener.onCompletion();
@@ -130,10 +129,10 @@ public class GalleryProjectListPresenterTest {
     galleryProjectListPresenter.goToShare(currentProject);
 
     verify(mockedGalleryProjectListView).navigateTo(ShareActivity.class);
+    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
-  @Ignore // TODO: 18/9/18 Resolve NPE Futures.addCallback for testing
   @Test
   public void goToDetailsProjectUpdateRepositoryAndNavigate() {
     GalleryProjectListPresenter galleryProjectListPresenter = getGalleryProjectListPresenter();
@@ -153,12 +152,10 @@ public class GalleryProjectListPresenterTest {
   }
 
   private GalleryProjectListPresenter getGalleryProjectListPresenter() {
-    GalleryProjectListPresenter galleryProjectListPresenter =
-        new GalleryProjectListPresenter(mockedGalleryProjectListView, mockedSharedPreferences,
+    return new GalleryProjectListPresenter(mockedGalleryProjectListView, mockedSharedPreferences,
         mockedProjectRepository, mockedCreateDefaultUseCase, mockedDuplicateProjectUseCase,
         mockedDeleteComposition, mockedProjectInstanceCache, mockedSaveComposition,
         mockedUpdateComposition, mockedGetCompositions, mockedGetCompositionAssets,
-        watermarkIsForced, amIAVerticalApp, mockedVimojoPresenter);
-    return galleryProjectListPresenter;
+        watermarkIsForced, amIAVerticalApp);
   }
 }

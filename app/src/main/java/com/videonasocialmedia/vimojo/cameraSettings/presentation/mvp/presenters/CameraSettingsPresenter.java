@@ -34,7 +34,7 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
-public class CameraSettingsPresenter {
+public class CameraSettingsPresenter extends VimojoPresenter {
   private final CameraSettingsView cameraSettingsListView;
   protected UserEventTracker userEventTracker;
   private GetCameraSettingsMapperSupportedListUseCase getSettingListUseCase;
@@ -61,7 +61,6 @@ public class CameraSettingsPresenter {
   private boolean amIAVerticalApp;
   private String defaultResolutionSetting;
   private VideoResolution.Resolution defaultVideoResolution;
-  private VimojoPresenter vimojoPresenter;
 
   @Inject
   public CameraSettingsPresenter(
@@ -77,7 +76,7 @@ public class CameraSettingsPresenter {
       @Named("selectResolutionAvailable") boolean allowSelectResolution,
       @Named("amIAVerticalApp") boolean amIAVerticalApp,
       @Named("defaultResolutionSetting") String defaultResolutionSetting,
-      @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution, VimojoPresenter vimojoPresenter) {
+      @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution) {
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;
@@ -94,7 +93,6 @@ public class CameraSettingsPresenter {
     this.amIAVerticalApp = amIAVerticalApp;
     this.defaultResolutionSetting = defaultResolutionSetting;
     this.defaultVideoResolution = defaultVideoResolution;
-    this.vimojoPresenter = vimojoPresenter;
     setupResolutionMappers();
     setupFrameRateMappers();
     setupQualityMappers();
@@ -245,7 +243,7 @@ public class CameraSettingsPresenter {
     VideoResolution.Resolution videoResolution = videoResolutionValues.get(resolutionSelectedId);
     if (videoResolution == null) { videoResolution = defaultVideoResolution; }
     setCompositionResolution.setResolution(currentProject, videoResolution);
-    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   public void setCameraFrameRateSetting(int frameRateSelectedId) {
@@ -257,7 +255,7 @@ public class CameraSettingsPresenter {
     cameraSettingsRepository.setFrameRateSetting(cameraSettings, frameRate);
     setCompositionFrameRate.updateFrameRate(currentProject, videoFrameRate);
     userEventTracker.trackChangeFrameRate(frameRate);
-    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   public void setCameraQualitySetting(int qualitySelectedId) {
@@ -269,7 +267,7 @@ public class CameraSettingsPresenter {
     cameraSettingsRepository.setQualitySetting(cameraSettings, quality);
     setCompositionQuality.setQuality(currentProject, videoQuality);
     userEventTracker.trackChangeQuality(quality);
-    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   public void settingChanged(int settingId) {

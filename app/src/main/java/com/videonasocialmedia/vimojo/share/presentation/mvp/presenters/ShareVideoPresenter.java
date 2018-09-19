@@ -56,7 +56,7 @@ import javax.inject.Named;
 /**
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
  */
-public class ShareVideoPresenter {
+public class ShareVideoPresenter extends VimojoPresenter {
   private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
   private Context context;
   private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
@@ -91,24 +91,23 @@ public class ShareVideoPresenter {
   private boolean ftpPublishingAvailable;
   private boolean showAds;
   private boolean showSocialNetworksDecision;
-  private VimojoPresenter vimojoPresenter;
 
   @Inject
   public ShareVideoPresenter(
-      Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-      SharedPreferences sharedPreferences,
-      AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-      ExportProjectUseCase exportProjectUseCase,
-      ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-      GetFtpListUseCase getFtpListUseCase,
-      UploadToPlatform uploadToPlatform,
-      RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-      UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
-      FetchUserFeatures fetchUserFeatures,
-      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-      @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-      @Named("showAds") boolean showAds,
-      @Named("showSocialNetworks") boolean showSocialNetworksDecision, VimojoPresenter vimojoPresenter) {
+          Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+          SharedPreferences sharedPreferences,
+          AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+          ExportProjectUseCase exportProjectUseCase,
+          ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+          GetFtpListUseCase getFtpListUseCase,
+          UploadToPlatform uploadToPlatform,
+          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
+          FetchUserFeatures fetchUserFeatures,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+          @Named("showAds") boolean showAds,
+          @Named("showSocialNetworks") boolean showSocialNetworksDecision) {
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;
@@ -127,7 +126,6 @@ public class ShareVideoPresenter {
     this.ftpPublishingAvailable = ftpPublishingAvailable;
     this.showAds = showAds;
     this.showSocialNetworksDecision = showSocialNetworksDecision;
-    this.vimojoPresenter = vimojoPresenter;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -215,7 +213,7 @@ public class ShareVideoPresenter {
   public void addVideoExportedToProject(String videoPath) {
     addLastVideoExportedProjectUseCase.addLastVideoExportedToProject(currentProject, videoPath,
         DateUtils.getDateRightNow());
-    vimojoPresenter.executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 
   protected void startExport(int typeNetworkSelected) {
@@ -321,7 +319,7 @@ public class ShareVideoPresenter {
     if (uploadToPlatform.isBeingSendingToPlatform(videoUpload)) {
       shareVideoViewReference.get().showDialogVideoIsBeingSendingToPlatform();
     } else {
-      vimojoPresenter.executeUseCaseCall((Callable<Void>) () -> {
+      executeUseCaseCall((Callable<Void>) () -> {
         try {
           uploadToPlatform.addVideoToUpload(videoUpload);
           Log.d(LOG_TAG, "uploadVideo " + videoUpload.getUuid());

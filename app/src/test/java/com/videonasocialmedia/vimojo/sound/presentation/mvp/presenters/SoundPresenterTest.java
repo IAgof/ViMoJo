@@ -19,7 +19,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.view.FakeBackgroundExecute;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 import static org.hamcrest.Matchers.is;
@@ -149,19 +147,6 @@ public class SoundPresenterTest {
     verify(mockedSoundView).showTrackAudioFirst();
     verify(mockedSoundView).showTrackAudioSecond();
   }
-
-  @Test
-  public void setTrackVolumeUpdateComposition() throws ExecutionException, InterruptedException {
-    SoundPresenter spySoundPresenter = Mockito.spy(getSoundPresenter());
-    int seekBarProgress = 55;
-    int trackId = 0;
-    spySoundPresenter.vimojoPresenter = new FakeBackgroundExecute();
-
-    spySoundPresenter.setTrackVolume(trackId, seekBarProgress);
-
-    verify(mockedUpdateComposition).updateComposition(currentProject);
-  }
-
 
   @NonNull
   private SoundPresenter getSoundPresenter() {
