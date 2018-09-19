@@ -38,6 +38,9 @@ public class FeatureToggleToFeatureToggleDtoMapper extends KarumiMapper<FeatureT
 
   @Override
   public FeatureToggle reverseMap(FeatureToggleDto featureToggleDto) {
+    if (featureToggleDto == null) {
+      return null;
+    }
     FeatureToggle featureToggle =
             new FeatureToggle(featureToggleDto.getName(), featureToggleDto.isEnabled());
     featureToggle.description = featureToggleDto.getDescription();
