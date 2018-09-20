@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
@@ -37,8 +38,8 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -107,6 +108,8 @@ public class EditorPresenterTest {
   private boolean watermarkIsForced;
   private boolean hideTutorials;
   private boolean amIAVerticalApp;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock ListenableFuture mockedListenableFuture;
 
   @Before
   public void injectMocks() {
@@ -129,24 +132,31 @@ public class EditorPresenterTest {
             mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
             mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
             mockedUpdateComposition, showWaterMarkSwitch, vimojoStoreAvailable,
-            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp);
+            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp,
+            mockedBackgroundExecutor);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
 
   @Test
-  public void switchPreferenceWatermarkCallsUseCaseAndUpdateProject()
-      throws InterruptedException {
+  public void switchPreferenceWatermarkCallsUseCaseAndUpdateProject() {
     EditorPresenter editorPresenter = getEditorPresenter();
     boolean watermarkActivated = true;
     when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
     assert(!currentProject.hasWatermark());
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then(new Answer<Runnable>() {
+      @Override
+      public Runnable answer(InvocationOnMock invocation) throws Throwable {
+        Runnable runnable = invocation.getArgument(0);
+        runnable.run();
+        return null;
+      }
+    });
 
     editorPresenter.switchPreference(watermarkActivated, ConfigPreferences.WATERMARK);
 
     verify(mockedUpdateCompositionWatermark).updateCompositionWatermark(currentProject,
         watermarkActivated);
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
@@ -154,6 +164,7 @@ public class EditorPresenterTest {
   public void initCallsInitPreviewFromProjectIfProjectHasNotBeenExported() {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = false;
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(spyEditorPresenter
                     .updatePresenter(hasBeenProjectExported, videoExportedPath, currentAppliedTheme),
@@ -175,6 +186,7 @@ public class EditorPresenterTest {
   public void initCallsInitPreviewFromVideoExportedIfProjectHasBeenExported() {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = true;
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(spyEditorPresenter
                     .updatePresenter(hasBeenProjectExported, videoExportedPath, currentAppliedTheme),
@@ -197,6 +209,7 @@ public class EditorPresenterTest {
     currentProject.getMediaTrack().insertItem(video);
     Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(editorPresenter.obtainVideoFromProject(), new FutureCallback<Object>() {
               @Override
@@ -247,6 +260,7 @@ public class EditorPresenterTest {
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(Project.class),
         any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(editorPresenter.obtainVideoFromProject(), new FutureCallback<Object>() {
               @Override
@@ -455,7 +469,8 @@ public class EditorPresenterTest {
             mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
             mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
             mockedUpdateComposition,showWaterMarkSwitch, vimojoStoreAvailable,
-            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp );
+            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp,
+            mockedBackgroundExecutor);
     editorPresenter.currentProject = currentProject;
     return editorPresenter;
   }

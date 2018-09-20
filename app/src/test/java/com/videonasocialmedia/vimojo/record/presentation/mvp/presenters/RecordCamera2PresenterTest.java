@@ -35,6 +35,7 @@ import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -108,6 +109,7 @@ public class RecordCamera2PresenterTest {
   private boolean hideRecordAudioGain;
   private boolean hideTutorialsDecision;
   private boolean amIAVerticalApp;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectMocks() {
@@ -374,7 +376,7 @@ public class RecordCamera2PresenterTest {
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
             mockedCameraSettingsRepository, mockedProjectInstanceCache, mockedUpdateComposition,
-            hideRecordAudioGain, hideTutorialsDecision, amIAVerticalApp);
+            hideRecordAudioGain, hideTutorialsDecision, amIAVerticalApp, mockedBackgroundExecutor);
     recordCamera2Presenter.currentProject = currentProject;
     return recordCamera2Presenter;
   }

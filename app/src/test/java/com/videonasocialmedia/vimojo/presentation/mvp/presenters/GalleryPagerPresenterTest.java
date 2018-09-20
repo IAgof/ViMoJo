@@ -3,7 +3,10 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
+import android.support.annotation.NonNull;
 
+import com.google.android.apps.common.testing.accessibility.framework.proto.FrameworkProtos;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
@@ -27,6 +30,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,21 +39,30 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 22/03/17.
@@ -75,6 +88,7 @@ public class GalleryPagerPresenterTest {
   @Mock UpdateComposition mockedUpdateComposition;
   @Mock SetCompositionResolution mockedSetCompositionResolution;
   private Project currentProject;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectMocks() {
@@ -101,8 +115,7 @@ public class GalleryPagerPresenterTest {
 //  }
 
   @Test
-  public void updateProfileForEmptyProjectChangeProjectResolutionIfNoVideos()
-      throws InterruptedException {
+  public void updateProfileForEmptyProjectChangeProjectResolutionIfNoVideos() {
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
     VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
@@ -122,6 +135,12 @@ public class GalleryPagerPresenterTest {
     doReturn(preferenceResolutionString).when(mockedContext)
             .getString(R.string.low_resolution_name);
 
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation -> {
+      Runnable runnable = invocation.getArgument(0);
+      runnable.run();
+      return null;
+    });
+
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
     ArgumentCaptor<VideoResolution.Resolution> resolutionCaptor =
@@ -132,7 +151,6 @@ public class GalleryPagerPresenterTest {
     assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.HD720));
     verify(mockedPreferencesEditor).putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
             preferenceResolutionString);
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(any(Project.class));
   }
 
@@ -208,7 +226,7 @@ public class GalleryPagerPresenterTest {
             mockedApplyAVTransitionsUseCase,
             mockedSharedPreferences,
             mockedProjectInstanceCache, mockedUpdateComposition,
-            mockedSetCompositionResolution);
+            mockedSetCompositionResolution, mockedBackgroundExecutor);
   }
 
   public void setAProject() {

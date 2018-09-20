@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -33,9 +34,11 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
 
   @Inject
   public SoundPresenter(
-          SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
-          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-          @Named("voiceOverAvailable") boolean voiceOverAvailable) {
+      SoundView soundView, ModifyTrackUseCase modifyTrackUseCase,
+      ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+      @Named("voiceOverAvailable") boolean voiceOverAvailable,
+      BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.soundView = soundView;
     this.projectInstanceCache = projectInstanceCache;
     this.modifyTrackUseCase = modifyTrackUseCase;

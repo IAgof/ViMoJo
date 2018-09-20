@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.trim.domain.TrimResultCallback;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -62,12 +63,13 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
 
     @Inject
     public TrimPreviewPresenter(
-            TrimView trimView, SharedPreferences sharedPreferences,
-            UserEventTracker userEventTracker,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-            ProjectInstanceCache projectInstanceCache,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+        TrimView trimView, SharedPreferences sharedPreferences,
+        UserEventTracker userEventTracker,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+        ProjectInstanceCache projectInstanceCache,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;

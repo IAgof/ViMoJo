@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
@@ -63,6 +64,7 @@ public class TrimPreviewPresenterTest {
     List<Media> videoList = new ArrayList<>();
     @Mock UpdateComposition mockedUpdateComposition;
     private boolean amIAVerticalApp;
+    @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
     public void injectMocks() {
@@ -80,7 +82,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, userEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, amIAVerticalApp);
+                mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -202,7 +204,7 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedTrimView, mockedSharedPreferences, mockedUserEventTracker,
                 mockedGetMediaListFromProjectUseCase, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, amIAVerticalApp);
+                mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }

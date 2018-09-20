@@ -28,6 +28,7 @@ import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -62,11 +63,12 @@ public class GalleryPagerPresenter extends VimojoPresenter
      * Constructor.
      */
     @Inject public GalleryPagerPresenter(
-            GalleryPagerView galleryPagerView, Context context,
-            AddVideoToProjectUseCase addVideoToProjectUseCase,
-            ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-            SetCompositionResolution setCompositionResolution) {
+        GalleryPagerView galleryPagerView, Context context,
+        AddVideoToProjectUseCase addVideoToProjectUseCase,
+        ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        SetCompositionResolution setCompositionResolution, BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;

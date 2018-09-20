@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,11 +25,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -46,6 +50,7 @@ public class DetailProjectPresenterTest {
   @Mock UpdateComposition mockedUpdateComposition;
   @Mock SetCompositionInfo mockedSetCompositionInfo;
   @Mock ProjectRepository mockedProjectRepository;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void initDoubles() {
@@ -73,27 +78,33 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void setProjectInfoCallsUseCasesAndTracking() throws InterruptedException {
+  public void setProjectInfoCallsUseCasesAndTracking() {
 
     DetailProjectPresenter spyPresenter = Mockito.spy(getDetailProjectPresenter());
     String titleProject = "titleProject";
     String descriptionProject = "descriptionProject";
     List<String> productTypeList = new ArrayList<>();
     spyPresenter.init();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation
+        -> {
+      Runnable runnable = invocation.getArgument(0);
+      runnable.run();
+      return null;
+    });
 
     spyPresenter.setProjectInfo(titleProject, descriptionProject, productTypeList);
 
     verify(mockedSetCompositionInfo).setCompositionInfo(currentProject, titleProject,
         descriptionProject, productTypeList);
     verify(mockedUserEventTracker).trackProjectInfo(currentProject);
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
     return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
-            mockedProjectInstanceCache, mockedUpdateComposition, mockedSetCompositionInfo);
+            mockedProjectInstanceCache, mockedUpdateComposition, mockedSetCompositionInfo,
+            mockedBackgroundExecutor);
   }
 
   private void getAProject() {

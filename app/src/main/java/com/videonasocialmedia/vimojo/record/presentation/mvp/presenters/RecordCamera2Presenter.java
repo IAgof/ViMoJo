@@ -38,6 +38,7 @@ import com.videonasocialmedia.vimojo.record.presentation.views.custom.picometer.
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.text.DecimalFormat;
@@ -120,7 +121,8 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
       ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
       @Named("hideRecordAudioGain") boolean hideRecordAudioGain,
       @Named("hideTutorials") boolean hideTutorialsDecision,
-      @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+      @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;

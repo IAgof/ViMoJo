@@ -23,17 +23,21 @@ import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -58,6 +62,7 @@ public class VoiceOverVolumePresenterTest {
   private boolean amIAVerticalApp;
   @Mock UpdateTrack mockedUpdateTrack;
   @Mock RemoveTrack mockedRemoveTrack;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectTestDoubles() {
@@ -77,13 +82,17 @@ public class VoiceOverVolumePresenterTest {
         .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
     VoiceOverVolumePresenter voiceOverVolumePresenter = getVoiceOverVolumePresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation -> {
+      Runnable runnable = invocation.getArgument(0);
+      runnable.run();
+      return null;
+    });
 
     voiceOverVolumePresenter.setVoiceOverVolume(volume);
 
     verify(mockedVoiceOverVolumeView).goToSoundActivity();
     verify(mockedModifyTrackUseCase).setTrackVolume(currentProject.getAudioTracks()
         .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER), volume);
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
@@ -101,7 +110,7 @@ public class VoiceOverVolumePresenterTest {
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
         mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack,
-        mockedRemoveTrack);
+        mockedRemoveTrack, mockedBackgroundExecutor);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

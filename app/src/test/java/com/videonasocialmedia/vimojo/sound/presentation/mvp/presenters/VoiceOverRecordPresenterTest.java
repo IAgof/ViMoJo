@@ -26,6 +26,7 @@ import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -71,6 +72,7 @@ public class VoiceOverRecordPresenterTest {
   private boolean amIAVerticalApp;
   @Mock UpdateTrack mockedUpdateTrack;
   @Mock RemoveTrack mockedRemoveTrack;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectTestDoubles() {
@@ -166,10 +168,15 @@ public class VoiceOverRecordPresenterTest {
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             Matchers.any(OnRemoveMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation
+        -> {
+          Runnable runnable = invocation.getArgument(0);
+          runnable.run();
+          return null;
+    });
 
     injectedPresenter.deletePreviousVoiceOver();
 
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedVoiceOverRecordView).showError(null);
   }
 
@@ -200,7 +207,8 @@ public class VoiceOverRecordPresenterTest {
             mockedContext, mockedVoiceOverRecordView, mockedGetMediaListFromProjectUseCase,
             mockedGetPreferencesTransitionFromProjectUseCase, mockedAddAudioUseCase,
             mockedRemoveAudioUseCase, mockedUserEventTracker, mockedProjectInstanceCache,
-            mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack);
+            mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack,
+            mockedBackgroundExecutor);
     voiceOverRecordPresenter.currentProject = currentProject;
     return voiceOverRecordPresenter;
   }

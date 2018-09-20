@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.HashMap;
@@ -70,7 +71,8 @@ public class InitAppPresenter extends VimojoPresenter {
       SaveComposition saveComposition, @Named("watermarkIsForced") boolean watermarkIsForced,
       @Named("showAds") boolean showAds, @Named("amIAVerticalApp") boolean amIAVerticalApp,
       @Named("defaultResolutionSetting") String defaultResolutionSetting,
-      @Named("isAppOutOfDate") boolean isAppOutOfDate) {
+      @Named("isAppOutOfDate") boolean isAppOutOfDate, BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;

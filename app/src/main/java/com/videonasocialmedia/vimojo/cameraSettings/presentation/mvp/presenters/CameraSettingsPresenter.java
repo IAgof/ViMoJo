@@ -17,6 +17,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositio
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.HashMap;
@@ -76,7 +77,9 @@ public class CameraSettingsPresenter extends VimojoPresenter {
       @Named("selectResolutionAvailable") boolean allowSelectResolution,
       @Named("amIAVerticalApp") boolean amIAVerticalApp,
       @Named("defaultResolutionSetting") String defaultResolutionSetting,
-      @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution) {
+      @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution,
+      BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;

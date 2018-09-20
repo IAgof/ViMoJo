@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +50,7 @@ public class InitAppPresenterTest {
   private boolean amIAVerticalApp;
   private String defaultResolutionSetting;
   private boolean isAppOutOfDate;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
 
   @Before
@@ -71,7 +73,7 @@ public class InitAppPresenterTest {
     return new InitAppPresenter(mockedContext, mockedInitAppView, mockedSharedPreferences,
         mockedUseCase, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
         mockedProjectInstanceCache, mockedSaveComposition, watermarkIsForced, showAds,
-        amIAVerticalApp, defaultResolutionSetting, isAppOutOfDate);
+        amIAVerticalApp, defaultResolutionSetting, isAppOutOfDate, mockedBackgroundExecutor);
   }
 
   public void getAProject() {

@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.split.domain.VideoAndCompositionUpdaterOnSp
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -55,7 +56,8 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         SplitVideoUseCase splitVideoUseCase,
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-        @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+        @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;

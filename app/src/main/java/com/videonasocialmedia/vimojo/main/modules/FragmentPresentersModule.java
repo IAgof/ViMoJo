@@ -33,6 +33,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.pres
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import javax.inject.Named;
@@ -68,26 +69,27 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          UpdateAudioTransitionPreferenceToProjectUseCase
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-          UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-          UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateCompositionWatermark updateCompositionWatermark,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, GetAccount getAccount,
-          UpdateComposition updateComposition, FetchUserFeatures fetchUserFeatures,
-          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
-          @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("hideTransitionPreference") boolean hideTransitionPreference,
-          @Named("showMoreAppsPreference") boolean showMoreAppsPreference) {
+      UpdateCompositionWatermark updateCompositionWatermark,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+      UploadDataSource uploadRepository, GetAccount getAccount,
+      UpdateComposition updateComposition, FetchUserFeatures fetchUserFeatures,
+      @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+      @Named("showWaterMarkSwitch") boolean showWaterMarkSwitch,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+      @Named("hideTransitionPreference") boolean hideTransitionPreference,
+      @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
+      BackgroundExecutor backgroundExecutor) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             getMediaListFromProjectUseCase,
@@ -100,7 +102,7 @@ public class FragmentPresentersModule {
             uploadRepository, projectInstanceCache, getAccount, updateComposition,
             fetchUserFeatures, vimojoStoreAvailable,
             showWaterMarkSwitch, vimojoPlatformAvailable, ftpPublishingAvailable,
-            hideTransitionPreference, showMoreAppsPreference);
+            hideTransitionPreference, showMoreAppsPreference, backgroundExecutor);
   }
 
   @Provides
@@ -156,4 +158,8 @@ public class FragmentPresentersModule {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
+  @Provides
+  BackgroundExecutor providesBackgroundExecutor() {
+    return new BackgroundExecutor();
+  }
 }

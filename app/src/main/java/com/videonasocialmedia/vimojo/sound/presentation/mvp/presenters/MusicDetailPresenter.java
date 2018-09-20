@@ -32,6 +32,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinis
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.List;
@@ -68,15 +69,17 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
 
     @Inject
     public MusicDetailPresenter(
-            MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-            AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp,
-            RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack) {
+        MusicDetailView musicDetailView, Context context, UserEventTracker userEventTracker,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
+        ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack,
+        BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
@@ -126,7 +129,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
             @Override
             public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
                 userEventTracker.trackMusicSet(currentProject);
-                Futures.addCallback(
+                addCallback(
                         executeUseCaseCall(() -> {
                             removeMedia.removeMedias(removedMedias);
                             updateComposition.updateComposition(currentProject);

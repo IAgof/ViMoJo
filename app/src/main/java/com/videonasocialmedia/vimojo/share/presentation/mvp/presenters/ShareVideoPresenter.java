@@ -40,6 +40,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
@@ -94,20 +95,22 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
   @Inject
   public ShareVideoPresenter(
-          Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
-          SharedPreferences sharedPreferences,
-          AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
-          ExportProjectUseCase exportProjectUseCase,
-          ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
-          GetFtpListUseCase getFtpListUseCase,
-          UploadToPlatform uploadToPlatform,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-          UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
-          FetchUserFeatures fetchUserFeatures,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("showAds") boolean showAds,
-          @Named("showSocialNetworks") boolean showSocialNetworksDecision) {
+      Context context, ShareVideoView shareVideoView, UserEventTracker userEventTracker,
+      SharedPreferences sharedPreferences,
+      AddLastVideoExportedToProjectUseCase addLastVideoExportedProjectUseCase,
+      ExportProjectUseCase exportProjectUseCase,
+      ObtainNetworksToShareUseCase obtainNetworksToShareUseCase,
+      GetFtpListUseCase getFtpListUseCase,
+      UploadToPlatform uploadToPlatform,
+      RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+      UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
+      FetchUserFeatures fetchUserFeatures,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+      @Named("showAds") boolean showAds,
+      @Named("showSocialNetworks") boolean showSocialNetworksDecision,
+      BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;

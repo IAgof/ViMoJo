@@ -11,22 +11,24 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.views.CameraSettingsView;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionFrameRate;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionQuality;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
+
 
 /**
  * Created by alvaro on 20/11/17.
@@ -77,6 +80,7 @@ public class CameraSettingsPresenterTest {
   private boolean amIAVerticalApp;
   private String defaultResolutionSetting;
   private VideoResolution.Resolution defaultVideoResolution;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectMocks() {
@@ -93,7 +97,7 @@ public class CameraSettingsPresenterTest {
         mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
         mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution,
         showCameraPro, allowSelectFrameRate, allowSelectResolution, amIAVerticalApp,
-        defaultResolutionSetting, defaultVideoResolution);
+        defaultResolutionSetting, defaultVideoResolution, mockedBackgroundExecutor);
 
     assertThat(presenter.userEventTracker, is(userEventTracker));
   }
@@ -114,29 +118,42 @@ public class CameraSettingsPresenterTest {
   }
 
   @Test
-  public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking()
-      throws InterruptedException {
+  public void setCameraResolutionPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int resolutionPreferenceId = ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then(new Answer<Runnable>() {
+      @Override
+      public Runnable answer(InvocationOnMock invocation) throws Throwable {
+        Runnable runnable = invocation.getArgument(0);
+        runnable.run();
+        return null;
+      }
+    });
 
     presenter.setCameraResolutionSetting(resolutionPreferenceId);
 
     verify(mockedCameraSettingsRepository).setResolutionSetting(any(CameraSettings.class), anyString());
     verify(mockedSetCompositionResolution).setResolution(any(Project.class), any(VideoResolution.Resolution.class));
     verify(mockedUserEventTracker).trackChangeResolution(anyString());
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(any(Project.class));
   }
 
   @Test
-  public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking()
-      throws InterruptedException {
+  public void setCameraFrameRatePreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int frameRatePreferenceId = FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then(new Answer<Runnable>() {
+      @Override
+      public Runnable answer(InvocationOnMock invocation) throws Throwable {
+        Runnable runnable = invocation.getArgument(0);
+        runnable.run();
+        return null;
+      }
+    });
 
     presenter.setCameraFrameRateSetting(frameRatePreferenceId);
 
@@ -144,25 +161,30 @@ public class CameraSettingsPresenterTest {
     verify(mockedSetCompositionFrameRate).updateFrameRate(currentProject,
         VideoFrameRate.FrameRate.FPS30);
     verify(mockedUserEventTracker).trackChangeFrameRate("30 fps");
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
 
   @Test
-  public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking()
-      throws InterruptedException {
+  public void setCameraQualityPreferenceUpdateRepositoriesProjectAndTracking() {
     CameraSettingsPresenter presenter = getCameraSettingsPresenter();
     int qualityPreferenceId = CameraSettings.CAMERA_SETTING_QUALITY_16_ID;
     CameraSettings cameraSettings = getCameraSettings();
     when(mockedCameraSettingsRepository.getCameraSettings()).thenReturn(cameraSettings);
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then(new Answer<Runnable>() {
+      @Override
+      public Runnable answer(InvocationOnMock invocation) throws Throwable {
+        Runnable runnable = invocation.getArgument(0);
+        runnable.run();
+        return null;
+      }
+    });
 
     presenter.setCameraQualitySetting(qualityPreferenceId);
 
     verify(mockedCameraSettingsRepository).setQualitySetting(cameraSettings, "16 Mbps");
     verify(mockedSetCompositionQuality).setQuality(currentProject, VideoQuality.Quality.LOW);
     verify(mockedUserEventTracker).trackChangeQuality("16 Mbps");
-    Thread.sleep(ConstantsTest.SLEEP_MILLIS_FOR_TEST_BACKGROUND_TASKS);
     verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
@@ -172,7 +194,7 @@ public class CameraSettingsPresenterTest {
         mockedCameraSettingsRepository, mockedUpdateComposition, mockedProjectInstanceCache,
         mockedSetCompositionQuality, mockedSetCompositionFrameRate, mockedSetCompositionResolution,
         showCameraPro, allowSelectFrameRate, allowSelectResolution, amIAVerticalApp,
-        defaultResolutionSetting, defaultVideoResolution);
+        defaultResolutionSetting, defaultVideoResolution, mockedBackgroundExecutor);
     cameraSettingsPresenter.currentProject = currentProject;
     return cameraSettingsPresenter;
   }
