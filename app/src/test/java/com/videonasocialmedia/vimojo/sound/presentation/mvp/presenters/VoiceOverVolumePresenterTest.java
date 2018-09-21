@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
@@ -63,6 +64,7 @@ public class VoiceOverVolumePresenterTest {
   @Mock UpdateTrack mockedUpdateTrack;
   @Mock RemoveTrack mockedRemoveTrack;
   @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void injectTestDoubles() {
@@ -110,7 +112,7 @@ public class VoiceOverVolumePresenterTest {
         mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromPRojectUseCase,
         mockedGetAudioFromProjectUseCase, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
         mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack,
-        mockedRemoveTrack, mockedBackgroundExecutor);
+        mockedRemoveTrack, mockedBackgroundExecutor, mockedUserEventTracker);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

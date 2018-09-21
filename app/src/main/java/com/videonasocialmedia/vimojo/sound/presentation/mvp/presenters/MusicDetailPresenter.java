@@ -79,7 +79,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
         @Named("amIAVerticalApp") boolean amIAVerticalApp,
         RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack,
         BackgroundExecutor backgroundExecutor) {
-        super(backgroundExecutor);
+        super(backgroundExecutor, userEventTracker);
         this.musicDetailView = musicDetailView;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;

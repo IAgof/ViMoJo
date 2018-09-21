@@ -19,6 +19,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
@@ -46,6 +47,7 @@ public class SoundPresenterTest {
   private Project currentProject;
   private boolean voiceOverAvailable;
   @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void init() {
@@ -154,7 +156,7 @@ public class SoundPresenterTest {
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
         mockedProjectInstantCache, mockedUpdateComposition, voiceOverAvailable,
-        mockedBackgroundExecutor);
+        mockedBackgroundExecutor, mockedUserEventTracker);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

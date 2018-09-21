@@ -158,8 +158,4 @@ public class FragmentPresentersModule {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
-  @Provides
-  BackgroundExecutor providesBackgroundExecutor() {
-    return new BackgroundExecutor();
-  }
 }

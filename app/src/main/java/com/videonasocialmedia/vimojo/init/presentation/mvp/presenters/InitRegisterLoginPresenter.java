@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitRegisterLoginView;
 import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 /**
@@ -38,7 +39,9 @@ public class InitRegisterLoginPresenter extends VimojoPresenter {
 
   public InitRegisterLoginPresenter(Context context, InitRegisterLoginView initRegisterLoginView,
                                     UserAuth0Helper userAuth0Helper,
+                                    BackgroundExecutor backgroundExecutor,
                                     UserEventTracker userEventTracker) {
+    super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.initRegisterLoginView = initRegisterLoginView;
     this.userAuth0Helper = userAuth0Helper;

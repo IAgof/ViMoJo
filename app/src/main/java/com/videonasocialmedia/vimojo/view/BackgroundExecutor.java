@@ -20,6 +20,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 /**
  * Delegate class to execute background tasks out of UI thread.
  */
@@ -28,6 +30,7 @@ public class BackgroundExecutor {
   private static final int N_THREADS = 5;
   private final ListeningExecutorService executorPool;
 
+  @Inject
   public BackgroundExecutor() {
     executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
   }
@@ -40,7 +43,8 @@ public class BackgroundExecutor {
     return executorPool.submit(runnable);
   }
 
-  public void addCallback(ListenableFuture<?> listenableFuture, FutureCallback<Object> futureCallback) {
+  public void addCallback(ListenableFuture<?> listenableFuture, FutureCallback<Object>
+      futureCallback) {
     Futures.addCallback(listenableFuture, futureCallback);
   }
 }

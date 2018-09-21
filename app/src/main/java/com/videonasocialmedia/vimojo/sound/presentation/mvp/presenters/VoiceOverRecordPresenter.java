@@ -96,7 +96,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
       UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
       UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;

@@ -118,7 +118,7 @@ public class EditorPresenter extends VimojoPresenter
           @Named("hideTutorials") boolean hideTutorials,
           @Named("amIAVerticalApp") boolean amIAVerticalApp,
           BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;

@@ -80,7 +80,7 @@ public class InitAppPresenter extends VimojoPresenter {
   private boolean amIAVerticalApp;
   private String defaultResolutionSetting;
   private boolean isAppOutOfDate;
-  private boolean vimojoPlatformAvailable;
+  protected boolean vimojoPlatformAvailable;
 
   @Inject
   public InitAppPresenter(
@@ -95,7 +95,7 @@ public class InitAppPresenter extends VimojoPresenter {
       @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
       UserAuth0Helper userAuth0Helper, UserEventTracker userEventTracker,
       BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;

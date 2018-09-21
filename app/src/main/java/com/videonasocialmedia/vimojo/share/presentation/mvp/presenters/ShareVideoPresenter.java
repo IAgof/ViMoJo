@@ -115,7 +115,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
       @Named("showAds") boolean showAds,
       @Named("showSocialNetworks") boolean showSocialNetworksDecision,
       BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.shareVideoViewReference = new WeakReference<>(shareVideoView);
     this.userEventTracker = userEventTracker;

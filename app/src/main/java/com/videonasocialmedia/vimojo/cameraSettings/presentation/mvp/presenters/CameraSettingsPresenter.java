@@ -79,7 +79,7 @@ public class CameraSettingsPresenter extends VimojoPresenter {
       @Named("defaultResolutionSetting") String defaultResolutionSetting,
       @Named("defaultVideoResolution") VideoResolution.Resolution defaultVideoResolution,
       BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.cameraSettingsListView = cameraSettingsListView;
     this.userEventTracker = userEventTracker;
     this.getSettingListUseCase = getSettingListUseCase;

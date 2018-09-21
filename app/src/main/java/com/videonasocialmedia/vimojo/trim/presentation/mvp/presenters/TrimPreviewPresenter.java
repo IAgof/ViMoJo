@@ -69,7 +69,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
         ProjectInstanceCache projectInstanceCache,
         @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
-        super(backgroundExecutor);
+        super(backgroundExecutor, userEventTracker);
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;

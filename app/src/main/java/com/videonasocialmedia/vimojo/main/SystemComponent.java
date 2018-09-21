@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadB
 import com.videonasocialmedia.vimojo.sync.presentation.SyncService;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import javax.inject.Singleton;
 
@@ -45,6 +46,7 @@ public interface SystemComponent {
   CameraSettingsDataSource getCameraRepository();
   JobManager provideAPIJobManager();
   BackgroundScheduler provideBackgroundScheduler();
+  BackgroundExecutor provideBackgroundExecutor();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
   void inject(UploadBroadcastReceiver uploadBroadcastReceiver);

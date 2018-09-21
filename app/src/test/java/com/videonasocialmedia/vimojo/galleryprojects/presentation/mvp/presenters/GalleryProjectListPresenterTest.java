@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
@@ -67,6 +68,7 @@ public class GalleryProjectListPresenterTest {
   private boolean watermarkIsForced;
   @Mock BackgroundExecutor mockedBackgroundExecutor;
   @Mock ListenableFuture mockedListenableFuture;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void injectMocks() {
@@ -196,6 +198,6 @@ public class GalleryProjectListPresenterTest {
         mockedProjectRepository, mockedCreateDefaultUseCase, mockedDuplicateProjectUseCase,
         mockedDeleteComposition, mockedProjectInstanceCache, mockedSaveComposition,
         mockedUpdateComposition, mockedGetCompositions, mockedGetCompositionAssets,
-        watermarkIsForced, amIAVerticalApp, mockedBackgroundExecutor);
+        watermarkIsForced, amIAVerticalApp, mockedBackgroundExecutor, mockedUserEventTracker);
   }
 }

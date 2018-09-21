@@ -60,7 +60,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
         UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp,
         BackgroundExecutor backgroundExecutor) {
-        super(backgroundExecutor);
+        super(backgroundExecutor, userEventTracker);
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;

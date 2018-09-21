@@ -52,7 +52,7 @@ public class DetailProjectPresenter extends VimojoPresenter {
       Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
       ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
       SetCompositionInfo setCompositionInfo, BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;

@@ -30,6 +30,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.ConstantsTest;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
@@ -89,6 +90,7 @@ public class GalleryPagerPresenterTest {
   @Mock SetCompositionResolution mockedSetCompositionResolution;
   private Project currentProject;
   @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void injectMocks() {
@@ -226,7 +228,7 @@ public class GalleryPagerPresenterTest {
             mockedApplyAVTransitionsUseCase,
             mockedSharedPreferences,
             mockedProjectInstanceCache, mockedUpdateComposition,
-            mockedSetCompositionResolution, mockedBackgroundExecutor);
+            mockedSetCompositionResolution, mockedBackgroundExecutor, mockedUserEventTracker);
   }
 
   public void setAProject() {

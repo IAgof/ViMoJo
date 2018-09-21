@@ -11,6 +11,8 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+
 /**
  * Class for presenters to extend to implement presentation logic. This class provides some common
  * functionalities presenters share
@@ -19,6 +21,7 @@ public class VimojoPresenter {
   private BackgroundExecutor backgroundExecutor;
   private UserEventTracker userEventTracker;
 
+  @Inject
   public VimojoPresenter(BackgroundExecutor backgroundExecutor,
                          UserEventTracker userEventTracker) {
     this.backgroundExecutor = backgroundExecutor;
@@ -36,6 +39,7 @@ public class VimojoPresenter {
   public final void addCallback(ListenableFuture listenableFuture, FutureCallback futureCallback) {
     backgroundExecutor.addCallback(listenableFuture, futureCallback);
   }
+
   public void onActivityDestroy() {
     userEventTracker.flush();
   }

@@ -122,7 +122,7 @@ public class RecordCamera2Presenter extends VimojoPresenter implements Camera2Wr
       @Named("hideRecordAudioGain") boolean hideRecordAudioGain,
       @Named("hideTutorials") boolean hideTutorialsDecision,
       @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.recordView = recordView;
     this.userEventTracker = userEventTracker;

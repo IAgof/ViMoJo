@@ -87,7 +87,7 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
         UpdateComposition updateComposition, RemoveMedia removeMedia,
         @Named("amIAVerticalApp") boolean amIAVerticalApp,
         BackgroundExecutor backgroundExecutor) {
-        super(backgroundExecutor);
+        super(backgroundExecutor, userEventTracker);
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;

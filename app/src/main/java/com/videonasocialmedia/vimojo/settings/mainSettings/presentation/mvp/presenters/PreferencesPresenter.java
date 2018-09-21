@@ -135,7 +135,7 @@ public class PreferencesPresenter extends VimojoPresenter
       @Named("hideTransitionPreference") boolean hideTransitionPreference,
       @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
       BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+    super(backgroundExecutor, userEventTracker);
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;

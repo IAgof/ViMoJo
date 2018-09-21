@@ -57,7 +57,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
-        super(backgroundExecutor);
+        super(backgroundExecutor, userEventTracker);
         this.splitView = splitView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;

@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
@@ -61,8 +62,9 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
       SaveComposition saveComposition, UpdateComposition updateComposition,
       GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
       @Named("watermarkIsForced") boolean watermarkIsForced,
-      @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
-    super(backgroundExecutor);
+      @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor,
+      UserEventTracker userEventTracker) {
+    super(backgroundExecutor, userEventTracker);
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
     this.projectRepository = projectRepository;

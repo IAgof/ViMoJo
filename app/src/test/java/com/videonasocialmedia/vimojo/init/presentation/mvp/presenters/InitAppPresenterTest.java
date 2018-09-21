@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -24,17 +23,15 @@ import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -79,15 +76,12 @@ public class InitAppPresenterTest {
     verify(mockedRunSyncAdapterHelper).runSyncAdapterPeriodically();
   }
 
-  @Ignore
   @Test
   public void userNavigateToRecordIfBuildConfigPlatformNotActivated() {
-    InitAppPresenter initAppPresenter = getInitAppPresenter();
-    // TODO: 24/8/18 Learn how to mock BuildConfig values, seems to be necessary Roboelectric
-    PowerMockito.mockStatic(BuildConfig.class);
-    Mockito.doReturn(false).when(BuildConfig.FEATURE_VIMOJO_PLATFORM);
+    InitAppPresenter spyInitAppPresenter = spy(getInitAppPresenter());
+    spyInitAppPresenter.vimojoPlatformAvailable = false;
 
-    initAppPresenter.setNavigation();
+    spyInitAppPresenter.setNavigation();
 
     verify(mockedInitAppView).navigate(RecordCamera2Activity.class);
   }

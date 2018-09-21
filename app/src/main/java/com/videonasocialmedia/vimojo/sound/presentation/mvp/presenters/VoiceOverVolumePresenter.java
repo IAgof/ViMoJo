@@ -60,8 +60,9 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
         ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp,
-        UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
-        super(backgroundExecutor);
+        UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor,
+        UserEventTracker userEventTracker) {
+        super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
