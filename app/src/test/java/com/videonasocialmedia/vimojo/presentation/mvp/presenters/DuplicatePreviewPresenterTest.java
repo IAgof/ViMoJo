@@ -18,6 +18,7 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +54,7 @@ public class DuplicatePreviewPresenterTest {
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
     private boolean amIAVerticalApp;
+    @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
     public void injectMocks() {
@@ -71,7 +73,7 @@ public class DuplicatePreviewPresenterTest {
                 new DuplicatePreviewPresenter(
                         mockedDuplicateView, userEventTracker, mockedAddVideoToProjectUseCase,
                         mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                        mockedUpdateComposition, amIAVerticalApp);
+                        mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -110,7 +112,7 @@ public class DuplicatePreviewPresenterTest {
         DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(
                 mockedDuplicateView, mockedUserEventTracker, mockedAddVideoToProjectUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                mockedUpdateComposition, amIAVerticalApp);
+                mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
         duplicatePreviewPresenter.currentProject = currentProject;
         return  duplicatePreviewPresenter;
     }

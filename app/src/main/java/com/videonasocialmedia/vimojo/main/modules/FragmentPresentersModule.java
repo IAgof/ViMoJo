@@ -32,6 +32,7 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.pres
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
 import javax.inject.Named;
@@ -67,27 +68,27 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          UpdateAudioTransitionPreferenceToProjectUseCase
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-          UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-          UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
           UpdateCompositionWatermark updateCompositionWatermark,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
           UploadDataSource uploadDataSource, GetAccount getAccount,
-          UserEventTracker userEventTracker, UpdateComposition updateComposition,
-          FetchUserFeatures fetchUserFeatures,
+          UserEventTracker userEventTracker,UpdateComposition updateComposition, FetchUserFeatures fetchUserFeatures,
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
           @Named("hideTransitionPreference") boolean hideTransitionPreference,
-          @Named("showMoreAppsPreference") boolean showMoreAppsPreference) {
+          @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
+      BackgroundExecutor backgroundExecutor) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             getMediaListFromProjectUseCase,
@@ -99,7 +100,7 @@ public class FragmentPresentersModule {
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
             uploadDataSource, projectInstanceCache, getAccount, userEventTracker, updateComposition,
             fetchUserFeatures, vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
-            ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference);
+            ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference, backgroundExecutor);
   }
 
   @Provides
@@ -157,4 +158,8 @@ public class FragmentPresentersModule {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
+  @Provides
+  BackgroundExecutor providesBackgroundExecutor() {
+    return new BackgroundExecutor();
+  }
 }

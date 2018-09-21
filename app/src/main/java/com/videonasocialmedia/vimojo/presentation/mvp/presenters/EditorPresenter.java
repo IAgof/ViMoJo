@@ -40,6 +40,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
@@ -115,7 +116,9 @@ public class EditorPresenter extends VimojoPresenter
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("watermarkIsForced") boolean watermarkIsForced,
           @Named("hideTutorials") boolean hideTutorials,
-          @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+          @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;

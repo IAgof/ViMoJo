@@ -14,6 +14,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Deta
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -48,9 +49,10 @@ public class DetailProjectPresenter extends VimojoPresenter {
 
   @Inject
   public DetailProjectPresenter(
-          Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
-          ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-          SetCompositionInfo setCompositionInfo) {
+      Context context, DetailProjectView detailProjectView, UserEventTracker userEventTracker,
+      ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+      SetCompositionInfo setCompositionInfo, BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.context = context;
     this.detailProjectView = detailProjectView;
     this.userEventTracker = userEventTracker;

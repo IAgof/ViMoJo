@@ -24,6 +24,7 @@ import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +59,7 @@ public class SplitPreviewPresenterTest {
     List<Media> videoList = new ArrayList<>();
     @Mock UpdateComposition mockedUpdateComposition;
     private boolean amIAVerticalApp;
+    @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
     public void injectMocks() {
@@ -75,7 +77,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(
                 mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                mockedUpdateComposition, amIAVerticalApp);
+                mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -128,7 +130,7 @@ public class SplitPreviewPresenterTest {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(
                 mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
                 mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
-                mockedUpdateComposition, amIAVerticalApp);
+                mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }

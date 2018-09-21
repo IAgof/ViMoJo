@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,7 @@ public class TimeLineBugEditPresenterTest {
   @Mock RemoveMedia removeMedia;
   private Project currentProject;
   private boolean amIAVerticalApp;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
 
   @Before
@@ -75,7 +77,7 @@ public class TimeLineBugEditPresenterTest {
             mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
             mockedMediaItemReorderer, mockedProjectInstanceCache, updateComposition, removeMedia,
-            amIAVerticalApp);
+            amIAVerticalApp, mockedBackgroundExecutor);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

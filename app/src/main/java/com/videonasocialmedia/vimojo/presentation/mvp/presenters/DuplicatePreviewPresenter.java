@@ -19,6 +19,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
@@ -52,12 +53,14 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements OnVide
      * Get media list from project use case
      */
     @Inject public DuplicatePreviewPresenter(
-            DuplicateView duplicateView, UserEventTracker userEventTracker,
-            AddVideoToProjectUseCase addVideoToProjectUseCase,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ProjectInstanceCache projectInstanceCache,
-            UpdateComposition updateComposition,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+        DuplicateView duplicateView, UserEventTracker userEventTracker,
+        AddVideoToProjectUseCase addVideoToProjectUseCase,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        ProjectInstanceCache projectInstanceCache,
+        UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.duplicateView = duplicateView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;

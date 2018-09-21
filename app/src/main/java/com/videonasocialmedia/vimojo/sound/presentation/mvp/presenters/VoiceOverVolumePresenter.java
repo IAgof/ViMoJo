@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.List;
@@ -52,14 +53,15 @@ public class VoiceOverVolumePresenter extends VimojoPresenter implements OnVideo
 
     @Inject
     public VoiceOverVolumePresenter(
-            Context context, VoiceOverVolumeView voiceOverVolumeView,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-            GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-            ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
-            ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp,
-            UpdateTrack updateTrack, RemoveTrack removeTrack) {
+        Context context, VoiceOverVolumeView voiceOverVolumeView,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
+        ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;

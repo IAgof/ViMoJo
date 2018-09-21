@@ -39,6 +39,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
@@ -76,15 +77,17 @@ public class EditPresenter extends VimojoPresenter implements ElementChangedList
 
     @Inject
     public EditPresenter(
-            EditActivityView editActivityView, Context context,
-            VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
-            UserEventTracker userEventTracker,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-            ReorderMediaItemUseCase reorderMediaItemUseCase,
-            ProjectInstanceCache projectInstanceCache,
-            UpdateComposition updateComposition, RemoveMedia removeMedia,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
+        EditActivityView editActivityView, Context context,
+        VideoTranscodingErrorNotifier videoTranscodingErrorNotifier,
+        UserEventTracker userEventTracker,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+        ReorderMediaItemUseCase reorderMediaItemUseCase,
+        ProjectInstanceCache projectInstanceCache,
+        UpdateComposition updateComposition, RemoveMedia removeMedia,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor);
         this.editActivityView = editActivityView;
         this.context = context;
         this.videoTranscodingErrorNotifier = videoTranscodingErrorNotifier;

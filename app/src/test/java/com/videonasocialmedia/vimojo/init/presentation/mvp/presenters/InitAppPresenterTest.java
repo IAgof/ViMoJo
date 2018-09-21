@@ -1,10 +1,3 @@
-/*
- * Copyright (C) 2018 Videona Socialmedia SL
- * http://www.videona.com
- * info@videona.com
- * All rights reserved
- */
-
 package com.videonasocialmedia.vimojo.init.presentation.mvp.presenters;
 
 import android.content.Context;
@@ -17,17 +10,18 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
-import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -36,19 +30,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by jliarte on 22/10/16.
  */
-@PrepareForTest(BuildConfig.class)
 public class InitAppPresenterTest {
 
   @Mock CreateDefaultProjectUseCase mockedCreateDefaultProject;
@@ -69,6 +60,7 @@ public class InitAppPresenterTest {
   private String defaultResolutionSetting;
   private boolean isAppOutOfDate;
   private boolean vimojoPlatformAvailable;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
 
   @Before
@@ -125,7 +117,7 @@ public class InitAppPresenterTest {
         mockedCreateDefaultProject, mockedCameraSettingsRepository, mockedRunSyncAdapterHelper,
         mockedProjectInstanceCache, mockedSaveComposition, watermarkIsForced, showAds,
         amIAVerticalApp, defaultResolutionSetting, isAppOutOfDate, vimojoPlatformAvailable,
-        mockedUserAuth0Helper, mockedUserEventTracker);
+        mockedUserAuth0Helper, mockedUserEventTracker, mockedBackgroundExecutor);
   }
 
   public void getAProject() {

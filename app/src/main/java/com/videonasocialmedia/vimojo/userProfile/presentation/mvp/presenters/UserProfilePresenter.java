@@ -19,6 +19,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetriev
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.List;
@@ -40,10 +41,12 @@ public class UserProfilePresenter extends VimojoPresenter {
 
   @Inject
   public UserProfilePresenter(
-          UserProfileView view, SharedPreferences sharedPreferences,
-          ObtainLocalVideosUseCase obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
-          FetchUserFeatures fetchUserFeatures,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable) {
+      UserProfileView view, SharedPreferences sharedPreferences,
+      ObtainLocalVideosUseCase obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
+      FetchUserFeatures fetchUserFeatures,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;

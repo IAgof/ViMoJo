@@ -35,6 +35,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecor
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
@@ -94,7 +95,8 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
       AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
       UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
       UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
-      UpdateTrack updateTrack, RemoveTrack removeTrack) {
+      UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
     this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;

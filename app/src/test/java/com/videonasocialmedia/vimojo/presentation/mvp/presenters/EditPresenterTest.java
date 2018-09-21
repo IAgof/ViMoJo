@@ -23,6 +23,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +66,7 @@ public class EditPresenterTest {
   @Mock RemoveMedia mockedRemoveMedia;
   private Project currentProject;
   private boolean amIAVerticalApp;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectTestDoubles() {
@@ -171,7 +173,7 @@ public class EditPresenterTest {
             mockedEditorView, mockedContext, mockedVideoTranscodingErrorNotifier,
             mockedUserEventTracker, mockedGetMediaListFromProjectUseCase, mockedVideoRemover,
             mockedMediaItemReorderer, mockedProjectInstantCache, mockedUpdateComposition,
-            mockedRemoveMedia, amIAVerticalApp);
+            mockedRemoveMedia, amIAVerticalApp, mockedBackgroundExecutor);
     editPresenter.currentProject = currentProject;
     return editPresenter;
   }

@@ -49,6 +49,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
@@ -111,29 +112,30 @@ public class PreferencesPresenter extends VimojoPresenter
    * @param hideTransitionPreference
    */
   public PreferencesPresenter(
-          PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          UpdateAudioTransitionPreferenceToProjectUseCase
+      PreferencesView preferencesView, Context context, SharedPreferences sharedPreferences,
+      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+      UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
-          UpdateVideoTransitionPreferenceToProjectUseCase
+      UpdateVideoTransitionPreferenceToProjectUseCase
                   updateVideoTransitionPreferenceToProjectUseCase,
-          UpdateIntermediateTemporalFilesTransitionsUseCase
+      UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateCompositionWatermark updateCompositionWatermark,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
-          GetAccount getAccount, UserEventTracker userEventTracker,
-          UpdateComposition updateComposition,
-          FetchUserFeatures fetchUserFeatures,
-          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
-          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
-          @Named("hideTransitionPreference") boolean hideTransitionPreference,
-          @Named("showMoreAppsPreference") boolean showMoreAppsPreference) {
+      UpdateCompositionWatermark updateCompositionWatermark,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
+      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+      UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
+      GetAccount getAccount, UserEventTracker userEventTracker, UpdateComposition updateComposition,
+      FetchUserFeatures fetchUserFeatures,
+      @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+      @Named("showWaterMarkSwitch") boolean showWatermarkSwitch,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+      @Named("hideTransitionPreference") boolean hideTransitionPreference,
+      @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
+      BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.preferencesView = preferencesView;
     this.context = context;
     this.sharedPreferences = sharedPreferences;

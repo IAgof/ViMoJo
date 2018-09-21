@@ -34,6 +34,7 @@ import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.text.ParseException;
@@ -83,16 +84,18 @@ public class InitAppPresenter extends VimojoPresenter {
 
   @Inject
   public InitAppPresenter(
-          Context context, InitAppView initAppView, SharedPreferences sharedPreferences,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          CameraSettingsDataSource cameraSettingsRepository,
-          RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
-          SaveComposition saveComposition, @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("showAds") boolean showAds, @Named("amIAVerticalApp") boolean amIAVerticalApp,
-          @Named("defaultResolutionSetting") String defaultResolutionSetting,
-          @Named("isAppOutOfDate") boolean isAppOutOfDate,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          UserAuth0Helper userAuth0Helper, UserEventTracker userEventTracker) {
+      Context context, InitAppView initAppView, SharedPreferences sharedPreferences,
+      CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      CameraSettingsDataSource cameraSettingsRepository,
+      RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
+      SaveComposition saveComposition, @Named("watermarkIsForced") boolean watermarkIsForced,
+      @Named("showAds") boolean showAds, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+      @Named("defaultResolutionSetting") String defaultResolutionSetting,
+      @Named("isAppOutOfDate") boolean isAppOutOfDate,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      UserAuth0Helper userAuth0Helper, UserEventTracker userEventTracker,
+      BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor);
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
