@@ -204,11 +204,11 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         switch (videoWidth) {
             case "4096":
             case "3840": // TODO(jliarte): 3/05/17 BQx5 4K resolution!!!
-                return VideoResolution.Resolution.H_4K;
+                return VideoResolution.Resolution.HD4K;
             case "1920":
-                return VideoResolution.Resolution.H_1080P;
+                return VideoResolution.Resolution.HD1080;
             case "1280":
-                return VideoResolution.Resolution.H_720P;
+                return VideoResolution.Resolution.HD720;
             default:
                 return null;
         }

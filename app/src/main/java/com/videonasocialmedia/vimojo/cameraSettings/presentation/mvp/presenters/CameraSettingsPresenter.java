@@ -107,17 +107,17 @@ public class CameraSettingsPresenter {
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-        VideoResolution.Resolution.H_720P);
+        VideoResolution.Resolution.HD720);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-        VideoResolution.Resolution.H_1080P);
+        VideoResolution.Resolution.HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-        VideoResolution.Resolution.H_4K);
+        VideoResolution.Resolution.HD4K);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
-        VideoResolution.Resolution.H_720P);
+        VideoResolution.Resolution.HD720);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
-        VideoResolution.Resolution.H_1080P);
+        VideoResolution.Resolution.HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
-        VideoResolution.Resolution.H_4K);
+        VideoResolution.Resolution.HD4K);
   }
 
   private void setupHorizontalResolutions() {
@@ -137,17 +137,17 @@ public class CameraSettingsPresenter {
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-            VideoResolution.Resolution.H_720P);
+            VideoResolution.Resolution.HD720);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-            VideoResolution.Resolution.H_1080P);
+            VideoResolution.Resolution.HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-            VideoResolution.Resolution.H_4K);
+            VideoResolution.Resolution.HD4K);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
-        VideoResolution.Resolution.H_720P);
+        VideoResolution.Resolution.HD720);
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
-        VideoResolution.Resolution.H_1080P);
+        VideoResolution.Resolution.HD1080);
     videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
-        VideoResolution.Resolution.H_4K);
+        VideoResolution.Resolution.HD4K);
   }
 
   private void setupFrameRateMappers() {
