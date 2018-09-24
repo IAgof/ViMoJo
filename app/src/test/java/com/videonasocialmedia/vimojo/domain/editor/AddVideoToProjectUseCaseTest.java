@@ -159,7 +159,7 @@ public class AddVideoToProjectUseCaseTest {
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
     currentProject = new Project(projectInfo, "/path", "private/path",
-        new Profile(VideoResolution.Resolution.H_720P,
+        new Profile(VideoResolution.Resolution.HD720,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25));
   }
 }

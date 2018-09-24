@@ -371,7 +371,7 @@ public class UserEventTrackerTest {
     }
 
     public void getAProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

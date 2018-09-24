@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         //classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'io.fabric.tools:gradle:1.25.1'
+        classpath 'io.fabric.tools:gradle:1.26.0'
     }
 }
 
@@ -34,7 +34,7 @@ task checkstyle(type: Checkstyle) {
     reports {
         xml.enabled = true
         xml {
-            destination "${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml"
+            destination file("${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml")
         }
     }
 
@@ -362,17 +362,19 @@ android {
     applicationVariants.all { variant ->
         variant.productFlavors.each { flavor ->
             def variantSuffix = variant.name.capitalize()
-            def generatePropertiesTask = task("fabricGenerateProperties${variantSuffix}") << {
-                Properties properties = new Properties()
-                if (variantSuffix.endsWith("Debug")) {
-                    properties.put("apiKey", FABRIC_VIDEONA_ORG_APIKEY)
-                    properties.put("apiSecret", FABRIC_VIDEONA_ORG_APISECRET)
-                } else {
-                    properties.put("apiKey", flavor.fabricApiKey)
-                    properties.put("apiSecret", flavor.fabricApiSecret)
+            def generatePropertiesTask = task("fabricGenerateProperties${variantSuffix}") {
+                doLast {
+                    Properties properties = new Properties()
+                    if (variantSuffix.endsWith("Debug")) {
+                        properties.put("apiKey", FABRIC_VIDEONA_ORG_APIKEY)
+                        properties.put("apiSecret", FABRIC_VIDEONA_ORG_APISECRET)
+                    } else {
+                        properties.put("apiKey", flavor.fabricApiKey)
+                        properties.put("apiSecret", flavor.fabricApiSecret)
+                    }
+                    properties.store(new FileWriter(fabricProperties), "")
+                    println "Generating fabric.properties for api key: ${flavor.fabricApiKey}"
                 }
-                properties.store(new FileWriter(fabricProperties), "")
-                println "Generating fabric.properties for api key: ${flavor.fabricApiKey}"
             }
 
             def generateResourcesTask = project.tasks.getByName("fabricGenerateResources${variantSuffix}")

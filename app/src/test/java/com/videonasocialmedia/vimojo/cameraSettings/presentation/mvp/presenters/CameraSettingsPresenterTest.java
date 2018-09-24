@@ -168,7 +168,7 @@ public class CameraSettingsPresenterTest {
   }
 
   public void setAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_1080P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

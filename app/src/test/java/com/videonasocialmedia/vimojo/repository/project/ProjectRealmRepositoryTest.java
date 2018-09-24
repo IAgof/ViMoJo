@@ -178,7 +178,7 @@ public class ProjectRealmRepositoryTest {
   }
 
   public void getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_1080P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD1080,
         VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",

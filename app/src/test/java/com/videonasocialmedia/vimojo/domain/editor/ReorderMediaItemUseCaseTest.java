@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 23/10/16.
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class ReorderMediaItemUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @InjectMocks ReorderMediaItemUseCase injectedUseCase;
@@ -149,7 +151,7 @@ public class ReorderMediaItemUseCaseTest {
   }
 
   public void getAProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.H_720P, VideoQuality.Quality.HIGH,
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
         VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

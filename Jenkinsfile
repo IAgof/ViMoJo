@@ -73,6 +73,11 @@ node {
   }
 }
 
+stage 'Clean build'
+node {
+  sh "./gradlew clean --no-daemon"
+}
+
 // Pulls the android flavor out of the branch name the branch is prepended with /QA_
 @NonCPS
 def flavor(branchName) {

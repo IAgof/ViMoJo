@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 /**
  * Created by alvaro on 5/09/16.
  */
+@Config(manifest= Config.NONE)
 public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   private Project currentProject;
@@ -78,7 +80,7 @@ public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
   private void getAProject() {
     String rootPath = "project/root/path";
     String privatePath = "private/path";
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
