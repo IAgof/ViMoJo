@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
-import com.birbit.android.jobqueue.JobManager;
+import android.content.Context;
+
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
@@ -32,7 +33,7 @@ public class MockedDataRepositoriesModule extends DataRepositoriesModule {
     return mock(CameraSettingsDataSource.class);
   }
 
-  @Override BackgroundScheduler provideBackgroundScheduler(JobManager jobManager) {
+  @Override BackgroundScheduler provideBackgroundScheduler(Context context) {
     return new FakeBackgroundScheduler();
   }
 

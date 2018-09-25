@@ -12,9 +12,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,6 +31,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +53,8 @@ import static org.powermock.api.mockito.PowerMockito.spy;
 // TODO(jliarte): 17/10/16 a use case should be able to be tested without needing robolectric help!
 @PowerMockRunnerDelegate(RobolectricTestRunner.class)
 @PrepareForTest({TextToDrawable.class})
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class, JobManager.class})
 public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock TranscoderHelper mockedTranscoderHelper;
   @Mock Project mockedProject;

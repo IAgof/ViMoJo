@@ -15,14 +15,18 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
@@ -48,7 +52,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 // TODO(jliarte): 15/06/16 I need to use robolectric here as Video is being copied in the presenter
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest=Config.NONE)
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class, JobManager.class})
 public class SplitPreviewPresenterTest {
     @Mock private SplitView mockedSplitView;
     @Mock private UserEventTracker mockedUserEventTracker;

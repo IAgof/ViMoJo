@@ -7,12 +7,16 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +39,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 23/10/16.
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class, JobManager.class})
 public class ReorderMediaItemUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @InjectMocks ReorderMediaItemUseCase injectedUseCase;

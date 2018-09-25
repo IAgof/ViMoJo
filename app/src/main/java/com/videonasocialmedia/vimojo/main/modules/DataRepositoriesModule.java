@@ -70,17 +70,15 @@ public class DataRepositoriesModule {
   }
 
   @Singleton @Provides
-  JobManager provideAPIJobManager(Context context) {
+  BackgroundScheduler provideBackgroundScheduler(Context context) {
     Configuration config = new Configuration.Builder(context).minConsumerCount(MIN_CONSUMER_COUNT)
             .maxConsumerCount(MAX_CONSUMER_COUNT)
             .loadFactor(LOAD_FACTOR)
             .build();
-    return new JobManager(config);
-  }
+    JobManager jobManager = new JobManager(config);
 
-  @Singleton @Provides
-  BackgroundScheduler provideBackgroundScheduler(JobManager jobManager) {
-    return new JobManagerBackgroundScheduler(jobManager);
+    JobManagerBackgroundScheduler jobManagerBackgroundScheduler = new JobManagerBackgroundScheduler(jobManager);
+    return jobManagerBackgroundScheduler;
   }
 
 }

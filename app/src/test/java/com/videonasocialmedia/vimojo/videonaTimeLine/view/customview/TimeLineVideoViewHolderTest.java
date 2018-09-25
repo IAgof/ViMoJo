@@ -10,6 +10,7 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
 import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.helper.ItemTouchHelperViewHolder;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
-        shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
+        shadows = {ShadowMultiDex.class, JobManager.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class TimeLineVideoViewHolderTest {
   private EditActivity editActivity;
   @Mock private VideoTimeLineRecyclerViewClickListener mockedListener;
