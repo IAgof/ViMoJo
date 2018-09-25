@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Gall
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -51,6 +52,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private GetCompositionAssets getCompositionAssets;
   private boolean watermarkIsForced;
   private boolean amIVerticalApp;
+  protected boolean cloudBackupAvailable;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -63,7 +65,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
       GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
       @Named("watermarkIsForced") boolean watermarkIsForced,
       @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor,
-      UserEventTracker userEventTracker) {
+      UserEventTracker userEventTracker,
+      @Named("cloudBackupAvailable") boolean cloudBackupAvailable) {
     super(backgroundExecutor, userEventTracker);
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
@@ -78,6 +81,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.getCompositionAssets = getCompositionAssets;
     this.watermarkIsForced = watermarkIsForced;
     this.amIVerticalApp = amIAVerticalApp;
+    this.cloudBackupAvailable = cloudBackupAvailable;
   }
 
   public void init() {
@@ -155,7 +159,13 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void updateProjectList() {
     galleryProjectListView.showLoading();
     addCallback(
-            executeUseCaseCall(() -> getCompositions.getListProjectsByLastModificationDescending()),
+            executeUseCaseCall(() -> {
+              ReadPolicy readPolicy = ReadPolicy.LOCAL_ONLY;
+              if (cloudBackupAvailable) {
+                readPolicy = ReadPolicy.READ_ALL;
+              }
+              return getCompositions.getListProjectsByLastModificationDescending(readPolicy);
+            }),
             new FutureCallback<List<Project>>() {
               @Override
               public void onSuccess(@Nullable List<Project> projectList) {

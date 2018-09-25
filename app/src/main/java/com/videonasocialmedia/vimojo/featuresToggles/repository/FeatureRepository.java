@@ -108,7 +108,7 @@ public class FeatureRepository extends VimojoRepository<FeatureToggle> {
     }
     if (featureToggle == null && readPolicy.useRemote()) {
       backgroundScheduler.schedule(() -> {
-        FeatureToggle apifeatureToggle = remoteDataSource.getById(userId);;
+        FeatureToggle apifeatureToggle = remoteDataSource.getById(userId);
         localDataSource.update(apifeatureToggle);
         cacheDataSource.update(apifeatureToggle);
         return apifeatureToggle;

@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
@@ -69,6 +70,8 @@ public class GalleryProjectListPresenterTest {
   @Mock BackgroundExecutor mockedBackgroundExecutor;
   @Mock ListenableFuture mockedListenableFuture;
   @Mock UserEventTracker mockedUserEventTracker;
+  private boolean cloudBackupAvailable;
+  private ReadPolicy readPolicy = ReadPolicy.READ_ALL;
 
   @Before
   public void injectMocks() {
@@ -81,7 +84,7 @@ public class GalleryProjectListPresenterTest {
     List<Project> projectList = new ArrayList<>();
     projectList.add(currentProject);
     doReturn(projectList).when(mockedGetCompositions)
-            .getListProjectsByLastModificationDescending();
+            .getListProjectsByLastModificationDescending(readPolicy);
     GalleryProjectListPresenter spyGalleryProjectListPresenter =
         Mockito.spy(getGalleryProjectListPresenter());
     when(mockedBackgroundExecutor.submit(any(Callable.class))).then(invocation -> {
@@ -108,7 +111,7 @@ public class GalleryProjectListPresenterTest {
   public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject() {
     List<Project> projectList = new ArrayList<>();
     doReturn(projectList).when(mockedGetCompositions)
-            .getListProjectsByLastModificationDescending();
+            .getListProjectsByLastModificationDescending(readPolicy);
     GalleryProjectListPresenter spyGalleryProjectListPresenter =
         Mockito.spy(getGalleryProjectListPresenter());
     when(mockedBackgroundExecutor.submit(any(Callable.class))).then(invocation -> {
@@ -194,10 +197,14 @@ public class GalleryProjectListPresenterTest {
   }
 
   private GalleryProjectListPresenter getGalleryProjectListPresenter() {
-    return new GalleryProjectListPresenter(mockedGalleryProjectListView, mockedSharedPreferences,
-        mockedProjectRepository, mockedCreateDefaultUseCase, mockedDuplicateProjectUseCase,
-        mockedDeleteComposition, mockedProjectInstanceCache, mockedSaveComposition,
-        mockedUpdateComposition, mockedGetCompositions, mockedGetCompositionAssets,
-        watermarkIsForced, amIAVerticalApp, mockedBackgroundExecutor, mockedUserEventTracker);
+    GalleryProjectListPresenter galleryProjectListPresenter =
+        new GalleryProjectListPresenter(mockedGalleryProjectListView, mockedSharedPreferences,
+            mockedProjectRepository, mockedCreateDefaultUseCase, mockedDuplicateProjectUseCase,
+            mockedDeleteComposition, mockedProjectInstanceCache, mockedSaveComposition,
+            mockedUpdateComposition, mockedGetCompositions, mockedGetCompositionAssets,
+            watermarkIsForced, amIAVerticalApp, mockedBackgroundExecutor, mockedUserEventTracker,
+            cloudBackupAvailable);
+    galleryProjectListPresenter.cloudBackupAvailable = true;
+    return galleryProjectListPresenter;
   }
 }

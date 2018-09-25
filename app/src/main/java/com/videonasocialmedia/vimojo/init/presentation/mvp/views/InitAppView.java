@@ -20,4 +20,6 @@ public interface InitAppView {
   void showDialogOutOfDate();
 
   void appContinueWorkflow();
+
+  void navigateToRegisterLogin();
 }

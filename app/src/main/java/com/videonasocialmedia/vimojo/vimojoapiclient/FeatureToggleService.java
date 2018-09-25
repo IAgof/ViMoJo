@@ -18,6 +18,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 
@@ -26,9 +27,11 @@ import retrofit2.http.QueryMap;
  */
 public interface FeatureToggleService {
   @GET("user/{userId}/userFeature")
+  @Headers("Content-Type: application/json")
   Call<List<FeatureToggleDto>> getUserFeatures(@Path("userId") String userId);
 
   @GET("user/{userId}/userFeature")
+  @Headers("Content-Type: application/json")
   Call<List<FeatureToggleDto>> getUserFeature(@Path("userId") String userId,
                                         @QueryMap Map<String, Object> query);
 }

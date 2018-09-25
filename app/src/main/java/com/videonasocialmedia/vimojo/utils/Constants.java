@@ -151,6 +151,7 @@ public class Constants {
   public static final String USER_FEATURE_CAMERA_PRO = "user-feature-camera-pro";
   public static final String USER_FEATURE_SELECT_FRAME_RATE = "user-feature-select-frame-rate";
   public static final String USER_FEATURE_SELECT_RESOLUTION = "user-feature-select-resolution";
+  public static final String USER_FEATURE_CLOUD_BACKUP = "user-feature-cloud-backup";
   public static final String FEATURE_RECORD_AUDIO_GAIN = "feature-record-audio-gain";
   public static final String FEATURE_SHARE_SHOW_SOCIAL_NETWORKS = "feature-show-social-networks";
   public static final String FEATURE_SHOW_MORE_APPS = "feature-show-more-apps";
@@ -170,4 +171,5 @@ public class Constants {
   public static final boolean DEFAULT_CAMERA_PRO = false;
   public static final boolean DEFAULT_SELECT_FRAME_RATE = false;
   public static final boolean DEFAULT_SELECT_RESOLUTION = false;
+  public static final boolean DEFAULT_CLOUD_BACKUP = false;
 }

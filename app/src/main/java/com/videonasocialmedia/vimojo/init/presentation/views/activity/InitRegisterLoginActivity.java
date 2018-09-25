@@ -91,8 +91,8 @@ public class InitRegisterLoginActivity extends VimojoActivity implements InitReg
 
   @Override
   public void navigateToRecordCamera2() {
-    finish();
     Intent intent = new Intent(VimojoApplication.getAppContext(), RecordCamera2Activity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
 

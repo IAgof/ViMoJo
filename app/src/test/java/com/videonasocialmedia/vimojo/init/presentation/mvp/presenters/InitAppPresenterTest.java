@@ -103,7 +103,7 @@ public class InitAppPresenterTest {
 
     initAppPresenter.checkLogin();
 
-    verify(mockedInitAppView).navigate(InitRegisterLoginActivity.class);
+    verify(mockedInitAppView).navigateToRegisterLogin();
   }
 
   private InitAppPresenter getInitAppPresenter() {

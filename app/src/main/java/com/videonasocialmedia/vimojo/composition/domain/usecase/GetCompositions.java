@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.composition.domain.usecase;
 
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class GetCompositions {
     this.projectRepository = projectRepository;
   }
 
-  public List<Project> getListProjectsByLastModificationDescending() {
-    return projectRepository.getListProjectsByLastModificationDescending();
+  public List<Project> getListProjectsByLastModificationDescending(ReadPolicy readPolicy) {
+    return projectRepository.getListProjectsByLastModificationDescending(readPolicy);
   }
 }

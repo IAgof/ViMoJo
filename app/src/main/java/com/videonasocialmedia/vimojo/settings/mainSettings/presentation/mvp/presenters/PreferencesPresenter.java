@@ -15,17 +15,13 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.result.Credentials;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -34,7 +30,6 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositio
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -88,7 +83,6 @@ public class PreferencesPresenter extends VimojoPresenter
   private GetAccount getAccount;
   private Project currentProject;
   private UpdateComposition updateComposition;
-  private FetchUserFeatures fetchUserFeatures;
   private boolean vimojoStoreAvailable;
   private boolean showWatermarkSwitch;
   private boolean vimojoPlatformAvailable;
@@ -104,7 +98,6 @@ public class PreferencesPresenter extends VimojoPresenter
    * @param sharedPreferences
    * @param userAuth0Helper
    * @param updateComposition
-   * @param fetchUserFeatures
    * @param vimojoStoreAvailable
    * @param showWatermarkSwitch
    * @param vimojoPlatformAvailable
@@ -116,18 +109,17 @@ public class PreferencesPresenter extends VimojoPresenter
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       UpdateAudioTransitionPreferenceToProjectUseCase
-                  updateAudioTransitionPreferenceToProjectUseCase,
+          updateAudioTransitionPreferenceToProjectUseCase,
       UpdateVideoTransitionPreferenceToProjectUseCase
-                  updateVideoTransitionPreferenceToProjectUseCase,
+          updateVideoTransitionPreferenceToProjectUseCase,
       UpdateIntermediateTemporalFilesTransitionsUseCase
-                  updateIntermediateTemporalFilesTransitionsUseCase,
+          updateIntermediateTemporalFilesTransitionsUseCase,
       UpdateCompositionWatermark updateCompositionWatermark,
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
       BillingManager billingManager, UserAuth0Helper userAuth0Helper,
       UploadDataSource uploadRepository, ProjectInstanceCache projectInstanceCache,
       GetAccount getAccount, UserEventTracker userEventTracker, UpdateComposition updateComposition,
-      FetchUserFeatures fetchUserFeatures,
       @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
       @Named("showWaterMarkSwitch") boolean showWatermarkSwitch,
       @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
@@ -159,7 +151,6 @@ public class PreferencesPresenter extends VimojoPresenter
     this.userAuth0Helper = userAuth0Helper;
     this.getAccount = getAccount;
     this.updateComposition = updateComposition;
-    this.fetchUserFeatures = fetchUserFeatures;
     this.vimojoStoreAvailable = vimojoStoreAvailable;
     this.showWatermarkSwitch = showWatermarkSwitch;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
@@ -399,7 +390,6 @@ public class PreferencesPresenter extends VimojoPresenter
 
   public void signOutConfirmed() {
     deleteAccount();
-    preferencesView.setupUserAuthentication(false);
   }
 
   private void deleteAccount() {
@@ -429,25 +419,6 @@ public class PreferencesPresenter extends VimojoPresenter
     if (uploadRepository.getAllVideosToUpload().size() > 0) {
       uploadRepository.removeAllVideosToUpload();
     }
-  }
-
-  public void performLoginAndSaveAccount(Activity activity) {
-    userAuth0Helper.performLogin(activity, new UserAuth0Helper.AuthCallback() {
-      @Override
-      public void onFailure(AuthenticationException exception) {
-        preferencesView.showError(R.string.auth0_error_authentication);
-      }
-
-      @Override
-      public void onSuccess(@NonNull Credentials credentials) {
-        fetchUserFeatures();
-        preferencesView.setupUserAuthentication(true);
-      }
-    });
-  }
-
-  private void fetchUserFeatures() {
-    fetchUserFeatures.fetch();
   }
 
   public void trackQualityAndResolutionAndFrameRateUserTraits(String key, String value) {

@@ -122,13 +122,12 @@ public class UserAuth0Helper {
           @Override
           public void onSuccess(@NonNull Credentials credentials) {
             Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
-            saveCredentials(credentials);
-            authCallback.onSuccess(credentials);
+            saveCredentials(credentials, authCallback);
           }
         });
   }
 
-  public void saveCredentials(Credentials credentials) {
+  private void saveCredentials(Credentials credentials, AuthCallback authCallback) {
     // save credentials, user logged
     manager.saveCredentials(credentials);
     // TODO: 29/8/18 Move tracking to initRegisterLoginPresenter when we only have one access to perform login
@@ -140,11 +139,12 @@ public class UserAuth0Helper {
           @Override
           public void onFailure(AuthenticationException error) {
             // TODO(jliarte): 10/07/18 handle this error!
-
+            Log.e(LOG_TAG, "Error Saving user credentials!!", error);
             Log.d(LOG_TAG, "onFailure getting user profile AuthenticationException "
                 + error.getMessage());
             Crashlytics.log("Failure getting user profile AuthenticationException "
                 + error.getMessage());
+            authCallback.onFailure(error);
           }
 
           @Override
@@ -164,12 +164,16 @@ public class UserAuth0Helper {
                 userEventTracker.aliasUser(userProfile.getEmail());
                 sharedPreferences.edit().putBoolean(ConfigPreferences.USER_ALIASED, true).apply();
               }
+              authCallback.onSuccess(credentials);
 
             } catch (VimojoApiException vimojoApiException) {
               // TODO(jliarte): 10/07/18 notify user an error authenticating!!!
+              Log.e(LOG_TAG, "Error saving user credentials while geting user id");
               Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
               Crashlytics.log("Error process getting UserId vimojoApiException");
               Crashlytics.logException(vimojoApiException);
+              authCallback.onFailure(new
+                  AuthenticationException(("Error process getting UserId vimojoApiException")));
             }
           }
         });

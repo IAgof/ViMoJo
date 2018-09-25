@@ -81,7 +81,7 @@ public class FragmentPresentersModule {
           GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
           BillingManager billingManager, UserAuth0Helper userAuth0Helper,
           UploadDataSource uploadDataSource, GetAccount getAccount,
-          UserEventTracker userEventTracker,UpdateComposition updateComposition, FetchUserFeatures fetchUserFeatures,
+          UserEventTracker userEventTracker,UpdateComposition updateComposition,
           @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
           @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
@@ -99,7 +99,7 @@ public class FragmentPresentersModule {
             updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
             uploadDataSource, projectInstanceCache, getAccount, userEventTracker, updateComposition,
-            fetchUserFeatures, vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
+        vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
             ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference, backgroundExecutor);
   }
 

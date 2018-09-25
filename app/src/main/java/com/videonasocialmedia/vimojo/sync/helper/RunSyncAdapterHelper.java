@@ -127,6 +127,8 @@ public class RunSyncAdapterHelper {
     if (account != null) {
       Log.d(LOG_TAG, "Requesting sync!");
       ContentResolver.requestSync(account, authority, settingsBundle);
+    } else {
+      Log.e(LOG_TAG, "Unable to request sync as account is null!!");
     }
   }
 }

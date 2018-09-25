@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
+import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
@@ -338,7 +340,9 @@ public class SettingsFragment extends PreferenceFragment implements
 
   @Override
   public void navigateToInitRegisterLogin() {
-    navigateTo(InitRegisterLoginActivity.class);
+    Intent intent = new Intent(VimojoApplication.getAppContext(), InitRegisterLoginActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
   }
 
   private AlertDialog createSignOutDialog() {
@@ -495,8 +499,6 @@ public class SettingsFragment extends PreferenceFragment implements
       if (userLoggedIn) {
         AlertDialog dialog = createSignOutDialog();
         dialog.show();
-      } else {
-        preferencesPresenter.performLoginAndSaveAccount(getActivity());
       }
       return true;
     }

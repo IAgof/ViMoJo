@@ -273,7 +273,7 @@ public class InitAppPresenter extends VimojoPresenter {
       userEventTracker.trackUserLoggedIn(true);
       initAppView.navigate(RecordCamera2Activity.class);
     } else {
-      initAppView.navigate(InitRegisterLoginActivity.class);
+      initAppView.navigateToRegisterLogin();
     }
   }
 

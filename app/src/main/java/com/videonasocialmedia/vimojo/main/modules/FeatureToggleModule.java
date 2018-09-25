@@ -97,6 +97,12 @@ public class FeatureToggleModule {
     return featureDecisions.selectResolutionAvailable();
   }
 
+  @Provides @Named("cloudBackupAvailable")
+  boolean provideCloudBackupAvailable(FeatureDecisions featureDecisions) {
+    return featureDecisions.cloudBackupAvailable();
+  }
+
+
   @Provides @Named("hideRecordAudioGain")
   boolean provideHideRecordAudioGainDecision(FeatureDecisions featureDecisions) {
     // TODO(jliarte): 4/09/18 this is not a decision, is a feature availability

@@ -408,10 +408,11 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   InitRegisterLoginPresenter provideRegisterLoginPresenter(UserAuth0Helper userAuth0Helper,
+                                                           FetchUserFeatures fetchUserFeatures,
                                                            BackgroundExecutor backgroundExecutor,
                                                            UserEventTracker userEventTracker) {
     return new InitRegisterLoginPresenter(activity, (InitRegisterLoginActivity) activity,
-            userAuth0Helper, backgroundExecutor, userEventTracker);
+            userAuth0Helper, fetchUserFeatures, backgroundExecutor, userEventTracker);
   }
 
   @Provides @PerActivity
@@ -455,12 +456,13 @@ public class ActivityPresentersModule {
           GetCompositionAssets getCompositionAssets,
           @Named("watermarkIsForced") boolean watermarkIsForced,
           @Named("amIAVerticalApp") boolean amIAVerticalApp,
-          BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
+          BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker,
+          @Named("cloudBackupAvailable") boolean cloudBackupAvailable) {
     return new GalleryProjectListPresenter((GalleryProjectListActivity) activity, sharedPreferences,
             projectRepository, createDefaultProjectUseCase, duplicateProjectUseCase,
             deleteComposition, (ProjectInstanceCache) activity.getApplication(), saveComposition,
             updateComposition, getCompositions, getCompositionAssets, watermarkIsForced,
-            amIAVerticalApp, backgroundExecutor, userEventTracker);
+            amIAVerticalApp, backgroundExecutor, userEventTracker, cloudBackupAvailable);
   }
 
   @Provides @PerActivity

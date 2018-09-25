@@ -8,6 +8,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDat
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.FeatureToggleModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
@@ -31,7 +32,7 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = {ApplicationModule.class, DataRepositoriesModule.class,
-        TrackerModule.class, UploadToPlatformModule.class})
+        TrackerModule.class, UploadToPlatformModule.class, FeatureToggleModule.class})
 public interface SystemComponent {
   Context provideContext();
   ProjectRepository getProjectRepository();
