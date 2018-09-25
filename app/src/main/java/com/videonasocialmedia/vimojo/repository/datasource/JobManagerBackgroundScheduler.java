@@ -30,6 +30,11 @@ public class JobManagerBackgroundScheduler implements BackgroundScheduler {
   private JobManager jobManager;
   private ListeningExecutorService listeningExecutorService;
 
+  public JobManagerBackgroundScheduler() {
+    this.listeningExecutorService = MoreExecutors.listeningDecorator(
+            Executors.newFixedThreadPool(N_THREADS));
+  }
+
   public JobManagerBackgroundScheduler(JobManager jobManager) {
     this.listeningExecutorService = MoreExecutors.listeningDecorator(
             Executors.newFixedThreadPool(N_THREADS));

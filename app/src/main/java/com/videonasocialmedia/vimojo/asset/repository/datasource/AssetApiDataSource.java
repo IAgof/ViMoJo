@@ -6,7 +6,6 @@ package com.videonasocialmedia.vimojo.asset.repository.datasource;
 
 import android.util.Log;
 
-import com.birbit.android.jobqueue.JobManager;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.mapper.AssetToAssetDtoMapper;
