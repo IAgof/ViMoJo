@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 10/06/16.
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest= Config.NONE)
 public class DuplicatePreviewPresenterTest {
     @Mock private DuplicateView mockedDuplicateView;
     @Mock private UserEventTracker mockedUserEventTracker;

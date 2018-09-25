@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 23/10/16.
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class ReorderMediaItemUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @InjectMocks ReorderMediaItemUseCase injectedUseCase;

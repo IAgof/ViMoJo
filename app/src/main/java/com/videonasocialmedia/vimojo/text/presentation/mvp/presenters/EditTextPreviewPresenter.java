@@ -102,13 +102,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         editTextView.showError("No videos");
     }
 
-    public void createDrawableWithText(String text, String position, int width, int height) {
-        drawableGenerator = new TextToDrawable(context);
-        Drawable drawable = drawableGenerator.createDrawableWithTextAndPosition(text, position,
-            width, height);
-        editTextView.showText(drawable);
-    }
-
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
         Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
         Futures.addCallback(modifyVideoTextAndPositionUseCase

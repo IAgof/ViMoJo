@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 
@@ -43,6 +44,7 @@ import static org.powermock.api.mockito.PowerMockito.spy;
  * Created by jliarte on 19/10/16.
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest= Config.NONE)
 public class ModifyVideoTextAndPositionUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;
   @Mock MediaTranscoder mockedMediaTranscoder;
@@ -192,7 +194,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   }
 
   private void getAProject() {
-    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+    currentProject = new Project(null, null, null,
+        new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
   }
 

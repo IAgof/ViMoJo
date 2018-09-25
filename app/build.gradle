@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         //classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'io.fabric.tools:gradle:1.25.1'
+        classpath 'io.fabric.tools:gradle:1.26.0'
     }
 }
 
@@ -34,7 +34,7 @@ task checkstyle(type: Checkstyle) {
     reports {
         xml.enabled = true
         xml {
-            destination "${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml"
+            destination file("${project.rootDir}/app/build/reports/checkstyle/checkstyle-result.xml")
         }
     }
 
@@ -70,8 +70,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 127 // 20180710
-            versionName "0.20.5" // 20180710
+            versionCode 128 // 20180925
+            versionName "0.20.6" // 20180925
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -139,8 +139,8 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 78 // 20180710
-            versionName "0.20.5.fThomsonFoundation" // 20180710
+            versionCode 79 // 20180925
+            versionName "0.20.6.fThomsonFoundation" // 20180925
             resValue "string", "app_out_of_date", "2018-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -177,8 +177,8 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 45 // 20180710
-            versionName "0.20.5.fMarketForNews" // 20180710
+            versionCode 46 // 20180925
+            versionName "0.20.6.fMarketForNews" // 20180925
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -217,8 +217,8 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 20 // 20180710
-            versionName "0.20.5.fElConfidencial" // 20180710
+            versionCode 21 // 20180925
+            versionName "0.20.6.fElConfidencial" // 20180925
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -239,8 +239,8 @@ android {
 
         vanitatis {
             applicationId "com.videonasocialmedia.vimojo.vanitatis"
-            versionCode 7 // 20180710
-            versionName "0.20.5.fVanitatis" // 20180710
+            versionCode 8 // 20180925
+            versionName "0.20.6.fVanitatis" // 20180925
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo Vanitatis"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -261,8 +261,8 @@ android {
 
         vishow {
             applicationId "com.videonasocialmedia.vimojo.vishow"
-            versionCode 6 // 20180809 // v1 Beta for Google Play
-            versionName "0.20.5.fVishow" // 20180710
+            versionCode 7 // 20180925
+            versionName "0.20.6.fVishow" // 20180925
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vishow"
             resValue "string", "content_authority", applicationId + '.provider'
@@ -285,17 +285,19 @@ android {
     applicationVariants.all { variant ->
         variant.productFlavors.each { flavor ->
             def variantSuffix = variant.name.capitalize()
-            def generatePropertiesTask = task("fabricGenerateProperties${variantSuffix}") << {
-                Properties properties = new Properties()
-                if (variantSuffix.endsWith("Debug")) {
-                    properties.put("apiKey", FABRIC_VIDEONA_ORG_APIKEY)
-                    properties.put("apiSecret", FABRIC_VIDEONA_ORG_APISECRET)
-                } else {
-                    properties.put("apiKey", flavor.fabricApiKey)
-                    properties.put("apiSecret", flavor.fabricApiSecret)
+            def generatePropertiesTask = task("fabricGenerateProperties${variantSuffix}") {
+                doLast {
+                    Properties properties = new Properties()
+                    if (variantSuffix.endsWith("Debug")) {
+                        properties.put("apiKey", FABRIC_VIDEONA_ORG_APIKEY)
+                        properties.put("apiSecret", FABRIC_VIDEONA_ORG_APISECRET)
+                    } else {
+                        properties.put("apiKey", flavor.fabricApiKey)
+                        properties.put("apiSecret", flavor.fabricApiSecret)
+                    }
+                    properties.store(new FileWriter(fabricProperties), "")
+                    println "Generating fabric.properties for api key: ${flavor.fabricApiKey}"
                 }
-                properties.store(new FileWriter(fabricProperties), "")
-                println "Generating fabric.properties for api key: ${flavor.fabricApiKey}"
             }
 
             def generateResourcesTask = project.tasks.getByName("fabricGenerateResources${variantSuffix}")
