@@ -65,6 +65,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -454,6 +455,19 @@ public class EditorPresenterTest {
     editorPresenter.initPreviewFromProject();
 
     verify(mockedVideonaPlayerView).setVoiceOverVolume(0.0f);
+  }
+
+  @Test
+  public void ifShowWatermarkSwitchNotActivatedShowWatermarkPrefView() {
+    EditorPresenter spyEditorPresenter = spy(getEditorPresenter());
+    spyEditorPresenter.showWatermarkSwitch = false;
+    boolean hasBeenProjectExported = false;
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
+
+    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
+        currentAppliedTheme);
+
+    verify(mockedEditorActivityView).hideWatermarkSwitch();
   }
 
   private EditorPresenter getEditorPresenter() {

@@ -196,16 +196,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     private void createDrawableFromText(TextEffect.TextPosition textPosition) {
         String text = getTextFromEditText();
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            if (videonaPlayer.getWidth() > 0) {
-                videonaPlayer.setImageText(text, textPosition.name(),
-                    videonaPlayer.getVideoPreview().getWidth(),
-                    videonaPlayer.getVideoPreview().getHeight());
-            }
-        } else {
-            videonaPlayer.setImageText(text, textPosition.name(),
+        videonaPlayer.setImageText(text, textPosition.name(),
                 Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
-        }
     }
 
     @NonNull

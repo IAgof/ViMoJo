@@ -90,7 +90,7 @@ public class EditorPresenter extends VimojoPresenter
   private RemoveMedia removeMedia;
   private UpdateCompositionWatermark updateCompositionWatermark;
   private UpdateComposition updateComposition;
-  private boolean showWatermarkSwitch;
+  protected boolean showWatermarkSwitch;
   private boolean vimojoStoreAvailable;
   private boolean vimojoPlatformAvailable;
   private boolean watermarkIsForced;
@@ -151,11 +151,11 @@ public class EditorPresenter extends VimojoPresenter
     return this.executeUseCaseCall(() -> {
       currentProject = projectInstanceCache.getCurrentProject();
       updateTheme(currentAppliedTheme);
-      setupWatermarkDrawerSwitch();
       setupVimojoStore();
       setupVimojoPlatformLink();
       setupTutorial();
       updateDrawerHeaderWithCurrentProject();
+      setupWatermarkDrawerSwitch();
       setupPlayer(hasBeenProjectExported, videoPath);
     });
   }
@@ -433,10 +433,6 @@ public class EditorPresenter extends VimojoPresenter
     return watermarkIsForced || currentProject.hasWatermark();
   }
 
-  private void activateWatermarkPreference() {
-    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).apply();
-  }
-
   @Override
   public void itemDarkThemePurchased(boolean purchased) {
     if (purchased) {
@@ -444,16 +440,6 @@ public class EditorPresenter extends VimojoPresenter
     } else {
       deactivateDarkThemePreference();
       editorActivityView.deactivateDarkTheme();
-    }
-  }
-
-  @Override
-  public void itemWatermarkPurchased(boolean purchased) {
-    if (purchased) {
-      editorActivityView.itemWatermarkPurchased();
-    } else {
-      activateWatermarkPreference();
-      editorActivityView.activateWatermark();
     }
   }
 

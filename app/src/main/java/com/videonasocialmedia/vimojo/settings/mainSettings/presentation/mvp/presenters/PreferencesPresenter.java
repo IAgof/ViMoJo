@@ -89,6 +89,7 @@ public class PreferencesPresenter extends VimojoPresenter
   private boolean ftpPublishingAvailable;
   private boolean hideTransitionPreference;
   private boolean showMoreAppsPreference;
+  private boolean watermarkIsForced;
 
   /**
    * Constructor
@@ -126,6 +127,7 @@ public class PreferencesPresenter extends VimojoPresenter
       @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
       @Named("hideTransitionPreference") boolean hideTransitionPreference,
       @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
+      @Named("watermarkIsForced") boolean watermarkIsForced,
       BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.preferencesView = preferencesView;
@@ -157,6 +159,7 @@ public class PreferencesPresenter extends VimojoPresenter
     this.ftpPublishingAvailable = ftpPublishingAvailable;
     this.hideTransitionPreference = hideTransitionPreference;
     this.showMoreAppsPreference = showMoreAppsPreference;
+    this.watermarkIsForced = watermarkIsForced;
   }
 
   public void updatePresenter(Activity activity) {
@@ -233,9 +236,10 @@ public class PreferencesPresenter extends VimojoPresenter
   }
 
   private void setupWatermarkPreference() {
-    if (showWatermarkSwitch) {
+    if (showWatermarkSwitch && !watermarkIsForced) {
       boolean data = currentProject.hasWatermark();
       preferencesView.setWatermarkSwitchPref(data);
+      preferencesView.setWatermarkSwitch();
     } else {
       preferencesView.hideWatermarkPreference();
     }
@@ -350,21 +354,7 @@ public class PreferencesPresenter extends VimojoPresenter
     sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).commit();
   }
 
-  @Override
-  public void itemWatermarkPurchased(boolean purchased) {
-    if (purchased) {
-      preferencesView.itemWatermarkPurchased();
-    } else {
-      activateWatermarkPreference();
-      preferencesView.activateWatermark();
-    }
-  }
-
-  private void activateWatermarkPreference() {
-    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).commit();
-  }
-
-  public void setupVimojoStore(Activity activity) {
+  private void setupVimojoStore(Activity activity) {
     if (vimojoStoreAvailable) {
       initBilling(activity);
       preferencesView.setVimojoStoreAvailable();

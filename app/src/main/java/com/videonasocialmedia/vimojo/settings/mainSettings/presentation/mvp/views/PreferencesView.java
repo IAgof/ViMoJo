@@ -66,13 +66,11 @@ public interface PreferencesView {
 
     void itemDarkThemePurchased();
 
-    void itemWatermarkPurchased();
-
     void setVimojoStoreAvailable();
 
-    void deactivateDarkTheme();
+  void setWatermarkSwitch();
 
-    void activateWatermark();
+    void deactivateDarkTheme();
 
     void setupUserAuthentication(boolean userLoggedIn);
 
