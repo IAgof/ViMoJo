@@ -337,6 +337,12 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         splashScreenTask.execute();
     }
 
+    @Override
+    public void navigateToRegisterLogin() {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), InitRegisterLoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
 
     /**

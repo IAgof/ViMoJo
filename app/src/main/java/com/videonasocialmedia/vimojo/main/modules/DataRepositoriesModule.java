@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.repository.datasource.JobManagerBackgroundS
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.repository.music.datasource.MusicRealmDataSource;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -38,9 +39,11 @@ public class DataRepositoriesModule {
 
   @Singleton @Provides
   ProjectRepository provideDefaultProjectRepository(
-          ProjectRealmDataSource projectRealmRepository,
-          CompositionApiDataSource compositionApiDataSource) {
-    return new ProjectRepository(projectRealmRepository, compositionApiDataSource);
+      ProjectRealmDataSource projectRealmRepository,
+      CompositionApiDataSource compositionApiDataSource,
+      @Named("cloudBackupAvailable") boolean cloudBackupAvailable) {
+    return new ProjectRepository(projectRealmRepository, compositionApiDataSource,
+        cloudBackupAvailable);
   }
 
   @Singleton @Provides

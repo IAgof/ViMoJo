@@ -35,6 +35,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
   private static final String LOG_TAG = ProjectRepository.class.getSimpleName();
   private final ProjectRealmDataSource projectRealmDataSource;
   private final CompositionApiDataSource compositionApiDataSource;
+  private final boolean cloudBackupAvailable;
   private Comparator<Project> dateComparatorDescending = (Comparator<Project>) (left, right) -> {
     return DateUtils.parseStringDate(right.getLastModification())
             .compareTo(DateUtils.parseStringDate(left.getLastModification())); // use your logic
@@ -42,18 +43,21 @@ public class ProjectRepository extends VimojoRepository<Project> {
 
   @Inject
   public ProjectRepository(ProjectRealmDataSource projectRealmDataSource,
-                           CompositionApiDataSource compositionApiDataSource) {
+                           CompositionApiDataSource compositionApiDataSource,
+                           boolean cloudBackupAvailable) {
     this.projectRealmDataSource = projectRealmDataSource;
     this.compositionApiDataSource = compositionApiDataSource;
+    this.cloudBackupAvailable = cloudBackupAvailable;
   }
 
   @Override
   public void add(Project item) {
     Log.d(LOG_TAG, "ProjectRepo.add project " + item);
     this.projectRealmDataSource.add(item);
-    // TODO(jliarte): 18/07/18 feature toggle this
     // TODO(jliarte): 12/07/18 get success/error on API add and reflect it in local data sources? - sync status/date
-    this.compositionApiDataSource.add(item);
+    if (cloudBackupAvailable) {
+      this.compositionApiDataSource.add(item);
+    }
   }
 
   @Override
@@ -66,7 +70,9 @@ public class ProjectRepository extends VimojoRepository<Project> {
   public void update(Project item) {
     item.updateDateOfModification(DateUtils.getDateRightNow());
     this.projectRealmDataSource.update(item);
-    this.compositionApiDataSource.update(item);
+    if (cloudBackupAvailable) {
+      this.compositionApiDataSource.update(item);
+    }
   }
 
   @Override
@@ -74,7 +80,6 @@ public class ProjectRepository extends VimojoRepository<Project> {
     if (policy.useLocal()) {
       this.projectRealmDataSource.remove(item);
     }
-
     if (policy.useRemote()) {
       this.compositionApiDataSource.remove(item);
     }
@@ -130,7 +135,11 @@ public class ProjectRepository extends VimojoRepository<Project> {
   public List<Project> getListProjectsByLastModificationDescending() {
     List<Project> realmProjects = projectRealmDataSource
             .getListProjectsByLastModificationDescending();
-    List<Project> apiCompositions = compositionApiDataSource.getListProjectsByLastModificationDescending(); // TODO(jliarte): 27/07/18 change to query by specification?
+    if (!cloudBackupAvailable) {
+      return realmProjects;
+    }
+    List<Project> apiCompositions =
+        compositionApiDataSource.getListProjectsByLastModificationDescending(); // TODO(jliarte): 27/07/18 change to query by specification?
     return mergeCompositions(realmProjects, apiCompositions);
   }
 

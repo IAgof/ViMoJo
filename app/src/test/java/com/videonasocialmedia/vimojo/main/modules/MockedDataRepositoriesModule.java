@@ -19,7 +19,8 @@ public class MockedDataRepositoriesModule extends DataRepositoriesModule {
   @Override
   ProjectRepository provideDefaultProjectRepository(
           ProjectRealmDataSource projectRealmRepository,
-          CompositionApiDataSource compositionApiDataSource) {
+          CompositionApiDataSource compositionApiDataSource,
+          boolean cloudBackupAvailable) {
     return mock(ProjectRepository.class);
   }
 

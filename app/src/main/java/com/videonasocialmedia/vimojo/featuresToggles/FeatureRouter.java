@@ -14,6 +14,7 @@ import java.util.HashMap;
 import javax.inject.Inject;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_PRO;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CLOUD_BACKUP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FORCE_WATERMARK;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_FTP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_SELECT_FRAME_RATE;
@@ -58,6 +59,8 @@ class FeatureRouter {
         new FeatureToggle(Constants.USER_FEATURE_SELECT_FRAME_RATE, DEFAULT_SELECT_FRAME_RATE));
     defaultMap.put(Constants.USER_FEATURE_SELECT_RESOLUTION,
         new FeatureToggle(Constants.USER_FEATURE_SELECT_RESOLUTION, DEFAULT_SELECT_RESOLUTION));
+    defaultMap.put(Constants.USER_FEATURE_CLOUD_BACKUP,
+        new FeatureToggle(Constants.USER_FEATURE_CLOUD_BACKUP, DEFAULT_CLOUD_BACKUP));
   }
 
   private void initReleaseToggles() {

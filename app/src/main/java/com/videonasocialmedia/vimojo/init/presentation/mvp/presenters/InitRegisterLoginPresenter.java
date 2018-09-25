@@ -7,18 +7,16 @@
 
 package com.videonasocialmedia.vimojo.init.presentation.mvp.presenters;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitRegisterLoginView;
 import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -36,15 +34,18 @@ public class InitRegisterLoginPresenter extends VimojoPresenter {
   private UserAuth0Helper userAuth0Helper;
   private Context context;
   private UserEventTracker userEventTracker;
+  private FetchUserFeatures fetchUserFeatures;
 
   public InitRegisterLoginPresenter(Context context, InitRegisterLoginView initRegisterLoginView,
                                     UserAuth0Helper userAuth0Helper,
+                                    FetchUserFeatures fetchUserFeatures,
                                     BackgroundExecutor backgroundExecutor,
                                     UserEventTracker userEventTracker) {
     super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.initRegisterLoginView = initRegisterLoginView;
     this.userAuth0Helper = userAuth0Helper;
+    this.fetchUserFeatures = fetchUserFeatures;
     this.userEventTracker = userEventTracker;
   }
 
@@ -70,7 +71,7 @@ public class InitRegisterLoginPresenter extends VimojoPresenter {
       public void onSuccess(Credentials credentials) {
         Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
         initRegisterLoginView.pauseVideo();
-        userAuth0Helper.saveCredentials(credentials);
+        fetchUserFeatures.fetch();
         initRegisterLoginView.navigateToRecordCamera2();
       }
 

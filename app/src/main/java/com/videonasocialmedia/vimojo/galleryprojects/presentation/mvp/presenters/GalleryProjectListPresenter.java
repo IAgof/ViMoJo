@@ -21,6 +21,7 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Gall
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -51,6 +52,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private GetCompositionAssets getCompositionAssets;
   private boolean watermarkIsForced;
   private boolean amIVerticalApp;
+  protected boolean cloudBackupAvailable;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -63,7 +65,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
       GetCompositions getCompositions, GetCompositionAssets getCompositionAssets,
       @Named("watermarkIsForced") boolean watermarkIsForced,
       @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor,
-      UserEventTracker userEventTracker) {
+      UserEventTracker userEventTracker,
+      @Named("cloudBackupAvailable") boolean cloudBackupAvailable) {
     super(backgroundExecutor, userEventTracker);
     this.galleryProjectListView = galleryProjectListView;
     this.sharedPreferences = sharedPreferences;
@@ -78,6 +81,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.getCompositionAssets = getCompositionAssets;
     this.watermarkIsForced = watermarkIsForced;
     this.amIVerticalApp = amIAVerticalApp;
+    this.cloudBackupAvailable = cloudBackupAvailable;
   }
 
   public void init() {
@@ -105,6 +109,14 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     } catch (IllegalItemOnTrack illegalItemOnTrack) {
       Log.d(LOG_TAG, "Error duplicating project");
       illegalItemOnTrack.printStackTrace();
+    }
+  }
+
+  public void deleteProjectClicked(Project project) {
+    if (cloudBackupAvailable) {
+      galleryProjectListView.showDeleteConfirmDialog(project);
+    } else {
+      deleteProject(project);
     }
   }
 
@@ -155,24 +167,24 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void updateProjectList() {
     galleryProjectListView.showLoading();
     addCallback(
-            executeUseCaseCall(() -> getCompositions.getListProjectsByLastModificationDescending()),
-            new FutureCallback<List<Project>>() {
-              @Override
-              public void onSuccess(@Nullable List<Project> projectList) {
-                galleryProjectListView.hideLoading();
-                if (projectList != null && projectList.size() > 0) {
-                  galleryProjectListView.showProjectList(projectList);
-                } else {
-                  galleryProjectListView.createDefaultProject();
-                }
-              }
-
-              @Override
-              public void onFailure(Throwable t) {
-                // TODO(jliarte): 7/08/18 review this case
-                galleryProjectListView.createDefaultProject();
-              }
-            });
+            executeUseCaseCall(() ->
+                getCompositions.getListProjectsByLastModificationDescending()),
+                new FutureCallback<List<Project>>() {
+                  @Override
+                  public void onSuccess(@Nullable List<Project> projectList) {
+                    galleryProjectListView.hideLoading();
+                    if (projectList != null && projectList.size() > 0) {
+                      galleryProjectListView.showProjectList(projectList);
+                    } else {
+                      galleryProjectListView.createDefaultProject();
+                    }
+                  }
+                  @Override
+                  public void onFailure(Throwable t) {
+                    // TODO(jliarte): 7/08/18 review this case
+                    galleryProjectListView.createDefaultProject();
+                  }
+                });
   }
 
   public void createNewProject(String rootPath, String privatePath,

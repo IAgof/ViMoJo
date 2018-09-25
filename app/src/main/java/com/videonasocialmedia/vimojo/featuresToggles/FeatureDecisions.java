@@ -74,6 +74,10 @@ public class FeatureDecisions {
     return features.isEnabled(Constants.USER_FEATURE_SELECT_RESOLUTION);
   }
 
+  public boolean cloudBackupAvailable() {
+    return features.isEnabled(Constants.USER_FEATURE_CLOUD_BACKUP);
+  }
+
   public boolean hideRecordAudioGain() {
     return !features.isEnabled(Constants.FEATURE_RECORD_AUDIO_GAIN);
   }

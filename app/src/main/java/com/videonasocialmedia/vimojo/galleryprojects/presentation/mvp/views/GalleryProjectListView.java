@@ -34,4 +34,6 @@ public interface GalleryProjectListView {
   void hideUpdateAssetsProgressDialog();
 
   void updateUpdateAssetsProgressDialog(int remaining);
+
+  void showDeleteConfirmDialog(Project project);
 }
