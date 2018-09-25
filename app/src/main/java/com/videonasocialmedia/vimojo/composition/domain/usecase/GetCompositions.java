@@ -23,7 +23,7 @@ public class GetCompositions {
     this.projectRepository = projectRepository;
   }
 
-  public List<Project> getListProjectsByLastModificationDescending(ReadPolicy readPolicy) {
-    return projectRepository.getListProjectsByLastModificationDescending(readPolicy);
+  public List<Project> getListProjectsByLastModificationDescending() {
+    return projectRepository.getListProjectsByLastModificationDescending();
   }
 }

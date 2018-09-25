@@ -112,6 +112,14 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     }
   }
 
+  public void deleteProjectClicked(Project project) {
+    if (cloudBackupAvailable) {
+      galleryProjectListView.showDeleteConfirmDialog(project);
+    } else {
+      deleteProject(project);
+    }
+  }
+
   public void deleteProject(Project project) {
     // TODO(jliarte): 10/08/18 from both
     Futures.addCallback(executeUseCaseCall(() -> deleteComposition.delete(project)),
@@ -159,30 +167,24 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   public void updateProjectList() {
     galleryProjectListView.showLoading();
     addCallback(
-            executeUseCaseCall(() -> {
-              ReadPolicy readPolicy = ReadPolicy.LOCAL_ONLY;
-              if (cloudBackupAvailable) {
-                readPolicy = ReadPolicy.READ_ALL;
-              }
-              return getCompositions.getListProjectsByLastModificationDescending(readPolicy);
-            }),
-            new FutureCallback<List<Project>>() {
-              @Override
-              public void onSuccess(@Nullable List<Project> projectList) {
-                galleryProjectListView.hideLoading();
-                if (projectList != null && projectList.size() > 0) {
-                  galleryProjectListView.showProjectList(projectList);
-                } else {
-                  galleryProjectListView.createDefaultProject();
-                }
-              }
-
-              @Override
-              public void onFailure(Throwable t) {
-                // TODO(jliarte): 7/08/18 review this case
-                galleryProjectListView.createDefaultProject();
-              }
-            });
+            executeUseCaseCall(() ->
+                getCompositions.getListProjectsByLastModificationDescending()),
+                new FutureCallback<List<Project>>() {
+                  @Override
+                  public void onSuccess(@Nullable List<Project> projectList) {
+                    galleryProjectListView.hideLoading();
+                    if (projectList != null && projectList.size() > 0) {
+                      galleryProjectListView.showProjectList(projectList);
+                    } else {
+                      galleryProjectListView.createDefaultProject();
+                    }
+                  }
+                  @Override
+                  public void onFailure(Throwable t) {
+                    // TODO(jliarte): 7/08/18 review this case
+                    galleryProjectListView.createDefaultProject();
+                  }
+                });
   }
 
   public void createNewProject(String rootPath, String privatePath,

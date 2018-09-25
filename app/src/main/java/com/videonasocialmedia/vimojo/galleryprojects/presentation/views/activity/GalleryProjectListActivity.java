@@ -194,10 +194,11 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
 
   @Override
   public void onDeleteProject(final Project project) {
-    showDeleteConfirmDialog(project);
+    presenter.deleteProjectClicked(project);
   }
 
-  private void showDeleteConfirmDialog(Project project) {
+  @Override
+  public void showDeleteConfirmDialog(Project project) {
     DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
       if (which == DialogInterface.BUTTON_POSITIVE) {
         presenter.deleteProject(project);

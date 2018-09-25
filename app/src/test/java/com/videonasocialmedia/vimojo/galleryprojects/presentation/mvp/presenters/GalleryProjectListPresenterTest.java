@@ -84,7 +84,7 @@ public class GalleryProjectListPresenterTest {
     List<Project> projectList = new ArrayList<>();
     projectList.add(currentProject);
     doReturn(projectList).when(mockedGetCompositions)
-            .getListProjectsByLastModificationDescending(readPolicy);
+            .getListProjectsByLastModificationDescending();
     GalleryProjectListPresenter spyGalleryProjectListPresenter =
         Mockito.spy(getGalleryProjectListPresenter());
     when(mockedBackgroundExecutor.submit(any(Callable.class))).then(invocation -> {
@@ -111,7 +111,7 @@ public class GalleryProjectListPresenterTest {
   public void ifProjectRepositoryHasNotProjectAfterDeleteCreateNewDefaultProject() {
     List<Project> projectList = new ArrayList<>();
     doReturn(projectList).when(mockedGetCompositions)
-            .getListProjectsByLastModificationDescending(readPolicy);
+            .getListProjectsByLastModificationDescending();
     GalleryProjectListPresenter spyGalleryProjectListPresenter =
         Mockito.spy(getGalleryProjectListPresenter());
     when(mockedBackgroundExecutor.submit(any(Callable.class))).then(invocation -> {

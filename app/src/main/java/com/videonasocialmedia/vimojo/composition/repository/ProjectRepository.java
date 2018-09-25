@@ -35,7 +35,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
   private static final String LOG_TAG = ProjectRepository.class.getSimpleName();
   private final ProjectRealmDataSource projectRealmDataSource;
   private final CompositionApiDataSource compositionApiDataSource;
-  private final ReadPolicy readPolicy;
+  private final boolean cloudBackupAvailable;
   private Comparator<Project> dateComparatorDescending = (Comparator<Project>) (left, right) -> {
     return DateUtils.parseStringDate(right.getLastModification())
             .compareTo(DateUtils.parseStringDate(left.getLastModification())); // use your logic
@@ -47,11 +47,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
                            boolean cloudBackupAvailable) {
     this.projectRealmDataSource = projectRealmDataSource;
     this.compositionApiDataSource = compositionApiDataSource;
-    if (cloudBackupAvailable) {
-      this.readPolicy = ReadPolicy.READ_ALL;
-    } else {
-      this.readPolicy = ReadPolicy.LOCAL_ONLY;
-    }
+    this.cloudBackupAvailable = cloudBackupAvailable;
   }
 
   @Override
@@ -59,7 +55,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
     Log.d(LOG_TAG, "ProjectRepo.add project " + item);
     this.projectRealmDataSource.add(item);
     // TODO(jliarte): 12/07/18 get success/error on API add and reflect it in local data sources? - sync status/date
-    if (readPolicy.useRemote()) {
+    if (cloudBackupAvailable) {
       this.compositionApiDataSource.add(item);
     }
   }
@@ -74,7 +70,7 @@ public class ProjectRepository extends VimojoRepository<Project> {
   public void update(Project item) {
     item.updateDateOfModification(DateUtils.getDateRightNow());
     this.projectRealmDataSource.update(item);
-    if (readPolicy.useRemote()) {
+    if (cloudBackupAvailable) {
       this.compositionApiDataSource.update(item);
     }
   }
@@ -136,10 +132,10 @@ public class ProjectRepository extends VimojoRepository<Project> {
     return this.projectRealmDataSource.getLastModifiedProject();
   }
 
-  public List<Project> getListProjectsByLastModificationDescending(ReadPolicy readPolicy) {
+  public List<Project> getListProjectsByLastModificationDescending() {
     List<Project> realmProjects = projectRealmDataSource
             .getListProjectsByLastModificationDescending();
-    if (!readPolicy.useRemote()) {
+    if (!cloudBackupAvailable) {
       return realmProjects;
     }
     List<Project> apiCompositions =
