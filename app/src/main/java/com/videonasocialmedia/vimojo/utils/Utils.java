@@ -432,19 +432,19 @@ public class Utils {
     public static VideoResolution.Resolution getResolutionFromItemName(Context context,
                                                                       String resolution) {
         if (resolution.compareTo(context.getString(R.string.low_resolution_name)) == 0) {
-                return VideoResolution.Resolution.H_720P;
+                return VideoResolution.Resolution.HD720;
             }
 
         if (resolution.compareTo(context.getString(R.string.good_resolution_name)) == 0) {
-            return VideoResolution.Resolution.H_1080P;
+            return VideoResolution.Resolution.HD1080;
         }
 
         if (resolution.compareTo(context.getString(R.string.high_resolution_name)) == 0) {
-            return VideoResolution.Resolution.H_4K;
+            return VideoResolution.Resolution.HD4K;
         }
 
         // default
-        return VideoResolution.Resolution.H_720P;
+        return VideoResolution.Resolution.HD720;
     }
 
     public static VideoQuality.Quality getQualityFromItemName(Context context,

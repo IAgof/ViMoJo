@@ -123,7 +123,7 @@ public class Constants {
           : ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
   public static final VideoResolution.Resolution DEFAULT_CAMERA_SETTING_VIDEO_RESOLUTION =
       BuildConfig.FEATURE_VERTICAL_VIDEOS ? VideoResolution.Resolution.V_1080P
-          : VideoResolution.Resolution.H_1080P;
+          : VideoResolution.Resolution.HD1080;
   public static final String DEFAULT_CAMERA_SETTING_QUALITY = CameraSettings.CAMERA_SETTING_QUALITY_16;
   public static final VideoQuality.Quality DEFAULT_CAMERA_SETTING_VIDEO_QUALITY =
           VideoQuality.Quality.LOW;

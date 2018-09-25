@@ -51,7 +51,7 @@ public class DetailProjectPresenterTest {
 
   @Test
   public void initPresenterCallsProjectTitleDescriptionProductTypesAndDetailsInfo() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     currentProject.setProfile(compositionProfile);
     List<String> productType = new ArrayList<>();
@@ -90,7 +90,7 @@ public class DetailProjectPresenterTest {
   }
 
   private void getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

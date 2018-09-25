@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 10/06/16.
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest= Config.NONE)
 public class DuplicatePreviewPresenterTest {
     @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private DuplicateView mockedDuplicateView;
@@ -115,7 +117,7 @@ public class DuplicatePreviewPresenterTest {
     }
 
     public void setAProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
                 VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

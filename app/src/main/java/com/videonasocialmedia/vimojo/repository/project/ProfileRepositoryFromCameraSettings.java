@@ -59,11 +59,11 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   private void setupResolutionMap() {
     resolutionMap = new HashMap<>();
     resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720,
-            VideoResolution.Resolution.H_720P);
+            VideoResolution.Resolution.HD720);
     resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_1080,
-            VideoResolution.Resolution.H_1080P);
+            VideoResolution.Resolution.HD1080);
     resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_2160,
-            VideoResolution.Resolution.H_4K);
+            VideoResolution.Resolution.HD4K);
     resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720,
         VideoResolution.Resolution.V_720P);
     resolutionMap.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_1080,
@@ -147,10 +147,10 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
       // default 1080p. We suppose that 720p is the minimum supported, 1080p not is always presented if all phones, eg. Videona MotoG.
       if (resolutionSetting.deviceSupports(CAMERA_SETTING_RESOLUTION_1080_BACK_ID)) {
         return isVerticalMode ? VideoResolution.Resolution.V_1080P
-            : VideoResolution.Resolution.H_1080P;
+            : VideoResolution.Resolution.HD1080;
       } else {
         return isVerticalMode ? VideoResolution.Resolution.V_720P
-            : VideoResolution.Resolution.H_720P;
+            : VideoResolution.Resolution.HD720;
       }
     }
   }

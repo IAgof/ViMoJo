@@ -90,13 +90,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         editTextView.showError("No videos");
     }
 
-    public void createDrawableWithText(String text, String position, int width, int height) {
-        drawableGenerator = new TextToDrawable(context);
-        Drawable drawable = drawableGenerator.createDrawableWithTextAndPosition(text, position,
-            width, height);
-        editTextView.showText(drawable);
-    }
-
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
         VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
 

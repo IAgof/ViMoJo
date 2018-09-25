@@ -99,8 +99,8 @@ public class GalleryPagerPresenterTest {
   public void updateProfileForEmptyProjectChangeProjectResolutionIfNoVideos() {
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
-    VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.H_720P);
-    Profile profile = new Profile(VideoResolution.Resolution.H_1080P, VideoQuality.Quality.GOOD,
+    VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
+    Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
@@ -122,7 +122,7 @@ public class GalleryPagerPresenterTest {
             ArgumentCaptor.forClass(VideoResolution.Resolution.class);
     verify(mockedProjectRepository).updateResolution(Mockito.any(Project.class), resolutionCaptor.capture());
     VideoResolution.Resolution resolutionCaptorValue = resolutionCaptor.getValue();
-    assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.H_720P));
+    assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.HD720));
 
     verify(mockedPreferencesEditor).putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
             preferenceResolutionString);
@@ -132,7 +132,7 @@ public class GalleryPagerPresenterTest {
   public void updateProfileForEmptyProjectDoesNothingIfUnknownResolution() {
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
-    Profile profile = new Profile(VideoResolution.Resolution.H_1080P, VideoQuality.Quality.GOOD,
+    Profile profile = new Profile(VideoResolution.Resolution.HD1080, VideoQuality.Quality.GOOD,
             VideoFrameRate.FrameRate.FPS30);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
@@ -162,7 +162,7 @@ public class GalleryPagerPresenterTest {
   public void updateProfileForEmptyProjectDoesNothingIfVideosInProject() throws IllegalItemOnTrack {
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
-    VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.H_720P);
+    VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
     doReturn(String.valueOf(videoResolution720.getWidth()))
             .when(mockedMetadataRetriever)
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
@@ -182,7 +182,7 @@ public class GalleryPagerPresenterTest {
   public void updateProfileForEmptyProjectDoesNothingIfNoSelectedVideos() {
     GalleryPagerPresenter galleryPagerPresenter = getGalleryPresenter();
     galleryPagerPresenter.metadataRetriever = mockedMetadataRetriever;
-    VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.H_720P);
+    VideoResolution videoResolution720 = new VideoResolution(VideoResolution.Resolution.HD720);
     doReturn(String.valueOf(videoResolution720.getWidth()))
             .when(mockedMetadataRetriever)
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
@@ -202,7 +202,7 @@ public class GalleryPagerPresenterTest {
   }
 
   public void setAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);

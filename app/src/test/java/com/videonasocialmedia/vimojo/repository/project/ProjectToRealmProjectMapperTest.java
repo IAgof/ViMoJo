@@ -33,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ProjectToRealmProjectMapperTest {
   @Test
   public void testMapReturnsRealmProjectInstance() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
@@ -47,7 +47,7 @@ public class ProjectToRealmProjectMapperTest {
 
   @Test
   public void testMapSetsRealmProjectFieldsFromProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.H_720P, VideoQuality.Quality.HIGH,
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",
         "Project description", new ArrayList<>());
@@ -158,7 +158,7 @@ public class ProjectToRealmProjectMapperTest {
 
   @NonNull
   private Project getAProject() {
-    Profile profile = new Profile(VideoResolution.Resolution.H_720P, VideoQuality.Quality.HIGH,
+    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
             VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",
         "Project description", new ArrayList<>());

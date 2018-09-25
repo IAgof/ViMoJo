@@ -23,8 +23,6 @@ public interface EditTextView {
 
     void showError(String message);
 
-    void showText(Drawable drawable);
-
     void initTextToVideoAdded(String text, String position);
 
     void updateProject();

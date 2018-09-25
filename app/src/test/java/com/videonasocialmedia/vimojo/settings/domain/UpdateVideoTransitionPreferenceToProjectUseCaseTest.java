@@ -60,7 +60,7 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
   }
 
   private void getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",
         "Project description", new ArrayList<>());
