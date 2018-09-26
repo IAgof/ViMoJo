@@ -467,7 +467,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         videonaTimeLine.scrollToPosition(currentClipIndex);
     }
 
-    @Override
+  @Override
     public void onBackPressed() {
         navigateTo(RecordCamera2Activity.class);
     }

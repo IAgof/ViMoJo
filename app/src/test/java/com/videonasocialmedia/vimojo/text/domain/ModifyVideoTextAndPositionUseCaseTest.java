@@ -69,7 +69,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     injectedUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition());
+    injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -92,7 +92,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
     injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
-        video.getClipTextPosition());
+        video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -112,7 +112,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             mockedMediaTranscoder);
 
     injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
-        video.getClipTextPosition());
+        video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -136,7 +136,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
     injectedUseCase.addTextToVideo(currentProject, video, video.getClipText(),
-        video.getClipTextPosition());
+        video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -158,7 +158,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    injectedUseCase.addTextToVideo(currentProject, video, "text", textPosition);
+    injectedUseCase.addTextToVideo(currentProject, video, "text", textPosition,
+        video.hasClipTextShadow());
 
     verify(mockedVideoRepository, atLeastOnce()).update(video);
     assertThat(video.getClipText(), is("text"));

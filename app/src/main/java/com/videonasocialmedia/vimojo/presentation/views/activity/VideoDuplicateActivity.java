@@ -48,8 +48,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
-        VideonaPlayer.VideonaPlayerListener {
+public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView {
     private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";
     private static final String NUM_DUPLICATE_VIDEOS = "num_duplicate_videos";
     private static final String TAG = "VideoDuplicateActivity";
@@ -86,8 +85,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         setupActivityButtons();
 
         this.getActivityPresentersComponent().inject(this);
-
-        videonaPlayer.setListener(this);
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
@@ -275,9 +272,5 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         numDuplicateVideos--;
         updateDecrementVideoButton();
         textNumDuplicates.setText("x" + numDuplicateVideos);
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
     }
 }

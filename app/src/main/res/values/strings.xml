@@ -126,6 +126,7 @@
     <string name="error_videoEdit">The maximum number of lines to draw is two</string>
     <string name="edit_text_hint_VideoEditText">Write your text</string>
     <string name="edit">Edit</string>
+    <string name="edit_text_checkbox">Shadow</string>
 
     <!-- Gallery activity -->
     <string name="confirmDeleteTitle">Delete</string>

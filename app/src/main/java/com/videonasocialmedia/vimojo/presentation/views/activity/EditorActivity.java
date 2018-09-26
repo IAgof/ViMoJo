@@ -608,6 +608,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
   }
 
+
+  @Override
+  public void playerReady() {
+    // Do nothing
+  }
+
   private void updateCurrentProjectThumb(String path) {
     File thumb = new File(path);
     if (thumb.exists()) {

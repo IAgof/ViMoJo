@@ -41,7 +41,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGH
 
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
-    SeekBar.OnSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
+    SeekBar.OnSeekBarChangeListener{
 
     private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
     private String MUSIC_DETAIL_POSITION_VOLUME = "sound_volume_position";
@@ -79,7 +79,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         ButterKnife.bind(this);
         initToolbar();
         restoreState(savedInstanceState);
-        videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);
     }
@@ -233,12 +232,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Optional @OnClick(R.id.cancel_music)
     public void onCancelMusicClickListener() {
             goToMusicList();
-    }
-
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
-
     }
 
     @Override
