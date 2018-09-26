@@ -457,19 +457,6 @@ public class EditorPresenterTest {
     verify(mockedVideonaPlayerView).setVoiceOverVolume(0.0f);
   }
 
-  @Test
-  public void ifShowWatermarkSwitchNotActivatedShowWatermarkPrefView() {
-    EditorPresenter spyEditorPresenter = spy(getEditorPresenter());
-    spyEditorPresenter.showWatermarkSwitch = false;
-    boolean hasBeenProjectExported = false;
-    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
-
-    spyEditorPresenter.updatePresenter(hasBeenProjectExported, videoExportedPath,
-        currentAppliedTheme);
-
-    verify(mockedEditorActivityView).hideWatermarkSwitch();
-  }
-
   private EditorPresenter getEditorPresenter() {
     EditorPresenter editorPresenter = new EditorPresenter(
             mockedEditorActivityView, mockedVideonaPlayerView, mockedSharedPreferences,

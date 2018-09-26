@@ -284,11 +284,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void showText(String text, String position, int width, int height) {
-        videonaPlayer.setImageText(text, position, width, height);
-    }
-
-    @Override
     public void newClipPlayed(int currentClipIndex) {
     }
 
