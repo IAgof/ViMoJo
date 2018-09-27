@@ -57,26 +57,28 @@ public class ModifyVideoTextAndPositionUseCase {
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
-    public void addTextToVideo(Project currentProject, final Video videoToEdit, String text, String textPosition) {
-      setVideoTextParams(videoToEdit, text, textPosition, currentProject);
+    public void addTextToVideo(Project currentProject, final Video videoToEdit, String text,
+                               String textPosition, boolean isShadowChecked) {
+      setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
       videoRepository.update(videoToEdit);
 
       if (videoIsBeingAdapted(videoToEdit)) {
         ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
         videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
-                applyText(currentProject, videoToEdit, text, textPosition)));
+                applyText(currentProject, videoToEdit, text, textPosition, isShadowChecked)));
       } else {
         runTextTranscodingTask(videoToEdit, currentProject);
       }
     }
 
   private Function<Video, Video> applyText(final Project currentProject, final Video videoToEdit,
-                                           final String text, final String textPosition) {
+                                           final String text, final String textPosition,
+                                           boolean isShadowChecked) {
     return new Function<Video, Video>() {
       @Nullable
       @Override
       public Video apply(Video input) {
-        setVideoTextParams(videoToEdit, text, textPosition, currentProject);
+        setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
         videoRepository.update(videoToEdit);
         ListenableFuture<Video> task = runTextTranscodingTask(videoToEdit, currentProject);
         // TODO(jliarte): 15/09/17 check this and error propagation
@@ -119,10 +121,11 @@ public class ModifyVideoTextAndPositionUseCase {
   }
 
   private void setVideoTextParams(Video videoToEdit, String text, String textPosition,
-                                  Project currentProject) {
+                                  boolean isShadowChecked, Project currentProject) {
     videoToEdit.setClipText(text);
     videoToEdit.setClipTextPosition(textPosition);
     videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
+    videoToEdit.setClipTextShadow(isShadowChecked);
   }
 
   private void handleTranscodingError(Video video, String message, Project currentProject) {

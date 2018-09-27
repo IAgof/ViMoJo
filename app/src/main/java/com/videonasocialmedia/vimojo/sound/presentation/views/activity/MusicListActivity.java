@@ -37,7 +37,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGH
  *
  */
 public class MusicListActivity extends VimojoActivity implements MusicListView,
-        SoundRecyclerViewClickListener, VideonaPlayer.VideonaPlayerListener {
+        SoundRecyclerViewClickListener{
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
     @Inject MusicListPresenter presenter;
@@ -58,7 +58,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         getActivityPresentersComponent().inject(this);
         setupToolbar();
         restoreState(savedInstanceState);
-        videonaPlayer.setListener(this);
         initVideoListRecycler();
     }
 
@@ -155,11 +154,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
         startActivity(i);
         finish();
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
-
     }
 }
 

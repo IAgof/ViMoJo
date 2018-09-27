@@ -310,6 +310,11 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
+    public void playerReady() {
+        // Do nothing
+    }
+
+    @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // start recording.

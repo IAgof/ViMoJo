@@ -183,7 +183,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
         // create your Realm configuration
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .name("vimojoDB")
-                .schemaVersion(13) //from v0.14.4 8-3-2018 to v0.19.0 7-6-2018
+                .schemaVersion(14) // from v0.19.0 7-6-2018 to v0.20.7 20180926
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
