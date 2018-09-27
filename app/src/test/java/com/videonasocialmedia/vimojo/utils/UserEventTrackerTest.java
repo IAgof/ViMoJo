@@ -254,7 +254,7 @@ public class UserEventTrackerTest {
                 is(position));
         assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TEXT_LENGTH),
                 is(lengthText));
-        assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TEXT_SHADOW),
+        assertThat(trackedEvent.getProperties().getBoolean(AnalyticsConstants.TEXT_SHADOW),
             is(isShadowChecked));
         assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
             currentProject);
