@@ -1,2 +1,2 @@
-v0.20.7
-- Edit text screen, added checkbox to select shadow in text over video.
+v0.20.8
+- Fixed bug exporting videos.
