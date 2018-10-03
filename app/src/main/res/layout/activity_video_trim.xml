@@ -61,7 +61,7 @@
                         android:layout_marginBottom="8dp"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginTop="@dimen/activity_trim_range_seekbar_margin_top"
                         rsb:activeColor="?attr/colorAccent"
                         rsb:background_color="@null"
                         rsb:bar_color="?attr/colorAccent"
@@ -90,7 +90,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp">
+                    android:padding="4dp">
 
                     <RadioGroup
                         android:id="@+id/radio_group_trim_advance"

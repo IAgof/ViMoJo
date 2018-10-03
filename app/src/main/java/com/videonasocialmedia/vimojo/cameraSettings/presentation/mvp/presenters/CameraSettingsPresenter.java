@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
@@ -68,6 +69,11 @@ public class CameraSettingsPresenter {
 
   public void updatePresenter() {
     this.currentProject = projectInstanceCache.getCurrentProject();
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      cameraSettingsListView.screenOrientationPortrait();
+    } else {
+      cameraSettingsListView.screenOrientationLandscape();
+    }
   }
 
   private void setupProInterfaceMappers() {
@@ -77,19 +83,57 @@ public class CameraSettingsPresenter {
   }
 
   private void setupResolutionMappers() {
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      setupVerticalResolutions();
+    } else {
+      setupHorizontalResolutions();
+    }
+  }
+
+  private void setupVerticalResolutions() {
     resolutionNames = new HashMap<Integer, String>();
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
-            ResolutionSetting.CAMERA_SETTING_RESOLUTION_720);
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720);
     resolutionNames.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
-            ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080);
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_1080);
     resolutionNames.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
-            ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160);
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_2160);
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
-        ResolutionSetting.CAMERA_SETTING_RESOLUTION_720);
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720);
     resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
-        ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080);
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_1080);
     resolutionNames.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
-        ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160);
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_2160);
+
+    videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
+    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
+        VideoResolution.Resolution.HD720);
+    videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+        VideoResolution.Resolution.HD1080);
+    videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+        VideoResolution.Resolution.HD4K);
+    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
+        VideoResolution.Resolution.HD720);
+    videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+        VideoResolution.Resolution.HD1080);
+    videoResolutionValues.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+        VideoResolution.Resolution.HD4K);
+  }
+
+  private void setupHorizontalResolutions() {
+    resolutionNames = new HashMap<Integer, String>();
+    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,
+            ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720);
+    resolutionNames.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID,
+            ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_1080);
+    resolutionNames.put(CAMERA_SETTING_RESOLUTION_2160_BACK_ID,
+            ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_2160);
+    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID,
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720);
+    resolutionNames.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_1080_FRONT_ID,
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_1080);
+    resolutionNames.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID,
+        ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_2160);
 
     videoResolutionValues = new HashMap<Integer, VideoResolution.Resolution>();
     videoResolutionValues.put(ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID,

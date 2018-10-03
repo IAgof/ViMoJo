@@ -33,7 +33,6 @@ import android.os.StatFs;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-import com.coremedia.iso.IsoFile;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -355,14 +354,6 @@ public class Utils {
         }
     }
 
-    public static double getFileDuration(String filePath) throws IOException {
-        IsoFile isoFile = new IsoFile(filePath);
-        double lengthInMSeconds = (double)
-                (isoFile.getMovieBox().getMovieHeaderBox().getDuration() /
-                        isoFile.getMovieBox().getMovieHeaderBox().getTimescale()) * 1000;
-        return lengthInMSeconds;
-    }
-
     public static void addFileToVideoGallery(String file) {
         MediaScannerConnection.scanFile(VimojoApplication.getAppContext(),
                 new String[] { file }, null,
@@ -606,6 +597,13 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static String capitalizeFirstLetter(String original) {
+        if (original == null || original.length() == 0) {
+            return original;
+        }
+        return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
 }

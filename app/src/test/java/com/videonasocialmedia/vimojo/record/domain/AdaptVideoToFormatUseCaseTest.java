@@ -7,7 +7,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
-import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;

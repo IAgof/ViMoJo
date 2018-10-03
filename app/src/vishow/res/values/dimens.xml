@@ -1,0 +1,27 @@
+<!--
+  ~ Copyright (C) 2018 Videona Socialmedia SL
+  ~ http://www.videona.com
+  ~ info@videona.com
+  ~ All rights reserved
+  -->
+
+<resources>
+    <!-- Flavor dimens for support vertical videos -->
+    <dimen name="activity_duplicate_size_thumb">60dp</dimen>
+    <dimen name="activity_trim_range_seekbar_margin_top">10dp</dimen>
+    <dimen name="activity_trim_cardview_buttons_padding">4dp</dimen>
+    <dimen name="activity_split_seekbar_margin_top">10dp</dimen>
+    <dimen name="custom_sound_card_view_linear_layout_audio_blocks_height">68dp</dimen>
+    <dimen name="sound_mediatimeline_media_time_size_thumb">52dp</dimen>
+    <dimen name="sound_mediatimeline_media_time_size_text_duration_clip">6sp</dimen>
+    <dimen name="sound_list_item_view_holder_size_thumb">50dp</dimen>
+    <dimen name="activity_music_detail_size_thumb">48dp</dimen>
+    <dimen name="activity_music_detail_text_size_music_title">14sp</dimen>
+    <dimen name="activity_music_detail_text_size_music_duration">12sp</dimen>
+    <dimen name="activity_music_detail_text_size_music_author">10sp</dimen>
+    <dimen name="activity_music_detail_volumen_seekbar_margin_top">24dp</dimen>
+    <dimen name="activity_voice_ove_rec_button_voiceover_cardview_height">100dp</dimen>
+    <dimen name="activity_share_buttons_cardview_margin_bottom">64dp</dimen>
+    <dimen name="share_buttons_network_view_holder_name_text_size">24sp</dimen>
+    <dimen name="share_buttons_network_view_holder_icon_size">48dp</dimen>
+</resources>

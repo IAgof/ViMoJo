@@ -9,8 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.UUID;
-
 import io.realm.RealmObject;
 
 import static org.hamcrest.MatcherAssert.assertThat;

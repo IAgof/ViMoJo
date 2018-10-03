@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_music_title_arp_bounce">Geographer \nDance and electronic music | Dramatic</string>
+    <string name="activity_music_title_club_thump">Gunnar Olsen \nDance and electronic music | Trance</string>
+    <string name="activity_music_title_the_missing_link">The Whole Other \nChillout and electronic music | Groove</string>
+    <string name="activity_music_title_the_toe_jam">Diamond Ortiz \nDance and electronic music | Funky</string>
+
+    <string name="licenseMusic">
+    • Toe Kam, Diamond Ortiz, https://www.youtube.com/channel/UC8IxuOt9Z4Fr0EOff4wSx_Q \n\n
+    • Club Thump, Gunnar Olsen \n\n
+    • Arp Bounce, Geographer, https://www.youtube.com/channel/UCcB_tnqYHwPzADwUdeppIIQ \n\n
+    • The Missing Link, The Whole Other, https://www.youtube.com/channel/UCxfzyJ-HvEZbGmubAmfcsfQ \n\n
+    </string>
+
+    <string name="vimojo_kit_web">"https://vimojo.co/mojokit/?utm_source=vishow_android&amp;utm_medium=app_link"</string>
+    <string name="vimojo_platform_base">https://platform.vimojo.co</string>
+    <string name="vimojo_platform">"https://platform.vimojo.co/?utm_source=vimojo_android&amp;utm_medium=app_link"</string>
+
+    <!-- Auth0 configuration -->
+    <string name="com_auth0_client_id">9z2Co0NpTwXNshfSvh0dhyCuwW0S5x4E</string>
+    <string name="com_auth0_domain">vimojo.eu.auth0.com</string>
+    <string name="com_auth0_audience">https://vimojo.auth/api</string>
+
+    <string name="flavor_name">Vishow</string>
+
+    <string name="app_videona">Videona</string>
+    <string name="app_videona_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.videona&amp;referrer=utm_source%3DVideona%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+    <string name="app_kamarada">Kamarada</string>
+    <string name="app_kamarada_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.kamarada&amp;referrer=utm_source%3DKamarada%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+    <string name="app_vimojo">Vimojo</string>
+    <string name="app_vimojo_campaign_link">https://play.google.com/store/apps/details?id=com.videonasocialmedia.vimojo.main&amp;referrer=utm_source%3DVimojo%2520from%2520Vishow%2520app%26utm_medium%3DLink%2520directo%26utm_campaign%3DVishow</string>
+
+    <string name="admob_app_id">ca-app-pub-4533929990381933~3090744535</string>
+    <string name="admob_banner_ad_unit_id">ca-app-pub-4533929990381933/1063346996</string>
+
+</resources>

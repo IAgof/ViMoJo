@@ -28,7 +28,6 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -102,7 +101,7 @@ public class ProjectRealmRepositoryTest {
   // TODO(jliarte): 21/10/16 dont know how to test this yet
 //  @Test
 //  public void testAddCallsExecuteTransaction() {
-//    Profile profile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.EXCELLENT,
+//    Profile profile = new Profile(VideoResolution.Resolution.H_720P, VideoQuality.Quality.EXCELLENT,
 //            -1, Profile.ProfileType.pro);
 //    Project project = new Project("Project title", "root/path", profile);
 //    ProjectRealmRepository repo = new ProjectRealmRepository();

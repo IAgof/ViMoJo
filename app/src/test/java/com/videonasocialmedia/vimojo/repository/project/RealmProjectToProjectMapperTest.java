@@ -14,7 +14,6 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.repository.music.RealmMusic;
 import com.videonasocialmedia.vimojo.repository.track.RealmTrack;
@@ -34,8 +33,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

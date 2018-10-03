@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 /**
  * Created by alvaro on 5/09/16.
  */
+@Config(manifest= Config.NONE)
 public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   private Project currentProject;

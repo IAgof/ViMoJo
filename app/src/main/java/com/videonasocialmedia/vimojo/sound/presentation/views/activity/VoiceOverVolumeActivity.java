@@ -8,6 +8,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -28,11 +29,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
+
 /**
  * Created by ruth on 19/09/16.
  */
-public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
-        VideonaPlayer.VideonaPlayerListener, VoiceOverVolumeView {
+public class VoiceOverVolumeActivity extends VimojoActivity implements
+    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
@@ -64,7 +67,6 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
 
         getActivityPresentersComponent().inject(this);
         restoreState(savedInstanceState);
-        videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);
         textSeekBarVolume.setText(currentSoundVolumePosition+" % ");
@@ -80,6 +82,9 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
     }
 
     @Override
@@ -227,9 +232,5 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     @Override
     public void muteMusic() {
         videonaPlayer.setMusicVolume(0.0f);
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
     }
 }

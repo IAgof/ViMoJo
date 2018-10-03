@@ -76,6 +76,11 @@
     <string name="export_apply_watermark_resource_error">Error applying watermark, resource not found</string>
     <string name="export_join_videos_error">Error joining the videos</string>
     <string name="export_wait_for_transcoding_error">Error adapting yur videos</string>
+    <string name="share_continue">Continue</string>
+    <string name="share_cancel">Cancel</string>
+    <string name="share_instagram_duration_warning">Your project duration is greater than 15
+        seconds, Instagram will trim your video. Do you want to continue?. If not, do not forget to
+        save video in gallery</string>
 
     <!-- Editor Activity -->
     <string name="new_project">New project</string>
@@ -121,6 +126,7 @@
     <string name="error_videoEdit">The maximum number of lines to draw is two</string>
     <string name="edit_text_hint_VideoEditText">Write your text</string>
     <string name="edit">Edit</string>
+    <string name="edit_text_checkbox">Shadow</string>
 
     <!-- Gallery activity -->
     <string name="confirmDeleteTitle">Delete</string>
@@ -313,6 +319,11 @@
     <!-- Watermark Settings -->
     <string name="title_watermark_section">Add watermark</string>
     <string name="title_watermark_preference">Watermark</string>
+
+    <!-- More apps -->
+    <string name="title_more_apps_section">More apps</string>
+
+
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">About us</string>
@@ -513,23 +524,7 @@ limitations under the License. \n
 
     </string>
     <string name="licenseMusicTitle"><u>Music Attribution</u></string>
-    <string name="licenseMusicContent">
-        • Kevin MacLeod, Impact Prelude, http://freemusicarchive.org/music/Kevin_MacLeod/Impact/Impact_Prelude_1765,
-        icono DJ, CC BY 3.0\n• Kevin MacLeod, Monkeys Spinning Monkeys,
-        http://freemusicarchive.org/music/Kevin_MacLeod/Best_of_2014_1461/Monkeys_Spinning_Monkeys,
-        icono clarinete, CC BY 3.0\n• Josh Woodward, Don\'t Close Your Eyes (Instrumental),
-        http://freemusicarchive.org/music/Josh_Woodward/The_Simple_Life_Part_2_1667/JoshWoodward-TSL-NoVox-204-DontCloseYourEyes_1462,
-        icono guitarra española, CC BY 4.0\n• Grapes, I Dunno, http://ccmixter.org/files/grapes/16626,
-        icono gorra, CC BY 3.0\n• Josh Woodward, Troublemaker, http://www.joshwoodward.com/song/troublemaker,
-        icono micrófono, CC BY 4.0\n• Scott Altham, Break Dance, http://ccmixter.org/files/scottaltham/47985,
-        icono congas, CC BY 3.0\n• Kevin MacLeod, Call To Adventure,
-        https://freemusicarchive.org/music/Kevin_MacLeod/2013/Call_to_Adventure_1089, icono violín,
-        CC BY 3.0\n• Josh Woodward, Airplane Mod Instrumental,
-        http://freemusicarchive.org/music/Josh_Woodward/The_Beautiful_Machine/JoshWoodward-AirplaneMode-NoVox,
-        icono guitarra eléctrica, CC BY 4.0\n• Josh Woodward, The Last Slice Of Pecan Pie (INSTRUMENTAL VERSION),
-        http://freemusicarchive.org/music/Josh_Woodward/The_Beautiful_Machine/JoshWoodward-TheLastSliceOfPecanPie-NoVox,
-        icono clave de sol, CC BY 4.0\n
-    </string>
+    <string name="licenseMusic"></string>
 
     <!-- <string name="licenseDesignFreepik">
 
@@ -667,49 +662,6 @@ limitations under the License. \n
 
 
     </string>
-
-    <string name="licenseMusic">
-
-        GOING HIGHER\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            https://www.bensound.com/royalty-free-music/track/going-higher\n\n
-
-        UKELELE\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            http://www.bensound.com/royalty-free-music/track/ukulele\n\n
-
-        JAZZY-FRENCHY\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            https://www.bensound.com/royalty-free-music/track/jazzy-frenchy\n\n
-
-        ACOUSTIC BREEZE\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            http://www.bensound.com/index.php?route=product/search&amp;search=ACOUSTIC%20BREEZE\n\n
-   </string>
 
     <string name="licenseDagger">
         Copyright 2012 The Dagger Authors\n\nLicensed under the Apache License, Version 2.0
@@ -2573,4 +2525,6 @@ and Conditions.\n\n
 
     <string name="vimojo_platform_base_debug">https://beta.viday.co</string>
     <string name="com_auth0_audience_debug">https://vimojo.auth/api</string>
+
+
 </resources>

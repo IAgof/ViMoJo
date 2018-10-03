@@ -16,6 +16,7 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRep
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -27,7 +28,8 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
 import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
@@ -46,6 +48,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
  */
 public class InitAppPresenter {
   private final Context context;
+  private final InitAppView initAppView;
   private final CameraSettingsRepository cameraSettingsRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private final ProjectRepository projectRepository;
@@ -57,13 +60,15 @@ public class InitAppPresenter {
 
 
   @Inject
-  public InitAppPresenter(Context context, SharedPreferences sharedPreferences,
+  public InitAppPresenter(Context context, InitAppView initAppView,
+                          SharedPreferences sharedPreferences,
                           CreateDefaultProjectUseCase createDefaultProjectUseCase,
                           CameraSettingsRepository cameraSettingsRepository,
                           RunSyncAdapterHelper runSyncAdapterHelper,
                           ProjectRepository projectRepository,
                           ProjectInstanceCache projectInstanceCache) {
     this.context = context;
+    this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
@@ -77,17 +82,16 @@ public class InitAppPresenter {
     if (projectInstanceCache.getCurrentProject() == null) {
       // TODO(jliarte): 23/04/18 in fact, there will be always a project instance, consider removing
       Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-              isWatermarkActivated(), drawableFadeTransitionVideo);
+              isWatermarkActivated(), drawableFadeTransitionVideo,
+              BuildConfig.FEATURE_VERTICAL_VIDEOS);
       projectRepository.add(project);
       projectInstanceCache.setCurrentProject(project);
     }
   }
 
   public boolean isWatermarkActivated() {
-    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
-      return true;
-    }
-    return sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
+    return BuildConfig.FEATURE_FORCE_WATERMARK
+        || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
   }
 
   public void checkCamera2FrameRateAndResolutionSupported() {
@@ -145,7 +149,8 @@ public class InitAppPresenter {
     }
 
     if(!resolutionBack1080pSupported){
-      defaultResolution = CAMERA_SETTING_RESOLUTION_720;
+      defaultResolution = BuildConfig.FEATURE_VERTICAL_VIDEOS ? CAMERA_SETTING_RESOLUTION_V_720
+          : CAMERA_SETTING_RESOLUTION_H_720;
       //resolutionBack1080pSupported = true;
     }
 
@@ -205,5 +210,10 @@ public class InitAppPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      initAppView.screenOrientationPortrait();
+    } else {
+      initAppView.screenOrientationLandscape();
+    }
   }
 }

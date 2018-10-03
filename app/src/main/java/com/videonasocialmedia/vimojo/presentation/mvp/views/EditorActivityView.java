@@ -35,4 +35,6 @@ public interface EditorActivityView {
     void goToRecordOrGalleryScreen();
 
     void hideLinkToVimojoPlatform();
+
+    void hideTutorialViews();
 }
