@@ -46,7 +46,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGH
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
-        VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
+    SeekBar.OnSeekBarChangeListener {
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";
 
@@ -91,7 +91,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         splitSeekBar.setOnSeekBarChangeListener(this);
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
 
-        videonaPlayer.setListener(this);
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
 
@@ -281,10 +280,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
                     Snackbar.LENGTH_SHORT);
             snackbar.show();
         });
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
     }
 
   @Override

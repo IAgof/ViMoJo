@@ -231,8 +231,9 @@ public class UserEventTrackerTest {
         UserEventTracker userEventTracker = Mockito.spy(getMockedUserEventTracker());
         String position = "Center";
         int lengthText = 27;
+        boolean isShadowChecked = false;
 
-        userEventTracker.trackClipAddedText(position, lengthText, currentProject);
+        userEventTracker.trackClipAddedText(position, lengthText, isShadowChecked, currentProject);
 
         Mockito.verify(userEventTracker).trackEvent(eventCaptor.capture());
         UserEventTracker.Event trackedEvent = eventCaptor.getValue();
@@ -244,6 +245,8 @@ public class UserEventTrackerTest {
                 is(position));
         assertThat(trackedEvent.getProperties().getInt(AnalyticsConstants.TEXT_LENGTH),
                 is(lengthText));
+        assertThat(trackedEvent.getProperties().getBoolean(AnalyticsConstants.TEXT_SHADOW),
+            is(isShadowChecked));
         assertEvenPropertiesIncludeProjectCommonProperties(trackedEvent.getProperties(),
             currentProject);
 

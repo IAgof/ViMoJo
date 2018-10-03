@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
@@ -54,6 +53,7 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     private final String THEME_DARK = "dark";
     private int videoToEditTextIndex;
     private boolean amIAVerticalApp;
+    private boolean isShadowChecked;
 
 
     @Inject
@@ -84,6 +84,10 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
             ArrayList<Video> v = new ArrayList<>();
             videoToEdit = (Video) videoList.get(videoToEditTextIndex);
             v.add(videoToEdit);
+            if (videoToEdit.hasClipTextShadow()) {
+                isShadowChecked = true;
+                editTextView.setCheckboxShadow(true);
+            }
             onVideosRetrieved(v);
         }
         if (amIAVerticalApp) {
@@ -105,10 +109,11 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
         Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
         Futures.addCallback(modifyVideoTextAndPositionUseCase
-                .addTextToVideo(currentProject, videoToEdit, text, textPositionSelected.name()),
-                new ClipTextResultCallback(), backgroundExecutor);
+                .addTextToVideo(currentProject, videoToEdit, text, textPositionSelected.name(),
+                    isShadowChecked), new ClipTextResultCallback(), backgroundExecutor);
 
-        userEventTracker.trackClipAddedText("center", text.length(), currentProject);
+        userEventTracker.trackClipAddedText(textPositionSelected.name(), text.length(),
+            isShadowChecked, currentProject);
     }
 
     @Override
@@ -139,6 +144,10 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
         return outValue;
+    }
+
+    public void setCheckboxShadow(boolean isShadowChecked) {
+        this.isShadowChecked = isShadowChecked;
     }
 }
 

@@ -33,8 +33,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGH
 /**
  * Created by ruth on 19/09/16.
  */
-public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.OnSeekBarChangeListener,
-        VideonaPlayer.VideonaPlayerListener, VoiceOverVolumeView {
+public class VoiceOverVolumeActivity extends VimojoActivity implements
+    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
@@ -66,7 +66,6 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
 
         getActivityPresentersComponent().inject(this);
         restoreState(savedInstanceState);
-        videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);
         textSeekBarVolume.setText(currentSoundVolumePosition+" % ");
@@ -236,9 +235,5 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements SeekBar.O
     @Override
     public void setAspectRatioVerticalVideos() {
         videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
     }
 }
