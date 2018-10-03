@@ -22,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,15 +29,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoController;
-import com.google.android.gms.ads.VideoOptions;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
@@ -47,14 +41,14 @@ import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
+import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.share.model.entities.FtpNetwork;
 import com.videonasocialmedia.vimojo.share.model.entities.SocialNetwork;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView;
 import com.videonasocialmedia.vimojo.share.presentation.views.adapter.OptionsToShareAdapter;
-import com.videonasocialmedia.vimojo.presentation.views.listener.OnOptionsToShareListClickListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
@@ -582,10 +576,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   @Override
-  public void showVideoExportError(int cause, Exception exception) {
+  public void showVideoExportError(int cause) {
     exportDialog.dismiss();
     showVideoExportErrorDialog(cause);
-    Crashlytics.logException(exception);
   }
 
   @Override

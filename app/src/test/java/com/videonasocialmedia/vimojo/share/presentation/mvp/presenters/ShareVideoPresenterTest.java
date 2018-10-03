@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
@@ -88,7 +87,6 @@ public class ShareVideoPresenterTest {
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
-    @Mock FFmpeg mockedFFmpeg;
 
     @Before
     public void injectMocks() {
@@ -293,9 +291,9 @@ public class ShareVideoPresenterTest {
         boolean hasBeenProjectExported = false;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
 
-        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork, mockedFFmpeg);
+        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork);
 
-        verify(spyShareVideoPresenter).startExport(anyNetwork, mockedFFmpeg);
+        verify(spyShareVideoPresenter).startExport(anyNetwork);
     }
 
     @Test
@@ -306,7 +304,7 @@ public class ShareVideoPresenterTest {
         String videoExportedPath = "";
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
 
-        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork, mockedFFmpeg);
+        spyShareVideoPresenter.exportOrProcessNetwork(anyNetwork);
 
         verify(spyShareVideoPresenter).processNetworkClicked(anyNetwork, videoExportedPath);
     }
@@ -328,8 +326,7 @@ public class ShareVideoPresenterTest {
         assertThat("Project info product type is not empty",
             currentProject.getProjectInfo().getProductTypeList().size(), is(1));
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork,
-            mockedFFmpeg);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork);
 
         verify(spyShareVideoPresenter).clickUploadToPlatform(isWifiConnected,
             acceptUploadVideoMobileNetwork, isMobileNetworkConnected, videoExportedPath);
@@ -343,7 +340,7 @@ public class ShareVideoPresenterTest {
         FtpNetwork ftpNetworkSelected = null;
         String videoExportedPath = "";
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeFtp, mockedFFmpeg);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeFtp);
 
         verify(mockedShareVideoView).createDialogToInsertNameProject(ftpNetworkSelected,
             videoExportedPath);
@@ -359,8 +356,7 @@ public class ShareVideoPresenterTest {
         when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
         String videoExportedPath = "";
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork,
-            mockedFFmpeg);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
 
         verify(mockedShareVideoView).shareVideo(videoExportedPath, mockedSocialNetwork);
     }
@@ -373,8 +369,7 @@ public class ShareVideoPresenterTest {
         when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
         String videoExportedPath = "";
 
-        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork,
-            mockedFFmpeg);
+        spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork);
 
         verify(mockedShareVideoView).showIntentOtherNetwork(videoExportedPath);
     }

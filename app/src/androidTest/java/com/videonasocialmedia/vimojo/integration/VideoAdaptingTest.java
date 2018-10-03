@@ -56,7 +56,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -85,7 +85,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
     getAProject();
-    when(mockedProjectRepository.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
@@ -162,16 +162,15 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     VideonaFormat videoFormat = new VideonaFormat(5000000, 1280, 720);
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
-    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
-        videoToAdaptRepo);
+    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
 
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
-    exportProjectUseCase.export(Constants.PATH_WATERMARK, mockedExportListener);
+    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     assertThat(transcodingTask, notNullValue());
     verify(mockedExportListener, never()).onExportSuccess(any(Video.class));
-    verify(mockedExportListener, never()).onExportError(anyString(), any());
+    verify(mockedExportListener, never()).onExportError(anyInt(), any());
     transcodingTask.get();
     verify(mockedListener).onSuccessAdapting(video);
     ArgumentCaptor<Object> videoCaptor = ArgumentCaptor.forClass(Video.class);
@@ -199,19 +198,18 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     String destPath2 = testPath + "/res2.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
-    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
-        videoToAdaptRepo);
+    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
 
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);
-    exportProjectUseCase.export(Constants.PATH_WATERMARK, mockedExportListener);
+    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     ListenableFuture<Video> transcodingTask2 = video2.getTranscodingTask();
     assertThat(transcodingTask, notNullValue());
     assertThat(transcodingTask2, notNullValue());
     verify(mockedExportListener, never()).onExportSuccess(any(Video.class));
-    verify(mockedExportListener, never()).onExportError(anyString(), exception);
+    verify(mockedExportListener, never()).onExportError(anyInt(), any());
     transcodingTask.get();
     transcodingTask2.get();
     verify(mockedListener).onSuccessAdapting(video);
@@ -249,8 +247,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     String destPath2 = testPath + "/res2.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
-    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(mockedProjectRepository,
-        videoToAdaptRepo);
+    ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
             new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
 
@@ -260,7 +257,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     video2.setTempPath(testPath);
     video.setTempPath(testPath);
     modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
-    exportProjectUseCase.export(Constants.PATH_WATERMARK, mockedExportListener);
+    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask_b = video.getTranscodingTask();
     ListenableFuture<Video> transcodingTask2 = video2.getTranscodingTask();
@@ -268,7 +265,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     assertThat(transcodingTask, not(transcodingTask_b));
     assertThat(transcodingTask2, notNullValue());
     verify(mockedExportListener, never()).onExportSuccess(any(Video.class));
-    verify(mockedExportListener, never()).onExportError(anyString(), exception);
+    verify(mockedExportListener, never()).onExportError(anyInt(), any());
     transcodingTask_b.get();
     transcodingTask2.get();
     verify(mockedListener).onSuccessAdapting(video);
@@ -309,7 +306,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   public void afterRestoreVideoAdaptViaRepositoryVideoReferenceChanges() throws IllegalItemOnTrack, IOException {
     //Config realm
     File tempFolder = testFolder.newFolder("realmdata");
-    RealmConfiguration config = new RealmConfiguration.Builder(tempFolder).build();
+    RealmConfiguration config = new RealmConfiguration.Builder().build(); //new RealmConfiguration.Builder(tempFolder).build()
     Realm realm = Realm.getInstance(config);
     //Prepare project and videoToAdapt
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
@@ -327,7 +324,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     videoToAdaptRepo.update(videoToAdapt);
 
     // App died, restore data
-    Project projectRetriever = projectRepo.getCurrentProject();
+    Project projectRetriever = projectRepo.getLastModifiedProject();
     VideoToAdapt videoToAdaptRetrieve = videoToAdaptRepo.getAllVideos().get(0);
 
     assertThat( projectRetriever.getMediaTrack().getItems().get(0),
@@ -343,7 +340,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   }
 
   public void getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     List<String> productType = new ArrayList<>();
     ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
