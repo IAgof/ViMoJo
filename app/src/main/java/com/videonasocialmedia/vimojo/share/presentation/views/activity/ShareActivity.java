@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
@@ -88,7 +87,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
-  private FFmpeg ffmpeg;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +100,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       hideFab();
       initBarProgressDialog();
       checkNetworksAvailable();
-      ffmpeg = FFmpeg.getInstance(this);
   }
 
   @Override
@@ -211,7 +208,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Optional @OnClick(R.id.fab_share_room)
     public void showMoreNetworks() {
-      presenter.onMoreSocialNetworkClicked(ffmpeg);
+      presenter.onMoreSocialNetworkClicked();
     }
 
     @Override
@@ -226,14 +223,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
     @Override
     public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
-      presenter.onSocialNetworkClicked(socialNetwork, ffmpeg);
+      presenter.onSocialNetworkClicked(socialNetwork);
     }
 
   @Override
   public void onVimojoPlatformClicked() {
     checkNetworksAvailable();
     presenter.onVimojoPlatformClicked(isWifiConnected, isAcceptedUploadWithMobileNetwork,
-            isMobileNetworkConnected, ffmpeg);
+            isMobileNetworkConnected);
   }
 
   private void checkNetworksAvailable() {
@@ -373,7 +370,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void onFtpClicked(FtpNetwork ftp) {
-      presenter.onFtpClicked(ftp, ffmpeg);
+      presenter.onFtpClicked(ftp);
   }
 
   @Override

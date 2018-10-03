@@ -9,7 +9,6 @@ package com.videonasocialmedia.vimojo.export.domain;
 
 import android.util.Log;
 
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -53,7 +52,7 @@ public class ExportProjectUseCase implements ExportListener {
    * Main use case method.
    */
   public void export(Project currentProject, String pathWatermark,
-                     OnExportFinishedListener onExportFinishedListener, FFmpeg ffmpeg) {
+                     OnExportFinishedListener onExportFinishedListener) {
     this.project = currentProject;
     String tempPathIntermediateAudioFilesDirectory =
             project.getProjectPathIntermediateAudioMixedFiles();
@@ -69,7 +68,7 @@ public class ExportProjectUseCase implements ExportListener {
     try {
       ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
       Futures.transform(adaptVideoTasks, (Function<List<Video>, Object>) input -> {
-        vmCompositionExportSession.exportAsyncronously(ffmpeg);
+        vmCompositionExportSession.exportAsyncronously();
         return null;
       });
     } catch (NoSuchElementException exception) {

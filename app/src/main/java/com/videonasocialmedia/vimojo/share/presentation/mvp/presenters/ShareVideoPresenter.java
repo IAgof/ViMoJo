@@ -16,7 +16,6 @@ import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -190,7 +189,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
         DateUtils.getDateRightNow());
   }
 
-  protected void startExport(int typeNetworkSelected, FFmpeg ffmpeg) {
+  protected void startExport(int typeNetworkSelected) {
     shareVideoViewReference.get().showProgressDialogVideoExporting();
     isAppExportingProject = true;
     exportUseCase.export(currentProject, Constants.PATH_WATERMARK, new OnExportFinishedListener() {
@@ -228,7 +227,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
           isAppExportingProject = false;
         }
       }
-    }, ffmpeg);
+    });
   }
 
   protected void clickUploadToPlatform(boolean isWifiConnected,
@@ -316,37 +315,36 @@ public class ShareVideoPresenter extends VimojoPresenter {
     return true;
   }
 
-  public void onSocialNetworkClicked(SocialNetwork socialNetwork, FFmpeg ffmpeg) {
+  public void onSocialNetworkClicked(SocialNetwork socialNetwork) {
     shareVideoViewReference.get().pauseVideoPlayerPreview();
     socialNetworkSelected = socialNetwork;
-    exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork, ffmpeg);
+    exportOrProcessNetwork(OptionsToShareList.typeSocialNetwork);
   }
 
   public void onVimojoPlatformClicked(boolean isWifiConnected,
                                       boolean acceptUploadVideoMobileNetwork,
-                                      boolean isMobileNetworkConnected,
-                                      FFmpeg ffmpeg) {
+                                      boolean isMobileNetworkConnected) {
     this.isWifiConnected = isWifiConnected;
     this.acceptUploadVideoMobileNetwork = acceptUploadVideoMobileNetwork;
     this.isMobileNetworkConnected = isMobileNetworkConnected;
     shareVideoViewReference.get().pauseVideoPlayerPreview();
-    exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork, ffmpeg);
+    exportOrProcessNetwork(OptionsToShareList.typeVimojoNetwork);
   }
 
-  public void onFtpClicked(FtpNetwork ftp, FFmpeg ffmpeg) {
+  public void onFtpClicked(FtpNetwork ftp) {
     shareVideoViewReference.get().pauseVideoPlayerPreview();
     ftpNetworkSelected = ftp;
-    exportOrProcessNetwork(OptionsToShareList.typeFtp, ffmpeg);
+    exportOrProcessNetwork(OptionsToShareList.typeFtp);
   }
 
-  public void onMoreSocialNetworkClicked(FFmpeg ffmpeg) {
+  public void onMoreSocialNetworkClicked() {
     shareVideoViewReference.get().pauseVideoPlayerPreview();
-    exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork, ffmpeg);
+    exportOrProcessNetwork(OptionsToShareList.typeMoreSocialNetwork);
   }
 
-  protected void exportOrProcessNetwork(int typeNetworkSelected, FFmpeg ffmpeg) {
+  protected void exportOrProcessNetwork(int typeNetworkSelected) {
     if (!hasBeenProjectExported()) {
-      startExport(typeNetworkSelected, ffmpeg);
+      startExport(typeNetworkSelected);
     } else {
       processNetworkClicked(typeNetworkSelected, videoPath);
     }

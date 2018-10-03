@@ -25,9 +25,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -404,7 +401,6 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
         presenter.onAppPathsCheckSuccess(Constants.PATH_APP, Constants.PATH_APP_ANDROID, drawableFadeTransitionVideo);
         setupStartApp();
-        initFFmpeg();
     }
 
     @Override
@@ -552,36 +548,5 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
     private void setupAndTrackInit() throws CameraAccessException {
         setup();
         trackAppStartup();
-    }
-
-    private void initFFmpeg() {
-        FFmpeg ffmpeg = FFmpeg.getInstance(this);
-        try {
-            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
-
-                @Override
-                public void onStart() {
-                    Log.d(LOG_TAG, "initFFmpeg, start");
-                }
-
-                @Override
-                public void onFailure() {
-                    Log.d(LOG_TAG, "initFFmpeg, failure");
-                }
-
-                @Override
-                public void onSuccess() {
-                    Log.d(LOG_TAG, "initFFmpeg, success");
-                }
-
-                @Override
-                public void onFinish() {
-                    Log.d(LOG_TAG, "initFFmpeg, finish");
-                }
-            });
-        } catch (FFmpegNotSupportedException e) {
-            // Handle if FFmpeg is not supported by device
-            Log.d(LOG_TAG, "initFFmpeg, FFmpegNotSupportedException " + e.getMessage());
-        }
     }
 }
