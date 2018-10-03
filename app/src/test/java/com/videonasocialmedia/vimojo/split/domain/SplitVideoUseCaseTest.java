@@ -104,7 +104,8 @@ public class SplitVideoUseCaseTest {
   }
 
   private void getAProject() {
-    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
-            VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
+    currentProject = new Project(null, null, null,
+        new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.GOOD,
+            VideoFrameRate.FrameRate.FPS30));
   }
 }

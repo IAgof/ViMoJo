@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -36,9 +37,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
+
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
-    SeekBar.OnSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener {
+    SeekBar.OnSeekBarChangeListener{
 
     private static final String MUSIC_DETAIL_PROJECT_POSITION = "music_detail_project_position";
     private String MUSIC_DETAIL_POSITION_VOLUME = "sound_volume_position";
@@ -76,7 +79,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         ButterKnife.bind(this);
         initToolbar();
         restoreState(savedInstanceState);
-        videonaPlayer.setListener(this);
         seekBarVolume.setOnSeekBarChangeListener(this);
         seekBarVolume.setProgress(currentSoundVolumePosition);
     }
@@ -92,6 +94,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
             //TODO show snackbar with error message
         }
         presenter.updatePresenter(musicPath);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
     }
 
     @Override
@@ -227,12 +232,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Optional @OnClick(R.id.cancel_music)
     public void onCancelMusicClickListener() {
             goToMusicList();
-    }
-
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
-
     }
 
     @Override

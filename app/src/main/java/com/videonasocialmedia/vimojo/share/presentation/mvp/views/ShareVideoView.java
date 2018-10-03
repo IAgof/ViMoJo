@@ -52,4 +52,6 @@ public interface ShareVideoView {
   void showDialogVideoIsBeingSendingToPlatform();
 
   void successLoginAuth0();
+
+  void showDialogInstagramStoriesDuration();
 }

@@ -123,6 +123,25 @@
     </PreferenceCategory> -->
 
     <PreferenceCategory
+        android:key="@string/title_more_apps_section"
+        android:title="@string/title_more_apps_section">
+        <Preference
+            android:key="appVideona"
+            android:title="@string/app_videona">
+        </Preference>
+        <Preference
+            android:key="appKamarada"
+            android:title="@string/app_kamarada">
+        </Preference>
+        <Preference
+            android:key="appVimojo"
+            android:title="@string/app_vimojo">
+        </Preference>
+    </PreferenceCategory>
+
+
+
+    <PreferenceCategory
         android:key="moreInformation"
         android:title="@string/moreInformation">
         <Preference

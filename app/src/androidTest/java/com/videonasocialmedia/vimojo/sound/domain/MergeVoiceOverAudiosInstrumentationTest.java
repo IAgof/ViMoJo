@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.sound.domain;
 
 import android.media.MediaMetadataRetriever;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -76,7 +75,7 @@ public class MergeVoiceOverAudiosInstrumentationTest extends AssetManagerAndroid
   }
 
   private void getAProject() {
-    Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
+    Profile compositionProfile = new Profile(VideoResolution.Resolution.H_720P,
         VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
     ProjectInfo projectInfo = new ProjectInfo("Project title",
         "Project description", new ArrayList<>());

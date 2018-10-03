@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -43,10 +44,11 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_HIGH;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
-        VideonaPlayer.VideonaPlayerListener, SeekBar.OnSeekBarChangeListener {
+    SeekBar.OnSeekBarChangeListener {
     private static final String SPLIT_POSITION = "split_position";
     private static final String SPLIT_VIDEO_POSITION = "split_video_position";
 
@@ -91,7 +93,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         splitSeekBar.setOnSeekBarChangeListener(this);
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
 
-        videonaPlayer.setListener(this);
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
 
@@ -108,6 +109,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
         presenter.updatePresenter();
     }
 
@@ -281,15 +285,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void showText(String text, String position) {
-        videonaPlayer.setImageText(text, position);
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
-    }
-
-  @Override
   public void updateSplitSeekbar(int progress) {
     onProgressChanged(splitSeekBar, progress, true);
     splitSeekBar.setProgress(progress);

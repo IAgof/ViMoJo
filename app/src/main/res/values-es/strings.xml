@@ -78,6 +78,11 @@
     <string name="export_apply_watermark_resource_error">Error añadiendo marca de agua, recurso no encontrado</string>
     <string name="export_join_videos_error">Error juntando vídeos</string>
     <string name="export_wait_for_transcoding_error">Error en la adaptación de sus vídeos</string>
+    <string name="share_continue">Continuar</string>
+    <string name="share_cancel">Cancelar</string>
+    <string name="share_instagram_duration_warning">La duración de tu montaje final supera los 15
+        segundos. Instagram recortará tu video final. ¿Quieres continuar? Si no, no olvides
+        guardar tu vídeo en galería.</string>
 
     <!-- Editor Activity -->
     <string name="new_project">Nuevo proyecto</string>
@@ -120,7 +125,7 @@
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
     <string name="edit_text_hint_VideoEditText">Escribe aquí tu texto</string>
     <string name="edit">Editar</string>
-
+    <string name="edit_text_checkbox">Sombreado</string>
 
     <!-- Gallery activity -->
     <string name="galleryProjectActivityTitle">Proyectos</string>
@@ -293,6 +298,9 @@
     <!-- Watermark Settings -->
     <string name="title_watermark_section">Añadir marca de agua</string>
     <string name="title_watermark_preference">Marca de agua</string>
+
+    <!-- More apps -->
+    <string name="title_more_apps_section">Más aplicaciones</string>
 
     <!-- More info Settings -->
     <string name="aboutUsTitle">Sobre nosotros</string>

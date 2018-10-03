@@ -25,8 +25,14 @@ public class GetVideoFormatFromCurrentProjectUseCase {
         VideoResolution resolution = project.getProfile().getVideoResolution();
         VideoQuality quality = project.getProfile().getVideoQuality();
         VideoFrameRate frameRate = project.getProfile().getVideoFrameRate();
-        videoCameraFormat = new VideoCameraFormat(resolution.getWidth(), resolution.getHeight(),
-            quality.getVideoBitRate(), frameRate.getFrameRate());
+        int width = resolution.getWidth();
+        int height = resolution.getHeight();
+        if (height > width) {
+            height = width;
+            width = resolution.getHeight();
+        }
+        videoCameraFormat = new VideoCameraFormat(width, height, quality.getVideoBitRate(),
+            frameRate.getFrameRate());
         return videoCameraFormat;
     }
 

@@ -10,6 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
@@ -130,8 +131,7 @@ public class NewClipImporterTest {
         newClipImporterSpy.relaunchUnfinishedAdaptTasks(currentProject);
 
         Mockito.verify(newClipImporterSpy).adaptVideoToVideonaFormat(currentProject, video, position,
-                cameraRotation,
-                ++retries);
+                cameraRotation, ++retries);
         assertThat(videosToAdapt.get(0).getVideo().getIdentifier(), is(video.getIdentifier()));
     }
 

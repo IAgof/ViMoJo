@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -33,6 +34,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 
 /**
  * Created by ruth on 14/09/16.
@@ -97,6 +100,9 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
     }
 
     @Override
@@ -301,6 +307,11 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @Override
     public void newClipPlayed(int currentClipIndex) {
         videonaPlayer.setVideoVolume(videoVolumeMute);
+    }
+
+    @Override
+    public void playerReady() {
+        // Do nothing
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
@@ -25,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.MobileAds;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -123,7 +125,10 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
         setVersionCode();
         createPermissionListeners();
         Dexter.continuePendingRequestsIfPossible(compositePermissionsListener);
-
+        if (BuildConfig.FEATURE_SHOW_ADS) {
+            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+            MobileAds.initialize(this, getString(R.string.admob_app_id));
+        }
     }
 
     private boolean isBetaAppOutOfDate() {
@@ -434,6 +439,16 @@ public class InitAppActivity extends VimojoActivity implements InitAppView, OnIn
             mixpanel.getPeople().showGivenNotification(notification, this);
             mixpanel.getPeople().trackNotificationSeen(notification);
         }
+    }
+
+    @Override
+    public void screenOrientationPortrait() {
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
+    public void screenOrientationLandscape() {
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     /**

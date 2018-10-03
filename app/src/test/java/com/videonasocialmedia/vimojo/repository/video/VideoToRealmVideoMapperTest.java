@@ -34,6 +34,7 @@ public class VideoToRealmVideoMapperTest {
     video.tempPath = "tmp/path";
     video.setClipText("text");
     video.setClipTextPosition(TextEffect.TextPosition.CENTER.name());
+    video.setClipTextShadow(true);
     video.setTrimmedVideo(true);
     video.setStartTime(10);
     video.setStopTime(80);
@@ -49,6 +50,7 @@ public class VideoToRealmVideoMapperTest {
     assertThat(realmVideo.tempPath, is("tmp/path"));
     assertThat(realmVideo.volume, is(1f));
     assertThat(realmVideo.clipText, is("text"));
+    assertThat(realmVideo.clipTextShadow, is(true));
     assertThat(realmVideo.clipTextPosition, is(TextEffect.TextPosition.CENTER.name()));
     assertThat(realmVideo.isTextToVideoAdded, is(true));
     assertThat(realmVideo.isTrimmedVideo, is(true));

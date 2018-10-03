@@ -16,7 +16,6 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import org.junit.Before;
@@ -31,6 +30,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(PowerMockRunner.class)
 // TODO(jliarte): 17/10/16 a use case should be able to be tested without needing robolectric help!
 @PowerMockRunnerDelegate(RobolectricTestRunner.class)
+@Config(manifest= Config.NONE) // Warning running test relaunchExportCallsVideoRepositoryUpdate STANDARD_OUT WARNING: No manifest file found at ./AndroidManifest.xml.Falling back to the Android OS resources only. To remove this warning, annotate your test class with @Config(manifest=Config.NONE).
 @PrepareForTest({TextToDrawable.class})
 public class RelaunchTranscoderTempBackgroundUseCaseTest {
   @Mock TextToDrawable mockedDrawableGenerator;

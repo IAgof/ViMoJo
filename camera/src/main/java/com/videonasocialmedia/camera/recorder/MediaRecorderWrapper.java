@@ -220,15 +220,16 @@ public class MediaRecorderWrapper implements MediaRecorder.OnErrorListener, Medi
     }
 
     public boolean is720p(){
-      return (width == 1280 && height == 720);
+      return (width == 1280 && height == 720) || (width == 720 && height == 1280);
     }
 
     public boolean is1080p(){
-      return (width == 1920 && height == 1080);
+      return (width == 1920 && height == 1080) || (width == 1080 && height == 1920) ;
     }
 
     public boolean is4k(){
-      return ((width == 4096 || width == 3840) && height == 2160);
+      return ((width == 4096 || width == 3840) && height == 2160)
+          || (width == 2160 && (height == 4096 || height == 3840));
     }
 
   }

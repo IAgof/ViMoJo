@@ -154,11 +154,14 @@ public class EditorPresenter extends VimojoPresenter
     checkWatermark();
     checkVimojoStore();
     checkVimojoPlatform();
+    checkShowTutorial();
   }
 
-  private void checkVimojoPlatform() {
-    if (!BuildConfig.FEATURE_SHOW_LINK_VIMOJO_PLATFORM) {
-      editorActivityView.hideLinkToVimojoPlatform();
+  private void checkWatermark() {
+    if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
+      editorActivityView.watermarkFeatureAvailable();
+    } else {
+      editorActivityView.hideWatermarkSwitch();
     }
   }
 
@@ -172,11 +175,15 @@ public class EditorPresenter extends VimojoPresenter
     }
   }
 
-  private void checkWatermark() {
-    if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
-      editorActivityView.watermarkFeatureAvailable();
-    } else {
-      editorActivityView.hideWatermarkSwitch();
+  private void checkVimojoPlatform() {
+    if (!BuildConfig.FEATURE_SHOW_LINK_VIMOJO_PLATFORM) {
+      editorActivityView.hideLinkToVimojoPlatform();
+    }
+  }
+
+  private void checkShowTutorial() {
+    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+      editorActivityView.hideTutorialViews();
     }
   }
 
@@ -201,7 +208,8 @@ public class EditorPresenter extends VimojoPresenter
   private void setNewProject(String rootPath, String privatePath,
                              Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            getPreferenceWaterMark(), drawableFadeTransitionVideo);
+            getPreferenceWaterMark(), drawableFadeTransitionVideo,
+            BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectRepository.add(project);
     projectInstanceCache.setCurrentProject(project);
   }

@@ -93,7 +93,8 @@ public class GalleryProjectListPresenter {
   public void setNewProject(String rootPath, String privatePath,
                             Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            isWatermarkActivated(), drawableFadeTransitionVideo);
+            isWatermarkActivated(), drawableFadeTransitionVideo,
+            BuildConfig.FEATURE_VERTICAL_VIDEOS);
     projectRepository.add(project);
     projectInstanceCache.setCurrentProject(project);
   }

@@ -22,6 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -47,6 +48,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_HIGH;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoTrimActivity extends VimojoActivity implements TrimView,
@@ -122,6 +124,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     protected void onResume() {
         super.onResume();
         videonaPlayer.onShown(this);
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
         presenter.updatePresenter();
     }
 
@@ -323,11 +328,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         videonaPlayer.initPreview(currentPosition);
     }
 
-    @Override
-    public void showText(String text, String position) {
-        videonaPlayer.setImageText(text,position);
-    }
-
     private void initCurrentPosition() {
         // TODO(jliarte): 5/09/16 this will give problems with state restoring as in config changes, cause it overrides restored currentPosition
         if (currentPosition == -1) currentPosition = video.getStartTime();
@@ -433,6 +433,11 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     public void newClipPlayed(int currentClipIndex) {
       videonaPlayer.playPreview();
+    }
+
+    @Override
+    public void playerReady() {
+        // Do nothing
     }
 
     @Override

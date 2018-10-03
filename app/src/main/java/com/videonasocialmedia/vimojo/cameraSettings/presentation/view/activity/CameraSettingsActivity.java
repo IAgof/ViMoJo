@@ -3,13 +3,16 @@ package com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -41,6 +44,7 @@ public class CameraSettingsActivity extends VimojoActivity implements
   private CameraSettingsAdapter adapter;
   private List<CameraSettingViewModel> cameraSettingPackageList;
   public static final int NUM_COLUMNS_GRID_RECYCLER = 2;
+  public static final int NUM_COLUMNS_GRID_RECYCLER_VERTICAL = 1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +68,14 @@ public class CameraSettingsActivity extends VimojoActivity implements
     int orientation = LinearLayoutManager.VERTICAL;
     adapter = new CameraSettingsAdapter();
     adapter.setCameraSettingsListClickListener(this);
-    RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,
-        NUM_COLUMNS_GRID_RECYCLER, orientation, false);
+    RecyclerView.LayoutManager layoutManager;
+    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      layoutManager = new LinearLayoutManager(this, orientation, false);
+    } else {
+      layoutManager = new GridLayoutManager(this,
+          NUM_COLUMNS_GRID_RECYCLER, orientation, false);
+    }
+    recyclerCameraSettingsList.addItemDecoration(new DividerItemDecoration(this, orientation));
     recyclerCameraSettingsList.setLayoutManager(layoutManager);
     recyclerCameraSettingsList.setAdapter(adapter);
   }
@@ -93,6 +103,16 @@ public class CameraSettingsActivity extends VimojoActivity implements
       }
     });
     dialog.show();
+  }
+
+  @Override
+  public void screenOrientationPortrait() {
+    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+  }
+
+  @Override
+  public void screenOrientationLandscape() {
+    setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
   }
 
   @Override

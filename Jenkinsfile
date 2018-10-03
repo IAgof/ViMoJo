@@ -69,7 +69,13 @@ node {
     //sh "./gradlew crashlyticsUploadDistributionNbcDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     sh "./gradlew crashlyticsUploadDistributionElConfidencialDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
     sh "./gradlew crashlyticsUploadDistributionVanitatisDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
+    sh "./gradlew crashlyticsUploadDistributionVishowDebug  -PBUILD_NUMBER=${env.BUILD_NUMBER} --no-daemon"
   }
+}
+
+stage 'Clean build'
+node {
+  sh "./gradlew clean --no-daemon"
 }
 
 // Pulls the android flavor out of the branch name the branch is prepended with /QA_

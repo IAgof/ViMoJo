@@ -8,6 +8,7 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -86,8 +87,6 @@ public class SplitPreviewPresenter implements OnVideosRetrieved, OnSplitVideoLis
     public void onVideosRetrieved(List<Video> videoList) {
         splitView.showPreview(videoList);
         Video video = videoList.get(0);
-        if(video.hasText())
-            splitView.showText(video.getClipText(), video.getClipTextPosition());
         maxSeekBarSplit =  video.getStopTime() - video.getStartTime();
         splitView.initSplitView(video.getStartTime(), maxSeekBarSplit);
     }

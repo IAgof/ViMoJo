@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -30,11 +31,13 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
+
 /**
  *
  */
 public class MusicListActivity extends VimojoActivity implements MusicListView,
-        SoundRecyclerViewClickListener, VideonaPlayer.VideonaPlayerListener {
+        SoundRecyclerViewClickListener{
     private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
     @Inject MusicListPresenter presenter;
@@ -55,7 +58,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         getActivityPresentersComponent().inject(this);
         setupToolbar();
         restoreState(savedInstanceState);
-        videonaPlayer.setListener(this);
         initVideoListRecycler();
     }
 
@@ -64,6 +66,9 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
+        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
     }
 
     @Override
@@ -149,11 +154,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
         i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
         startActivity(i);
         finish();
-    }
-
-    @Override
-    public void newClipPlayed(int currentClipIndex) {
-
     }
 }
 

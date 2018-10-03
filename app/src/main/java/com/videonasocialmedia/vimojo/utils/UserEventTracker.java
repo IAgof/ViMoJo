@@ -100,7 +100,8 @@ public class UserEventTracker {
         }
     }
 
-    public void trackClipAddedText(String position, int textLength, Project project){
+    public void trackClipAddedText(String position, int textLength, boolean isShadowChecked,
+                                   Project project){
 
         JSONObject eventProperties = new JSONObject();
         try {
@@ -108,6 +109,7 @@ public class UserEventTracker {
                     AnalyticsConstants.EDIT_ACTION_TEXT);
             eventProperties.put(AnalyticsConstants.TEXT_POSITION, position);
             eventProperties.put(AnalyticsConstants.TEXT_LENGTH, textLength);
+            eventProperties.put(AnalyticsConstants.TEXT_SHADOW, isShadowChecked);
             addProjectEventProperties(project, eventProperties);
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
