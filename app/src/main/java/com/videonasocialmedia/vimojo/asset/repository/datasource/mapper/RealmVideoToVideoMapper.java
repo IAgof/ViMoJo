@@ -17,6 +17,7 @@ public class RealmVideoToVideoMapper implements Mapper<RealmVideo,Video> {
         video.setPosition(realmVideo.position);
         video.setClipText(realmVideo.clipText);
         video.setClipTextPosition(realmVideo.clipTextPosition);
+        video.setClipTextShadow(realmVideo.clipTextShadow);
         video.setTrimmedVideo(realmVideo.isTrimmedVideo);
         video.setStartTime(realmVideo.startTime);
         video.setStopTime(realmVideo.stopTime);

@@ -56,8 +56,9 @@ public class ModifyVideoTextAndPositionUseCase {
   }
 
     public ListenableFuture<Video> addTextToVideo(Project currentProject, final Video videoToEdit,
-                                                  String text, String textPosition) {
-      setVideoTextParams(videoToEdit, text, textPosition, currentProject);
+                                                  String text,
+                               String textPosition, boolean isShadowChecked) {
+      setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
       mediaRepository.update(videoToEdit); // TODO(jliarte): 13/09/18 needed because of text settings change
       return transcodeVideo(currentProject, videoToEdit, text, textPosition);
     }
@@ -66,7 +67,7 @@ public class ModifyVideoTextAndPositionUseCase {
     if (videoIsBeingAdapted(videoToEdit)) {
       ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
       videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
-              applyText(currentProject, videoToEdit, text, textPosition)));
+              applyText(currentProject, videoToEdit, text, textPosition, isShadowChecked)));
       return videoToEdit.getTranscodingTask();
     } else {
       return runTextTranscodingTask(videoToEdit, currentProject);
@@ -74,9 +75,10 @@ public class ModifyVideoTextAndPositionUseCase {
   }
 
   private Function<Video, Video> applyText(final Project currentProject, final Video videoToEdit,
-                                           final String text, final String textPosition) {
+                                           final String text, final String textPosition,
+                                           boolean isShadowChecked) {
     return input -> {
-      setVideoTextParams(videoToEdit, text, textPosition, currentProject);
+      setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
       mediaRepository.update(videoToEdit); // TODO(jliarte): 13/09/18 needed because of text settings change
       ListenableFuture<Video> task = runTextTranscodingTask(videoToEdit, currentProject);
       // TODO(jliarte): 15/09/17 check this and error propagation
@@ -119,10 +121,11 @@ public class ModifyVideoTextAndPositionUseCase {
   }
 
   private void setVideoTextParams(Video videoToEdit, String text, String textPosition,
-                                  Project currentProject) {
+                                  boolean isShadowChecked, Project currentProject) {
     videoToEdit.setClipText(text);
     videoToEdit.setClipTextPosition(textPosition);
     videoToEdit.setTempPath(currentProject.getProjectPathIntermediateFiles());
+    videoToEdit.setClipTextShadow(isShadowChecked);
   }
 
   private void handleTranscodingError(Video video, String message, Project currentProject) {

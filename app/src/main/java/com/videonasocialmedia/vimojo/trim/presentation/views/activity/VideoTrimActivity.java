@@ -432,6 +432,11 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     }
 
     @Override
+    public void playerReady() {
+        // Do nothing
+    }
+
+    @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         if (buttonSelectAdvanceLow.isChecked()) {
             showPlayerAdvanceLow();
