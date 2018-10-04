@@ -111,7 +111,6 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         Futures.addCallback(modifyVideoTextAndPositionUseCase
                 .addTextToVideo(currentProject, videoToEdit, text, textPositionSelected.name(),
                     isShadowChecked), new ClipTextResultCallback(), backgroundExecutor);
-
         userEventTracker.trackClipAddedText(textPositionSelected.name(), text.length(),
             isShadowChecked, currentProject);
     }

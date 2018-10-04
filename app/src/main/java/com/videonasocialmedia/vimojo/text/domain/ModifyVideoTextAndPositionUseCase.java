@@ -56,8 +56,8 @@ public class ModifyVideoTextAndPositionUseCase {
   }
 
     public ListenableFuture<Video> addTextToVideo(Project currentProject, final Video videoToEdit,
-                                                  String text, String textPosition,
-                                                  boolean isShadowChecked) {
+                                                  String text,
+                               String textPosition, boolean isShadowChecked) {
       setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
       mediaRepository.update(videoToEdit); // TODO(jliarte): 13/09/18 needed because of text settings change
       return transcodeVideo(currentProject, videoToEdit, text, textPosition, isShadowChecked);
