@@ -632,6 +632,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         case VMCompositionExportSession.EXPORT_STAGE_MIX_AUDIO_ERROR:
           dialog_message_export_error = R.string.export_mix_audio_error;
           break;
+        case VMCompositionExportSession.EXPORT_STAGE_APPLY_AUDIO_MIXED_ERROR:
+          dialog_message_export_error = R.string.export_apply_audio_mixed_error;
+          break;
         case VMCompositionExportSession.EXPORT_STAGE_APPLY_WATERMARK_RESOURCE_ERROR:
           dialog_message_export_error = R.string.export_apply_watermark_resource_error;
           break;

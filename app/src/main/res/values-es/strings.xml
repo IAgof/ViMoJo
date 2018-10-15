@@ -72,6 +72,7 @@
     <string name="export_mix_audio">Mezclando audio</string>
     <string name="export_mix_audio_error">Error mezclando audio</string>
     <string name="export_apply_audio_mixed">Procesando audio mezclado</string>
+    <string name="export_apply_audio_mixed_error">Error procesando audio mezclado</string>
     <string name="export_apply_watermark">Añadiendo marca de agua</string>
     <string name="export_apply_watermark_error">Error procesando marca de agua</string>
     <string name="export">Comenzando exportación</string>

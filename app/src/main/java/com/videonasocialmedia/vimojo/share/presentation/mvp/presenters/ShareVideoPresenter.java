@@ -196,7 +196,9 @@ public class ShareVideoPresenter extends VimojoPresenter {
   protected void startExport(int typeNetworkSelected) {
     shareVideoViewReference.get().showProgressDialogVideoExporting();
     isAppExportingProject = true;
-    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, new OnExportFinishedListener() {
+    String nativeLibPath = context.getApplicationInfo().nativeLibraryDir;
+    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, nativeLibPath,
+        new OnExportFinishedListener() {
       @Override
       public void onExportError(int error, Exception exception) {
         Crashlytics.log("Error exporting: " + error);

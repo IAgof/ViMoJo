@@ -162,10 +162,11 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     VideonaFormat videoFormat = new VideonaFormat(5000000, 1280, 720);
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
+    String nativeLibPath = "some/lib/path";
     ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
-
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
-    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, mockedExportListener);
+
+    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, nativeLibPath, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     assertThat(transcodingTask, notNullValue());
@@ -196,13 +197,14 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     VideonaFormat videoFormat = new VideonaFormat(5000000, 1280, 720);
     String destPath = testPath + "/res.mp4";
     String destPath2 = testPath + "/res2.mp4";
+    String nativeLibPath = "some/lib/path";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
     ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
-
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);
-    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, mockedExportListener);
+
+    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, nativeLibPath, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     ListenableFuture<Video> transcodingTask2 = video2.getTranscodingTask();
@@ -245,19 +247,20 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     VideonaFormat videoFormat = new VideonaFormat(5000000, 1280, 720);
     String destPath = testPath + "/res.mp4";
     String destPath2 = testPath + "/res2.mp4";
+    String nativeLibPath = "some/lib/path";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
     ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
             new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
-
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
     video2.setTempPath(testPath);
     video.setTempPath(testPath);
     modifyVideoDurationUseCase.trimVideo(video, 0, 500, project);
-    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, mockedExportListener);
+
+    exportProjectUseCase.export(project, Constants.PATH_WATERMARK, nativeLibPath, mockedExportListener);
 
     ListenableFuture<Video> transcodingTask_b = video.getTranscodingTask();
     ListenableFuture<Video> transcodingTask2 = video2.getTranscodingTask();

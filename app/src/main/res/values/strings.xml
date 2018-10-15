@@ -70,6 +70,7 @@
     <string name="export_mix_audio">Mixing audio</string>
     <string name="export_mix_audio_error">Error mixing audio</string>
     <string name="export_apply_audio_mixed">Applying mixed audio</string>
+    <string name="export_apply_audio_mixed_error">Error applying mixed audio</string>
     <string name="export_apply_watermark">Applying watermark</string>
     <string name="export_apply_watermark_error">Error applying watermark</string>
     <string name="export">Starting export</string>
