@@ -1,9 +1,7 @@
 package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 
-import android.content.SharedPreferences;
-
-import com.videonasocialmedia.vimojo.BuildConfig;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
@@ -11,7 +9,10 @@ import android.util.Range;
 import android.util.Size;
 
 import com.videonasocialmedia.camera.utils.Camera2Settings;
+import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
+import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
 import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -20,17 +21,14 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
-import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
-import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_24_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_25_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting.CAMERA_SETTING_FRAME_RATE_30_ID;
@@ -40,13 +38,16 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720;
+import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_V_720;
+import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 
 /**
  * Created by jliarte on 22/10/16.
  */
-public class InitAppPresenter {
+public class InitAppPresenter extends VimojoPresenter {
   private final Context context;
   private final InitAppView initAppView;
   private final CameraSettingsRepository cameraSettingsRepository;
@@ -215,5 +216,10 @@ public class InitAppPresenter {
     } else {
       initAppView.screenOrientationLandscape();
     }
+    executeUseCaseCall(() -> deleteCache());
+  }
+
+  protected void deleteCache() {
+    FileUtils.cleanDirectory(context.getCacheDir());
   }
 }

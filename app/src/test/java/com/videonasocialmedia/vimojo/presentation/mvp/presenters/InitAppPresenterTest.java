@@ -3,6 +3,9 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
@@ -19,13 +22,18 @@ import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -58,6 +66,15 @@ public class InitAppPresenterTest {
     initAppPresenter.init();
 
     verify(mockedRunSyncAdapterHelper).runSyncAdapterPeriodically();
+  }
+
+  @Test
+  public void initAppCallsDeleteCacheDir() {
+    InitAppPresenter spyInitAppPresenter = spy(getInitAppPresenter());
+
+    spyInitAppPresenter.init();
+
+    verify(spyInitAppPresenter).deleteCache();
   }
 
   private InitAppPresenter getInitAppPresenter() {
