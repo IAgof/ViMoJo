@@ -95,9 +95,6 @@ public class UserAuth0Helper {
     extraConfigParams.put(AUTH0_PARAMETER_MAIN_COLOR, String.format("#%06x",
         ContextCompat.getColor(context, R.color.colorAccent) & 0xffffff));
     extraConfigParams.put(AUTH0_PARAMETER_FLAVOUR, BuildConfig.FLAVOR);
-    // TODO: 29/8/18 Move prehisteric user check to initRegisterLoginPresenter when we only have one access to perform login
-    extraConfigParams.put(AUTH0_PREHISTERIC_USER,
-        sharedPreferences.getBoolean(ConfigPreferences.PREHISTERIC_USER, false));
     //Use the account in the API clients
     WebAuthProvider.init(account)
         .withScheme("https")
@@ -152,7 +149,9 @@ public class UserAuth0Helper {
             // UserId
             String userId = null;
             try {
-              userId = userApiClient.getUserId(credentials.getAccessToken()).getId();
+              // TODO: 29/8/18 Move prehisteric user check to initRegisterLoginPresenter when we only have one access to perform login
+              boolean prehisteric = sharedPreferences.getBoolean(ConfigPreferences.PREHISTERIC_USER, false);
+              userId = userApiClient.getUserId(credentials.getAccessToken(), prehisteric).getId();
               registerAccount(userProfile.getEmail(), "fakePassword",
                   "fakeToken", userId);
               // TODO: 29/8/18 Move tracking to initRegisterLoginPresenter when we only have one access to perform login

@@ -113,7 +113,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
                 .isVideoFadeTransitionActivated(currentProject)) {
             musicDetailView.setVideoFadeTransitionAmongVideos();
         }
-        if(amIVerticalApp) {
+        if (amIVerticalApp) {
             musicDetailView.setAspectRatioVerticalVideos();
         }
     }
@@ -198,7 +198,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements OnVideosRet
     @Override
     public void onVideosRetrieved(List<Video> videoList) {
         musicDetailView.bindVideoList(videoList);
-        if(currentProject.hasVoiceOver()){
+        if (currentProject.hasVoiceOver()){
             retrieveVoiceOver();
         }
     }

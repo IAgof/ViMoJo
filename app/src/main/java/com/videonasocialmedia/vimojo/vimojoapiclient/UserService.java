@@ -7,8 +7,12 @@ package com.videonasocialmedia.vimojo.vimojoapiclient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 
+import java.util.HashMap;
+
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 /**
@@ -19,5 +23,5 @@ public interface UserService {
   Call<UserDto> getUser(@Path("id") String id);
 
   @GET("user/getId")
-  Call<UserId> getUserId();
+  Call<UserId> getUserId(@PartMap HashMap<String, RequestBody> requestBodyHashMap);
 }

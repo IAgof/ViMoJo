@@ -9,9 +9,12 @@ import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserDto;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserId;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 
 /**
@@ -20,6 +23,8 @@ import retrofit2.Response;
  * <p>Handles user vimojo API calls.</p>
  */
 public class UserApiClient extends VimojoApiClient {
+  private static final String USER_API_PREHISTERIC = "prehisteric";
+
   @Inject
   public UserApiClient() {
   }
@@ -47,10 +52,15 @@ public class UserApiClient extends VimojoApiClient {
     return null;
   }
 
-  public UserId getUserId(String token) throws VimojoApiException {
+  public UserId getUserId(String token, boolean prehisteric) throws VimojoApiException {
     UserService userService = getService(UserService.class, token);
     try {
-      Response<UserId> response = userService.getUserId().execute();
+      HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
+      if (prehisteric) {
+        requestBodyHashMap.put(USER_API_PREHISTERIC,
+                RequestBody.create(MultipartBody.FORM, "true"));
+      }
+      Response<UserId> response = userService.getUserId(requestBodyHashMap).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {

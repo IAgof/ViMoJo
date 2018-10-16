@@ -448,7 +448,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     implementation 'com.google.guava:guava:19.0'
-    implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
+    implementation 'com.squareup.tape2:tape:2.0.0-beta1'
     implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation 'com.auth0.android:auth0:1.13.0'
     implementation 'com.google.firebase:firebase-ads:11.8.0'
