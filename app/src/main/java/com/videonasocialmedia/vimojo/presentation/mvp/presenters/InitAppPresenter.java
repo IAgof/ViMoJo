@@ -216,10 +216,10 @@ public class InitAppPresenter extends VimojoPresenter {
     } else {
       initAppView.screenOrientationLandscape();
     }
-    executeUseCaseCall(() -> deleteCache());
+    deleteCache();
   }
 
   protected void deleteCache() {
-    FileUtils.cleanDirectory(context.getCacheDir());
+    executeUseCaseCall(() -> FileUtils.cleanDirectory(context.getCacheDir()));
   }
 }
