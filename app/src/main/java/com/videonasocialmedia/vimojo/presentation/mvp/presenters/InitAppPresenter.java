@@ -44,6 +44,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.BACK_CAMERA_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 
+ashlytics.android.Crashlytics;
+
 /**
  * Created by jliarte on 22/10/16.
  */
