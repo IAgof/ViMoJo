@@ -14,8 +14,6 @@ public interface EditorActivityView {
 
     void itemDarkThemePurchased();
 
-    void itemWatermarkPurchased();
-
     void showWatermarkSwitch(boolean watermarkIsSelected);
 
     void hideWatermarkSwitch();

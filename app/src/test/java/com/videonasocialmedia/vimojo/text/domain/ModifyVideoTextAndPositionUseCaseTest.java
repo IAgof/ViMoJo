@@ -77,7 +77,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
     spyModifyVideoTextAndPositionUseCase.transcoderHelper = new TranscoderHelper(mockedDrawableGenerator,
             mockedMediaTranscoder);
 
-    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition());
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(), video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedMediaTranscoder).transcodeTrimAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -102,7 +102,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
     spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(),
-        video.getClipTextPosition());
+        video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -124,7 +124,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             mockedMediaTranscoder);
 
     spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(),
-        video.getClipTextPosition());
+        video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedMediaTranscoder).transcodeAndOverlayImageToVideo(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -150,7 +150,7 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
     spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, video.getClipText(),
-        video.getClipTextPosition());
+        video.getClipTextPosition(), video.hasClipTextShadow());
 
     verify(mockedTranscoderHelper).updateIntermediateFile(
             eq(currentProject.getVMComposition().getDrawableFadeTransitionVideo()),
@@ -174,7 +174,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
             eq(currentProject.getVMComposition().isAudioFadeTransitionActivated()), eq(video),
             any(VideonaFormat.class), eq(currentProject.getProjectPathIntermediateFileAudioFade()));
 
-    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, "text", textPosition);
+    spyModifyVideoTextAndPositionUseCase.addTextToVideo(currentProject, video, "text", textPosition,
+        video.hasClipTextShadow());
 
     verify(mockedMediaRepository, atLeastOnce()).update(video);
     assertThat(video.getClipText(), is("text"));
@@ -199,7 +200,8 @@ public class ModifyVideoTextAndPositionUseCaseTest {
   }
 
   private void getAProject() {
-    currentProject = new Project(null, null, null, new Profile(VideoResolution.Resolution.HD720,
+    currentProject = new Project(null, null, null,
+        new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.GOOD, VideoFrameRate.FrameRate.FPS30));
   }
 

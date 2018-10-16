@@ -1,7 +1,6 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,7 +35,6 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.a
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
-import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
@@ -69,8 +67,8 @@ public class SettingsFragment extends PreferenceFragment implements
   protected SharedPreferences.Editor editor;
   protected MixpanelAPI mixpanel;
   private boolean darkThemePurchased = false;
-  private boolean watermarkPurchased = false;
   private boolean vimojoStoreAvailable = false;
+  private boolean showWatermarkSwitch = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -256,26 +254,19 @@ public class SettingsFragment extends PreferenceFragment implements
   }
 
   @Override
-  public void itemWatermarkPurchased() {
-    watermarkPurchased = true;
-    updateIconLockItemsInAPP(watermarkSwitchPref, watermarkPurchased);
+  public void setVimojoStoreAvailable() {
+    vimojoStoreAvailable = true;
   }
 
   @Override
-  public void setVimojoStoreAvailable() {
-    vimojoStoreAvailable = true;
+  public void setWatermarkSwitch() {
+    showWatermarkSwitch = true;
   }
 
   @Override
   public void deactivateDarkTheme() {
     darkThemePurchased = false;
     themeappSwitchPref.setChecked(false);
-  }
-
-  @Override
-  public void activateWatermark() {
-    watermarkPurchased = false;
-    watermarkSwitchPref.setChecked(true);
   }
 
   @Override
@@ -412,7 +403,7 @@ public class SettingsFragment extends PreferenceFragment implements
   }
 
   private boolean isWatermarkAvailable() {
-    return watermarkPurchased || !vimojoStoreAvailable;
+    return showWatermarkSwitch;
   }
 
   private void restartActivity() {

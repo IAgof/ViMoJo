@@ -93,11 +93,6 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     public void onVideosRetrieved(List<Video> videoList) {
         splitView.showPreview(videoList);
         Video video = videoList.get(0);
-        if(video.hasText()) {
-            VideoResolution videoResolution = currentProject.getProfile().getVideoResolution();
-            splitView.showText(video.getClipText(), video.getClipTextPosition(),
-                videoResolution.getWidth(), videoResolution.getHeight());
-        }
         maxSeekBarSplit =  video.getStopTime() - video.getStartTime();
         splitView.initSplitView(video.getStartTime(), maxSeekBarSplit);
     }

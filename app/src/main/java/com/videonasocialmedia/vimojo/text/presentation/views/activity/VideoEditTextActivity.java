@@ -1,23 +1,24 @@
 package com.videonasocialmedia.vimojo.text.presentation.views.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
@@ -25,7 +26,6 @@ import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.vimojo.text.presentation.views.customviews.MaxCharPerLineInputFilter;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
@@ -47,19 +48,15 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  */
 public class VideoEditTextActivity extends VimojoActivity implements EditTextView,
         VideonaPlayer.VideonaPlayerListener {
-    private final int MAX_CHARS_PER_LINE = 20;
-    private final int MAX_LINES = 2;
+    private static String LOG_TAG = VideoEditTextActivity.class.getName();
     private final String STATE_BUTTON_TOP = "state_button_top";
     private final String STATE_BUTTON_CENTER = "state_button_center";
     private final String STATE_BUTTON_BOTTOM ="state_button_bottom" ;
     private final String VIDEO_POSITION = "video_position";
     private final String CURRENT_TEXT = "current_text";
     private final String THEME_DARK = "dark";
-    boolean hasTypedMoreThanTwoLines = false;
 
     @Inject EditTextPreviewPresenter presenter;
-
-    private boolean stateWasRestored = false;
 
     @BindView(R.id.text_activityText)
     EditText clipText;
@@ -71,15 +68,15 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     ImageButton button_editText_top;
     @BindView(R.id.button_editText_bottom)
     ImageButton button_ediText_bottom;
-    @BindView(R.id.imageVideoText)
-    ImageView image_view_text;
     @BindView(R.id.button_ok_or_edit_text)
     Button buttonOkOrEditText;
+    @BindView(R.id.edit_text_checkbox)
+    CheckBox checkboxShadow;
 
     private Video video;
     int videoIndexOnTrack;
     private int currentPosition = 0;
-    private String typedText;
+    private String typedText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +93,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         presenter.updateColorButton();
         presenter.updateColorText();
-        stateWasRestored = false;
         button_editText_top.setSelected(false);
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
@@ -114,8 +110,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
-        clipText.requestFocus();
-        showKeyboard();
     }
 
     @Override
@@ -137,14 +131,12 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
             button_ediText_bottom.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_BOTTOM));
             button_editText_center.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_CENTER));
             button_editText_top.setSelected(savedInstanceState.getBoolean(STATE_BUTTON_TOP));
-            stateWasRestored = true;
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stateWasRestored = true;
     }
 
     @Override
@@ -186,41 +178,23 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_top)
     public void onClickAddTextTop(){
-        paintPositionEditText(TextEffect.TextPosition.TOP);
-        createDrawableFromText(typedText, TextEffect.TextPosition.TOP);
+        paintPositionEditText(TextEffect.TextPosition.TOP.name());
+        updateTextInPreview();
         hideKeyboard(clipText);
     }
 
     @OnClick(R.id.button_editText_center)
     public void onClickAddTextCenter() {
-        paintPositionEditText(TextEffect.TextPosition.CENTER);
-        createDrawableFromText(typedText, TextEffect.TextPosition.CENTER);
+        paintPositionEditText(TextEffect.TextPosition.CENTER.name());
+        updateTextInPreview();
         hideKeyboard(clipText);
     }
 
     @OnClick(R.id.button_editText_bottom)
     public void onClickAddTextBottom() {
-        paintPositionEditText(TextEffect.TextPosition.BOTTOM);
-        createDrawableFromText(typedText, TextEffect.TextPosition.BOTTOM);
+        paintPositionEditText(TextEffect.TextPosition.BOTTOM.name());
+        updateTextInPreview();
         hideKeyboard(clipText);
-    }
-
-    private void createDrawableFromText(String text, TextEffect.TextPosition textPosition) {
-        text = getTextFromEditText();
-        // TODO: 6/9/18 Implement edit text feature for vertical videos app and move logic to presenters
-        /**
-         * if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            if (videonaPlayer.getWidth() > 0) {
-                presenter.createDrawableWithText(text, textPosition.name(),
-                    videonaPlayer.getVideoPreview().getWidth(),
-                    videonaPlayer.getVideoPreview().getHeight());
-            }
-        } else {
-            presenter.createDrawableWithText(text, textPosition.name(),
-                Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
-        }*/
-        presenter.createDrawableWithText(text, textPosition.name(),
-            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
     @NonNull
@@ -228,18 +202,18 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         return clipText.getText().toString();
     }
 
-    public void paintPositionEditText(TextEffect.TextPosition position) {
-        if (position == TextEffect.TextPosition.BOTTOM) {
+    public void paintPositionEditText(String position) {
+        if (position.equals(TextEffect.TextPosition.BOTTOM.name())) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(true);
         }
-        if (position == TextEffect.TextPosition.CENTER) {
+        if (position.equals(TextEffect.TextPosition.CENTER.name())) {
             button_editText_top.setSelected(false);
             button_editText_center.setSelected(true);
             button_ediText_bottom.setSelected(false);
         }
-        if (position == TextEffect.TextPosition.TOP) {
+        if (position.equals(TextEffect.TextPosition.TOP.name())) {
             button_editText_top.setSelected(true);
             button_editText_center.setSelected(false);
             button_ediText_bottom.setSelected(false);
@@ -304,39 +278,16 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         ArrayList<Video> clipList = new ArrayList<>();
         clipList.add(video);
         if (video.hasText()) {
-            initTextToVideoAdded(video.getClipText(), video.getClipTextPosition());
-            video.setClipText("");
+            clipText.setText(video.getClipText());
+            paintPositionEditText(video.getClipTextPosition());
         }
         videonaPlayer.initPreviewLists(clipList);
         videonaPlayer.initPreview(currentPosition);
-        MaxCharPerLineInputFilter.applyAutoWrap(clipText, MAX_CHARS_PER_LINE);
-        onTextChanged();
     }
 
     @Override
     public void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showText(Drawable drawable) {
-       image_view_text.setImageDrawable(drawable);
-    }
-
-    @Override
-    public void initTextToVideoAdded(String text, String position) {
-        if (stateWasRestored) {
-            position = getTextPositionSelected().name();
-            typedText = getTextFromEditText();
-            stateWasRestored = false;
-        } else {
-            clipText.setText(text);
-        }
-        TextEffect.TextPosition positionText = TextToDrawable.getTypePositionFromString(position);
-        paintPositionEditText(positionText);
-        if (videonaPlayer != null) {
-            createDrawableFromText(typedText, positionText);
-        }
     }
 
     @Override
@@ -365,6 +316,26 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
+    public void setCheckboxShadow(boolean shadowActivated) {
+        checkboxShadow.setChecked(shadowActivated);
+    }
+
+    private void updateTextInPreview() {
+        Log.d(LOG_TAG, "updateTextInPreview ");
+        String textPosition = getTextPositionSelected().name();
+        String text = getTextFromEditText();
+        videonaPlayer.setImageText(text, textPosition, checkboxShadow.isChecked(),
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    }
+
+
+    @OnCheckedChanged(R.id.edit_text_checkbox)
+    public void onCheckboxShadowClicked(CompoundButton button, boolean checked) {
+        presenter.setCheckboxShadow(checked);
+        updateTextInPreview();
+    }
+
+    @Override
     public void setAspectRatioVerticalVideos() {
         videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
@@ -383,37 +354,18 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     public void newClipPlayed(int currentClipIndex) {
     }
 
+    @Override
+    public void playerReady() {
+        updateTextInPreview();
+        clipText.requestFocus();
+        showKeyboard();
+    }
+
     @OnTextChanged(R.id.text_activityText)
     void onTextChanged() {
         typedText = getTextFromEditText();
-        updateTextinPreview();
-
-        if (null != clipText.getLayout() && clipText.getLayout().getLineCount() > MAX_LINES) {
-            if (!hasTypedMoreThanTwoLines){
-                showError(getString(R.string.error_videoEdit));
-                hasTypedMoreThanTwoLines =true;
-                clipText.setTextColor(Color.RED);
-            }
-        } else {
-            hasTypedMoreThanTwoLines =false;
-            presenter.updateColorText();
-        }
-    }
-
-
-    private void updateTextinPreview() {
-        if (button_editText_top.isSelected()) {
-            createDrawableFromText(typedText, TextEffect.TextPosition.TOP);
-            return;
-        }
-        if (button_editText_center.isSelected()) {
-            createDrawableFromText(typedText, TextEffect.TextPosition.CENTER);
-            return;
-        }
-        if (button_ediText_bottom.isSelected()) {
-            createDrawableFromText(typedText, TextEffect.TextPosition.BOTTOM);
-            return;
-        }
+        updateTextInPreview();
+        presenter.updateColorText();
     }
 
     public TextEffect.TextPosition getTextPositionSelected() {

@@ -1,3 +1,12 @@
+v0.20.7
+- Edit text screen, added checkbox to select shadow in text over video.
+
+v0.20.6
+- Edit text screen, remove two lines and 20 characters limitations
+
+v0.20.5
+- Update music and watermark resources.
+
 v0.20.4
 - Fixed music not playing problem in all edit views
 - Fixed login problems

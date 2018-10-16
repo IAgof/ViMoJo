@@ -21,7 +21,8 @@ public class GetAudioFromProjectUseCase {
     private void getItemsOnAudioTrack(Project project, GetMusicFromProjectCallback listener,
                                       int indexAudioTrack) {
         Music music = null;
-        if (project.getAudioTracks().get(indexAudioTrack).getItems().size() > 0) {
+        if (project.getAudioTracks().size() > 0 &&
+            project.getAudioTracks().get(indexAudioTrack).getItems().size() > 0) {
             music = (Music) project.getAudioTracks().get(indexAudioTrack).getItems().get(0);
         }
         listener.onMusicRetrieved(music);

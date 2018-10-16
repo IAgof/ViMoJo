@@ -88,7 +88,8 @@ public class FragmentPresentersModule {
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
           @Named("hideTransitionPreference") boolean hideTransitionPreference,
           @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
-      BackgroundExecutor backgroundExecutor) {
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          BackgroundExecutor backgroundExecutor) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
             getMediaListFromProjectUseCase,
@@ -100,7 +101,8 @@ public class FragmentPresentersModule {
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
             uploadDataSource, projectInstanceCache, getAccount, userEventTracker, updateComposition,
         vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
-            ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference, backgroundExecutor);
+            ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference,
+        watermarkIsForced, backgroundExecutor);
   }
 
   @Provides

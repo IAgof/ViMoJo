@@ -19,8 +19,6 @@ public interface SplitView {
 
     void showError(int stringResourceId);
 
-    void showText(String text, String position, int width, int height);
-
     void updateSplitSeekbar(int progress);
 
     void updateProject();

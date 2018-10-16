@@ -101,7 +101,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   VideonaPlayerExo videonaPlayer;
 
   private boolean darkThemePurchased = false;
-  private boolean watermarkPurchased = false;
   CircleImageView imageProjectThumb;
   TextView projectName;
   TextView projectDate;
@@ -115,7 +114,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 editorPresenter.switchPreference(isChecked, ConfigPreferences.WATERMARK);
               } else {
                 watermarkSwitch.setChecked(true);
-                navigateTo(VimojoStoreActivity.class);
               }
             }
           };
@@ -136,6 +134,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   protected String videoExportedPath;
   protected boolean projectHasBeenExported = false;
   private int currentPlayerPosition = 0;
+  private boolean showWatermarkSwitch;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -365,7 +364,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   private boolean isWatermarkAvailable() {
-    return watermarkPurchased || !isVimojoStoreAvailable;
+    return showWatermarkSwitch;
   }
 
   private void updateNavigationIcon(int identifier, int resourceId) {
@@ -406,18 +405,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void itemWatermarkPurchased() {
-    watermarkPurchased = true;
-    updateNavigationIcon(R.id.switch_watermark, R.drawable.ic_unlocked);
-  }
-
-  @Override
   public void showWatermarkSwitch(boolean watermarkIsSelected) {
     runOnUiThread(() -> {
       watermarkSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.switch_watermark)
               .getActionView();
+      showWatermarkSwitch = true;
       if (watermarkSwitch != null) {
-        watermarkSwitch.setOnCheckedChangeListener(null);
         watermarkSwitch.setChecked(watermarkIsSelected);
         watermarkSwitch.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
       }
@@ -505,7 +498,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void activateWatermark() {
-    watermarkSwitch.setOnCheckedChangeListener(null);
     watermarkSwitch.setChecked(true);
     watermarkSwitch.setOnCheckedChangeListener(watermarkOnCheckedChangeListener);
   }
@@ -600,6 +592,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     if (isVideoMute) {
       videonaPlayer.setVideoVolume(VOLUME_MUTE);
     }
+  }
+
+
+  @Override
+  public void playerReady() {
+    // Do nothing
   }
 
   private void updateCurrentProjectThumb(String path) {

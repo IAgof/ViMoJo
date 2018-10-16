@@ -324,11 +324,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
         videonaPlayer.initPreview(currentPosition);
     }
 
-    @Override
-    public void showText(String text, String position, int width, int height) {
-        videonaPlayer.setImageText(text,position, width, height);
-    }
-
     private void initCurrentPosition() {
         // TODO(jliarte): 5/09/16 this will give problems with state restoring as in config changes, cause it overrides restored currentPosition
         if (currentPosition == -1) currentPosition = video.getStartTime();
@@ -434,6 +429,11 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView,
     @Override
     public void newClipPlayed(int currentClipIndex) {
       videonaPlayer.playPreview();
+    }
+
+    @Override
+    public void playerReady() {
+        // Do nothing
     }
 
     @Override

@@ -103,18 +103,16 @@ public class Constants {
 
     public enum MEMORY_STATUS {CRITICAL, MEDIUM, OKAY;}
 
-    public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
-
+  public static final float MIN_TRIM_OFFSET = 0.35f; //350ms
   public static final float MS_CORRECTION_FACTOR = 1000f;
-
   public static final int ADVANCE_PLAYER_PRECISION_LOW = 300;
-
   public static final int ADVANCE_PLAYER_PRECISION_MEDIUM = 600;
   public static final int ADVANCE_PLAYER_PRECISION_HIGH = 1200;
+
   public static final String IN_APP_BILLING_ITEM_WATERMARK = "inappitem_watermark";
   public static final String IN_APP_BILLING_ITEM_DARK_THEME = "inappitem_darktheme";
-  public static final boolean DEFAULT_THEME_DARK_STATE = false;
 
+  public static final boolean DEFAULT_THEME_DARK_STATE = false;
   public static final boolean DEFAULT_WATERMARK_STATE = true;
   public static final String DEFAULT_CAMERA_SETTING_QUALITY = CameraSettings.CAMERA_SETTING_QUALITY_16;
 

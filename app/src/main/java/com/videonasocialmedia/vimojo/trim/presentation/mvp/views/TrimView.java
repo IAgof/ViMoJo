@@ -27,8 +27,6 @@ public interface TrimView {
 
     void showPreview(List<Video> movieList);
 
-    void showText(String text, String position, int width, int height);
-
     void showError(String message);
 
     void updateStartTrimmingRangeSeekBar(float minValue);

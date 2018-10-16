@@ -19,6 +19,7 @@ public class RealmVideo extends RealmObject {
 //    public int fileDuration;
     public String clipText;
     public String clipTextPosition;
+    public boolean clipTextShadow;
     public boolean isTextToVideoAdded = false;
     public boolean isTrimmedVideo = false;
     public int startTime;
@@ -30,7 +31,7 @@ public class RealmVideo extends RealmObject {
     }
 
     public RealmVideo(String uuid, int position, String mediaPath, float volume, String tempPath,
-                      String clipText, String clipTextPosition,
+                      String clipText, String clipTextPosition, boolean clipTextShadow,
                       boolean textToVideoAdded, boolean trimmedVideo, int startTime, int stopTime,
                       String videoError, boolean isTranscodingTempFileFinished) {
         this.uuid = uuid;
@@ -40,6 +41,7 @@ public class RealmVideo extends RealmObject {
         this.tempPath = tempPath;
         this.clipText = clipText;
         this.clipTextPosition = clipTextPosition;
+        this.clipTextShadow = clipTextShadow;
         this.isTextToVideoAdded = textToVideoAdded;
         this.isTrimmedVideo = trimmedVideo;
         this.startTime = startTime;

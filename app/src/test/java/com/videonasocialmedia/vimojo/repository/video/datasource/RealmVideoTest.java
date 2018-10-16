@@ -33,6 +33,7 @@ public class RealmVideoTest {
     realmVideo.tempPath = "tmp/path";
     realmVideo.clipText = "text";
     realmVideo.clipTextPosition = TextEffect.TextPosition.CENTER.name();
+    realmVideo.clipTextShadow = false;
     realmVideo.isTextToVideoAdded = false;
     realmVideo.isTrimmedVideo = false;
     realmVideo.startTime = 1;
@@ -43,6 +44,7 @@ public class RealmVideoTest {
     assertThat(realmVideo.tempPath, is("tmp/path"));
     assertThat(realmVideo.clipText, is("text"));
     assertThat(realmVideo.clipTextPosition, is(TextEffect.TextPosition.CENTER.name()));
+    assertThat(realmVideo.clipTextShadow, is(false));
     assertThat(realmVideo.isTextToVideoAdded, is(false));
     assertThat(realmVideo.isTrimmedVideo, is(false));
     assertThat(realmVideo.startTime, is(1));
