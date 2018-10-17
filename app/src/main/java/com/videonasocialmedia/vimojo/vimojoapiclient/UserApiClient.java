@@ -23,7 +23,6 @@ import retrofit2.Response;
  * <p>Handles user vimojo API calls.</p>
  */
 public class UserApiClient extends VimojoApiClient {
-  private static final String USER_API_PREHISTERIC = "prehisteric";
 
   @Inject
   public UserApiClient() {
@@ -55,12 +54,7 @@ public class UserApiClient extends VimojoApiClient {
   public UserId getUserId(String token, boolean prehisteric) throws VimojoApiException {
     UserService userService = getService(UserService.class, token);
     try {
-      HashMap<String, RequestBody> requestBodyHashMap = new HashMap<>();
-      if (prehisteric) {
-        requestBodyHashMap.put(USER_API_PREHISTERIC,
-                RequestBody.create(MultipartBody.FORM, "true"));
-      }
-      Response<UserId> response = userService.getUserId(requestBodyHashMap).execute();
+      Response<UserId> response = userService.getUserId(String.valueOf(prehisteric)).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {

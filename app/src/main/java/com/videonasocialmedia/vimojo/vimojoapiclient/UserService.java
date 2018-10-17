@@ -14,6 +14,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Class describing user services.
@@ -23,5 +24,5 @@ public interface UserService {
   Call<UserDto> getUser(@Path("id") String id);
 
   @GET("user/getId")
-  Call<UserId> getUserId(@PartMap HashMap<String, RequestBody> requestBodyHashMap);
+  Call<UserId> getUserId(@Query("prehisteric") String prehisteric);
 }
