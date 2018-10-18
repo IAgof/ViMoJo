@@ -96,10 +96,10 @@ public class ShareVideoPresenterTest {
     private String videoExportedPath = "videoExportedPath";
     @Mock UpdateComposition mockedUpdateComposition;
     @Mock FetchUserFeatures mockedFetchUserFeatures;
-    private boolean vimojoPlatformAvailable;
     private boolean ftpPublishingAvailable;
     private boolean showAds;
     private boolean showSocialNetworksDecision;
+    private boolean uploadToPlatformAvailable;
     @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
@@ -132,9 +132,9 @@ public class ShareVideoPresenterTest {
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase, mockedUploadToPlatform,
                 mockedRunSyncAdapterHelper, mockedProjectInstanceCache, mockedUserAuth0Helper,
-                mockedUpdateComposition, mockedFetchUserFeatures, vimojoPlatformAvailable,
+                mockedUpdateComposition, mockedFetchUserFeatures,
                 ftpPublishingAvailable, showAds, showSocialNetworksDecision,
-                mockedBackgroundExecutor);
+                uploadToPlatformAvailable, mockedBackgroundExecutor);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -425,8 +425,8 @@ public class ShareVideoPresenterTest {
                 mockedShareNetworksProvider, mockedFtpListUseCase,
             mockedUploadToPlatform, mockedRunSyncAdapterHelper,
             mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUpdateComposition,
-            mockedFetchUserFeatures, vimojoPlatformAvailable,
-            ftpPublishingAvailable, showAds, showSocialNetworksDecision, mockedBackgroundExecutor);
+            mockedFetchUserFeatures, ftpPublishingAvailable, showAds, showSocialNetworksDecision,
+            uploadToPlatformAvailable, mockedBackgroundExecutor);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

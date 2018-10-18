@@ -93,10 +93,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private UserAuth0Helper userAuth0Helper;
   private UpdateComposition updateComposition;
   private FetchUserFeatures fetchUserFeatures;
-  private boolean vimojoPlatformAvailable;
   private boolean ftpPublishingAvailable;
   private boolean showAds;
   private boolean showSocialNetworksDecision;
+  private boolean uploadToPlatformAvailable;
 
   @Inject
   public ShareVideoPresenter(
@@ -110,10 +110,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
       RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
       UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
       FetchUserFeatures fetchUserFeatures,
-      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
       @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
       @Named("showAds") boolean showAds,
       @Named("showSocialNetworks") boolean showSocialNetworksDecision,
+      @Named("uploadToPlatformAvailable") boolean uploadToPlatformAvailable,
       BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.context = context;
@@ -130,10 +130,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
     this.userAuth0Helper = userAuth0Helper;
     this.updateComposition = updateComposition;
     this.fetchUserFeatures = fetchUserFeatures;
-    this.vimojoPlatformAvailable = vimojoPlatformAvailable;
     this.ftpPublishingAvailable = ftpPublishingAvailable;
     this.showAds = showAds;
     this.showSocialNetworksDecision = showSocialNetworksDecision;
+    this.uploadToPlatformAvailable = uploadToPlatformAvailable;
   }
 
   public void updatePresenter(boolean hasBeenProjectExported, String videoExportedPath) {
@@ -190,7 +190,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private void obtainListOptionsToShare(VimojoNetwork vimojoNetwork, List<FtpNetwork> ftpList,
                                         List<SocialNetwork> socialNetworkList) {
     optionToShareList = new ArrayList();
-    if (vimojoPlatformAvailable) {
+    if (uploadToPlatformAvailable) {
       optionToShareList.add(vimojoNetwork);
     }
     if (ftpPublishingAvailable) {

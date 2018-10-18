@@ -119,6 +119,10 @@ public class FeatureDecisions {
         && !BuildConfig.DEBUG;
   }
 
+  public boolean uploadToPlatformAvailable() {
+    return features.isEnabled(Constants.USER_FEATURE_UPLOAD_TO_PLATFORM);
+  }
+
   private boolean isBetaAppOutOfDate(Context context) {
     Calendar endOfBeta = Calendar.getInstance();
     Calendar today = Calendar.getInstance();

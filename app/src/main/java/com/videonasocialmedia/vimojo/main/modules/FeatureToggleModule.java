@@ -147,4 +147,9 @@ public class FeatureToggleModule {
   boolean provideIsAppOutOfDate(FeatureDecisions featureDecisions, Context context) {
     return featureDecisions.isAppOutOfDate(context);
   }
+
+  @Provides @Named("uploadToPlatformAvailable")
+  boolean provideUploadToPlatformAvailable(FeatureDecisions featureDecisions) {
+    return featureDecisions.uploadToPlatformAvailable();
+  }
 }

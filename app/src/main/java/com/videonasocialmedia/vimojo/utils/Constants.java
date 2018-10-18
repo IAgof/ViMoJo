@@ -156,6 +156,7 @@ public class Constants {
   public static final String FEATURE_SHOW_TUTORIALS = "feature-show-tutorials";
   public static final String FEATURE_VERTICAL_VIDEOS = "feature-vertical-videos";
   public static final String FEATURE_OUT_OF_DATE = "feature-out-of-date";
+  public static final String USER_FEATURE_UPLOAD_TO_PLATFORM = "user-feature-upload-to-platform";
   /**
    * Default User features values
    */
@@ -170,4 +171,5 @@ public class Constants {
   public static final boolean DEFAULT_SELECT_FRAME_RATE = false;
   public static final boolean DEFAULT_SELECT_RESOLUTION = false;
   public static final boolean DEFAULT_CLOUD_BACKUP = false;
+  public static final boolean DEFAULT_UPLOAD_TO_PLATFORM = false;
 }

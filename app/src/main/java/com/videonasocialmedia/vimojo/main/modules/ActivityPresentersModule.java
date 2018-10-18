@@ -373,16 +373,16 @@ public class ActivityPresentersModule {
           RunSyncAdapterHelper runSyncAdapterHelper,
           UserAuth0Helper userAuth0Helper, UpdateComposition updateComposition,
           FetchUserFeatures fetchUserFeatures,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
           @Named("showAds") boolean showAds,
           @Named("showSocialNetworks") boolean showSocialNetworks,
+          @Named("uploadToPlatformAvailable") boolean uploadToPlatformAvailable,
           BackgroundExecutor backgroundExecutor) {
     return new ShareVideoPresenter(activity, (ShareActivity) activity, userEventTracker,
         sharedPreferences, addLastVideoExportedProjectUseCase, exportProjectUseCase,
         obtainNetworksToShareUseCase, getFtpListUseCase, uploadToPlatform, runSyncAdapterHelper,
         projectInstanceCache, userAuth0Helper, updateComposition, fetchUserFeatures,
-        vimojoPlatformAvailable, ftpPublishingAvailable, showAds, showSocialNetworks,
+        ftpPublishingAvailable, showAds, showSocialNetworks, uploadToPlatformAvailable,
         backgroundExecutor);
   }
 
