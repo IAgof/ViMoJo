@@ -327,9 +327,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
     @Override
     public void showError(final int stringToast) {
+      runOnUiThread(() -> {
         Snackbar snackbar = Snackbar.make(relativeLayoutActivityEdit, stringToast,
                 Snackbar.LENGTH_LONG);
         snackbar.show();
+      });
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
  */
 public interface SoundView {
 
-    void hideVoiceOverCardView();
+    void hideVoiceOverTrack();
 
     void addVoiceOverOptionToFab();
 

@@ -34,4 +34,6 @@ public interface EditTextView {
     void updateTextToThemeLight();
 
     void setCheckboxShadow(boolean shadowActivated);
+
+  void setAspectRatioVerticalVideos();
 }

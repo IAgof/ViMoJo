@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.galleryprojects.domain;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.OnProjectExportedListener;
 
 import javax.inject.Inject;

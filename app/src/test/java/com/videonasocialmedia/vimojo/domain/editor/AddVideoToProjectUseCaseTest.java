@@ -7,13 +7,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnLaunchAVTransitionTempFileListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AddVideoToProjectUseCaseTest {
-  @Mock ProjectRealmRepository mockedProjectRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   @Mock OnLaunchAVTransitionTempFileListener mockedLaunchAVTransitionTempFileListener;
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
   @Mock ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
@@ -50,28 +50,6 @@ public class AddVideoToProjectUseCaseTest {
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
     getAProject();
-  }
-
-  @Test
-  public void testAddVideoToProjectAtPositionCallsUpdateProject() {
-    Video video = new Video("media/path", 1f);
-
-    injectedUseCase.addVideoToProjectAtPosition(currentProject, video, 0,
-        mockedOnAddMediaFinishedListener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
-  public void testAddVideoListToTrackCallsUpdateProject() {
-    Video video = new Video("media/path", 1f);
-    List<Video> videoList = Collections.singletonList(video);
-    OnAddMediaFinishedListener listener = getOnAddMediaFinishedListener();
-        getOnLaunchAVTransitionTempFileListener();
-
-    injectedUseCase.addVideoListToTrack(currentProject, videoList, listener);
-
-    verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test

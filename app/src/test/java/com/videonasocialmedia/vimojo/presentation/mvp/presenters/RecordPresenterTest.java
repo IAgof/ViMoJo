@@ -13,9 +13,9 @@
 //import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 //import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 //import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-//import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+//import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 //import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
-//import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+//import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 //import com.videonasocialmedia.vimojo.utils.Constants;
 //import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 //
@@ -43,7 +43,7 @@
 //  @Mock
 //  ApplyAVTransitionsUseCase mockedApplyAVTransitionsUseCase;
 //  @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideonaFormatFromCurrentProjectUseCase;
-//  @Mock private VideoRepository mockedVideoRepository;
+//  @Mock private VideoDataSource mockedVideoRepository;
 //
 //  boolean externalIntent;
 //  private RecordPresenter recordPresenter;

@@ -21,4 +21,5 @@ public interface DuplicateView {
 
     void updateProject();
 
+  void setAspectRatioVideos();
 }

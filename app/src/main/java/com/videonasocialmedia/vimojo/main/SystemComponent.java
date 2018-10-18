@@ -1,22 +1,26 @@
 package com.videonasocialmedia.vimojo.main;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
+import com.videonasocialmedia.vimojo.main.modules.FeatureToggleModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.datasource.BackgroundScheduler;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.sync.presentation.broadcastreceiver.UploadBroadcastReceiver;
 import com.videonasocialmedia.vimojo.sync.presentation.SyncService;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import javax.inject.Singleton;
 
@@ -27,18 +31,21 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = {ApplicationModule.class, DataRepositoriesModule.class,
-        TrackerModule.class, UploadToPlatformModule.class})
+        TrackerModule.class, UploadToPlatformModule.class, FeatureToggleModule.class})
 public interface SystemComponent {
+  Context provideContext();
   ProjectRepository getProjectRepository();
-  VideoRepository getVideoRepository();
-  VideoToAdaptRepository getVideoToAdaptRepository();
-  TrackRepository getTrackRepository();
-  MusicRepository getMusicRepository();
-  UploadRepository getUploadRepository();
+  VideoDataSource getVideoRepository();
+  VideoToAdaptDataSource getVideoToAdaptRepository();
+  TrackDataSource getTrackRepository();
+  MusicDataSource getMusicRepository();
+  UploadDataSource getUploadRepository();
   UserEventTracker getUserEventTracker();
   UploadToPlatform getUploadToPlatform();
   SharedPreferences getSharedPreferences();
-  CameraSettingsRepository getCameraRepository();
+  CameraSettingsDataSource getCameraRepository();
+  BackgroundScheduler provideBackgroundScheduler();
+  BackgroundExecutor provideBackgroundExecutor();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
   void inject(UploadBroadcastReceiver uploadBroadcastReceiver);

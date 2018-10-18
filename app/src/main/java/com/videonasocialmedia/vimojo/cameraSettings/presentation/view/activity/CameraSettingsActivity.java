@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -52,7 +51,6 @@ public class CameraSettingsActivity extends VimojoActivity implements
     setContentView(R.layout.activity_camera_settings);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-    initCameraSettingsRecycler();
   }
 
   @Override
@@ -64,21 +62,6 @@ public class CameraSettingsActivity extends VimojoActivity implements
     super.onResume();
   }
 
-  private void initCameraSettingsRecycler() {
-    int orientation = LinearLayoutManager.VERTICAL;
-    adapter = new CameraSettingsAdapter();
-    adapter.setCameraSettingsListClickListener(this);
-    RecyclerView.LayoutManager layoutManager;
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-      layoutManager = new LinearLayoutManager(this, orientation, false);
-    } else {
-      layoutManager = new GridLayoutManager(this,
-          NUM_COLUMNS_GRID_RECYCLER, orientation, false);
-    }
-    recyclerCameraSettingsList.addItemDecoration(new DividerItemDecoration(this, orientation));
-    recyclerCameraSettingsList.setLayoutManager(layoutManager);
-    recyclerCameraSettingsList.setAdapter(adapter);
-  }
 
   @Override
   public void onCheckedChangeCameraPreference(RadioGroup radioGroup, int checkedId) {
@@ -115,6 +98,22 @@ public class CameraSettingsActivity extends VimojoActivity implements
     setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
   }
 
+  @Override
+  public void initCameraSettingsRecycler(boolean amIAVerticalApp) {
+    int orientation = LinearLayoutManager.VERTICAL;
+    adapter = new CameraSettingsAdapter();
+    adapter.setCameraSettingsListClickListener(this);
+    RecyclerView.LayoutManager layoutManager;
+    if (amIAVerticalApp) {
+      layoutManager = new LinearLayoutManager(this, orientation, false);
+    } else {
+      layoutManager = new GridLayoutManager(this,
+          NUM_COLUMNS_GRID_RECYCLER, orientation, false);
+    }
+    recyclerCameraSettingsList.addItemDecoration(new DividerItemDecoration(this, orientation));
+    recyclerCameraSettingsList.setLayoutManager(layoutManager);
+    recyclerCameraSettingsList.setAdapter(adapter);
+  }
   @Override
   public void onBackPressed() {
     navigateToRecord();

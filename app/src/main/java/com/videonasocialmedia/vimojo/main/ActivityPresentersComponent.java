@@ -2,12 +2,14 @@ package com.videonasocialmedia.vimojo.main;
 
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.GalleryProjectListActivity;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.internals.di.PerActivity;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
+import com.videonasocialmedia.vimojo.main.modules.FeatureToggleModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.VideoDuplicateActivity;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity;
@@ -32,7 +34,8 @@ import dagger.Component;
  */
 
 @PerActivity
-@Component(dependencies = {SystemComponent.class}, modules = {ActivityPresentersModule.class})
+@Component(dependencies = {SystemComponent.class},
+        modules = {ActivityPresentersModule.class, FeatureToggleModule.class })
 public interface ActivityPresentersComponent {
   void inject(VimojoActivity activity);
   void inject(MusicDetailActivity activity);
@@ -51,6 +54,7 @@ public interface ActivityPresentersComponent {
   void inject(VideoTrimActivity activity);
   void inject(ShareActivity activity);
   void inject(InitAppActivity activity);
+  void inject(InitRegisterLoginActivity activity);
   void inject(VoiceOverVolumeActivity activity);
   void inject(EditorActivity activity);
   void inject(GalleryProjectListActivity activity);

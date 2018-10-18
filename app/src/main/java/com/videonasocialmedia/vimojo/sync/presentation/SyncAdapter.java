@@ -17,9 +17,18 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.crashlytics.android.Crashlytics;
+import com.squareup.moshi.JsonEncodingException;
+import com.squareup.tape2.ObjectQueue;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.asset.domain.model.Asset;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by alvaro on 31/1/18.
@@ -42,13 +51,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   private boolean isWifiConnected;
   private boolean isMobileNetworkConnected;
   private UploadToPlatform uploadToPlatform;
-  private UploadRepository uploadRepository;
+  private AssetUploadQueue assetUploadQueue;
+  private UploadDataSource uploadRepository;
 
   /**
    * Set up the sync adapter
    */
   public SyncAdapter(Context context, boolean autoInitialize,
-                     UploadToPlatform uploadToPlatform, UploadRepository uploadRepository) {
+                     UploadToPlatform uploadToPlatform,
+                     AssetUploadQueue assetUploadQueue,
+                     UploadDataSource uploadRepository) {
     super(context, autoInitialize);
         /*
          * If your app uses a content resolver, get an instance of it
@@ -56,6 +68,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          */
     this.context = context;
     this.uploadToPlatform = uploadToPlatform;
+    this.assetUploadQueue = assetUploadQueue;
     this.uploadRepository = uploadRepository;
     Log.d(LOG_TAG, "created SyncAdapter...");
   }
@@ -106,6 +119,46 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
           }
         }
       }
+    }
+
+    // QUEUE asset model
+    ObjectQueue<Asset> queue = assetUploadQueue.getQueue();
+    if (!queue.isEmpty()) {
+      try {
+        while (assetUploadQueue.getQueue().iterator().hasNext()) {
+          Log.d(LOG_TAG, "launchingQueue");
+          boolean isAcceptedUploadMobileNetwork = false;
+          try {
+            isAcceptedUploadMobileNetwork = queue.peek().isAcceptedUploadMobileNetwork();
+          } catch (JsonEncodingException jsonError) {
+            // TODO(jliarte): 13/08/18 do some here?
+          }
+          if (areThereNetworksConnected(isAcceptedUploadMobileNetwork)) {
+            // TODO(jliarte): 5/03/18 will stuck on item that not meet network criteria, maybe
+            // reimplement this loop
+            assetUploadQueue.processNextQueueItem();
+          }
+          sleep(); // TODO(jliarte): 9/03/18 when looping while, waiting for network, high CPU usage
+        }
+      } catch (IOException ioException) {
+        Log.d(LOG_TAG, ioException.getMessage());
+        if (BuildConfig.DEBUG) {
+          // TODO(jliarte): 5/03/18 I'm sometimes getting an error here, even with a non empty queue
+          // file (maybe it gets corrupted somehow?) not able to reproduce properly. deeply
+          // investigate how to deal with it
+          ioException.printStackTrace();
+        }
+        Crashlytics.log("Error getting queue element, isAcceptedUploadMobileNetwork");
+        Crashlytics.logException(ioException);
+      }
+    }
+  }
+
+  private void sleep() {
+    try {
+      TimeUnit.SECONDS.sleep(10);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
 

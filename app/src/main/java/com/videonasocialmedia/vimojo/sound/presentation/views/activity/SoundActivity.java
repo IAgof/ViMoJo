@@ -3,7 +3,6 @@ package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,13 +12,12 @@ import android.widget.ScrollView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
@@ -52,11 +50,11 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   RelativeLayout relativeLayoutActivitySound;
 
   @Nullable @BindView(R.id.cardview_audio_blocks_clips_video)
-  CardViewAudioTrack trackClipsVideo;
+  CardViewAudioTrack videoTrack;
   @Nullable @BindView(R.id.cardview_audio_blocks_clips_audio_track_first)
-  CardViewAudioTrack trackClipsAudioTrackFirst;
+  CardViewAudioTrack firstAudioTrack;
   @Nullable @BindView(R.id.cardview_audio_blocks_clips_audio_track_second)
-  CardViewAudioTrack trackClipsAudioTrackSecond;
+  CardViewAudioTrack secondAudioTrack;
   @Nullable @BindView(R.id.scrollview_timeline_audio_blocks)
   ScrollView scrollViewTimeLineAudioBlocks;
   @Nullable @BindView(R.id.button_sound_warning_transcoding_file)
@@ -145,8 +143,8 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   }
 
   @Override
-  public void hideVoiceOverCardView() {
-    trackClipsAudioTrackSecond.setVisibility(View.GONE);
+  public void hideVoiceOverTrack() {
+    secondAudioTrack.setVisibility(View.GONE);
   }
 
   @Override
@@ -182,25 +180,25 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void bindTrack(Track track) {
     switch (track.getId()) {
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
-        trackClipsVideo.setListener(this);
-        trackClipsVideo.setTrack(track);
+        videoTrack.setListener(this);
+        videoTrack.setTrack(track);
         break;
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
           if (track.getPosition() == 1) {
-            trackClipsAudioTrackFirst.setListener(this);
-            trackClipsAudioTrackFirst.setTrack(track);
+            firstAudioTrack.setListener(this);
+            firstAudioTrack.setTrack(track);
           } else {
-            trackClipsAudioTrackSecond.setListener(this);
-            trackClipsAudioTrackSecond.setTrack(track);
+            secondAudioTrack.setListener(this);
+            secondAudioTrack.setTrack(track);
           }
         break;
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
         if (track.getPosition() == 1) {
-          trackClipsAudioTrackFirst.setListener(this);
-          trackClipsAudioTrackFirst.setTrack(track);
+          firstAudioTrack.setListener(this);
+          firstAudioTrack.setTrack(track);
         } else {
-          trackClipsAudioTrackSecond.setListener(this);
-          trackClipsAudioTrackSecond.setTrack(track);
+          secondAudioTrack.setListener(this);
+          secondAudioTrack.setTrack(track);
         }
         break;
     }
@@ -208,17 +206,17 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
 
   @Override
   public void showTrackVideo() {
-    trackClipsVideo.setVisibility(View.VISIBLE);
+    videoTrack.setVisibility(View.VISIBLE);
   }
 
   @Override
   public void showTrackAudioFirst() {
-    trackClipsAudioTrackFirst.setVisibility(View.VISIBLE);
+    firstAudioTrack.setVisibility(View.VISIBLE);
   }
 
   @Override
   public void showTrackAudioSecond() {
-    trackClipsAudioTrackSecond.setVisibility(View.VISIBLE);
+    secondAudioTrack.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -240,7 +238,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
     this.currentVideoIndex = currentClipIndex;
-    trackClipsVideo.updateClipSelection(currentClipIndex);
+    videoTrack.updateClipSelection(currentClipIndex);
     presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
         .INDEX_MEDIA_TRACK);
   }
@@ -260,13 +258,13 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void onClickExpandInfoTrack(int positionInTrack) {
     switch (positionInTrack){
       case 0:
-        focusOnView(trackClipsVideo);
+        focusOnView(videoTrack);
         break;
       case 1:
-        focusOnView(trackClipsAudioTrackFirst);
+        focusOnView(firstAudioTrack);
         break;
       case 2:
-        focusOnView(trackClipsAudioTrackSecond);
+        focusOnView(secondAudioTrack);
         break;
     }
   }
@@ -280,10 +278,10 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
         break;
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
-        trackClipsVideo.updateClipSelection(position);
+        videoTrack.updateClipSelection(position);
         break;
       case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        trackClipsVideo.updateClipSelection(position);
+        videoTrack.updateClipSelection(position);
         break;
     }
   }

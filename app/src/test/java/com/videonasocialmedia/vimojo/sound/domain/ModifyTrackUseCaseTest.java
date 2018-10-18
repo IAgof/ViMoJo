@@ -9,10 +9,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +34,10 @@ import static org.mockito.Mockito.verify;
 public class ModifyTrackUseCaseTest {
 
   @InjectMocks ModifyTrackUseCase injectedUseCase;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock TrackRepository mockedTrackRepository;
+  @Mock
+  ProjectRepository mockedProjectRepository;
+  @Mock
+  TrackDataSource mockedTrackRepository;
   private Project currentProject;
 
   @Before
@@ -45,21 +47,11 @@ public class ModifyTrackUseCaseTest {
   }
 
   @Test
-  public void setTrackVolumeUpdateProjectRepository(){
-    AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    float volumeTrack = 0.85f;
-
-    injectedUseCase.setTrackVolume(currentProject, track, volumeTrack);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void setTrackVolumeUpdateTrackVolume(){
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     float volumeTrack = 0.85f;
 
-    injectedUseCase.setTrackVolume(currentProject, track, volumeTrack);
+    injectedUseCase.setTrackVolume(track, volumeTrack);
 
     assertThat("setTrackVolume update volume track", track.getVolume(), is(volumeTrack));
   }
@@ -73,7 +65,7 @@ public class ModifyTrackUseCaseTest {
     mediaTrack.insertItem(video2);
     float mediaTrackVolume = 0.7f;
 
-    injectedUseCase.setTrackVolume(currentProject, mediaTrack, mediaTrackVolume);
+    injectedUseCase.setTrackVolume(mediaTrack, mediaTrackVolume);
 
     assertThat("setTrackVolume update volume video 1", currentProject.getMediaTrack().getItems().get(0)
         .getVolume(), is(mediaTrackVolume));
@@ -88,7 +80,7 @@ public class ModifyTrackUseCaseTest {
     AudioTrack track = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     assertThat("Default mute track is false", track.isMuted(), is(false));
 
-    injectedUseCase.setTrackMute(currentProject, track, true);
+    injectedUseCase.setTrackMute(track, true);
 
     assertThat("UseCase update track mute", track.isMuted(), is(true));
   }

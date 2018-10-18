@@ -5,51 +5,52 @@ import android.util.Log;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 /**
  * Created by jliarte on 6/07/17.
  */
 public class NewClipImporter {
   private static final String TAG = NewClipImporter.class.getCanonicalName();
-  private ProjectRepository projectRepository;
-  private final VideoRepository videoRepository;
-  protected VideoToAdaptRepository videoToAdaptRepository;
+  private final VideoDataSource videoRepository;
+  protected VideoToAdaptDataSource videoToAdaptRepository;
   private AdaptVideoToFormatUseCase adaptVideoToFormatUseCase;
   private GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase;
-  private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
+  private static final int N_THREADS = 5;
+  private final ListeningExecutorService executorPool;
 
   public NewClipImporter(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
           AdaptVideoToFormatUseCase adaptVideoToFormatUseCase,
           ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository, VideoRepository videoRepository,
-          VideoToAdaptRepository videoToAdaptRepository) {
+          VideoDataSource videoRepository,
+          VideoToAdaptDataSource videoToAdaptRepository) {
     this.getVideoFormatFromCurrentProjectUseCase = getVideoFormatFromCurrentProjectUseCase;
     this.adaptVideoToFormatUseCase = adaptVideoToFormatUseCase;
     this.launchTranscoderAddAVTransitionUseCase = launchTranscoderAddAVTransitionUseCase;
-    this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
-    this.projectRepository = projectRepository;
     this.videoRepository = videoRepository;
     this.videoToAdaptRepository = videoToAdaptRepository;
+    executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
   }
 
   public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
@@ -62,7 +63,10 @@ public class NewClipImporter {
             new AdaptVideoToFormatUseCase.AdaptListener() {
       @Override
       public void onSuccessAdapting(Video video) {
-        // TODO(jliarte): 31/08/17 implement this method
+        videoRepository.update(video); // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
+        // TODO(jliarte): 18/07/18 done in AdaptVideoToFormatUseCase.AdaptListener, but change to videoRepository (and execute in background?)
+//        addAssetToUpload(video);
+//        updateCompositionWithPlatform(currentProject);
       }
 
       @Override
@@ -76,11 +80,16 @@ public class NewClipImporter {
             cameraRotation, retries);
     try {
       adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, adaptListener);
+      // TODO(jliarte): 18/07/18 should chain with adapt job
       applyAVTransitions(video, currentProject);
     } catch (IOException e) {
       e.printStackTrace();
       adaptListener.onErrorAdapting(video, "adaptVideoToFormatUseCase");
     }
+  }
+
+  protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
+    return executorPool.submit(callable);
   }
 
   private void applyAVTransitions(Video video, Project currentProject) {
@@ -142,7 +151,7 @@ public class NewClipImporter {
                   + videoToAdapt.getVideo().getMediaPath());
           // Now find which videoRepository video correspond with videoToAdaptRepository by uuid
           Video videoToRelaunch = getVideoToRelaunch(currentProject, videoToAdapt);
-          if(videoToRelaunch != null) {
+          if (videoToRelaunch != null) {
             adaptVideoToVideonaFormat(currentProject, videoToRelaunch,
                     videoToAdapt.getPosition(), videoToAdapt.getRotation(),
                     ++videoToAdapt.numTriesAdaptingVideo);
@@ -160,7 +169,7 @@ public class NewClipImporter {
   protected Video getVideoToRelaunch(Project currentProject, VideoToAdapt videoToAdapt) {
     for(Media video: currentProject.getMediaTrack().getItems()){
       Video videoToRelaunch = (Video) video;
-      if(videoToRelaunch.getUuid().compareTo(videoToAdapt.getVideo().getUuid()) == 0) {
+      if (videoToRelaunch.getUuid().compareTo(videoToAdapt.getVideo().getUuid()) == 0) {
         return videoToRelaunch;
       }
     }

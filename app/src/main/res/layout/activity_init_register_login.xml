@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 Videona Socialmedia SL
+  ~ http://www.videona.com
+  ~ info@videona.com
+  ~ All rights reserved
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <VideoView
+        android:id="@+id/video_view_init_looper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/video_view_init_looper"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="52dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:padding="16dp"
+            android:textSize="18sp"
+            android:text="@string/textview_init_register_login_title"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:text="@string/textview_init_register_login_message"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_layout_buttons_register_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/button_init_register"
+            android:background="@color/colorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_text_init_register"
+            android:textColor="@color/colorWhite"
+            android:textAllCaps="false"
+            />
+        <Button
+            android:id="@+id/button_init_login"
+            android:background="@color/colorGreyTransparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_text_init_login"
+            android:textColor="@color/colorWhite"
+            android:textAllCaps="false"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

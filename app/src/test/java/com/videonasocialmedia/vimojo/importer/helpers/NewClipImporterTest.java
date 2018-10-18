@@ -10,18 +10,20 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.sync.AssetUploadQueue;
+import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.vimojoapiclient.CompositionApiClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,14 +59,20 @@ public class NewClipImporterTest {
     @Mock AdaptVideoToFormatUseCase mockedAdaptVideoToFormatUseCase;
     private File mockedStorageDir;
     @Mock GetVideoFormatFromCurrentProjectUseCase mockedGetVideoFormatFromCurrentProjectUseCase;
-    @Mock VideoToAdaptRepository mockedVideoToAdaptRepository;
+    @Mock
+    VideoToAdaptDataSource mockedVideoToAdaptRepository;
     private NewClipImporter newClipImporter;
     @Mock ApplyAVTransitionsUseCase mockedLaunchTranscoderAddAVTransitionUseCase;
     @Mock RelaunchTranscoderTempBackgroundUseCase mockedRelaunchTranscoderTempBackgroundUseCase;
-    @Mock VideoRepository mockedVideoRepository;
-    @Mock ProjectRepository mockedProjectRepository;
-    private Project currentProject;
+    @Mock
+    VideoDataSource mockedVideoRepository;
+    @Mock
+    ProjectRepository mockedProjectRepository;
+    @Mock AssetUploadQueue mockedAssetUploadQueue;
+    @Mock RunSyncAdapterHelper mockedRunSyncAdapterHelper;
+    @Mock CompositionApiClient mockedCompositionApiClient;
 
+    private Project currentProject;
     @InjectMocks
     private NewClipImporter injectedNewClipImporter;
 
@@ -83,10 +91,11 @@ public class NewClipImporterTest {
 
     @Before
     public void setUpNewClipImporter() {
-        newClipImporter = new NewClipImporter(mockedGetVideoFormatFromCurrentProjectUseCase,
-            mockedAdaptVideoToFormatUseCase, mockedLaunchTranscoderAddAVTransitionUseCase,
-            mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-            mockedVideoRepository, mockedVideoToAdaptRepository);
+        newClipImporter = new NewClipImporter(
+                mockedGetVideoFormatFromCurrentProjectUseCase, mockedAdaptVideoToFormatUseCase,
+                mockedLaunchTranscoderAddAVTransitionUseCase,
+                mockedVideoRepository, mockedVideoToAdaptRepository
+        );
     }
 
     @Test

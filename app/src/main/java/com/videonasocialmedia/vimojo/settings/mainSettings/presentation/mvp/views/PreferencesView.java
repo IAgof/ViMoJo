@@ -62,17 +62,15 @@ public interface PreferencesView {
 
     void hideFtpsViews();
 
-    void hideWatermarkView();
+    void hideWatermarkPreference();
 
     void itemDarkThemePurchased();
 
-    void itemWatermarkPurchased();
+    void setVimojoStoreAvailable();
 
-    void vimojoStoreSupported();
+  void setWatermarkSwitch();
 
     void deactivateDarkTheme();
-
-    void activateWatermark();
 
     void setupUserAuthentication(boolean userLoggedIn);
 
@@ -81,4 +79,8 @@ public interface PreferencesView {
     void showMoreAppsSection();
 
     void hideMoreAppsSection();
+
+    void hideTransitions();
+
+  void navigateToInitRegisterLogin();
 }

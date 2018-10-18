@@ -14,9 +14,10 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
 import com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.TimeLineVideoViewHolder;
 import com.videonasocialmedia.vimojo.videonaTimeLine.view.adapter.VideoTimeLineAdapter;
 import com.videonasocialmedia.vimojo.presentation.views.listener.VideoTimeLineRecyclerViewClickListener;
@@ -46,7 +47,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
-        shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
+        shadows = {ShadowMultiDex.class, JobManager.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class VideoTimeLineTouchHelperCallbackTest {
   @Mock private VideoTimeLineTouchHelperCallbackAdapterListener mockedCallbackAdapter;
   @Mock private RecyclerView mockedRecyclerView;

@@ -8,12 +8,16 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionInfo;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.DetailProjectView;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +25,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -35,12 +42,15 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DetailProjectPresenterTest {
 
-  @Mock ProjectRepository mockedProjectRepo;
   @Mock DetailProjectView mockedDetailProjectView;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock Context mockedContext;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
   private Project currentProject;
+  @Mock UpdateComposition mockedUpdateComposition;
+  @Mock SetCompositionInfo mockedSetCompositionInfo;
+  @Mock ProjectRepository mockedProjectRepository;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void initDoubles() {
@@ -68,25 +78,33 @@ public class DetailProjectPresenterTest {
   }
 
   @Test
-  public void setProjectInfoCallsProjectRepository() {
+  public void setProjectInfoCallsUseCasesAndTracking() {
 
     DetailProjectPresenter spyPresenter = Mockito.spy(getDetailProjectPresenter());
     String titleProject = "titleProject";
     String descriptionProject = "descriptionProject";
     List<String> productTypeList = new ArrayList<>();
     spyPresenter.init();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation
+        -> {
+      Runnable runnable = invocation.getArgument(0);
+      runnable.run();
+      return null;
+    });
 
     spyPresenter.setProjectInfo(titleProject, descriptionProject, productTypeList);
 
-    verify(mockedProjectRepo).setProjectInfo(currentProject, titleProject, descriptionProject,
-        productTypeList);
+    verify(mockedSetCompositionInfo).setCompositionInfo(currentProject, titleProject,
+        descriptionProject, productTypeList);
     verify(mockedUserEventTracker).trackProjectInfo(currentProject);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @NonNull
   public DetailProjectPresenter getDetailProjectPresenter() {
     return new DetailProjectPresenter(mockedContext, mockedDetailProjectView, mockedUserEventTracker,
-        mockedProjectRepo, mockedProjectInstanceCache);
+            mockedProjectInstanceCache, mockedUpdateComposition, mockedSetCompositionInfo,
+            mockedBackgroundExecutor);
   }
 
   private void getAProject() {

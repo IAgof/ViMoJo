@@ -22,23 +22,33 @@ import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.firebase.FirebaseApp;
 import com.karumi.dexter.Dexter;
 import com.squareup.leakcanary.LeakCanary;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.featuresToggles.FeatureDecisions;
+import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
+import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
 import com.videonasocialmedia.vimojo.main.modules.DataRepositoriesModule;
-import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.main.modules.TrackerModule;
 import com.videonasocialmedia.vimojo.main.modules.UploadToPlatformModule;
 import com.videonasocialmedia.vimojo.main.modules.VimojoApplicationModule;
 import com.videonasocialmedia.vimojo.model.VimojoMigration;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.FirebaseTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.MixpanelTracker;
+
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -46,8 +56,6 @@ import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_WATERMARK_STATE;
 
 public class VimojoApplication extends Application implements ProjectInstanceCache {
@@ -64,8 +72,11 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     private Project currentProject;
 
     @Inject ProjectRepository projectRepository;
+    @Inject FeatureRepository featureRepository;
     @Inject CreateDefaultProjectUseCase createDefaultProjectUseCase;
     @Inject SharedPreferences sharedPreferences;
+    @Inject SaveComposition saveComposition;
+    @Inject FeatureDecisions featureDecisions;
 
     public static Context getAppContext() {
         return VimojoApplication.context;
@@ -84,13 +95,10 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     public void onCreate() {
         super.onCreate();
         initSystemComponent();
-        // Set up Crashlytics, disabled for debug builds
-        Crashlytics crashlyticsKit = new Crashlytics.Builder()
-            .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-            .build();
-        Fabric.with(this, crashlyticsKit);
+        setupCrashlytics();
         context = getApplicationContext();
         setupGoogleAnalytics();
+        setupUserEventTracker();
 //        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         Dexter.initialize(this);
         setupLeakCanary();
@@ -99,6 +107,15 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .vimojoApplicationModule(getVimojoApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .build().inject(this);
+        fetchFeatureToggles();
+    }
+
+    private void setupUserEventTracker() {
+        UserEventTracker userEventTracker = new UserEventTracker.Builder(context)
+                .use(FirebaseTracker.FACTORY)
+                .use(MixpanelTracker.FACTORY)
+                .build();
+        UserEventTracker.setSingletonInstance(userEventTracker);
     }
 
     void initSystemComponent() {
@@ -107,7 +124,6 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .trackerModule(getTrackerModule())
                 .uploadToPlatformModule(getUploadToPlatformModule())
-//                .activityPresentersModule(getActivityPresentersModule())
                 .build();
     }
 
@@ -120,7 +136,7 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     private TrackerModule getTrackerModule() {
-        return new TrackerModule(this);
+        return new TrackerModule();
     }
 
     private UploadToPlatformModule getUploadToPlatformModule() {
@@ -140,6 +156,14 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             dataRepositoriesModule = new DataRepositoriesModule();
         }
         return dataRepositoriesModule;
+    }
+
+    private void setupCrashlytics() {
+        // Set up Crashlytics, disabled for debug builds
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+        Fabric.with(this, crashlyticsKit);
     }
 
     private void setupGoogleAnalytics() {
@@ -165,13 +189,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     public VimojoApplicationModule getVimojoApplicationModule() {
-        int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
-        }
         if (vimojoApplicationModule == null) {
-            vimojoApplicationModule = new VimojoApplicationModule(this,
-                defaultCameraIdSelected);
+            vimojoApplicationModule = new VimojoApplicationModule(this);
         }
         return vimojoApplicationModule;
     }
@@ -187,6 +206,12 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .migration(new VimojoMigration())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
+    }
+
+    private void fetchFeatureToggles() {
+        // TODO(jliarte): 3/09/18 should we call fetch use case?
+        ListeningExecutorService executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        executorPool.submit(() -> featureRepository.fetch());
     }
 
     protected void attachBaseContext(Context base) {
@@ -221,8 +246,9 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
             Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
             Project project = createDefaultProjectUseCase.createProject(Constants.PATH_APP,
                     Constants.PATH_APP_ANDROID, isWatermarkActivated(),
-                    drawableFadeTransitionVideo, BuildConfig.FEATURE_VERTICAL_VIDEOS);
-            projectRepository.add(project);
+                    drawableFadeTransitionVideo, featureDecisions.amIAVerticalApp());
+            ListeningExecutorService executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+            executorPool.submit(() -> saveComposition.saveComposition(project));
             return project;
         } else {
             return projectRepository.getLastModifiedProject();
@@ -230,7 +256,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
     }
 
     private boolean isWatermarkActivated() {
-        return BuildConfig.FEATURE_FORCE_WATERMARK || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
+        return featureDecisions.watermarkIsForced()
+            || sharedPreferences.getBoolean(ConfigPreferences.WATERMARK, DEFAULT_WATERMARK_STATE);
     }
 
     private boolean projectRepositoryIsEmpty() {

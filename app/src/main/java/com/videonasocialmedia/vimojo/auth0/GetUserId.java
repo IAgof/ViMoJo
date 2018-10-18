@@ -23,17 +23,19 @@ import javax.inject.Inject;
  */
 
 public class GetUserId {
+  private final Context context;
+
   @Inject
-  public GetUserId() {
+  public GetUserId(Context context) {
+    this.context = context;
   }
 
   /**
    * Returns the auth token stored in Android Account Manager.
    *
-   * @param context the app context
    * @return UserId object with user id stored in Android Account Manager
    */
-  public UserId getUserId(Context context) {
+  public UserId getUserId() {
     String id = "";
     AccountManager accountManager = AccountManager.get(context);
     Account account = UserAccountUtil.getAccount(context);

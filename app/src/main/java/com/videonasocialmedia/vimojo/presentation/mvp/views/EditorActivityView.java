@@ -14,15 +14,13 @@ public interface EditorActivityView {
 
     void itemDarkThemePurchased();
 
-    void itemWatermarkPurchased();
-
-    void watermarkFeatureAvailable();
+    void showWatermarkSwitch(boolean watermarkIsSelected);
 
     void hideWatermarkSwitch();
 
-    void setIconsFeatures();
+    void setDefaultIconsForStoreItems();
 
-    void setIconsPurchaseInApp();
+    void setLockIconsForStoreItems();
 
     void hideVimojoStoreViews();
 
@@ -37,4 +35,6 @@ public interface EditorActivityView {
     void hideLinkToVimojoPlatform();
 
     void hideTutorialViews();
+
+  void setAspectRatioVerticalVideos();
 }

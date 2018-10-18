@@ -10,23 +10,29 @@ package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 import android.content.SharedPreferences;
 import android.widget.RadioButton;
 
-import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.google.common.util.concurrent.Futures;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
+import com.videonasocialmedia.vimojo.trim.domain.TrimResultCallback;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
 import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
@@ -34,10 +40,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR
 /**
  * Created by vlf on 7/7/15.
  */
-public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
-    /**
-     * LOG_TAG
-     */
+public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRetrieved,
+    ElementChangedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
 
@@ -55,20 +59,24 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private int videoToTrimIndex;
+    private boolean amIVerticalApp;
 
     @Inject
     public TrimPreviewPresenter(
-            TrimView trimView, SharedPreferences sharedPreferences,
-            UserEventTracker userEventTracker,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-            ProjectInstanceCache projectInstanceCache) {
+        TrimView trimView, SharedPreferences sharedPreferences,
+        UserEventTracker userEventTracker,
+        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+        ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+        ProjectInstanceCache projectInstanceCache,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor, userEventTracker);
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.amIVerticalApp = amIAVerticalApp;
     }
 
     public void init(int videoToTrimIndex) {
@@ -86,6 +94,9 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
             v.add(videoToEdit);
             onVideosRetrieved(v);
         }
+        if (amIVerticalApp) {
+            trimView.setAspectRatioVerticalVideos();
+        }
     }
 
     @Override
@@ -102,13 +113,14 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
     }
 
     public void setTrim(int startTimeMs, int finishTimeMs) {
-
-        modifyVideoDurationUseCase.trimVideo(videoToEdit, startTimeMs, finishTimeMs,
-            currentProject);
+        Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
+        Futures.addCallback(modifyVideoDurationUseCase
+                        .trimVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject),
+                new TrimResultCallback(videoToEdit, currentProject), backgroundExecutor);
         trackVideoTrimmed();
     }
 
-    public void trackVideoTrimmed() {
+    void trackVideoTrimmed() {
         userEventTracker.trackClipTrimmed(currentProject);
     }
 
@@ -175,7 +187,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         updateRadioButtonAccordingTheme(radioButtonHigh);
     }
 
-    public void updateViewsAccordingTheme() {
+    void updateViewsAccordingTheme() {
         if (isThemeDarkActivated()) {
             trimView.updateViewToThemeDark();
         } else {
@@ -183,7 +195,7 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         }
     }
 
-    public void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
+    private void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
         if (isThemeDarkActivated()) {
             trimView.updateRadioButtonToThemeDark(buttonNoSelected);
         } else {
@@ -195,7 +207,5 @@ public class TrimPreviewPresenter implements OnVideosRetrieved, ElementChangedLi
         return sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
+
 }
-
-
-

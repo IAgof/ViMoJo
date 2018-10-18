@@ -10,33 +10,37 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
@@ -44,7 +48,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
@@ -59,30 +65,37 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX
  */
 public class EditorPresenter extends VimojoPresenter
         implements PlayStoreBillingDelegate.BillingDelegateView {
-  private final PlayStoreBillingDelegate playStoreBillingDelegate;
-  private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
   public static final float VOLUME_MUTE = 0f;
-
+  private static final String LOG_TAG = EditorPresenter.class.getSimpleName();
+  private final PlayStoreBillingDelegate playStoreBillingDelegate;
+  private final String THEME_DARK = "dark";
+  private final String THEME_LIGHT = "light";
+  private final BillingManager billingManager;
   private EditorActivityView editorActivityView;
   private VideonaPlayerView videonaPlayerView;
   private SharedPreferences sharedPreferences;
+  private SharedPreferences.Editor preferencesEditor;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   protected Project currentProject;
-  private SharedPreferences.Editor preferencesEditor;
   private Context context;
   private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
   private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
   private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
   private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
-  private ProjectRepository projectRepository;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-
-  private final String THEME_DARK = "dark";
-  private final String THEME_LIGHT = "light";
-  private final BillingManager billingManager;
+  private SaveComposition saveComposition;
   private ProjectInstanceCache projectInstanceCache;
+  private RemoveMedia removeMedia;
+  private UpdateCompositionWatermark updateCompositionWatermark;
+  private UpdateComposition updateComposition;
+  protected boolean showWatermarkSwitch;
+  private boolean vimojoStoreAvailable;
+  private boolean vimojoPlatformAvailable;
+  private boolean watermarkIsForced;
+  private boolean hideTutorials;
+  private boolean amIAVerticalApp;
 
   @Inject
   public EditorPresenter(
@@ -94,8 +107,18 @@ public class EditorPresenter extends VimojoPresenter
           GetAudioFromProjectUseCase getAudioFromProjectUseCase,
           GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          ProjectRepository projectRepository, NewClipImporter newClipImporter,
-          BillingManager billingManager, ProjectInstanceCache projectInstanceCache) {
+          NewClipImporter newClipImporter, BillingManager billingManager,
+          ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
+          RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
+          UpdateComposition updateComposition,
+          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
+          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          @Named("hideTutorials") boolean hideTutorials,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          BackgroundExecutor backgroundExecutor) {
+    super(backgroundExecutor, userEventTracker);
     this.editorActivityView = editorActivityView;
     this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
@@ -107,19 +130,32 @@ public class EditorPresenter extends VimojoPresenter
     this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
     this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
-    this.projectRepository = projectRepository;
     this.newClipImporter = newClipImporter;
     this.billingManager = billingManager;
     this.playStoreBillingDelegate = new PlayStoreBillingDelegate(billingManager, this);
     this.projectInstanceCache = projectInstanceCache;
+    this.saveComposition = saveComposition;
+    this.removeMedia = removeMedia;
+    this.updateCompositionWatermark = updateCompositionWatermark;
+    this.updateComposition = updateComposition;
+    this.showWatermarkSwitch = showWatermarkSwitch;
+    this.vimojoStoreAvailable = vimojoStoreAvailable;
+    this.vimojoPlatformAvailable = vimojoPlatformAvailable;
+    this.watermarkIsForced = watermarkIsForced;
+    this.hideTutorials = hideTutorials;
+    this.amIAVerticalApp = amIAVerticalApp;
   }
 
-  public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath, String currentAppliedTheme) {
+  public ListenableFuture<?> updatePresenter(boolean hasBeenProjectExported, String videoPath,
+                                             String currentAppliedTheme) {
     return this.executeUseCaseCall(() -> {
       currentProject = projectInstanceCache.getCurrentProject();
       updateTheme(currentAppliedTheme);
-      checkFeaturesAvailable();
+      setupVimojoStore();
+      setupVimojoPlatformLink();
+      setupTutorial();
       updateDrawerHeaderWithCurrentProject();
+      setupWatermarkDrawerSwitch();
       setupPlayer(hasBeenProjectExported, videoPath);
     });
   }
@@ -129,6 +165,9 @@ public class EditorPresenter extends VimojoPresenter
       initPreviewFromProject();
     } else {
       initPreviewFromVideoExported(videoPath);
+    }
+    if (amIAVerticalApp) {
+      editorActivityView.setAspectRatioVerticalVideos();
     }
   }
 
@@ -145,44 +184,37 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   public void onPause() {
-    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
+    if (vimojoStoreAvailable) {
       billingManager.destroy();
     }
   }
 
-  private void checkFeaturesAvailable() {
-    checkWatermark();
-    checkVimojoStore();
-    checkVimojoPlatform();
-    checkShowTutorial();
+  private void setupVimojoPlatformLink() {
+    if (!vimojoPlatformAvailable) {
+      editorActivityView.hideLinkToVimojoPlatform();
+    }
   }
 
-  private void checkWatermark() {
-    if (BuildConfig.FEATURE_WATERMARK_SWITCH && !BuildConfig.FEATURE_FORCE_WATERMARK) {
-      editorActivityView.watermarkFeatureAvailable();
+  private void setupVimojoStore() {
+    if (vimojoStoreAvailable) {
+      playStoreBillingDelegate.initBilling((Activity) context);
+      editorActivityView.setLockIconsForStoreItems();
+    } else {
+      editorActivityView.setDefaultIconsForStoreItems();
+      editorActivityView.hideVimojoStoreViews();
+    }
+  }
+
+  private void setupWatermarkDrawerSwitch() {
+    if (showWatermarkSwitch) {
+      editorActivityView.showWatermarkSwitch(watermarkIsSelected());
     } else {
       editorActivityView.hideWatermarkSwitch();
     }
   }
 
-  private void checkVimojoStore() {
-    if (BuildConfig.VIMOJO_STORE_AVAILABLE) {
-      playStoreBillingDelegate.initBilling((Activity) context);
-      editorActivityView.setIconsPurchaseInApp();
-    } else {
-      editorActivityView.setIconsFeatures();
-      editorActivityView.hideVimojoStoreViews();
-    }
-  }
-
-  private void checkVimojoPlatform() {
-    if (!BuildConfig.FEATURE_SHOW_LINK_VIMOJO_PLATFORM) {
-      editorActivityView.hideLinkToVimojoPlatform();
-    }
-  }
-
-  private void checkShowTutorial() {
-    if (!BuildConfig.FEATURE_SHOW_TUTORIALS) {
+  private void setupTutorial() {
+    if (hideTutorials) {
       editorActivityView.hideTutorialViews();
     }
   }
@@ -201,17 +233,27 @@ public class EditorPresenter extends VimojoPresenter
   public void resetCurrentProject(String rootPath, String privatePath,
                                   Drawable drawableFadeTransitionVideo) {
     clearProjectDataFromSharedPreferences();
-    setNewProject(rootPath, privatePath, drawableFadeTransitionVideo);
-    editorActivityView.goToRecordOrGalleryScreen();
+    Futures.addCallback(setNewProject(rootPath, privatePath, drawableFadeTransitionVideo),
+            new FutureCallback<Object>() {
+              @Override
+              public void onSuccess(@Nullable Object result) {
+                editorActivityView.goToRecordOrGalleryScreen();
+              }
+
+              @Override
+              public void onFailure(Throwable t) {
+                // TODO(jliarte): 18/07/18 handle error saving?
+                editorActivityView.goToRecordOrGalleryScreen();
+              }
+            });
   }
 
-  private void setNewProject(String rootPath, String privatePath,
-                             Drawable drawableFadeTransitionVideo) {
+  private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
+                                            Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            getPreferenceWaterMark(), drawableFadeTransitionVideo,
-            BuildConfig.FEATURE_VERTICAL_VIDEOS);
-    projectRepository.add(project);
+            watermarkIsSelected(), drawableFadeTransitionVideo, amIAVerticalApp);
     projectInstanceCache.setCurrentProject(project);
+    return executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
 
   // TODO(jliarte): 23/10/16 should this be moved to activity or other outer layer? maybe a repo?
@@ -231,7 +273,7 @@ public class EditorPresenter extends VimojoPresenter
         public void onVideosRetrieved(List<Video> videosRetrieved) {
           checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
           List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-          List<Video> videoCopy = new ArrayList<>(checkedVideoList);
+          List<Video> videoCopy = new ArrayList<>(videosRetrieved);
           videonaPlayerView.bindVideoList(videoCopy);
           //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
           newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
@@ -264,19 +306,20 @@ public class EditorPresenter extends VimojoPresenter
         // TODO(jliarte): 26/04/17 notify the user we are deleting items from project!!! FIXME
         ArrayList<Media> mediaToDeleteFromProject = new ArrayList<>();
         mediaToDeleteFromProject.add(video);
-        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
-            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
-              @Override
-              public void onRemoveMediaItemFromTrackSuccess() {
-
-              }
-
-              @Override
-              public void onRemoveMediaItemFromTrackError() {
-                // TODO: 19/2/18 Define on remove media error
-                editorActivityView.showError(R.string.addMediaItemToTrackError);
-              }
-            });
+//        removeVideoFromProjectUseCase.removeMediaItemsFromProject(currentProject,
+//            mediaToDeleteFromProject, new OnRemoveMediaFinishedListener() {
+//              @Override
+//              public void onRemoveMediaItemFromTrackSuccess(List<Media> mediaList) {
+//                executeUseCaseCall(() -> removeMedia.removeMedias(mediaList));
+//                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+//              }
+//
+//              @Override
+//              public void onRemoveMediaItemFromTrackError() {
+//                // TODO: 19/2/18 Define on remove media error
+//                editorActivityView.showError(R.string.addMediaItemToTrackError);
+//              }
+//            });
         Log.e(LOG_TAG, video.getMediaPath() + " not found!! deleting from project");
       } else {
         checkedVideoList.add(video);
@@ -340,7 +383,8 @@ public class EditorPresenter extends VimojoPresenter
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
-    relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
+    executeUseCaseCall(() -> relaunchTranscoderTempBackgroundUseCase
+            .relaunchExport(video, currentProject));
   }
 
   public void switchPreference(final boolean isChecked, String preference) {
@@ -353,7 +397,9 @@ public class EditorPresenter extends VimojoPresenter
     }
     if (preference.equals(ConfigPreferences.WATERMARK)) {
       // TODO:(alvaro.martinez) 2/11/17 track watermark applied
-      projectRepository.setWatermarkActivated(currentProject, isChecked);
+      updateCompositionWatermark.updateCompositionWatermark(currentProject, isChecked);
+      executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+      // TODO(jliarte): 21/08/18 should we chain this?
       if (isShareActivity()) {
         editorActivityView.restartActivity(context.getClass());
       }
@@ -383,15 +429,8 @@ public class EditorPresenter extends VimojoPresenter
     return currentTheme;
   }
 
-  public boolean getPreferenceWaterMark() {
-    if (BuildConfig.FEATURE_FORCE_WATERMARK) {
-      return true;
-    }
-    return currentProject.hasWatermark();
-  }
-
-  private void activateWatermarkPreference() {
-    sharedPreferences.edit().putBoolean(ConfigPreferences.WATERMARK, true).apply();
+  private boolean watermarkIsSelected() {
+    return watermarkIsForced || currentProject.hasWatermark();
   }
 
   @Override
@@ -401,16 +440,6 @@ public class EditorPresenter extends VimojoPresenter
     } else {
       deactivateDarkThemePreference();
       editorActivityView.deactivateDarkTheme();
-    }
-  }
-
-  @Override
-  public void itemWatermarkPurchased(boolean purchased) {
-    if (purchased) {
-      editorActivityView.itemWatermarkPurchased();
-    } else {
-      activateWatermarkPreference();
-      editorActivityView.activateWatermark();
     }
   }
 
@@ -428,7 +457,6 @@ public class EditorPresenter extends VimojoPresenter
   public void updateTitleCurrentProject(String title) {
     ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
-    projectRepository.setProjectInfo(currentProject, projectInfo.getTitle(), projectInfo.getDescription(),
-        projectInfo.getProductTypeList());
+    executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
   }
 }

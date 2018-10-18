@@ -8,12 +8,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +35,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class AddAudioUseCaseTest {
   
   @Mock OnAddMediaFinishedListener mockedOnAddMediaFinishedListener;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock TrackRepository mockedTrackRepository;
-  @Mock MusicRepository mockedMusicRepository;
+  @Mock
+  ProjectRepository mockedProjectRepository;
+  @Mock
+  TrackDataSource mockedTrackRepository;
+  @Mock
+  MusicDataSource mockedMusicRepository;
   private Project currentProject;
 
   @Before
@@ -149,20 +152,6 @@ public class AddAudioUseCaseTest {
   }
 
   @Test
-  public void addAudioUpdateRepositories() {
-    float defaultVolume = 0.7f;
-    int defaultDuration = 100;
-    Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
-    currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
-    AddAudioUseCase addAudioUseCase = getAddAudioUseCase();
-
-    addAudioUseCase.addMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
-        mockedOnAddMediaFinishedListener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
-  @Test
   public void addAudioInsertMusicToTrack() {
     float defaultVolume = 0.7f;
     int defaultDuration = 100;
@@ -213,7 +202,7 @@ public class AddAudioUseCaseTest {
 
 
   private AddAudioUseCase getAddAudioUseCase() {
-    return new AddAudioUseCase(mockedProjectRepository);
+    return new AddAudioUseCase();
   }
   
   private void getAProject() {

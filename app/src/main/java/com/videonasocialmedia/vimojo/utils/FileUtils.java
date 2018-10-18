@@ -123,4 +123,14 @@ public class FileUtils {
     File f = new File(mediaPath);
     f.delete();
   }
+
+  public static boolean fileExists(String assetFilePath) {
+    return new File(assetFilePath).exists();
+  }
+
+  public static void move(String src, String dst) {
+    File orig = new File(src);
+    File dest = new File(dst);
+    orig.renameTo(dest);
+  }
 }
