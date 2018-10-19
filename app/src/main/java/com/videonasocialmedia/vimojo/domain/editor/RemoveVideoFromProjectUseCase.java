@@ -11,16 +11,15 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalOrphanTransitionOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -28,32 +27,23 @@ import javax.inject.Inject;
  * This class is used to removed videos from the project.
  */
 public class RemoveVideoFromProjectUseCase {
-    protected ProjectRepository projectRepository;
-    protected VideoRepository videoRepository;
-
     /**
      * Default Constructor.
-     *
-     * @param projectRepository the project repository.
-     * @param videoRepository the video repository.
      */
-    @Inject public RemoveVideoFromProjectUseCase(ProjectRepository projectRepository,
-                                                 VideoRepository videoRepository) {
-        this.projectRepository = projectRepository;
-        this.videoRepository = videoRepository;
+    @Inject public RemoveVideoFromProjectUseCase() {
     }
 
     public void removeMediaItemsFromProject(Project currentProject, ArrayList<Media> mediaList,
                                             OnRemoveMediaFinishedListener listener) {
         boolean correct = false;
         Track mediaTrack = currentProject.getMediaTrack();
+        ArrayList<Media> removedMedias = new ArrayList<>();
         for (Media media : mediaList) {
-            correct = removeVideoItemFromTrack(currentProject, media, mediaTrack);
+            correct = removeVideoItemFromTrack(media, mediaTrack);
             if (!correct) break;
-            //video repository remove media, remove videos from other projects also.
-            videoRepository.remove((Video) media);
+            removedMedias.add(media);
         }
-        notifyResultToListener(currentProject, listener, correct);
+        notifyResultToListener(listener, correct, removedMedias);
     }
 
     public void removeMediaItemFromProject(Project currentProject, int positionVideoToRemove,
@@ -61,11 +51,9 @@ public class RemoveVideoFromProjectUseCase {
 
         Track mediaTrack = currentProject.getMediaTrack();
         Media media = mediaTrack.getItems().get(positionVideoToRemove);
-        boolean correct = removeVideoItemFromTrack(currentProject, media, mediaTrack);
+        boolean correct = removeVideoItemFromTrack(media, mediaTrack);
         if (!correct) return;
-        //video repository remove media, remove videos from other projects also.
-        videoRepository.remove((Video) media);
-        notifyResultToListener(currentProject, listener, correct);
+        notifyResultToListener(listener, correct, Collections.singletonList(media));
     }
 
     /**
@@ -75,7 +63,7 @@ public class RemoveVideoFromProjectUseCase {
      * @return bool if the item has been deleted from the track, return true. If it fails,
      *          return false.
      */
-    private boolean removeVideoItemFromTrack(Project currentProject, Media video, Track mediaTrack) {
+    private boolean removeVideoItemFromTrack(Media video, Track mediaTrack) {
         boolean result;
         try {
             mediaTrack.deleteItem(video);
@@ -89,11 +77,10 @@ public class RemoveVideoFromProjectUseCase {
         return result;
     }
 
-    private void notifyResultToListener(Project currentProject,
-                                        OnRemoveMediaFinishedListener listener, boolean correct) {
+    private void notifyResultToListener(OnRemoveMediaFinishedListener listener, boolean correct,
+                                        List<Media> removedMedias) {
         if (correct) {
-            projectRepository.update(currentProject);
-            listener.onRemoveMediaItemFromTrackSuccess();
+            listener.onRemoveMediaItemFromTrackSuccess(removedMedias);
         } else {
             listener.onRemoveMediaItemFromTrackError();
         }

@@ -19,7 +19,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.roughike.bottombar.BottomBar;
@@ -107,6 +105,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
   private AdView adView;
+  private View exportDialogView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +163,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   private void initBarProgressDialog() {
     LayoutInflater dialogLayout = LayoutInflater.from(ShareActivity.this);
-    View DialogView = dialogLayout.inflate(R.layout.dialog_progress_export, null);
+    exportDialogView = dialogLayout.inflate(R.layout.dialog_progress_export, null);
 
     exportDialog = new Dialog(ShareActivity.this, R.style.VideonaDialog);
     //exportDialog.setContentView(DialogView);
@@ -174,58 +173,15 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     lp.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.65);
     exportDialog.getWindow().setAttributes(lp);
 
-    exportDialogMessage = (TextView) DialogView.findViewById(R.id.exportDialogMessage);
+    exportDialogMessage = (TextView) exportDialogView.findViewById(R.id.exportDialogMessage);
 
-    Button cancel = (Button) DialogView.findViewById(R.id.cancel_btn);
+    Button cancel = (Button) exportDialogView.findViewById(R.id.cancel_btn);
     cancel.setOnClickListener(v -> {
         exportDialog.dismiss();
         presenter.cancelExportation();
     });
-
-    if (!BuildConfig.FEATURE_SHOW_ADS) {
-      CardView adsCardView = (CardView) DialogView.findViewById(R.id.adsCardView);
-      adsCardView.setVisibility(View.GONE);
-    } else {
-      // Native Admob
-      adView = (AdView) DialogView.findViewById(R.id.adView);
-      adView.loadAd(new AdRequest.Builder().build());
-      adView.setAdListener(new AdListener() {
-        @Override
-        public void onAdLoaded() {
-          // Code to be executed when an ad finishes loading.
-          Log.d(LOG_TAG, "onAdLoaded");
-        }
-
-        @Override
-        public void onAdFailedToLoad(int errorCode) {
-          // Code to be executed when an ad request fails.
-          Log.d(LOG_TAG, "onAdFailedToLoad errorCode " + errorCode);
-        }
-
-        @Override
-        public void onAdOpened() {
-          // Code to be executed when an ad opens an overlay that
-          // covers the screen.
-          Log.d(LOG_TAG, "onAdOpened");
-        }
-
-        @Override
-        public void onAdLeftApplication() {
-          // Code to be executed when the user has left the app.
-          Log.d(LOG_TAG, "onAdLeftApplication");
-        }
-
-        @Override
-        public void onAdClosed() {
-          // Code to be executed when when the user is about to return
-          // to the app after tapping on an ad.
-          Log.d(LOG_TAG, "onAdClosed");
-        }
-      });
-    }
     exportDialog.setCancelable(false);
     exportDialog.setCanceledOnTouchOutside(false);
-    exportDialog.setContentView(DialogView);
 
     checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
     checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
@@ -346,6 +302,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
         switch (which) {
           case DialogInterface.BUTTON_NEUTRAL:
+            // TODO(jliarte): 4/09/18 show loading progress
             presenter.performLoginAndSaveAccount(this);
             break;
         }
@@ -456,6 +413,20 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
           dialogClickListener);
       builder.show();
     });
+  }
+
+  @Override
+  public void showAdsView() {
+    adView = exportDialogView.findViewById(R.id.adView);
+    adView.loadAd(new AdRequest.Builder().build());
+    exportDialog.setContentView(exportDialogView);
+  }
+
+  @Override
+  public void hideAdsView() {
+    CardView adsCardView = exportDialogView.findViewById(R.id.adsCardView);
+    adsCardView.setVisibility(View.GONE);
+    exportDialog.setContentView(exportDialogView);
   }
 
   private void navigateToProjectDetails() {

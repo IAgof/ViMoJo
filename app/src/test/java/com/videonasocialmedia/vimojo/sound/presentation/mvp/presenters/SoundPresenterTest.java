@@ -12,16 +12,20 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.utils.Constants;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -39,7 +43,11 @@ public class SoundPresenterTest {
   @Mock SoundView mockedSoundView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock ProjectInstanceCache mockedProjectInstantCache;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
+  private boolean voiceOverAvailable;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void init() {
@@ -104,22 +112,20 @@ public class SoundPresenterTest {
 
   @Test
   public void ifProjectHasNotEnableVoiceOverCallsHideVoiceOverCardView() {
-    // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
-    boolean FEATURE_TOGGLE_VOICE_OVER = false;
-    SoundPresenter soundPresenter = getSoundPresenter();
+    SoundPresenter spySoundPresenter = Mockito.spy(getSoundPresenter());
+    spySoundPresenter.voiceOverAvailable = false;
 
-    soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    spySoundPresenter.checkVoiceOverFeatureToggle();
 
-    verify(mockedSoundView).hideVoiceOverCardView();
+    verify(mockedSoundView).hideVoiceOverTrack();
   }
 
   @Test
   public void ifProjectHasEnableVoiceOverCallsAddVoiceOverToFabButton() {
-    // TODO:(alvaro.martinez) 27/03/17 How to mock Build.Config values
-    boolean FEATURE_TOGGLE_VOICE_OVER = true;
-    SoundPresenter soundPresenter = getSoundPresenter();
+    SoundPresenter spySoundPresenter = Mockito.spy(getSoundPresenter());
+    spySoundPresenter.voiceOverAvailable = true;
 
-    soundPresenter.checkVoiceOverFeatureToggle(FEATURE_TOGGLE_VOICE_OVER);
+    spySoundPresenter.checkVoiceOverFeatureToggle();
 
     verify(mockedSoundView).addVoiceOverOptionToFab();
   }
@@ -149,7 +155,8 @@ public class SoundPresenterTest {
   @NonNull
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
-        mockedProjectInstantCache);
+        mockedProjectInstantCache, mockedUpdateComposition, voiceOverAvailable,
+        mockedBackgroundExecutor, mockedUserEventTracker);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

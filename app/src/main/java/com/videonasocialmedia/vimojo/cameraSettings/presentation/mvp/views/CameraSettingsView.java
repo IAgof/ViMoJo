@@ -13,4 +13,6 @@ public interface CameraSettingsView {
   void screenOrientationPortrait();
 
   void screenOrientationLandscape();
+
+  void initCameraSettingsRecycler(boolean amIAVerticalApp);
 }

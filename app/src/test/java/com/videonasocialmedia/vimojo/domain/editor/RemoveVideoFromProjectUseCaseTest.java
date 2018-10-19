@@ -4,19 +4,21 @@ import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -33,8 +35,10 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(PowerMockRunner.class)
 public class RemoveVideoFromProjectUseCaseTest {
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock VideoRepository mockedVideoRepository;
+  @Mock
+  ProjectRepository mockedProjectRepository;
+  @Mock
+  VideoDataSource mockedVideoRepository;
   @InjectMocks RemoveVideoFromProjectUseCase injectedUseCase;
   @Mock MediaTrack mockedMediaTrack;
   private Project currentProject;
@@ -45,19 +49,7 @@ public class RemoveVideoFromProjectUseCaseTest {
     getAProject();
   }
 
-  @Test
-  public void testRemoveMediaItemsFromProjectCallsUpdateProject() {
-    currentProject.setMediaTrack(mockedMediaTrack);
-    Video video = new Video("media/path", 1f);
-    ArrayList<Media> videos = new ArrayList<Media>();
-    videos.add(video);
-    OnRemoveMediaFinishedListener listener = getOnRemoveMediaFinishedListener();
-
-    injectedUseCase.removeMediaItemsFromProject(currentProject, videos, listener);
-
-    verify(mockedProjectRepository).update(currentProject);
-  }
-
+  @Ignore // Move this test to EditPresenter, it should be in charge of update video.
   @Test
   public void testRemoveMediaItemFromProjectCallsUpdateProject() throws IllegalItemOnTrack {
     Video video = new Video("media/path", 1f);
@@ -79,7 +71,17 @@ public class RemoveVideoFromProjectUseCaseTest {
       }
 
       @Override
-      public void onRemoveMediaItemFromTrackSuccess() {
+      public void onTrackUpdated(Track track) {
+
+      }
+
+      @Override
+      public void onTrackRemoved(Track track) {
+
+      }
+
+      @Override
+      public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 
       }
     };

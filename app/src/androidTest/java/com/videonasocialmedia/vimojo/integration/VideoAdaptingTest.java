@@ -16,16 +16,16 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmRepository;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.ProjectRealmDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -68,10 +68,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class VideoAdaptingTest extends AssetManagerAndroidTest {
-  private VideoToAdaptMemoryRepository videoToAdaptRepo;
+  private VideoToAdaptMemoryDataSource videoToAdaptRepo;
 
-  @Mock VideoRepository videoRepo;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock
+  VideoDataSource videoRepo;
+  @Mock
+  ProjectRepository mockedProjectRepository;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedListener;
   @Mock private OnExportFinishedListener mockedExportListener;
   private String testPath;
@@ -81,7 +83,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    videoToAdaptRepo = new VideoToAdaptMemoryRepository();
+    videoToAdaptRepo = new VideoToAdaptMemoryDataSource();
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
     getAProject();
@@ -252,7 +254,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     VideoToAdapt videoToAdapt2 = new VideoToAdapt(video2, destPath2, 0, 0, 0);
     ExportProjectUseCase exportProjectUseCase = new ExportProjectUseCase(videoToAdaptRepo);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
-            new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
+            new ModifyVideoDurationUseCase(videoToAdaptRepo, mediaRepository);
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, mockedListener);
     adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt2, videoFormat, mockedListener);
     ListenableFuture<Video> transcodingTask = video.getTranscodingTask();
@@ -315,7 +317,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     Video video = new Video(".temporal/Vid1234.mp4", Video.DEFAULT_VOLUME);
     currentProject.setProjectPath(testPath);
     currentProject.getVMComposition().getMediaTrack().insertItem(video);
-    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmRepository());
+    ProjectRepository projectRepo = Mockito.spy(new ProjectRealmDataSource(trackDataSource));
     projectRepo.update(currentProject);
     String destVideoRecorded = "DCIM/ViMoJo/Masters/Vid1233.mp4";
     int videoPosition = 0;
@@ -323,7 +325,7 @@ public class VideoAdaptingTest extends AssetManagerAndroidTest {
     int retries = 0;
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
         cameraRotation, retries);
-    VideoToAdaptRepository videoToAdaptRepo = Mockito.spy(new VideoToAdaptRealmRepository());
+    VideoToAdaptDataSource videoToAdaptRepo = Mockito.spy(new VideoToAdaptRealmDataSource());
     videoToAdaptRepo.update(videoToAdapt);
 
     // App died, restore data

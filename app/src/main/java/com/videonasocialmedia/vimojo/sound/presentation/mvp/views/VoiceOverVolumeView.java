@@ -20,4 +20,5 @@ public interface VoiceOverVolumeView {
     void muteVideo();
     void muteMusic();
 
+  void setAspectRatioVerticalVideos();
 }

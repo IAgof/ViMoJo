@@ -16,8 +16,8 @@ import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExport
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -37,14 +37,14 @@ public class ExportProjectUseCase implements ExportListener {
   private OnExportFinishedListener onExportFinishedListener;
   private VMCompositionExportSession vmCompositionExportSession;
   private Project project;
-  private final VideoToAdaptRepository videoToAdaptRepository;
+  private final VideoToAdaptDataSource videoToAdaptRepository;
   private boolean isExportCanceled = false;
 
   /**
    * Project VMCompositionExportSession use case.
    */
   public ExportProjectUseCase(
-          VideoToAdaptRepository videoToAdaptRepository) {
+          VideoToAdaptDataSource videoToAdaptRepository) {
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 

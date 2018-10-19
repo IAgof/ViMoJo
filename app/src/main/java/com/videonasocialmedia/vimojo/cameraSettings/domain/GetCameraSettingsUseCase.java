@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.cameraSettings.domain;
 
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 
 /**
  * Created by alvaro on 13/12/17.
@@ -8,9 +8,9 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRep
 
 public class GetCameraSettingsUseCase {
 
-  private CameraSettingsRepository cameraSettingsRepository;
+  private CameraSettingsDataSource cameraSettingsRepository;
 
-  public GetCameraSettingsUseCase(CameraSettingsRepository cameraSettingsRepository) {
+  public GetCameraSettingsUseCase(CameraSettingsDataSource cameraSettingsRepository) {
     this.cameraSettingsRepository = cameraSettingsRepository;
   }
 

@@ -4,33 +4,51 @@ package com.videonasocialmedia.vimojo.view;
  * Created by jliarte on 12/01/18.
  */
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
+
+import javax.inject.Inject;
 
 /**
  * Class for presenters to extend to implement presentation logic. This class provides some common
  * functionalities presenters share
  */
 public class VimojoPresenter {
-  // TODO(jliarte): 12/01/18 tune this parameter
-  private static final int N_THREADS = 5;
-  private final ListeningExecutorService executorPool;
+  private BackgroundExecutor backgroundExecutor;
+  private UserEventTracker userEventTracker;
 
-  public VimojoPresenter() {
-    executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
+  @Inject
+  public VimojoPresenter(BackgroundExecutor backgroundExecutor,
+                         UserEventTracker userEventTracker) {
+    this.backgroundExecutor = backgroundExecutor;
+    this.userEventTracker = userEventTracker;
   }
 
-  protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
-    return executorPool.submit(callable);
+  public final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {
+    return backgroundExecutor.submit(callable);
   }
 
-  protected final ListenableFuture<?> executeUseCaseCall(Runnable runnable) {
-    return executorPool.submit(runnable);
+  public final ListenableFuture<?> executeUseCaseCall(Runnable runnable) {
+    return backgroundExecutor.submit(runnable);
   }
 
+  public final void addCallback(ListenableFuture listenableFuture, FutureCallback futureCallback) {
+    backgroundExecutor.addCallback(listenableFuture, futureCallback);
+  }
 
+  public void onActivityDestroy() {
+    userEventTracker.flush();
+  }
+
+  public void onActivityStart(Class<? extends VimojoActivity> activity) {
+    userEventTracker.startView(activity);
+  }
+
+  public void onActivityPause(Class<? extends VimojoActivity> activity) {
+    userEventTracker.endView(activity);
+  }
 }

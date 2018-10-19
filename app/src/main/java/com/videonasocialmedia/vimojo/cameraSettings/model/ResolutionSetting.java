@@ -17,9 +17,9 @@ import java.util.HashMap;
  * This model is intended for record area.
  */
 public class ResolutionSetting {
-  public static final String CAMERA_SETTING_RESOLUTION_H_720 = "H_720p";
-  public static final String CAMERA_SETTING_RESOLUTION_H_1080 = "H_1080p";
-  public static final String CAMERA_SETTING_RESOLUTION_H_2160 = "H_4k";
+  public static final String CAMERA_SETTING_RESOLUTION_H_720 = "720p";
+  public static final String CAMERA_SETTING_RESOLUTION_H_1080 = "1080p";
+  public static final String CAMERA_SETTING_RESOLUTION_H_2160 = "4k";
   public static final String CAMERA_SETTING_RESOLUTION_V_720 = "V_720p";
   public static final String CAMERA_SETTING_RESOLUTION_V_1080 = "V_1080p";
   public static final String CAMERA_SETTING_RESOLUTION_V_2160 = "V_4K";

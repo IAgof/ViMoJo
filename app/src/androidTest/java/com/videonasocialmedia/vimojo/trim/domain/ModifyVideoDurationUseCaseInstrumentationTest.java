@@ -13,12 +13,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptMemoryDataSource;
 import com.videonasocialmedia.vimojo.integration.AssetManagerAndroidTest;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,15 +42,15 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerAndroidTest {
-  private VideoToAdaptMemoryRepository videoToAdaptRepo;
+  private VideoToAdaptMemoryDataSource videoToAdaptRepo;
   private String testPath;
-  @Mock private VideoRepository videoRepo;
+  @Mock private VideoDataSource videoRepo;
   @Mock private AdaptVideoToFormatUseCase.AdaptListener mockedAdaptListener;
   private Project currentProject;
 
   @Before
   public void setUp() {
-    videoToAdaptRepo = new VideoToAdaptMemoryRepository();
+    videoToAdaptRepo = new VideoToAdaptMemoryDataSource();
     testPath = getInstrumentation().getTargetContext().getExternalCacheDir()
             .getAbsolutePath();
     MockitoAnnotations.initMocks(this);
@@ -66,7 +66,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     Project project = setupProjectPath();
     project.getVMComposition().getMediaTrack().insertItem(video);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
-            new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
+            new ModifyVideoDurationUseCase(videoToAdaptRepo, mediaRepository);
 
     modifyVideoDurationUseCase.trimVideo(video, 100, 600, project);
 
@@ -97,7 +97,7 @@ public class ModifyVideoDurationUseCaseInstrumentationTest extends AssetManagerA
     String destPath = testPath + "/res.mp4";
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destPath, 0, 0, 0);
     ModifyVideoDurationUseCase modifyVideoDurationUseCase =
-            new ModifyVideoDurationUseCase(videoRepo, videoToAdaptRepo);
+            new ModifyVideoDurationUseCase(videoToAdaptRepo, mediaRepository);
 
     adaptVideoToFormatUseCase.adaptVideo(project, videoToAdapt, videoFormat, mockedAdaptListener);
     ListenableFuture<Video> adaptTask = video.getTranscodingTask();

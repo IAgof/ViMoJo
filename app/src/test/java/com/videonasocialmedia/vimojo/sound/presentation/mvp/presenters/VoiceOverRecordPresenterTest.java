@@ -11,9 +11,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
@@ -21,7 +24,9 @@ import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferences
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +67,12 @@ public class VoiceOverRecordPresenterTest {
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
+  private boolean amIAVerticalApp;
+  @Mock UpdateTrack mockedUpdateTrack;
+  @Mock RemoveTrack mockedRemoveTrack;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectTestDoubles() {
@@ -140,7 +150,7 @@ public class VoiceOverRecordPresenterTest {
 
   @Test
   public void removePreviousVoiceOverCallsShowErrorOnRemoveMediaItemFromTrackError()
-          throws IllegalItemOnTrack {
+      throws IllegalItemOnTrack, InterruptedException {
     final float defaultVolume = 0.5f;
     int defaultDuration = 100;
     final Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
@@ -158,6 +168,12 @@ public class VoiceOverRecordPresenterTest {
             eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             Matchers.any(OnRemoveMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation
+        -> {
+          Runnable runnable = invocation.getArgument(0);
+          runnable.run();
+          return null;
+    });
 
     injectedPresenter.deletePreviousVoiceOver();
 
@@ -187,11 +203,12 @@ public class VoiceOverRecordPresenterTest {
   }
 
   private VoiceOverRecordPresenter getVoiceOverRecorderPresenter(){
-    VoiceOverRecordPresenter voiceOverRecordPresenter = new VoiceOverRecordPresenter(mockedContext,
-        mockedVoiceOverRecordView,
-        mockedGetMediaListFromProjectUseCase, mockedGetPreferencesTransitionFromProjectUseCase,
-        mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedUserEventTracker,
-        mockedProjectInstanceCache);
+    VoiceOverRecordPresenter voiceOverRecordPresenter = new VoiceOverRecordPresenter(
+            mockedContext, mockedVoiceOverRecordView, mockedGetMediaListFromProjectUseCase,
+            mockedGetPreferencesTransitionFromProjectUseCase, mockedAddAudioUseCase,
+            mockedRemoveAudioUseCase, mockedUserEventTracker, mockedProjectInstanceCache,
+            mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack,
+            mockedBackgroundExecutor);
     voiceOverRecordPresenter.currentProject = currentProject;
     return voiceOverRecordPresenter;
   }

@@ -4,12 +4,12 @@ import com.videonasocialmedia.camera.utils.VideoCameraFormat;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -32,7 +32,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class GetVideoTranscoderFormatFromCurrentProjectUseCaseTest {
 
   private Project currentProject;
-  @Mock ProjectRepository mockedProjectRepository;
+  @Mock
+  ProjectRepository mockedProjectRepository;
 
   @Before
   public void setUp() throws Exception {

@@ -21,19 +21,21 @@ import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperLis
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -62,7 +64,6 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
 import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTING_RESOLUTION;
 import static com.videonasocialmedia.vimojo.utils.Constants.FRONT_CAMERA_ID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
@@ -97,14 +98,18 @@ public class RecordCamera2PresenterTest {
   @Mock Camera2WrapperListener mockedCamera2WrapperListener;
   @Mock private Activity mockedActivity;
   @Mock private Camera2Wrapper mockedCamera2Wrapper;
-  @Mock private VideoRepository mockedVideoRepository;
+  @Mock private VideoDataSource mockedVideoRepository;
   @Mock private NewClipImporter mockedNewClipImporter;
-  @Mock CameraSettingsRepository mockedCameraSettingsRepository;
+  @Mock CameraSettingsDataSource mockedCameraSettingsRepository;
   @Mock CameraSettings mockedCameraSettings;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
-  @InjectMocks private RecordCamera2Presenter injectedPresenter;
   private Project currentProject;
+  @Mock UpdateComposition mockedUpdateComposition;
+  private boolean hideRecordAudioGain;
+  private boolean hideTutorialsDecision;
+  private boolean amIAVerticalApp;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
 
   @Before
   public void injectMocks() {
@@ -116,7 +121,9 @@ public class RecordCamera2PresenterTest {
 
   @Test
   public void constructorSetsUserTracker() {
-    assertThat(injectedPresenter.userEventTracker, is(mockedUserEventTracker));
+    RecordCamera2Presenter recordCamera2Presenter = getRecordCamera2Presenter();
+
+    assertThat(recordCamera2Presenter.userEventTracker, is(mockedUserEventTracker));
   }
 
   @Test
@@ -368,7 +375,8 @@ public class RecordCamera2PresenterTest {
     RecordCamera2Presenter recordCamera2Presenter = new RecordCamera2Presenter(mockedActivity,
             mockedRecordView, mockedUserEventTracker, mockedSharedPreferences,
             mockedAddVideoToProjectUseCase, mockedNewClipImporter, mockedCamera2Wrapper,
-            mockedCameraSettingsRepository, mockedProjectInstanceCache);
+            mockedCameraSettingsRepository, mockedProjectInstanceCache, mockedUpdateComposition,
+            hideRecordAudioGain, hideTutorialsDecision, amIAVerticalApp, mockedBackgroundExecutor);
     recordCamera2Presenter.currentProject = currentProject;
     return recordCamera2Presenter;
   }
@@ -381,7 +389,8 @@ public class RecordCamera2PresenterTest {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
-    ResolutionSetting resolutionSetting = new ResolutionSetting(DEFAULT_CAMERA_SETTING_RESOLUTION,
+    ResolutionSetting resolutionSetting = new
+        ResolutionSetting(ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720,
         resolutionsSupportedMap);
     HashMap<Integer, Boolean> frameRatesSupportedMap = new HashMap<>();
     frameRatesSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);

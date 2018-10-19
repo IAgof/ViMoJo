@@ -10,8 +10,8 @@ import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StatFs;
 import android.os.Handler;
+import android.os.StatFs;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
@@ -37,18 +37,17 @@ import com.videonasocialmedia.camera.camera2.Camera2MeteringModeHelper;
 import com.videonasocialmedia.camera.camera2.Camera2WhiteBalanceHelper;
 import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.camera.customview.CustomManualFocusView;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.views.activity.GalleryActivity;
-import com.videonasocialmedia.vimojo.record.presentation.views.broadcastreceiver.BatteryReceiver;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.presenters.RecordCamera2Presenter;
 import com.videonasocialmedia.vimojo.record.presentation.mvp.views.RecordCamera2View;
+import com.videonasocialmedia.vimojo.record.presentation.views.broadcastreceiver.BatteryReceiver;
 import com.videonasocialmedia.vimojo.record.presentation.views.custom.dialogs.AlertDialogWithInfoIntoCircle;
-import com.videonasocialmedia.vimojo.cameraSettings.presentation.view.activity.CameraSettingsActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
@@ -349,7 +348,12 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   };
   private int minExposureCompensation;
   private int minExposureTime;
-
+  /**
+   * boolean to control decision am i a vertical app?
+   * Update value on init record screen and used logic in activity in order to NOT update all
+   * methods involve and moved to presenter.
+   */
+  private boolean amIAVerticalApp;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -403,13 +407,8 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public ActivityPresentersModule getActivityPresentersModule() {
-    int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-      defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
-    }
     return new ActivityPresentersModule(this, Constants.PATH_APP_TEMP,
-        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())),
-        defaultCameraIdSelected);
+        textureView, getFreeStorage(new StatFs(Environment.getDataDirectory().getPath())));
   }
 
   private void keepScreenOn() {
@@ -462,7 +461,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void setupSlideSeekBar() {
     slideSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       exposureTimeSeekBarVertical.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
     } else {
       exposureTimeSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
@@ -881,7 +880,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     listGridModeValues.add(GRID_MODE_ONE_ONE);
     listGridModeValues.add(GRID_MODE_CROSSES);
 
-    if (!BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (!amIAVerticalApp) {
       gridModeButtons.put(GRID_MODE_FIBONACCI, gridModeFibonacci);
       listGridModeValues.add(GRID_MODE_FIBONACCI);
     }
@@ -1562,7 +1561,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showGridModeLines() {
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       imageViewGrid.setImageResource(R.drawable.activity_record_grid_lines_background_vertical);
     } else {
       imageViewGrid.setImageResource(R.drawable.activity_record_grid_lines_background);
@@ -1571,7 +1570,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showGridModeOneOne() {
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       imageViewGrid.setImageResource(R.drawable.activity_record_grid_one_one_background_vertical);
     } else {
       imageViewGrid.setImageResource(R.drawable.activity_record_grid_one_one_background);
@@ -1580,7 +1579,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void showGridModeCrosses() {
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       imageViewGrid.setImageResource(R.drawable.activity_record_grid_crosses_bakcground_vertical);
     } else {
       imageViewGrid.setImageResource(R.drawable.activity_record_grid_crosses_bakcground);
@@ -1608,6 +1607,11 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   }
 
   @Override
+  public void setupAmIAVerticalApp(boolean amIAVerticalApp) {
+    this.amIAVerticalApp = amIAVerticalApp;
+  }
+
+  @Override
   public void setupManualExposureTime(int minimumExposureCompensation) {
     this.minExposureTime = presenter.getMinimunExposureTime();
   }
@@ -1620,7 +1624,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void enableExposureTimeSeekBar() {
     setupSlideSeekBar();
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       exposureTimeSeekBarVertical.setEnabled(true);
     } else {
       exposureTimeSeekBar.setEnabled(true);
@@ -1629,7 +1633,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void disableExposureTimeSeekBar() {
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       exposureTimeSeekBarVertical.setEnabled(false);
     } else {
       exposureTimeSeekBar.setEnabled(false);
@@ -1664,7 +1668,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     int maxShutterSpeed = presenter.getMaximumExposureTime();
     maxExposureText.setText("1/" + new Double(1/(maxShutterSpeed/1000000000d)).toString());
     minExposureText.setText("1/" + (1000000000 / minExposureTime));
-    if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+    if (amIAVerticalApp) {
       exposureTimeSeekBarVertical.setMax(maxShutterSpeed- minExposureTime);
       exposureTimeSeekBarVertical.setProgress(presenter.getCurrentExposureTimeSeekBarProgress());
     } else {
@@ -1827,7 +1831,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   @Override
   public void exposureTimeChanged(long exposureTime) {
     if (slideSeekBarMode == SLIDE_SEEKBAR_MODE_MANUAL_EXPOSURE_TIME) {
-      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      if (amIAVerticalApp) {
         exposureTimeSeekBarVertical.setProgress((int) exposureTime);
       } else {
         exposureTimeSeekBar.setProgress((int) exposureTime);
@@ -1912,7 +1916,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     @Override
     public void onOrientationChanged(int orientation) {
       checkShowRotateDeviceImage(orientation);
-      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      if (amIAVerticalApp) {
         if (orientation > 255 && orientation < 5) {
           if (orientationHaveChanged) {
             Log.d(LOG_TAG, "onOrientationChanged  rotationView changed " + orientation);
@@ -1955,7 +1959,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     }
 
     private void checkShowRotateDeviceImage(int orientation) {
-      if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
+      if (amIAVerticalApp) {
         if ((orientation > 75 && orientation < 105) && orientation != -1) {
           rotateDeviceHint.setRotation(90);
           rotateDeviceHint.setRotationX(0);

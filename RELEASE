@@ -1,2 +1,2 @@
-v0.20.8
-- Fixed bug exporting videos.
+v0.21.0
+- Added register/login screen. In order to identify users and allow coming new features like cloud composition backups.

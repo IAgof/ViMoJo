@@ -12,18 +12,23 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
 import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +37,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -41,19 +47,20 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by alvaro on 22/03/17.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
-        shadows = {ShadowMultiDex.class}, packageName = "com.videonasocialmedia.vimojo.debug")
+        shadows = {ShadowMultiDex.class, JobManager.class}, packageName = "com.videonasocialmedia.vimojo.debug")
 public class GalleryPagerPresenterTest {
   @Mock AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
   @Mock OnLaunchAVTransitionTempFileListener mockedLaunchAVTransitionTempFileListener;
@@ -67,9 +74,13 @@ public class GalleryPagerPresenterTest {
   @Mock Context mockedContext;
   @Mock private SharedPreferences mockedSharedPreferences;
   @Mock private SharedPreferences.Editor mockedPreferencesEditor;
-  @Mock private VideoRepository mockedVideoRepository;
+  @Mock private VideoDataSource mockedVideoRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock UpdateComposition mockedUpdateComposition;
+  @Mock SetCompositionResolution mockedSetCompositionResolution;
   private Project currentProject;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock UserEventTracker mockedUserEventTracker;
 
   @Before
   public void injectMocks() {
@@ -116,16 +127,23 @@ public class GalleryPagerPresenterTest {
     doReturn(preferenceResolutionString).when(mockedContext)
             .getString(R.string.low_resolution_name);
 
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation -> {
+      Runnable runnable = invocation.getArgument(0);
+      runnable.run();
+      return null;
+    });
+
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
     ArgumentCaptor<VideoResolution.Resolution> resolutionCaptor =
             ArgumentCaptor.forClass(VideoResolution.Resolution.class);
-    verify(mockedProjectRepository).updateResolution(Mockito.any(Project.class), resolutionCaptor.capture());
+    verify(mockedSetCompositionResolution).setResolution(any(Project.class),
+        resolutionCaptor.capture());
     VideoResolution.Resolution resolutionCaptorValue = resolutionCaptor.getValue();
     assertThat(resolutionCaptorValue, is(VideoResolution.Resolution.HD720));
-
     verify(mockedPreferencesEditor).putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
             preferenceResolutionString);
+    verify(mockedUpdateComposition).updateComposition(any(Project.class));
   }
 
   @Test
@@ -150,8 +168,8 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(project, videoList);
 
-    verify(mockedProjectRepository, never())
-            .updateResolution(Mockito.any(Project.class), Mockito.any(VideoResolution.Resolution.class));
+    verify(mockedSetCompositionResolution, never())
+            .setResolution(Mockito.any(Project.class), Mockito.any(VideoResolution.Resolution.class));
     verify(mockedPreferencesEditor, never())
             .putString(eq(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION),
             Mockito.anyString());
@@ -174,7 +192,7 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(currentProject, videoList);
 
-    verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
+    verify(mockedSetCompositionResolution, never()).setResolution(Mockito.any(Project.class),
         Mockito.any(VideoResolution.Resolution.class));
   }
 
@@ -190,15 +208,17 @@ public class GalleryPagerPresenterTest {
 
     galleryPagerPresenter.updateProfileForEmptyProject(currentProject, videoList);
 
-    verify(mockedProjectRepository, never()).updateResolution(Mockito.any(Project.class),
+    verify(mockedSetCompositionResolution, never()).setResolution(Mockito.any(Project.class),
         Mockito.any(VideoResolution.Resolution.class));
   }
 
   private GalleryPagerPresenter getGalleryPresenter() {
-    return new GalleryPagerPresenter(mockedGalleryPagerView, mockedContext,
-            mockedAddVideoToProjectUseCase, mockedGetVideonaFormatFromCurrentProjectUseCase,
-            mockedApplyAVTransitionsUseCase, mockedProjectRepository,
-            mockedVideoRepository, mockedSharedPreferences, mockedProjectInstanceCache);
+    return new GalleryPagerPresenter(
+            mockedGalleryPagerView, mockedContext, mockedAddVideoToProjectUseCase,
+            mockedApplyAVTransitionsUseCase,
+            mockedSharedPreferences,
+            mockedProjectInstanceCache, mockedUpdateComposition,
+            mockedSetCompositionResolution, mockedBackgroundExecutor, mockedUserEventTracker);
   }
 
   public void setAProject() {

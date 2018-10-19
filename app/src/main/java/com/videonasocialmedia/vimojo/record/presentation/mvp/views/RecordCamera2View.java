@@ -238,4 +238,6 @@ public interface RecordCamera2View {
     void screenOrientationLandscape();
 
     void hideTutorials();
+
+  void setupAmIAVerticalApp(boolean amIAVerticalApp);
 }

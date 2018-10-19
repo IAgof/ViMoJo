@@ -8,9 +8,8 @@ import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingValue;
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettingViewModel;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,21 +51,28 @@ public class GetCameraSettingsMapperSupportedListUseCase {
   @Inject
   public GetCameraSettingsMapperSupportedListUseCase(Context context,
                                                      Project currentProject,
-                                                     CameraSettingsRepository cameraSettingsRepository) {
+                                                     CameraSettingsDataSource cameraSettingsRepository) {
     this.context = context;
     cameraSettings = cameraSettingsRepository.getCameraSettings();
     this.currentProject = currentProject;
   }
 
   public List<CameraSettingViewModel> getCameraSettingsList(
-          HashMap<Integer, String> resolutionNames, HashMap<Integer, String> qualityNames,
-          HashMap<Integer, String> frameRateNames, HashMap<Integer, String> interfaceNames) {
+      HashMap<Integer, String> resolutionNames, HashMap<Integer, String> qualityNames,
+      HashMap<Integer, String> frameRateNames, HashMap<Integer, String> interfaceNames,
+      boolean showCameraPro, boolean allowSelectFrameRate, boolean allowSelectResolution) {
     List <CameraSettingViewModel> preferenceList = new ArrayList<>();
-    addProInterfaceSettingsToList(interfaceNames, preferenceList);
-    addResolutionSettingsToList(
-            resolutionNames, cameraSettings.getResolutionSetting(), preferenceList);
-    addFrameRateSettingsToList(
-            frameRateNames, cameraSettings.getFrameRateSetting(), preferenceList);
+    if (showCameraPro) {
+      addProInterfaceSettingsToList(interfaceNames, preferenceList);
+    }
+    if (allowSelectResolution) {
+      addResolutionSettingsToList(
+          resolutionNames, cameraSettings.getResolutionSetting(), preferenceList);
+    }
+    if (allowSelectFrameRate) {
+      addFrameRateSettingsToList(
+          frameRateNames, cameraSettings.getFrameRateSetting(), preferenceList);
+    }
     addQualitySettingsToList(qualityNames, preferenceList);
     return preferenceList;
   }

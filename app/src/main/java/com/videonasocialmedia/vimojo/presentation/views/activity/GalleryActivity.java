@@ -147,7 +147,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         List<Video> videoList;
         videoList = getSelectedVideos();
         if (videoList.size() > 0) {
-            galleryPagerPresenter.loadVideoListToProject(videoList);
+            galleryPagerPresenter.addVideoListToProject(videoList);
         }
     }
 

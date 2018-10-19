@@ -14,7 +14,7 @@ import android.util.Log;
 
 import com.videonasocialmedia.vimojo.main.SystemComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
@@ -29,7 +29,8 @@ import javax.inject.Inject;
 public class UploadBroadcastReceiver extends BroadcastReceiver {
 
   @Inject UploadToPlatform uploadToPlatform;
-  @Inject UploadRepository uploadRepository;
+  @Inject
+  UploadDataSource uploadRepository;
   @Inject RunSyncAdapterHelper runSyncAdapterHelper;
   private Context context;
   private String LOG_TAG = UploadBroadcastReceiver.class.getName();

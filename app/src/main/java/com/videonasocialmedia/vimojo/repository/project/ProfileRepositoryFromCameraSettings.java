@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResol
 import com.videonasocialmedia.vimojo.cameraSettings.model.CameraSettings;
 import com.videonasocialmedia.vimojo.cameraSettings.model.FrameRateSetting;
 import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
-import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsRepository;
+import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
 import java.util.HashMap;
@@ -23,6 +23,8 @@ import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetti
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_2160_FRONT_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_BACK_ID;
 import static com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting.CAMERA_SETTING_RESOLUTION_720_FRONT_ID;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 
 /**
  * Created by jliarte on 28/11/17.
@@ -40,16 +42,21 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   public static final VideoQuality.Quality DEFAULT_VIDEO_QUALITY = VideoQuality.Quality.LOW;
   public static final VideoFrameRate.FrameRate DEFAULT_VIDEO_FRAME_RATE = VideoFrameRate
           .FrameRate.FPS30;
-  private final CameraSettingsRepository cameraSettingsRepository;
+  private final CameraSettingsDataSource cameraSettingsRepository;
   private HashMap<String, VideoQuality.Quality> videoQualityMap;
   private HashMap<String, VideoFrameRate.FrameRate> frameRateMap;
   private HashMap<String, VideoResolution.Resolution> resolutionMap;
 
-  public ProfileRepositoryFromCameraSettings(CameraSettingsRepository cameraSettingsRepository,
-                                             int defaultCameraIdSelected) {
+  public ProfileRepositoryFromCameraSettings(CameraSettingsDataSource cameraSettingsRepository,
+                                             boolean amIAVerticalApp, boolean showCameraPro,
+                                             String defaultResolutionSetting) {
     this.cameraSettingsRepository = cameraSettingsRepository;
+    int defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
+    if (amIAVerticalApp) {
+      defaultCameraIdSelected = DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
+    }
     if (this.cameraSettingsRepository.getCameraSettings() == null) {
-      createDefaultCameraSettings(defaultCameraIdSelected);
+      createDefaultCameraSettings(defaultCameraIdSelected, showCameraPro, defaultResolutionSetting);
     }
     setupVideoQualityMap();
     setupFrameRateMap();
@@ -87,7 +94,8 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
   }
 
   // TODO(jliarte): 29/11/17 seems not to be responsibility of this repo, check for suitable class
-  private void createDefaultCameraSettings(int defaultCameraIdSelected) {
+  private void createDefaultCameraSettings(int defaultCameraIdSelected, boolean showCameraPro,
+                                           String defaultResolutionSetting) {
     HashMap<Integer, Boolean> resolutionsSupportedMap = new HashMap<>();
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_720_BACK_ID, true);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_BACK_ID, false);
@@ -96,8 +104,8 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_1080_FRONT_ID, false);
     resolutionsSupportedMap.put(CAMERA_SETTING_RESOLUTION_2160_FRONT_ID, false);
 
-    ResolutionSetting resolutionSetting = new ResolutionSetting(
-            Constants.DEFAULT_CAMERA_SETTING_RESOLUTION, resolutionsSupportedMap);
+    ResolutionSetting resolutionSetting = new ResolutionSetting(defaultResolutionSetting,
+        resolutionsSupportedMap);
 
     HashMap<Integer, Boolean> frameRateSupportedMap = new HashMap<>();
     frameRateSupportedMap.put(CAMERA_SETTING_FRAME_RATE_24_ID, false);
@@ -107,7 +115,12 @@ public class ProfileRepositoryFromCameraSettings implements ProfileRepository {
             Constants.DEFAULT_CAMERA_SETTING_FRAME_RATE, frameRateSupportedMap);
 
     String quality = Constants.DEFAULT_CAMERA_SETTING_QUALITY;
-    String interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    String interfaceSelected;
+    if (showCameraPro) {
+      interfaceSelected = Constants.DEFAULT_CAMERA_SETTING_INTERFACE_SELECTED;
+    } else {
+      interfaceSelected = Constants.CAMERA_SETTING_INTERFACE_BASIC;
+    }
     CameraSettings defaultCameraSettings = new CameraSettings(resolutionSetting,
             frameRateSetting, quality, interfaceSelected, defaultCameraIdSelected);
     cameraSettingsRepository.createCameraSetting(defaultCameraSettings);

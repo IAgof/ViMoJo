@@ -21,11 +21,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuali
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.OptionsToShareList;
@@ -37,7 +39,9 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
+import com.videonasocialmedia.vimojo.utils.ConstantsTest;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -46,6 +50,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -58,6 +64,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -69,7 +76,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Environment.class, TextUtils.class})
 public class ShareVideoPresenterTest {
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private ShareVideoView mockedShareVideoView;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private SharedPreferences mockedSharedPreferences;
@@ -90,6 +96,13 @@ public class ShareVideoPresenterTest {
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
     @Mock ApplicationInfo mockedApplicationInfo;
+    @Mock UpdateComposition mockedUpdateComposition;
+    @Mock FetchUserFeatures mockedFetchUserFeatures;
+    private boolean ftpPublishingAvailable;
+    private boolean showAds;
+    private boolean showSocialNetworksDecision;
+    private boolean uploadToPlatformAvailable;
+    @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
     public void injectMocks() {
@@ -115,13 +128,15 @@ public class ShareVideoPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
                 mockedShareVideoView, userEventTracker, mockedSharedPreferences,
-                mockedCreateDefaultProjectUseCase, mockedAddLastVideoExportedUseCase,
-                mockedExportProjectUseCase, mockedShareNetworksProvider, mockedFtpListUseCase,
-                mockedUploadToPlatform, mockedRunSyncAdapterHelper, mockedProjectInstanceCache,
-                mockedUserAuth0Helper);
+                mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
+                mockedShareNetworksProvider, mockedFtpListUseCase, mockedUploadToPlatform,
+                mockedRunSyncAdapterHelper, mockedProjectInstanceCache, mockedUserAuth0Helper,
+                mockedUpdateComposition, mockedFetchUserFeatures,
+                ftpPublishingAvailable, showAds, showSocialNetworksDecision,
+                uploadToPlatformAvailable, mockedBackgroundExecutor);
         assertThat(shareVideoPresenter.userEventTracker, is(userEventTracker));
     }
 
@@ -378,6 +393,24 @@ public class ShareVideoPresenterTest {
         verify(mockedShareVideoView).showIntentOtherNetwork(videoExportedPath);
     }
 
+    @Test
+    public void addVideoExportedToProjectCallsUseCaseAndUpdateProject() {
+        ShareVideoPresenter shareVideoPresenter = getShareVideoPresenter();
+        String videoPath = "someVideoPath";
+        when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>)
+            invocation -> {
+                Runnable runnable = invocation.getArgument(0);
+                runnable.run();
+                return null;
+        });
+
+        shareVideoPresenter.addVideoExportedToProject(videoPath);
+
+        verify(mockedAddLastVideoExportedUseCase).addLastVideoExportedToProject(any(Project.class),
+            anyString(),anyString());
+        verify(mockedUpdateComposition).updateComposition(currentProject);
+    }
+
     private void setAProject() {
         Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
             VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
@@ -390,11 +423,13 @@ public class ShareVideoPresenterTest {
     private ShareVideoPresenter getShareVideoPresenter() {
         ShareVideoPresenter shareVideoPresenter = new ShareVideoPresenter(mockContext,
             mockedShareVideoView, mockedUserEventTracker,
-            mockedSharedPreferences, mockedCreateDefaultProjectUseCase,
+            mockedSharedPreferences,
                 mockedAddLastVideoExportedUseCase, mockedExportProjectUseCase,
                 mockedShareNetworksProvider, mockedFtpListUseCase,
             mockedUploadToPlatform, mockedRunSyncAdapterHelper,
-            mockedProjectInstanceCache, mockedUserAuth0Helper);
+            mockedProjectInstanceCache, mockedUserAuth0Helper, mockedUpdateComposition,
+            mockedFetchUserFeatures, ftpPublishingAvailable, showAds, showSocialNetworksDecision,
+            uploadToPlatformAvailable, mockedBackgroundExecutor);
         shareVideoPresenter.currentProject = currentProject;
         return shareVideoPresenter;
     }

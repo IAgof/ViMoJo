@@ -16,21 +16,21 @@ import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
-import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionResolution;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,59 +40,54 @@ import javax.inject.Inject;
 /**
  * This class is used for adding new videos to the project.
  */
-public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
-    OnRemoveMediaFinishedListener
-//        , OnLaunchAVTransitionTempFileListener
-//        , TranscoderHelperListener
+public class GalleryPagerPresenter extends VimojoPresenter
+//        implements OnRemoveMediaFinishedListener
 {
     private final String LOG_TAG = "GalleryPagerPresenter";
 
     private final SharedPreferences preferences;
-    private final GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase;
     private final AddVideoToProjectUseCase addVideoToProjectUseCase;
     private final GalleryPagerView galleryPagerView;
     protected Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
-    private final VideoRepository videoRepository;
     private final ProjectInstanceCache projectInstanceCache;
     private boolean differentVideoFormat;
 
-    private VideonaFormat videoFormat;
     private final ApplyAVTransitionsUseCase launchTranscoderAddAVTransitionUseCase;
     // TODO(jliarte): 3/05/17 init in constructor to inject it. Wrap android MMR with our own class
     MediaMetadataRetriever metadataRetriever;
-    private final ProjectRepository projectRepository;
+    private final UpdateComposition updateComposition;
+    private SetCompositionResolution setCompositionResolution;
 
     /**
      * Constructor.
      */
     @Inject public GalleryPagerPresenter(
-            GalleryPagerView galleryPagerView, Context context,
-            AddVideoToProjectUseCase addVideoToProjectUseCase,
-            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-            ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
-            ProjectRepository projectRepository,
-            VideoRepository videoRepository, SharedPreferences preferences,
-            ProjectInstanceCache projectInstanceCache) {
+        GalleryPagerView galleryPagerView, Context context,
+        AddVideoToProjectUseCase addVideoToProjectUseCase,
+        ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        SetCompositionResolution setCompositionResolution, BackgroundExecutor backgroundExecutor,
+        UserEventTracker userEventTracker) {
+        super(backgroundExecutor, userEventTracker);
         this.galleryPagerView = galleryPagerView;
         this.context = context;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
-        this.getVideonaFormatFromCurrentProjectUseCase = getVideonaFormatFromCurrentProjectUseCase;
         this.launchTranscoderAddAVTransitionUseCase = applyAVTransitionsUseCase;
-        this.projectRepository = projectRepository;
-        this.videoRepository = videoRepository;
         this.preferences = preferences;
+        this.setCompositionResolution = setCompositionResolution;
         // TODO(jliarte): 23/04/18 inject this dependency? maybe abstracting from android with an interface
         metadataRetriever = new MediaMetadataRetriever();
         this.projectInstanceCache = projectInstanceCache;
+        this.updateComposition = updateComposition;
     }
 
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
     }
 
-    public void loadVideoListToProject(List<Video> videoList) {
+    public void addVideoListToProject(List<Video> videoList) {
         try {
             List<Video> checkedVideoList =
                     filterVideosWithResolutionDifferentFromProjectResolution(videoList);
@@ -115,7 +110,25 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     }
 
     private void addVideoToProject(List<Video> checkedVideoList) {
-        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList, this);
+        // TODO(jliarte): 18/07/18 extract repo call outside this UC and replace in all other invocations!!
+        addVideoToProjectUseCase.addVideoListToTrack(currentProject, checkedVideoList,
+                new OnAddMediaFinishedListener() {
+            @Override
+            public void onAddMediaItemToTrackSuccess(Media video) {
+                // TODO(jliarte): 18/07/18 check if this UC call should be inside if
+                // TODO(jliarte): 18/07/18 should update project or add new media to project?
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+                if (!differentVideoFormat) {
+                    galleryPagerView.navigate();
+                }
+            }
+
+            @Override
+            public void onAddMediaItemToTrackError() {
+                // TODO(jliarte): 18/07/18 handle this error - show message!!
+            }
+
+        });
     }
 
     private List<Video> filterVideosWithResolutionDifferentFromProjectResolution(
@@ -152,6 +165,7 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
     }
 
     private String getVideoWidth(Video video) {
+        // TODO(jliarte): 11/07/18 capture error getting info from MMR
         metadataRetriever.setDataSource(video.getMediaPath());
         return metadataRetriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
@@ -175,11 +189,12 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
             VideoResolution.Resolution resolutionForWidth = getResolutionForWidth(videoWidth);
 
             if (resolutionForWidth != null) {
-                projectRepository.updateResolution(currentProject, resolutionForWidth);
+                setCompositionResolution.setResolution(currentProject, resolutionForWidth);
                 SharedPreferences.Editor preferencesEditor = preferences.edit();
                 preferencesEditor.putString(ConfigPreferences.KEY_LIST_PREFERENCES_RESOLUTION,
                         getPreferenceResolutionForWidth(videoWidth));
-                preferencesEditor.commit();
+                preferencesEditor.apply();
+                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
             }
         }
     }
@@ -214,29 +229,22 @@ public class GalleryPagerPresenter implements OnAddMediaFinishedListener,
         }
     }
 
-    @Override
-    public void onRemoveMediaItemFromTrackError() {
-    }
-
-    @Override
-    public void onRemoveMediaItemFromTrackSuccess() {
-    }
-
-    @Override
-    public void onAddMediaItemToTrackError() {
-    }
-
-    /*
-
-    ÑAPA
-
-     */
-
-    @Override
-    public void onAddMediaItemToTrackSuccess(Media video) {
-        if (!differentVideoFormat) {
-            galleryPagerView.navigate();
-        }
-    }
+//    @Override
+//    public void onRemoveMediaItemFromTrackError() {
+//    }
+//
+//  @Override
+//  public void onTrackUpdated(Track track) {
+//
+//  }
+//
+//    @Override
+//    public void onTrackRemoved(Track track) {
+//
+//    }
+//
+//    @Override
+//    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
+//    }
 
 }

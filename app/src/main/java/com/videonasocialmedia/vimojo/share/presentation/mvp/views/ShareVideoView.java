@@ -54,4 +54,8 @@ public interface ShareVideoView {
   void successLoginAuth0();
 
   void showDialogInstagramStoriesDuration();
+
+  void showAdsView();
+
+  void hideAdsView();
 }

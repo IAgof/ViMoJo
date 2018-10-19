@@ -70,26 +70,19 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 130 // 20181001
-            versionName "0.20.8" // 20181001
+            versionCode 131 // 20181018
+            versionName "0.21.0" // 20181018
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
-            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "true"
-            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "1f6610673faf2f5fcde5824176e94c8f4570aa2c"
@@ -105,15 +98,8 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             ext.fabricApiKey = "3fc92dd8023e505ebab31a962e1eb284f37696bb"
             ext.fabricApiSecret = "f88950e831f1f8c6d7402b96e4e93c1c2f71f1e021dc68b183b8b3d2456b9b67"
@@ -128,15 +114,8 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             ext.fabricApiKey = "9600ab9fda1b0c0991396ffc882a957bbcca8678"
             ext.fabricApiSecret = "b3bf19cf86f8075700885f47ec7cf2813b8d8b6832a78a008ed9b757e5a56d91"
@@ -151,15 +130,8 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             ext.fabricApiKey = "ef7283ce8f2da3b2c5dc022a1d7952f349f659c5"
             ext.fabricApiSecret = "fdb53a8ca1d8e71f363963c0624f7606af4ed317c57340afc4a72303eef221b0"
@@ -167,26 +139,19 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 81 // 20181001
-            versionName "0.20.8.fThomsonFoundation" // 20181001
-            resValue "string", "app_out_of_date", "2018-06-30"
+            versionCode 82 // 20181018
+            versionName "0.21.0.fThomsonFoundation" // 20181018
+            resValue "string", "app_out_of_date", "2018-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
-            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
-            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "c5e050918c143441f6b23e7936f7f83faa1330b4"
@@ -203,15 +168,8 @@ android {
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "false"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             ext.fabricApiKey = "cc4515beda76fe1e841888650366e5a069c590a1"
             ext.fabricApiSecret = "4381a2ca62cb21c2118e3319917e7ccc53fd659bd726bdd1175f540e14e7186d"
@@ -219,26 +177,19 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 48 // 20181001
-            versionName "0.20.8.fMarketForNews" // 20181001
+            versionCode 49 // 20181018
+            versionName "0.21.0.fMarketForNews" // 20181018
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://market4news.com/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "false"
             buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "7bf627d1b2578e3f8e4136d9dba10530e0e7d578"
@@ -256,15 +207,8 @@ android {
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             ext.fabricApiKey = "60975c88785d14ed56393acb658081f33b93678f"
             ext.fabricApiSecret = "393c86bf03f37c4cf603df78c122f715fbd4aa4d3da89e0b3dc95333728e6308"
@@ -273,26 +217,19 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 23 // 20181001
-            versionName "0.20.8.fElConfidencial" // 20181001
+            versionCode 24 // 20181018
+            versionName "0.21.0.fElConfidencial" // 20181018
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "1442d44814a667b767d05105af9eaf0887fa55bf"
@@ -302,26 +239,19 @@ android {
 
         vanitatis {
             applicationId "com.videonasocialmedia.vimojo.vanitatis"
-            versionCode 10 // 20181001
-            versionName "0.20.8.fVanitatis" // 20181001
+            versionCode 11 // 20181018
+            versionName "0.21.0.fVanitatis" // 20181018
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo Vanitatis"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "true"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
             buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
-            buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_ADS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "false"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "true"
             ext.fabricApiKey = "ba042a668ef1e5a3445c6e91d54df22eb70dbfc9"
@@ -331,26 +261,19 @@ android {
 
         vishow {
             applicationId "com.videonasocialmedia.vimojo.vishow"
-            versionCode 9 // 20181001
-            versionName "0.20.8.fVishow" // 20181001
+            versionCode 10 // 20181018
+            versionName "0.21.0.fVishow" // 20181018
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vishow"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
             ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
-            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
-            buildConfigField "boolean", "FEATURE_FTP", "false"
-            buildConfigField "boolean", "FEATURE_VOICE_OVER", "true"
-            buildConfigField "boolean", "FEATURE_WATERMARK_SWITCH", "true"
-            buildConfigField "boolean", "FEATURE_FORCE_WATERMARK", "false"
-            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
-            buildConfigField "boolean", "VIMOJO_STORE_AVAILABLE", "false"
-            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
-            buildConfigField "boolean", "FEATURE_SHOW_LINK_VIMOJO_PLATFORM", "false"
+            buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
+            buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
+            buildConfigField "boolean", "FEATURE_RECORD_AUDIO_GAIN", "false"
             buildConfigField "boolean", "FEATURE_SHARE_SHOW_SOCIAL_NETWORKS", "true"
             buildConfigField "boolean", "FEATURE_VERTICAL_VIDEOS", "true"
-            buildConfigField "boolean", "FEATURE_SHOW_ADS", "true"
             buildConfigField "boolean", "FEATURE_SHOW_MORE_APPS", "true"
             buildConfigField "boolean", "FEATURE_SHOW_TUTORIALS", "false"
             ext.fabricApiKey = "84ed2eec6d02a66257b9991e2478d8c0f6fbb811"
@@ -527,9 +450,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     implementation 'com.google.guava:guava:19.0'
-    implementation 'com.squareup.tape2:tape:2.0.0-SNAPSHOT'
+    implementation 'com.squareup.tape2:tape:2.0.0-beta1'
+    implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation 'com.auth0.android:auth0:1.13.0'
     implementation 'com.google.firebase:firebase-ads:11.8.0'
+    implementation 'com.birbit:android-priority-jobqueue:2.0.1'
 }
 
 // Ensure the no-op dependency is always used in JVM tests.

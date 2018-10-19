@@ -1,36 +1,58 @@
 package com.videonasocialmedia.vimojo.utils;
 
+import android.content.Context;
 import android.util.Log;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
+import com.videonasocialmedia.vimojo.utils.tracker.FirebaseTracker;
+import com.videonasocialmedia.vimojo.utils.tracker.MixpanelTracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by jliarte on 7/06/16.
  */
 public class UserEventTracker {
-    private final String TAG = getClass().getSimpleName();
+    private final String LOG_TAG = getClass().getSimpleName();
     private static UserEventTracker userEventTrackerInstance;
-    public MixpanelAPI mixpanel;
     public static final String MIXPANEL_EMAIL_ID = "$email";
     public static final String MIXPANEL_ACCOUNT_EMAIL_ID = "$account_email";
+    public static final String FIREBASE_EMAIL_ID = "email";
+    public static final String FIREBASE_ACCOUNT_EMAIL_ID = "account_email";
     public static final String MIXPANEL_USERNAME_ID = "$username";
+    private Context context;
+    protected ArrayList<TrackerIntegration> trackers;
 
-    protected UserEventTracker(MixpanelAPI mixpanelAPI) {
-        this.mixpanel = mixpanelAPI;
+    protected UserEventTracker(Context context, ArrayList<TrackerIntegration.Factory> factories) {
+        this.trackers = new ArrayList<>();
+        this.context = context;
+        initializeTrackers(factories);
     }
 
-    public static UserEventTracker getInstance(MixpanelAPI mixpanelAPI) {
-        if (userEventTrackerInstance == null)
-            userEventTrackerInstance = new UserEventTracker(mixpanelAPI);
+    private void initializeTrackers(ArrayList<TrackerIntegration.Factory> factories) {
+        for (TrackerIntegration.Factory factory : factories) {
+            TrackerIntegration<?> tracker = factory.create(this);
+            if (tracker != null) {
+                this.trackers.add(tracker);
+            }
+        }
+    }
+
+    public static void setSingletonInstance(UserEventTracker singletonInstance) {
+        UserEventTracker.userEventTrackerInstance = singletonInstance;
+    }
+
+    public static UserEventTracker getInstance() {
         return userEventTrackerInstance;
     }
 
@@ -38,9 +60,190 @@ public class UserEventTracker {
         userEventTrackerInstance = null;
     }
 
+    public Context getApplication() {
+        return context;
+    }
+
+    private void identify(String id) {
+        for (TrackerIntegration integration : trackers) {
+            integration.identify(id);
+        }
+    }
+
+    public void aliasUser(String idAlias) {
+        for (TrackerIntegration integration : trackers) {
+            integration.aliasUser(idAlias);
+        }
+    }
+
     protected void trackEvent(Event event) {
         if (event != null) {
-            mixpanel.track(event.getName(), event.getProperties());
+            for (TrackerIntegration integration : trackers) {
+                integration.track(event);
+            }
+        }
+    }
+
+    private void registerSuperProperties(JSONObject superProperties) {
+        if (superProperties != null) {
+            for (TrackerIntegration integration : trackers) {
+                integration.registerSuperProperties(superProperties);
+            }
+        }
+    }
+
+    private void registerSuperPropertiesOnce(JSONObject superProperties) {
+        if (superProperties != null) {
+            for (TrackerIntegration integration : trackers) {
+                integration.registerSuperPropertiesOnce(superProperties);
+            }
+        }
+    }
+
+    private void setUserProperties(String propertyName, String propertyValue) {
+        for (TrackerIntegration integration : trackers) {
+            integration.setUserProperties(propertyName, propertyValue);
+        }
+    }
+
+    private void setUserProperties(String propertyName, boolean propertyValue) {
+        for (TrackerIntegration integration : trackers) {
+            integration.setUserProperties(propertyName, propertyValue);
+        }
+    }
+
+    private void setUserProperties(JSONObject userProperties) {
+        if (userProperties != null) {
+            for (TrackerIntegration integration : trackers) {
+                integration.setUserProperties(userProperties);
+            }
+        }
+    }
+
+    private void setUserPropertiesOnce(String propertyName, String propertyValue) {
+        for (TrackerIntegration integration : trackers) {
+            integration.setUserPropertiesOnce(propertyName, propertyValue);
+        }
+    }
+
+    private void setUserPropertiesOnce(JSONObject userProperties) {
+        if (userProperties != null) {
+            for (TrackerIntegration integration : trackers) {
+                integration.setUserPropertiesOnce(userProperties);
+            }
+        }
+    }
+
+    private void incrementUserProperty(String propertyName, int increment) {
+        for (TrackerIntegration integration : trackers) {
+            integration.incrementUserProperty(propertyName, increment);
+        }
+    }
+
+    public void flush() {
+        for (TrackerIntegration integration : trackers) {
+            integration.flush();
+        }
+    }
+
+    private int getMixpanelSuperProperty(String propertyName, int defValue) {
+        int value = defValue;
+        for (TrackerIntegration trackerIntegration : trackers) {
+            if (trackerIntegration instanceof MixpanelTracker) {
+                value = trackerIntegration.getSuperProperty(propertyName, defValue);
+            }
+        }
+        return value;
+    }
+
+    private String getMixpanelSuperProperty(String propertyName, String defValue) {
+        String value = defValue;
+        for (TrackerIntegration trackerIntegration : trackers) {
+            if (trackerIntegration instanceof MixpanelTracker) {
+                value = trackerIntegration.getSuperProperty(propertyName, defValue);
+            }
+        }
+        return value;
+    }
+
+    public void startView(Class<? extends VimojoActivity> activity) {
+        for (TrackerIntegration integration : trackers) {
+            integration.startView(activity);
+        }
+    }
+
+    public void endView(Class<? extends VimojoActivity> activity) {
+        for (TrackerIntegration integration : trackers) {
+            integration.endView(activity);
+        }
+    }
+
+    /***** App startup - from initAppActivity ******/
+
+    public void trackUserProfileGeneralTraits() {
+        incrementUserProperty(AnalyticsConstants.APP_USE_COUNT, 1);
+        JSONObject userProfileProperties = new JSONObject();
+        String userType = AnalyticsConstants.USER_TYPE_FREE;
+        if (BuildConfig.FLAVOR.equals("alpha")) {
+            userType = AnalyticsConstants.USER_TYPE_BETA;
+        }
+        try {
+            userProfileProperties.put(AnalyticsConstants.TYPE, userType);
+            userProfileProperties.put(AnalyticsConstants.LOCALE,
+                    Locale.getDefault().toString());
+            userProfileProperties.put(AnalyticsConstants.LANG, Locale.getDefault().getISO3Language());
+            setUserProperties(userProfileProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackAppStartupProperties(boolean firstTime) {
+        JSONObject appStartupSuperProperties = new JSONObject();
+        int appUseCount = getMixpanelSuperProperty(AnalyticsConstants.APP_USE_COUNT, 0);
+        try {
+            appStartupSuperProperties.put(AnalyticsConstants.APP_USE_COUNT, ++appUseCount);
+            appStartupSuperProperties.put(AnalyticsConstants.FIRST_TIME, firstTime);
+            appStartupSuperProperties.put(AnalyticsConstants.APP, "ViMoJo");
+            appStartupSuperProperties.put(AnalyticsConstants.FLAVOR, BuildConfig.FLAVOR);
+            this.registerSuperProperties(appStartupSuperProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackUserProfile(String androidId) {
+        this.identify(androidId);
+        JSONObject userProfileProperties = new JSONObject();
+        try {
+            userProfileProperties.put(AnalyticsConstants.CREATED,
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
+            this.setUserPropertiesOnce(userProfileProperties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackCreatedSuperProperty() {
+        JSONObject createdSuperProperty = new JSONObject();
+        try {
+            createdSuperProperty.put(AnalyticsConstants.CREATED,
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
+            this.registerSuperPropertiesOnce(createdSuperProperty);
+        } catch (JSONException e) {
+            Log.e("ANALYTICS", "Error sending created super property");
+        }
+    }
+
+    public void trackAppStartup(String initState) {
+        JSONObject initAppProperties = new JSONObject();
+        try {
+            initAppProperties.put(AnalyticsConstants.TYPE, AnalyticsConstants.TYPE_ORGANIC);
+            initAppProperties.put(AnalyticsConstants.INIT_STATE, initState);
+            Event event = new Event(AnalyticsConstants.APP_STARTED, initAppProperties); // TODO(jliarte): 28/08/18 std firebase event name??
+            this.trackEvent(event);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -53,7 +256,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackClipsReordered: error sending mixpanel VIDEO_EDITED reorder event");
+            Log.d(LOG_TAG, "trackClipsReordered: error sending tracking VIDEO_EDITED reorder event");
             e.printStackTrace();
         }
     }
@@ -67,7 +270,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackClipTrimmed: error sending mixpanel VIDEO_EDITED trim event");
+            Log.d(LOG_TAG, "trackClipTrimmed: error sending tracking VIDEO_EDITED trim event");
             e.printStackTrace();
         }
     }
@@ -80,7 +283,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackClipSplitted: error sending mixpanel VIDEO_EDITED split event");
+            Log.d(LOG_TAG, "trackClipSplitted: error sending tracking VIDEO_EDITED split event");
             e.printStackTrace();
         }
     }
@@ -95,7 +298,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackClipDuplicated: error sending mixpanel VIDEO_EDITED duplicate event");
+            Log.d(LOG_TAG, "trackClipDuplicated: error sending tracking VIDEO_EDITED duplicate event");
             e.printStackTrace();
         }
     }
@@ -114,7 +317,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackClipDuplicated: error sending mixpanel VIDEO_EDITED duplicate event");
+            Log.d(LOG_TAG, "trackClipDuplicated: error sending tracking VIDEO_EDITED duplicate event");
             e.printStackTrace();
         }
 
@@ -159,24 +362,18 @@ public class UserEventTracker {
 
     public void trackVideoSharedSuperProperties() {
         JSONObject updateSuperProperties = new JSONObject();
-        int numPreviousVideosShared;
-        try {
-            numPreviousVideosShared =
-                    mixpanel.getSuperProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_SHARED);
-        } catch (JSONException e) {
-            numPreviousVideosShared = 0;
-        }
+        int numPreviousVideosShared =
+                    getMixpanelSuperProperty(AnalyticsConstants.TOTAL_VIDEOS_SHARED, 0);
         try {
             updateSuperProperties.put(AnalyticsConstants.TOTAL_VIDEOS_SHARED,
                     ++numPreviousVideosShared);
-            mixpanel.registerSuperProperties(updateSuperProperties);
+            this.registerSuperProperties(updateSuperProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void trackVideoShared(String socialNetworkId, Project project,int totalVideoShared) {
-
         JSONObject eventProperties = new JSONObject();
         try {
             eventProperties.put(AnalyticsConstants.SOCIAL_NETWORK, socialNetworkId);
@@ -195,8 +392,8 @@ public class UserEventTracker {
     }
 
     public void trackVideoSharedUserTraits() {
-        mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_SHARED, 1);
-        mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_SHARED,
+        incrementUserProperty(AnalyticsConstants.TOTAL_VIDEOS_SHARED, 1);
+        setUserProperties(AnalyticsConstants.LAST_VIDEO_SHARED,
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
     }
 
@@ -208,7 +405,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackVideoStartRecording: error sending mixpanel USER_INTERACTED start " +
+            Log.d(LOG_TAG, "trackVideoStartRecording: error sending tracking USER_INTERACTED start " +
                 "event");
             e.printStackTrace();
         }
@@ -222,7 +419,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackVideoStopRecording: error sending mixpanel USER_INTERACTED stop " +
+            Log.d(LOG_TAG, "trackVideoStopRecording: error sending tracking USER_INTERACTED stop " +
                 "event");
             e.printStackTrace();
         }
@@ -237,11 +434,12 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackChangeCamera: error sending mixpanel USER_INTERACTED flash " +
+            Log.d(LOG_TAG, "trackChangeCamera: error sending tracking USER_INTERACTED flash " +
                 "event");
             e.printStackTrace();
         }
     }
+
     public void trackChangeFlashMode(boolean isFlashCameraSelected){
       JSONObject eventProperties = new JSONObject();
       try {
@@ -251,7 +449,7 @@ public class UserEventTracker {
         Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
         this.trackEvent(trackingEvent);
       } catch (JSONException e) {
-        Log.d(TAG, "trackChangeFlashMode: error sending mixpanel USER_INTERACTED change camera " +
+        Log.d(LOG_TAG, "trackChangeFlashMode: error sending tracking USER_INTERACTED change camera " +
             "event");
         e.printStackTrace();
       }
@@ -259,17 +457,12 @@ public class UserEventTracker {
 
     public void trackTotalVideosRecordedSuperProperty() {
         JSONObject totalVideoRecordedSuperProperty = new JSONObject();
-        int numPreviousVideosRecorded;
-        try {
-            numPreviousVideosRecorded =
-                mixpanel.getSuperProperties().getInt(AnalyticsConstants.TOTAL_VIDEOS_RECORDED);
-        } catch (JSONException e) {
-            numPreviousVideosRecorded = 0;
-        }
+        int numPreviousVideosRecorded =
+                getMixpanelSuperProperty(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 0);
         try {
             totalVideoRecordedSuperProperty.put(AnalyticsConstants.TOTAL_VIDEOS_RECORDED,
                 ++numPreviousVideosRecorded);
-            mixpanel.registerSuperProperties(totalVideoRecordedSuperProperty);
+            this.registerSuperProperties(totalVideoRecordedSuperProperty);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -293,8 +486,8 @@ public class UserEventTracker {
     }
 
     public void trackVideoRecordedUserTraits() {
-        mixpanel.getPeople().increment(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 1);
-        mixpanel.getPeople().set(AnalyticsConstants.LAST_VIDEO_RECORDED,
+        incrementUserProperty(AnalyticsConstants.TOTAL_VIDEOS_RECORDED, 1);
+        setUserProperties(AnalyticsConstants.LAST_VIDEO_RECORDED,
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date()));
     }
 
@@ -311,7 +504,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED drawer theme "
+            Log.d(LOG_TAG, "trackThemeAppChanged: error sending tracking USER_INTERACTED drawer theme "
                     + "dark event");
             e.printStackTrace();
         }
@@ -330,7 +523,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackThemeAppChanged: error sending mixpanel USER_INTERACTED settings theme"
+            Log.d(LOG_TAG, "trackThemeAppChanged: error sending tracking USER_INTERACTED settings theme"
                     + " dark event ");
             e.printStackTrace();
         }
@@ -345,7 +538,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackResolutionChanged: error sending mixpanel USER_INTERACTED camera "
+            Log.d(LOG_TAG, "trackResolutionChanged: error sending tracking USER_INTERACTED camera "
                 + " resolution event ");
             e.printStackTrace();
         }
@@ -361,7 +554,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackCameraInterfaceChanged: error sending mixpanel USER_INTERACTED camera "
+            Log.d(LOG_TAG, "trackCameraInterfaceChanged: error sending tracking USER_INTERACTED camera "
                 + " interface event ");
             e.printStackTrace();
         }
@@ -376,7 +569,7 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackFrameRateChanged: error sending mixpanel USER_INTERACTED camera "
+            Log.d(LOG_TAG, "trackFrameRateChanged: error sending tracking USER_INTERACTED camera "
                 + " frame rate event ");
             e.printStackTrace();
         }
@@ -391,21 +584,41 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackQualityChanged: error sending mixpanel USER_INTERACTED camera "
+            Log.d(LOG_TAG, "trackQualityChanged: error sending tracking USER_INTERACTED camera "
                 + " quality event ");
             e.printStackTrace();
         }
     }
 
-    public void trackUpdateUserName(String userName) {
-        mixpanel.getPeople().identify(mixpanel.getDistinctId());
-        mixpanel.getPeople().set(MIXPANEL_USERNAME_ID, userName);
+    public void trackResolutionUserTraits(String value) {
+        this.setUserProperties(AnalyticsConstants.RESOLUTION, value.toLowerCase());
     }
 
-    public void trackUpdateUserEmail(String email) {
-        mixpanel.getPeople().identify(mixpanel.getDistinctId());
-        mixpanel.getPeople().set(MIXPANEL_ACCOUNT_EMAIL_ID, email);
-        mixpanel.getPeople().setOnce(MIXPANEL_EMAIL_ID, email);
+    public void trackQualityUserTraits(String value) {
+        this.setUserProperties(AnalyticsConstants.QUALITY, value.toLowerCase());
+    }
+
+    public void trackFrameRateUserTraits(String value) {
+        this.setUserProperties(AnalyticsConstants.FRAME_RATE, value.toLowerCase());
+    }
+
+    public void trackUpdateUserName(String userName) {
+        // TODO(jliarte): 28/08/18 mixpanel.getDistinctId
+//        this.identify(tracking.getDistinctId());
+        setUserProperties(MIXPANEL_USERNAME_ID, userName);
+    }
+
+    public void trackUserEmailSet(String email) {
+        for (TrackerIntegration integration : trackers) {
+            if (integration instanceof MixpanelTracker) {
+                integration.setUserPropertiesOnce(MIXPANEL_ACCOUNT_EMAIL_ID, email);
+                integration.setUserPropertiesOnce(MIXPANEL_EMAIL_ID, email);
+            }
+            if (integration instanceof FirebaseTracker) {
+                integration.setUserPropertiesOnce(FIREBASE_ACCOUNT_EMAIL_ID, email);
+                integration.setUserPropertiesOnce(FIREBASE_EMAIL_ID, email);
+            }
+        }
 
     }
 
@@ -423,12 +636,99 @@ public class UserEventTracker {
             Event trackingEvent = new Event(AnalyticsConstants.PROJECT_EDITED, eventProperties);
             this.trackEvent(trackingEvent);
         } catch (JSONException e) {
-            Log.d(TAG, "trackProjectInfo: error sending mixpanel PROJECT_EDITED project info event");
+            Log.d(LOG_TAG, "trackProjectInfo: error sending tracking PROJECT_EDITED project info event");
             e.printStackTrace();
         }
     }
 
-  public static class Event {
+    public String getUserFirstRun() {
+        return getMixpanelSuperProperty(AnalyticsConstants.CREATED, "");
+    }
+
+    public void trackPrehistoricUser() {
+        this.setUserProperties(AnalyticsConstants.PREHISTERIC, true);
+        JSONObject superProps = new JSONObject();
+        try {
+            superProps.put(AnalyticsConstants.PREHISTERIC, true);
+            this.registerSuperProperties(superProps);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Error setting prehisteric super property");
+        }
+    }
+
+    public void trackLoginClick() {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.INTERACTION_CLICK_LOGIN);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, "trackLoginClick: error sending tracking INTERACTION_CLICK_LOGIN ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackRegisterClick() {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.INTERACTION,
+                AnalyticsConstants.INTERACTION_CLICK_REGISTER);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_INTERACTED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, "trackRegisterClick: error sending tracking " +
+                "INTERACTION_CLICK_REGISTER ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackUserLoggedIn(boolean wasLoggedIn) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.USER_WAS_LOGGED_IN, wasLoggedIn);
+            Event trackingEvent = new Event(AnalyticsConstants.USER_LOGGED_IN, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, "trackUserLoggedIn: error sending tracking INTERACTION ACTION_LOGIN ");
+            e.printStackTrace();
+        }
+    }
+
+    public void trackUserAuth0Id(String idToken) {
+        for (TrackerIntegration integration : trackers) {
+            if (integration instanceof MixpanelTracker) {
+                integration.setUserProperties(AnalyticsConstants.AUTH0_ID, idToken);
+            }
+            // Firebase error 7 property value length, we do not track this value.
+        }
+    }
+
+    public void trackUserId(String userId) {
+        this.setUserProperties(AnalyticsConstants.USER_ID, userId);
+    }
+
+    /** Fluent API for creating {@link UserEventTracker} instances. */
+    public static class Builder {
+        private final Context context;
+        private final ArrayList<TrackerIntegration.Factory> trackerFactories;
+
+        public Builder(Context context) {
+            this.trackerFactories = new ArrayList<>();
+            this.context = context;
+        }
+
+        public Builder use(TrackerIntegration.Factory factory) {
+            trackerFactories.add(factory);
+            return this;
+        }
+
+        public UserEventTracker build() {
+            return new UserEventTracker(context, trackerFactories);
+        }
+    }
+
+    public static class Event {
         private String name;
         private JSONObject properties;
 
@@ -443,6 +743,47 @@ public class UserEventTracker {
 
         public JSONObject getProperties() {
             return properties;
+        }
+    }
+
+    public abstract static class TrackerIntegration<T> {
+        public abstract void identify(String id);
+
+        public abstract void aliasUser(String idAlias);
+
+        public abstract void track(Event event);
+
+        public abstract void setUserProperties(JSONObject userProperties);
+
+        public abstract void setUserProperties(String propertyName, String propertyValue);
+
+        public abstract void setUserProperties(String propertyName, boolean propertyValue);
+
+        public abstract void setUserPropertiesOnce(JSONObject userProperties);
+
+        public abstract void setUserPropertiesOnce(String propertyName, String propertyValue);
+
+        public abstract void registerSuperProperties(JSONObject superProperties);
+
+        public abstract void registerSuperPropertiesOnce(JSONObject superProperties);
+
+        public abstract int getSuperProperty(String propertyName, int defValue);
+
+        public abstract String getSuperProperty(String propertyName, String defValue);
+
+        public abstract void incrementUserProperty(String propertyName, int increment);
+
+        public abstract void flush();
+
+        public abstract void startView(Class<? extends VimojoActivity> activity);
+
+        public abstract void endView(Class<? extends VimojoActivity> activity);
+
+        public interface Factory {
+            /**
+             * Attempts to create a tracking integration. Returns integration, or null if failed.
+             */
+            TrackerIntegration<?> create(UserEventTracker userEventTracker);
         }
     }
 }

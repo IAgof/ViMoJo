@@ -4,9 +4,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
 
 import org.junit.Before;
@@ -38,13 +38,6 @@ public class UpdateVideoTransitionPreferenceToProjectUseCaseTest {
   public void setup(){
     MockitoAnnotations.initMocks(this);
     getAProject();
-  }
-
-  @Test
-  public void updateVideoTransitionPreferenceCallsUpdateRepository(){
-    injectedUseCase.setVideoFadeTransitionActivated(currentProject, false);
-
-    verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test
