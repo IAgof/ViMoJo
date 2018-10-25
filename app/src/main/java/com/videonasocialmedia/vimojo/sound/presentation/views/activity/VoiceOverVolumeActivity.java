@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,20 +8,17 @@ import android.support.v7.app.AlertDialog;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -28,15 +26,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
-
 /**
  * Created by ruth on 19/09/16.
  */
 public class VoiceOverVolumeActivity extends VimojoActivity implements
-    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView {
+    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView, VMCompositionPlayer {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
-    private static final String SOUND_VOLUME_PROJECT_POSITION = "sound_volume_project_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
     private static final String TAG = "VoiceOverVolumeActivity";
 
@@ -79,31 +74,18 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        videonaPlayer.onShown(this);
         presenter.updatePresenter();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
+        presenter.removePresenter();
     }
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             currentSoundVolumePosition = savedInstanceState.getInt(SOUND_VOLUME_POSITION_VOLUME, 0);
-            currentProjectPosition = savedInstanceState.getInt(SOUND_VOLUME_PROJECT_POSITION, 0);
             soundVoiceOverPath = savedInstanceState.getString(VOICE_OVER_RECORDED_PATH);
         }
     }
@@ -122,7 +104,6 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SOUND_VOLUME_PROJECT_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(SOUND_VOLUME_POSITION_VOLUME, seekBarVolume.getProgress());
         outState.putString(VOICE_OVER_RECORDED_PATH, soundVoiceOverPath);
         super.onSaveInstanceState(outState);
@@ -181,37 +162,8 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
-    public void bindVideoList(List<Video> movieList) {
-        videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekTo(currentProjectPosition);
-        videonaPlayer.setVoiceOver(new Music(soundVoiceOverPath,
-            FileUtils.getDuration(soundVoiceOverPath)));
-        videonaPlayer.setVoiceOverVolume(currentSoundVolumePosition*0.01f);
-    }
-
-    @Override
-    public void setMusic(Music music) {
-        videonaPlayer.setMusic(music);
-    }
-
-    @Override
-    public void resetPreview() {
-        videonaPlayer.resetPreview();
-    }
-
-    @Override
     public void goToSoundActivity() {
         navigateTo(SoundActivity.class);
-    }
-
-    @Override
-    public void setVideoFadeTransitionAmongVideos() {
-        videonaPlayer.setVideoTransitionFade();
-    }
-
-    @Override
-    public void setAudioFadeTransitionAmongVideos() {
-        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override
@@ -223,17 +175,84 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
-    public void muteVideo() {
-        videonaPlayer.setVideoVolume(0.0f);
+    public void attachView(Context context) {
+        videonaPlayer.attachView(context);
     }
 
     @Override
-    public void muteMusic() {
-        videonaPlayer.setMusicVolume(0.0f);
+    public void detachView() {
+        videonaPlayer.detachView();
     }
 
     @Override
-    public void setAspectRatioVerticalVideos() {
-        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
+                                                       vmCompositionPlayerListener) {
+        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    }
+
+    @Override
+    public void init(VMComposition vmComposition) {
+        videonaPlayer.init(vmComposition);
+    }
+
+    @Override
+    public void initSingleClip(VMComposition vmComposition, int clipPosition) {
+        videonaPlayer.initSingleClip(vmComposition, clipPosition);
+    }
+
+    @Override
+    public void initSingleVideo(Video video) {
+        videonaPlayer.initSingleVideo(video);
+    }
+
+    @Override
+    public void playPreview() {
+        videonaPlayer.playPreview();
+    }
+
+    @Override
+    public void pausePreview() {
+        videonaPlayer.pausePreview();
+    }
+
+    @Override
+    public void seekTo(int timeInMsec) {
+        videonaPlayer.seekTo(timeInMsec);
+    }
+
+    @Override
+    public void seekToClip(int position) {
+        videonaPlayer.seekToClip(position);
+    }
+
+    @Override
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
+        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos(int height) {
+        videonaPlayer.setAspectRatioVerticalVideos(height);
+    }
+
+    @Override
+    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
+                             int height) {
+        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
+    }
+
+    @Override
+    public void setVideoVolume(float volume) {
+        videonaPlayer.setVideoVolume(volume);
+    }
+
+    @Override
+    public void setVoiceOverVolume(float volume) {
+        videonaPlayer.setVoiceOverVolume(volume);
+    }
+
+    @Override
+    public void setMusicVolume(float volume) {
+        videonaPlayer.setMusicVolume(volume);
     }
 }

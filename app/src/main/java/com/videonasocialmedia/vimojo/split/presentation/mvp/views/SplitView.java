@@ -1,27 +1,17 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.views;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
-import java.util.List;
-
 /**
  * Created by jca on 8/7/15.
  */
 public interface SplitView {
 
-    void initSplitView(int startTime, int maxSeekBar);
-
-    void playPreview();
-
-    void pausePreview();
-
-    void showPreview(List<Video> movieList);
+    void initSplitView(int maxSeekBar);
 
     void showError(int stringResourceId);
 
     void updateSplitSeekbar(int progress);
 
-    void updateProject();
+    void refreshTimeTag(int currentPosition);
 
-  void setAspectRatioVerticalVideos();
+    void updateProject();
 }

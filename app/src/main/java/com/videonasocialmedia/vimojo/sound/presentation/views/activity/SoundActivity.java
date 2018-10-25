@@ -13,7 +13,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
@@ -35,8 +35,8 @@ import butterknife.Optional;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
-    SoundView, CardViewAudioTrackListener{
+public class SoundActivity extends EditorActivity implements SoundView,
+    VMCompositionPlayer.VMCompositionPlayerListener, CardViewAudioTrackListener{
 
   private static final String TAG = "SoundActivity";
   private final int ID_BUTTON_FAB_TOP=1;
@@ -78,6 +78,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
       setupFab();
+      setVMCompositionPlayerListener(this);
   }
 
   @Override
@@ -239,8 +240,11 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
   public void newClipPlayed(int currentClipIndex) {
     this.currentVideoIndex = currentClipIndex;
     videoTrack.updateClipSelection(currentClipIndex);
-    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
-        .INDEX_MEDIA_TRACK);
+  }
+
+  @Override
+  public void playerReady() {
+    // Do nothing
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -28,9 +29,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -39,7 +40,6 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
@@ -52,23 +52,18 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
 import java.io.File;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter.VOLUME_MUTE;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
-
 /**
  *
  */
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
-        VideonaPlayerView, VideonaPlayer.VideonaPlayerListener {
+    VMCompositionPlayer {
   private static String LOG_TAG = EditorActivity.class.getCanonicalName();
-  private static final String EDITOR_ACTIVITY_PROJECT_POSITION = "editor_activity_project_position";
   private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
           "editor_activity_has_been_project_exported";
   private static final String EDITOR_ACTIVITY_VIDEO_EXPORTED = "editor_activity_video_exported";
@@ -130,10 +125,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     }
   };
 
-  private boolean isVideoMute;
   protected String videoExportedPath;
   protected boolean projectHasBeenExported = false;
-  private int currentPlayerPosition = 0;
   private boolean showWatermarkSwitch;
 
   @Override
@@ -142,13 +135,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     setContentView(R.layout.editor_activity);
     ButterKnife.bind(this);
     getActivityPresentersComponent().inject(this);
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-    videonaPlayer.setListener(this);
-    videonaPlayer.onShown(this);
   }
 
   @Override
@@ -162,14 +148,11 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onPause() {
     super.onPause();
-    editorPresenter.onPause();
-    videonaPlayer.onPause();
+    editorPresenter.removePresenter();
   }
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
-    currentPlayerPosition = videonaPlayer.getCurrentPosition();
-    outState.putInt(EDITOR_ACTIVITY_PROJECT_POSITION, currentPlayerPosition);
     outState.putBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED, projectHasBeenExported);
     outState.putString(EDITOR_ACTIVITY_VIDEO_EXPORTED, videoExportedPath);
     super.onSaveInstanceState(outState);
@@ -179,8 +162,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   protected void onRestoreInstanceState(Bundle state) {
     super.onRestoreInstanceState(state);
     if (state != null) {
-      currentPlayerPosition = state.getInt(EDITOR_ACTIVITY_PROJECT_POSITION,
-              0);
       projectHasBeenExported = state.getBoolean(EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED,
               false);
       videoExportedPath = state.getString(EDITOR_ACTIVITY_VIDEO_EXPORTED);
@@ -436,11 +417,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void setAspectRatioVerticalVideos() {
-    videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-  }
-
-  @Override
   public void setDefaultIconsForStoreItems() {
     runOnUiThread(() -> {
       updateNavigationIcon(R.id.switch_theme_dark, R.drawable.activity_editor_drawer_dark_theme);
@@ -503,60 +479,66 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void bindVideoList(List<Video> movieList) {
+  public void attachView(Context context) {
     runOnUiThread(() -> {
-      videonaPlayer.bindVideoList(movieList);
+      videonaPlayer.attachView(context);
     });
   }
 
   @Override
-  public void bindMusic(Music music) {
+  public void detachView() {
     runOnUiThread(() -> {
-      videonaPlayer.setMusic(music);
+      videonaPlayer.detachView();
     });
   }
 
   @Override
-  public void bindVoiceOver(Music voiceOver) {
+  public void setVMCompositionPlayerListener(VMCompositionPlayerListener
+                                                   vmCompositionPlayerListener) {
     runOnUiThread(() -> {
-      videonaPlayer.setVoiceOver(voiceOver);
+      videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
     });
   }
 
   @Override
-  public void setVideoMute() {
-    isVideoMute = true;
-    videonaPlayer.setVideoVolume(0f);
-  }
-
-  @Override
-  public void setVideoVolume(float volume) {
-    videonaPlayer.setVideoVolume(volume);
-  }
-
-  @Override
-  public void setVoiceOverVolume(float volume) {
-    videonaPlayer.setVoiceOverVolume(volume);
-  }
-
-  @Override
-  public void setMusicVolume(float volume) {
+  public void init(VMComposition vmComposition) {
     runOnUiThread(() -> {
-      videonaPlayer.setMusicVolume(volume);
+      videonaPlayer.init(vmComposition);
     });
   }
 
   @Override
-  public void setVideoFadeTransitionAmongVideos() {
+  public void initSingleClip(VMComposition vmComposition, int clipPosition) {
     runOnUiThread(() -> {
-      videonaPlayer.setVideoTransitionFade();
+      videonaPlayer.initSingleClip(vmComposition, clipPosition);
     });
   }
 
   @Override
-  public void setAudioFadeTransitionAmongVideos() {
+  public void initSingleVideo(Video video) {
     runOnUiThread(() -> {
-      videonaPlayer.setAudioTransitionFade();
+      videonaPlayer.initSingleVideo(video);
+    });
+  }
+
+  @Override
+  public void playPreview() {
+    runOnUiThread(() -> {
+      videonaPlayer.playPreview();
+    });
+  }
+
+  @Override
+  public void pausePreview() {
+    runOnUiThread(() -> {
+      videonaPlayer.pausePreview();
+    });
+  }
+
+  @Override
+  public void seekTo(int timeInMsec) {
+    runOnUiThread(() -> {
+      videonaPlayer.seekTo(timeInMsec);
     });
   }
 
@@ -568,36 +550,50 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void pausePreview() {
-    videonaPlayer.pausePreview();
-  }
-
-  @Override
-  public ListenableFuture<?> updatePlayerVideos() {
-    return editorPresenter.obtainVideoFromProject();
-  }
-
-  @Override
-  public void initPreviewFromVideo(List<Video> movieList) {
+  public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
     runOnUiThread(() -> {
-      videonaPlayer.onPause();
-      videonaPlayer.onShown(this);
-      videonaPlayer.initPreviewLists(movieList);
-      videonaPlayer.initPreview(currentPlayerPosition);
+      videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
     });
   }
 
   @Override
-  public void newClipPlayed(int currentClipIndex) {
-    if (isVideoMute) {
-      videonaPlayer.setVideoVolume(VOLUME_MUTE);
-    }
+  public void setAspectRatioVerticalVideos(int height) {
+    runOnUiThread(() -> {
+      videonaPlayer.setAspectRatioVerticalVideos(height);
+    });
   }
 
+  @Override
+  public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
+                           int height) {
+    runOnUiThread(() -> {
+      videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
+    });
+  }
 
   @Override
-  public void playerReady() {
-    // Do nothing
+  public void setVideoVolume(float volume) {
+    runOnUiThread(() -> {
+      videonaPlayer.setVideoVolume(volume);
+    });
+  }
+
+  @Override
+  public void setVoiceOverVolume(float volume) {
+    runOnUiThread(() -> {
+      videonaPlayer.setVoiceOverVolume(volume);
+    });
+  }
+
+  @Override
+  public void setMusicVolume(float volume) {
+    runOnUiThread(() -> {
+      videonaPlayer.setMusicVolume(volume);
+    });
+  }
+
+  public ListenableFuture<?> updatePlayerVideos() {
+    return editorPresenter.obtainVideoFromProject();
   }
 
   private void updateCurrentProjectThumb(String path) {

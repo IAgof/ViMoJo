@@ -4,31 +4,30 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
-import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
@@ -40,7 +39,6 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,16 +57,15 @@ import static com.videonasocialmedia.videonamediaframework.model.Constants.*;
 /**
  * Created by ruth on 15/09/16.
  */
-public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideosRetrieved {
+public class VoiceOverRecordPresenter extends VimojoPresenter implements ElementChangedListener {
   private final String LOG_TAG = getClass().getSimpleName();
   private final ProjectInstanceCache projectInstanceCache;
   private Context context;
-  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
+  private VoiceOverRecordView voiceOverRecordView;
+  private VMCompositionPlayer vmCompositionPlayerView;
+  protected UserEventTracker userEventTracker;
   private AddAudioUseCase addAudioUseCase;
   private RemoveAudioUseCase removeAudioUseCase;
-  private VoiceOverRecordView voiceOverRecordView;
-  protected UserEventTracker userEventTracker;
   protected Project currentProject;
   private boolean isRecording = false;
   private Recorder audioRecorder;
@@ -89,19 +86,16 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
 
   @Inject
   public VoiceOverRecordPresenter(
-      Context context, VoiceOverRecordView voiceOverRecordView,
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-      AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-      UserEventTracker userEventTracker, ProjectInstanceCache projectInstanceCache,
-      UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
-      UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
+      Context context, VoiceOverRecordView voiceOverRecordView, VMCompositionPlayer
+      vmCompositionPlayerView, AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
+      removeAudioUseCase, UserEventTracker userEventTracker, ProjectInstanceCache
+      projectInstanceCache, UpdateComposition updateComposition, @Named("amIAVerticalApp")
+      boolean amIAVerticalApp, UpdateTrack updateTrack, RemoveTrack removeTrack,
+      BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
-    this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
-    this.getPreferencesTransitionFromProjectUseCase =
-        getPreferencesTransitionFromProjectUseCase;
+    this.vmCompositionPlayerView = vmCompositionPlayerView;
     this.addAudioUseCase = addAudioUseCase;
     this.removeAudioUseCase = removeAudioUseCase;
     this.userEventTracker = userEventTracker;
@@ -114,43 +108,38 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
 
   public void updatePresenter() {
     this.currentProject = projectInstanceCache.getCurrentProject();
-    // TODO(jliarte): 23/04/18 add project changes listener
+    currentProject.addListener(this);
+    vmCompositionPlayerView.attachView(context);
     directoryVoiceOverRecorded = currentProject
         .getProjectPathIntermediateAudioFilesVoiceOverRecord();
-    obtainVideos();
-    if (getPreferencesTransitionFromProjectUseCase
-        .isVideoFadeTransitionActivated(currentProject)) {
-      voiceOverRecordView.setVideoFadeTransitionAmongVideos();
-    }
-    if (getPreferencesTransitionFromProjectUseCase
-        .isAudioFadeTransitionActivated(currentProject)
-        && !currentProject.getVMComposition().hasMusic()) {
-      voiceOverRecordView.setAudioFadeTransitionAmongVideos();
-    }
-    if (amIAVerticalApp) {
-      voiceOverRecordView.setAspectRatioVerticalVideos();
-    }
-  }
-
-  private void obtainVideos() {
-    getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, this);
-  }
-
-  @Override
-  public void onVideosRetrieved(List<Video> videoList) {
-    List<Video> copyVideoList = new ArrayList<>();
-    for (Video video : videoList) {
-      Video copyVideo = new Video(video);
-      copyVideo.setVolume(0f);
-      copyVideoList.add(copyVideo);
-    }
-    voiceOverRecordView.bindVideoList(copyVideoList);
+    loadPlayerFromProject();
     voiceOverRecordView.initVoiceOverView(0, currentProject.getDuration());
+    voiceOverRecordView.disablePlayerPlayButton();
+    if (amIAVerticalApp) {
+      vmCompositionPlayerView
+          .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+    }
   }
 
-  @Override
-  public void onNoVideosRetrieved() {
-    voiceOverRecordView.resetPreview();
+  public void removePresenter() {
+    vmCompositionPlayerView.detachView();
+  }
+
+
+  private void loadPlayerFromProject() {
+    VMComposition vmCompositionCopy = null;
+    try {
+      vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+    } catch (IllegalItemOnTrack illegalItemOnTrack) {
+      illegalItemOnTrack.printStackTrace();
+      Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+    }
+    vmCompositionPlayerView.init(vmCompositionCopy);
+    // Mute all tracks
+    vmCompositionPlayerView.setVideoVolume(0f);
+    if (vmCompositionCopy.hasMusic()) {
+      vmCompositionPlayerView.setMusicVolume(0f);
+    }
   }
 
   public void setVoiceOver(String finalNamePathAudioMerge) {
@@ -184,7 +173,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
     Log.d(LOG_TAG, "startRecording");
     setupAudioRecorder();
     isRecording = true;
-    voiceOverRecordView.playVideo();
+    vmCompositionPlayerView.playPreview();
     audioRecorder.startRecording();
     voiceOverRecorded = true;
   }
@@ -192,13 +181,13 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
   public void pauseRecording() {
     Log.d(LOG_TAG, "pauseRecording");
     audioRecorder.pauseRecording();
-    voiceOverRecordView.pauseVideo();
+    vmCompositionPlayerView.pausePreview();
   }
 
   public void resumeRecording() {
     Log.d(LOG_TAG, "resumeRecording");
     audioRecorder.resumeRecording();
-    voiceOverRecordView.playVideo();
+    vmCompositionPlayerView.playPreview();
   }
 
   public void stopRecording() {
@@ -325,6 +314,11 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements OnVideo
 
   protected boolean isVoiceOverRecorded() {
     return voiceOverRecorded;
+  }
+
+  @Override
+  public void onObjectUpdated() {
+    voiceOverRecordView.updateProject();
   }
 
   private class VoiceOverTranscodingTaskCallback implements FutureCallback<String> {

@@ -10,8 +10,11 @@ package com.videonasocialmedia.vimojo.presentation.views.activity;
  *
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,8 +28,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -35,24 +39,23 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.DuplicatePrevie
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView {
-    private static final String DUPLICATE_VIDEO_POSITION = "duplicate_video_position";
+public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
+    VMCompositionPlayer {
     private static final String NUM_DUPLICATE_VIDEOS = "num_duplicate_videos";
     private static final String TAG = "VideoDuplicateActivity";
 
     @Inject DuplicatePreviewPresenter presenter;
 
+    @BindView(R.id.coordinator_layout_video_duplicate)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.image_thumb_duplicate_video_left)
     ImageView imageThumbLeft;
     @BindView(R.id.image_thumb_duplicate_video_right)
@@ -70,8 +73,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     int videoIndexOnTrack;
-    private Video video;
-    private int currentPosition = 0;
     private int numDuplicateVideos = 2;
 
     @Override
@@ -89,7 +90,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         restoreState(savedInstanceState);
 
         textNumDuplicates.setText("x" + numDuplicateVideos);
-        presenter.init(videoIndexOnTrack);
     }
 
     @Override
@@ -100,25 +100,13 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Override
     protected void onResume() {
         super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.updatePresenter();
+        presenter.updatePresenter(videoIndexOnTrack);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
+        presenter.removePresenter();
     }
 
     private void setupActivityButtons() {
@@ -132,7 +120,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
 
     private void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            currentPosition = savedInstanceState.getInt(DUPLICATE_VIDEO_POSITION, 0);
             numDuplicateVideos = savedInstanceState.getInt(NUM_DUPLICATE_VIDEOS, 2);
         }
     }
@@ -167,19 +154,17 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Override
     public void onBackPressed() {
         navigateTo(EditActivity.class, videoIndexOnTrack);
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(DUPLICATE_VIDEO_POSITION, videonaPlayer.getCurrentPosition());
         outState.putInt(NUM_DUPLICATE_VIDEOS, numDuplicateVideos);
         super.onSaveInstanceState(outState);
     }
 
     @OnClick(R.id.button_duplicate_accept)
     public void onClickDuplicateAccept() {
-        presenter.duplicateVideo(videoIndexOnTrack, numDuplicateVideos);
+        presenter.duplicateVideo(numDuplicateVideos);
         navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
@@ -189,10 +174,10 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    public void initDuplicateView(String path) {
+    public void initDuplicateView(Video video) {
         updateDecrementVideoButton();
-        showThumbVideo(imageThumbLeft);
-        showThumbVideo(imageThumbRight);
+        showThumbVideo(imageThumbLeft, video);
+        showThumbVideo(imageThumbRight, video);
     }
 
     private void updateDecrementVideoButton() {
@@ -207,6 +192,37 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
+    public void attachView(Context context) {
+        videonaPlayer.attachView(context);
+    }
+
+    @Override
+    public void detachView() {
+        videonaPlayer.detachView();
+    }
+
+    @Override
+    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
+                                                       vmCompositionPlayerListener) {
+        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    }
+
+    @Override
+    public void init(VMComposition vmComposition) {
+        videonaPlayer.init(vmComposition);
+    }
+
+    @Override
+    public void initSingleClip(VMComposition vmComposition, int clipPosition) {
+        videonaPlayer.initSingleClip(vmComposition, clipPosition);
+    }
+
+    @Override
+    public void initSingleVideo(Video video) {
+        videonaPlayer.initSingleVideo(video);
+    }
+
+    @Override
     public void playPreview() {
         videonaPlayer.playPreview();
     }
@@ -217,29 +233,61 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    public void showPreview(List<Video> movieList) {
-        // (alvaro.martinez) 4/10/17 work on a copy to not modify original one until user accepts text
-        video = new Video(movieList.get(0));
-        // TODO(jliarte): will need fix when all videos from project will be loaded
-        videonaPlayer.initPreviewLists(movieList);
-        videonaPlayer.initPreview(currentPosition);
+    public void seekTo(int timeInMsec) {
+        videonaPlayer.seekTo(timeInMsec);
     }
 
     @Override
-    public void showError(String message) {
+    public void seekToClip(int position) {
+        videonaPlayer.seekToClip(position);
+    }
+
+    @Override
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
+        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos(int height) {
+        videonaPlayer.setAspectRatioVerticalVideos(height);
+    }
+
+    @Override
+    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
+                             int height) {
+        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
+    }
+
+    @Override
+    public void setVideoVolume(float volume) {
+        videonaPlayer.setVideoVolume(volume);
+    }
+
+    @Override
+    public void setVoiceOverVolume(float volume) {
+        videonaPlayer.setVoiceOverVolume(volume);
+    }
+
+    @Override
+    public void setMusicVolume(float volume) {
+        videonaPlayer.setMusicVolume(volume);
     }
 
     @Override
     public void updateProject() {
-        presenter.loadProjectVideo(videoIndexOnTrack);
+        presenter.updatePresenter(videoIndexOnTrack);
     }
 
     @Override
-    public void setAspectRatioVideos() {
-        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+    public void showError(String errorMessage) {
+        runOnUiThread(() -> {
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, errorMessage,
+                Snackbar.LENGTH_SHORT);
+            snackbar.show();
+        });
     }
 
-    private void showThumbVideo(ImageView imageThumbLeft) {
+    private void showThumbVideo(ImageView imageThumbLeft, Video video) {
         int microSecond = video.getStartTime() * 1000;
         BitmapPool bitmapPool = Glide.get(this).getBitmapPool();
         FileDescriptorBitmapDecoder decoder = new FileDescriptorBitmapDecoder(

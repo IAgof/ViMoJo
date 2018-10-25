@@ -14,13 +14,13 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMusicListUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -56,10 +56,10 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 10/06/16.
  */
 public class MusicDetailPresenterTest {
-    @Mock private MusicDetailView mockedMusicDetailView;
-    @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private Context mockedContext;
-    @Mock private GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
+    @Mock private MusicDetailView mockedMusicDetailView;
+    @Mock private VMCompositionPlayer mockedVmCompositionPlayer;
+    @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProject;
     @Mock private GetPreferencesTransitionFromProjectUseCase
             mockedGetPreferencesTransitionsFromProject;
@@ -67,10 +67,10 @@ public class MusicDetailPresenterTest {
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
     @Mock private GetMusicListUseCase mockedGetMusicListUseCase;
+
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
 
     @Mock Music mockedMusic;
-
     private Project currentProject;
     private String musicPath = "music/path";
     private List<Music> musicList = new ArrayList<>();
@@ -268,8 +268,8 @@ public class MusicDetailPresenterTest {
 
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(mockedMusicDetailView,
-            mockedContext, userEventTracker, mockedGetMediaListFromProjectUseCase,
+        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(
+            mockedContext, mockedMusicDetailView, mockedVmCompositionPlayer, userEventTracker,
             mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
             mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
             mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
@@ -280,8 +280,8 @@ public class MusicDetailPresenterTest {
     }
 
     private MusicDetailPresenter getMusicDetailPresenter() {
-        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(mockedMusicDetailView,
-            mockedContext, mockedUserEventTracker, mockedGetMediaListFromProjectUseCase,
+        MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(
+            mockedContext, mockedMusicDetailView, mockedVmCompositionPlayer, mockedUserEventTracker,
             mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
             mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
             mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,

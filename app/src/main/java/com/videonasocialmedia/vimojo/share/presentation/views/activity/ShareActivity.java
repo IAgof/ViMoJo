@@ -34,6 +34,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -67,7 +68,7 @@ import butterknife.Optional;
  * Activity for sharing video final render to different networks and save locally.
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
-    VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
+    OnOptionsToShareListClickListener {
 
   private String LOG_TAG = ShareActivity.class.getCanonicalName();
 

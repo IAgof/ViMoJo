@@ -76,7 +76,7 @@ android {
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -145,7 +145,7 @@ android {
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -183,7 +183,7 @@ android {
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://market4news.com/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -223,7 +223,7 @@ android {
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -245,7 +245,7 @@ android {
             resValue "string", "app_name", "Vimojo Vanitatis"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -267,7 +267,7 @@ android {
             resValue "string", "app_name", "Vishow"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"

@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +15,9 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -26,21 +28,17 @@ import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
-
 /**
  * Created by ruth on 14/09/16.
  */
 public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOverRecordView,
-        VideonaPlayer.VideonaPlayerListener, View.OnTouchListener {
+        VMCompositionPlayer, VMCompositionPlayer.VMCompositionPlayerListener, View.OnTouchListener {
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String TAG = "VoiceOverRecordActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
@@ -72,7 +70,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     private int millisecondsLeft;
     private int maxDuration;
     private boolean buttonRecordIsInStop = false;
-    private float videoVolumeMute = 0f;
+    private float volumeMute = 0f;
     private ProgressDialog progressDialog;
 
     @Override
@@ -84,20 +82,14 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         restoreState(savedInstanceState);
         changeVisibilityAndResouceButton();
         videonaPlayer.setSeekBarLayoutEnabled(false);
-        videonaPlayer.setListener(this);
+        setVMCompositionPlayerListener(this);
         createProgressDialog();
         buttonRecordVoiceOver.setOnTouchListener(this);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        videonaPlayer.onShown(this);
         presenter.updatePresenter();
     }
 
@@ -107,18 +99,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         if(presenter.isRecording()){
             presenter.pauseRecording();
         }
-        videonaPlayer.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
+        presenter.removePresenter();
     }
 
     private void createProgressDialog() {
@@ -204,35 +185,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
-    public void bindVideoList(List<Video> movieList) {
-        videonaPlayer.bindVideoList(movieList);
-        videonaPlayer.seekToClip(0);
-        videonaPlayer.seekTo(currentVoiceOverPosition);
-        videonaPlayer.showPauseButton();
-        videonaPlayer.setVideoVolume(videoVolumeMute);
-        // Disable ontouch view playerExo. Now you can't play/pause video.
-        enableDisableView(videonaPlayer, false);
-    }
-
-    @Override
-    public void resetPreview() {
-        videonaPlayer.resetPreview();
-    }
-
-    @Override
-    public void playVideo() {
-        videonaPlayer.playPreview();
-        videonaPlayer.showPauseButton();
-        videonaPlayer.setVideoVolume(videoVolumeMute);
-    }
-
-    @Override
-    public void pauseVideo() {
-        videonaPlayer.pausePreview();
-        videonaPlayer.showPauseButton();
-    }
-
-    @Override
     public void navigateToVoiceOverVolumeActivity(String voiceOverRecordedPath) {
         Intent intent = new Intent(this, VoiceOverVolumeActivity.class);
         intent.putExtra(IntentConstants.VOICE_OVER_RECORDED_PATH, voiceOverRecordedPath);
@@ -244,16 +196,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     public void showError(String errorMessage) {
         runOnUiThread(() -> Snackbar
                 .make(videonaPlayer, errorMessage, Snackbar.LENGTH_LONG).show());
-    }
-
-    @Override
-    public void setVideoFadeTransitionAmongVideos() {
-        videonaPlayer.setVideoTransitionFade();
-    }
-
-    @Override
-    public void setAudioFadeTransitionAmongVideos() {
-        videonaPlayer.setAudioTransitionFade();
     }
 
     @Override
@@ -302,13 +244,13 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
-    public void setAspectRatioVerticalVideos() {
-        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+    public void disablePlayerPlayButton() {
+        enableDisableView(videonaPlayer, false);
     }
 
     @Override
     public void newClipPlayed(int currentClipIndex) {
-        videonaPlayer.setVideoVolume(videoVolumeMute);
+        videonaPlayer.setVideoVolume(volumeMute);
     }
 
     @Override
@@ -384,5 +326,87 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
                 enableDisableView(group.getChildAt(idx), enabled);
             }
         }
+    }
+
+    @Override
+    public void attachView(Context context) {
+        videonaPlayer.attachView(context);
+    }
+
+    @Override
+    public void detachView() {
+        videonaPlayer.detachView();
+    }
+
+    @Override
+    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
+                                                       vmCompositionPlayerListener) {
+        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    }
+
+    @Override
+    public void init(VMComposition vmComposition) {
+        videonaPlayer.init(vmComposition);
+    }
+
+    @Override
+    public void initSingleClip(VMComposition vmComposition, int clipPosition) {
+        videonaPlayer.initSingleClip(vmComposition, clipPosition);
+    }
+
+    @Override
+    public void initSingleVideo(Video video) {
+        videonaPlayer.initSingleVideo(video);
+    }
+
+    @Override
+    public void playPreview() {
+        videonaPlayer.playPreview();
+    }
+
+    @Override
+    public void pausePreview() {
+        videonaPlayer.pausePreview();
+    }
+
+    @Override
+    public void seekTo(int timeInMsec) {
+        videonaPlayer.seekTo(timeInMsec);
+    }
+
+    @Override
+    public void seekToClip(int position) {
+        videonaPlayer.seekToClip(position);
+    }
+
+    @Override
+    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
+        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos(int height) {
+        videonaPlayer.setAspectRatioVerticalVideos(height);
+    }
+
+    @Override
+    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
+                             int height) {
+        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
+    }
+
+    @Override
+    public void setVideoVolume(float volume) {
+        videonaPlayer.setVideoVolume(volume);
+    }
+
+    @Override
+    public void setVoiceOverVolume(float volume) {
+        videonaPlayer.setVoiceOverVolume(volume);
+    }
+
+    @Override
+    public void setMusicVolume(float volume) {
+        videonaPlayer.setMusicVolume(volume);
     }
 }

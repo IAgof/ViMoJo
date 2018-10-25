@@ -10,29 +10,27 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
+import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
-import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
-import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.store.billing.PlayStoreBillingDelegate;
@@ -45,15 +43,11 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
-import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 
 /**
  * Parent class for three main edit views presenters: {@link EditPresenter},
@@ -72,17 +66,14 @@ public class EditorPresenter extends VimojoPresenter
   private final String THEME_LIGHT = "light";
   private final BillingManager billingManager;
   private EditorActivityView editorActivityView;
-  private VideonaPlayerView videonaPlayerView;
+  private final VMCompositionPlayer vmCompositionPlayerView;
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor preferencesEditor;
   protected UserEventTracker userEventTracker;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
   protected Project currentProject;
   private Context context;
-  private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
   private RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase;
-  private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
-  private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
   private final NewClipImporter newClipImporter;
   private RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
   private SaveComposition saveComposition;
@@ -99,13 +90,10 @@ public class EditorPresenter extends VimojoPresenter
 
   @Inject
   public EditorPresenter(
-          EditorActivityView editorActivityView, VideonaPlayerView videonaPlayerView,
-          SharedPreferences sharedPreferences, Activity context, UserEventTracker userEventTracker,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
+          Context context, EditorActivityView editorActivityView, VMCompositionPlayer
+          vmCompositionPlayerView, SharedPreferences sharedPreferences, UserEventTracker
+          userEventTracker, CreateDefaultProjectUseCase createDefaultProjectUseCase,
           RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
           NewClipImporter newClipImporter, BillingManager billingManager,
           ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
@@ -120,15 +108,12 @@ public class EditorPresenter extends VimojoPresenter
           BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.editorActivityView = editorActivityView;
-    this.videonaPlayerView = videonaPlayerView;
+    this.vmCompositionPlayerView = vmCompositionPlayerView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
     this.userEventTracker = userEventTracker;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
-    this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
     this.removeVideoFromProjectUseCase = removeVideoFromProjectUseCase;
-    this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
-    this.getPreferencesTransitionFromProjectUseCase = getPreferencesTransitionFromProjectUseCase;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.newClipImporter = newClipImporter;
     this.billingManager = billingManager;
@@ -156,6 +141,7 @@ public class EditorPresenter extends VimojoPresenter
       setupTutorial();
       updateDrawerHeaderWithCurrentProject();
       setupWatermarkDrawerSwitch();
+      vmCompositionPlayerView.attachView(context);
       setupPlayer(hasBeenProjectExported, videoPath);
     });
   }
@@ -167,26 +153,38 @@ public class EditorPresenter extends VimojoPresenter
       initPreviewFromVideoExported(videoPath);
     }
     if (amIAVerticalApp) {
-      editorActivityView.setAspectRatioVerticalVideos();
+      vmCompositionPlayerView
+          .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
   }
 
   protected void initPreviewFromVideoExported(String videoPath) {
-    List<Video> videoList = Collections.singletonList(new Video(videoPath, Video.DEFAULT_VOLUME));
-    videonaPlayerView.initPreviewFromVideo(videoList);
+    Video videoExported = new Video(videoPath, Video.DEFAULT_VOLUME);
+    vmCompositionPlayerView.initSingleVideo(videoExported);
   }
 
   protected void initPreviewFromProject() {
-    obtainVideoFromProject();
-    retrieveMusic();
-    retrieveTransitions();
-    retrieveVolumeOnTracks();
+    VMComposition vmCompositionCopy = null;
+    try {
+      vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+    } catch (IllegalItemOnTrack illegalItemOnTrack) {
+      illegalItemOnTrack.printStackTrace();
+      Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+    }
+    vmCompositionPlayerView.init(vmCompositionCopy);
+    List<Video> videoList;
+    videoList = (List<Video>) vmCompositionCopy.getMediaTrack().getItems().listIterator();
+    checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videoList);
+    List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
+    //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
+    newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
   }
 
-  public void onPause() {
+  public void removePresenter() {
     if (vimojoStoreAvailable) {
       billingManager.destroy();
     }
+    vmCompositionPlayerView.detachView();
   }
 
   private void setupVimojoPlatformLink() {
@@ -266,26 +264,6 @@ public class EditorPresenter extends VimojoPresenter
     preferencesEditor.apply();
   }
 
-  public ListenableFuture<?> obtainVideoFromProject() {
-    return this.executeUseCaseCall(() -> {
-      getMediaListFromProjectUseCase.getMediaListFromProject(currentProject, new OnVideosRetrieved() {
-        @Override
-        public void onVideosRetrieved(List<Video> videosRetrieved) {
-          checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videosRetrieved);
-          List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videosRetrieved);
-          List<Video> videoCopy = new ArrayList<>(videosRetrieved);
-          videonaPlayerView.bindVideoList(videoCopy);
-          //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
-          newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
-        }
-
-        @Override
-        public void onNoVideosRetrieved() {
-        }
-      });
-    });
-  }
-
   public void checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(List<Video> videoList) {
     for (Video video : videoList) {
       ListenableFuture transcodingJob = video.getTranscodingTask();
@@ -326,60 +304,6 @@ public class EditorPresenter extends VimojoPresenter
       }
     }
     return checkedVideoList;
-  }
-
-  private void retrieveMusic() {
-    if (currentProject.getVMComposition().hasMusic()) {
-      getAudioFromProjectUseCase.getMusicFromProject(currentProject, music -> {
-        Music copyMusic = new Music(music);
-        videonaPlayerView.bindMusic(copyMusic);
-      });
-    }
-    if (currentProject.getVMComposition().hasVoiceOver()) {
-      getAudioFromProjectUseCase.getVoiceOverFromProject(currentProject, voiceOver -> {
-        Music copyVoiceOver = new Music(voiceOver);
-        videonaPlayerView.bindVoiceOver(copyVoiceOver);
-      });
-    }
-  }
-
-  private void retrieveTransitions() {
-    if (getPreferencesTransitionFromProjectUseCase.isVideoFadeTransitionActivated(currentProject)) {
-      videonaPlayerView.setVideoFadeTransitionAmongVideos();
-    }
-    if (getPreferencesTransitionFromProjectUseCase.isAudioFadeTransitionActivated(currentProject) &&
-        !currentProject.getVMComposition().hasMusic()) {
-      videonaPlayerView.setAudioFadeTransitionAmongVideos();
-    }
-  }
-
-  protected void retrieveVolumeOnTracks() {
-    if (currentProject.getVMComposition().hasMusic()) {
-      Track musicTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC);
-      if (musicTrack.isMuted()) {
-        videonaPlayerView.setMusicVolume(VOLUME_MUTE);
-      } else {
-        videonaPlayerView.setMusicVolume(musicTrack.getVolume());
-      }
-    }
-
-    if (currentProject.getVMComposition().hasVoiceOver()) {
-      Track voiceOverTrack = currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER);
-      if (voiceOverTrack.isMuted()) {
-        videonaPlayerView.setVoiceOverVolume(VOLUME_MUTE);
-      } else {
-        videonaPlayerView.setVoiceOverVolume(voiceOverTrack.getVolume());
-      }
-    }
-
-    if (currentProject.getVMComposition().hasVideos()) {
-      Track mediaTrack = currentProject.getMediaTrack();
-      if (mediaTrack.isMuted()) {
-        videonaPlayerView.setVideoMute();
-      } else {
-        videonaPlayerView.setVideoVolume(mediaTrack.getVolume());
-      }
-    }
   }
 
   private void relaunchTranscoderTempFileJob(Video video) {
@@ -458,5 +382,11 @@ public class EditorPresenter extends VimojoPresenter
     ProjectInfo projectInfo = currentProject.getProjectInfo();
     projectInfo.setTitle(title);
     executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
+  }
+
+  public ListenableFuture<?> obtainVideoFromProject() {
+    return this.executeUseCaseCall(() -> {
+      initPreviewFromProject();
+    });
   }
 }

@@ -257,7 +257,7 @@
 //        }
 //    }
 //
-//    public void onDestroy() {
+//    public void destroyPlayer() {
 //        recorder.release();
 //    }
 //
