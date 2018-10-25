@@ -3,22 +3,26 @@ package com.videonasocialmedia.vimojo.presentation.mvp.presenters;
 import android.media.MediaMetadataRetriever;
 import android.support.annotation.NonNull;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
-import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,12 +33,11 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -42,9 +45,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 10/06/16.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest= Config.NONE)
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class, JobManager.class})
 public class DuplicatePreviewPresenterTest {
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private DuplicateView mockedDuplicateView;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
@@ -54,8 +57,11 @@ public class DuplicatePreviewPresenterTest {
     // TODO(jliarte): 13/06/16 Decouple Video entity from android
     @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
     @Mock private Video mockedVideo;
+    @Mock UpdateComposition mockedUpdateComposition;
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
+    private boolean amIAVerticalApp;
+    @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
     public void injectMocks() {
@@ -69,11 +75,12 @@ public class DuplicatePreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
         DuplicatePreviewPresenter duplicatePreviewPresenter =
-                new DuplicatePreviewPresenter(mockedDuplicateView, userEventTracker,
-                    mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,
-                    mockedProjectInstanceCache);
+                new DuplicatePreviewPresenter(
+                        mockedDuplicateView, userEventTracker, mockedAddVideoToProjectUseCase,
+                        mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
+                        mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(duplicatePreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -109,9 +116,10 @@ public class DuplicatePreviewPresenterTest {
 
     @NonNull
     public DuplicatePreviewPresenter getDuplicatePreviewPresenter() {
-        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(mockedDuplicateView, mockedUserEventTracker,
-            mockedAddVideoToProjectUseCase, mockedGetMediaListFromProjectUseCase,
-            mockedProjectInstanceCache);
+        DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(
+                mockedDuplicateView, mockedUserEventTracker, mockedAddVideoToProjectUseCase,
+                mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
+                mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
         duplicatePreviewPresenter.currentProject = currentProject;
         return  duplicatePreviewPresenter;
     }

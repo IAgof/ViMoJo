@@ -20,7 +20,7 @@ public class SyncConstants {
   public static final String VIMOJO_CONTENT_AUTHORITY = getContentAuthority();
 
   private static String getContentAuthority() {
-    if(BuildConfig.FLAVOR.equals("vimojo")) {
+    if (BuildConfig.FLAVOR.equals("vimojo")) {
       return BASE_PACKAGE_NAME + ".main" + ".provider";
     }
     return BASE_PACKAGE_NAME + "." + BuildConfig.FLAVOR + ".provider";

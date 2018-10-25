@@ -7,12 +7,16 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.MediaTrack;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnReorderMediaListener;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +39,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * Created by jliarte on 23/10/16.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class, JobManager.class})
 public class ReorderMediaItemUseCaseTest {
   @Mock ProjectRepository mockedProjectRepository;
   @InjectMocks ReorderMediaItemUseCase injectedUseCase;
@@ -47,19 +52,6 @@ public class ReorderMediaItemUseCaseTest {
     MockitoAnnotations.initMocks(this);
     getAProject();
     when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
-  }
-
-  @Test
-  public void testMoveMediaItemCallsUpdateProject() throws IllegalItemOnTrack {
-    Video video0 = new Video("video/0", Video.DEFAULT_VOLUME);
-    Video video1 = new Video("video/1", Video.DEFAULT_VOLUME);
-    currentProject.getVMComposition().getMediaTrack().insertItemAt(0, video0);
-    currentProject.getVMComposition().getMediaTrack().insertItemAt(1, video1);
-    OnReorderMediaListener onReorderMediaListener = getOnReorderMediaListener();
-
-    injectedUseCase.moveMediaItem(currentProject, 1, 0, onReorderMediaListener);
-
-    verify(mockedProjectRepository).update(currentProject);
   }
 
   @Test

@@ -7,30 +7,32 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 
-import android.media.MediaMetadataRetriever;
 import android.support.annotation.NonNull;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
-import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
+import com.videonasocialmedia.vimojo.test.shadows.JobManager;
 import com.videonasocialmedia.vimojo.test.shadows.MediaMetadataRetrieverShadow;
+import com.videonasocialmedia.vimojo.test.shadows.ShadowMultiDex;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
@@ -39,8 +41,8 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -50,19 +52,19 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 // TODO(jliarte): 15/06/16 I need to use robolectric here as Video is being copied in the presenter
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest=Config.NONE)
+@Config(application = VimojoTestApplication.class, constants = BuildConfig.class, sdk = 21,
+        shadows = {ShadowMultiDex.class, JobManager.class})
 public class SplitPreviewPresenterTest {
     @Mock private SplitView mockedSplitView;
-    @Mock private MixpanelAPI mockedMixpanelAPI;
     @Mock private UserEventTracker mockedUserEventTracker;
-    // TODO(jliarte): 13/06/16 Decouple Video entity from android
-    @Mock(name="retriever") MediaMetadataRetriever mockedMediaMetadataRetriever;
-    @InjectMocks Video injectedVideo;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock GetMediaListFromProjectUseCase mockedGetMediaListFromProjectUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
     private Project currentProject;
     List<Media> videoList = new ArrayList<>();
+    @Mock UpdateComposition mockedUpdateComposition;
+    private boolean amIAVerticalApp;
+    @Mock BackgroundExecutor mockedBackgroundExecutor;
 
     @Before
     public void injectMocks() {
@@ -76,10 +78,11 @@ public class SplitPreviewPresenterTest {
 
     @Test
     public void constructorSetsUserTracker() {
-        UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
-        SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedSplitView,
-            userEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
-            mockedProjectInstanceCache);
+        UserEventTracker userEventTracker = UserEventTracker.getInstance();
+        SplitPreviewPresenter presenter = new SplitPreviewPresenter(
+                mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
+                mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
+                mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -129,16 +132,17 @@ public class SplitPreviewPresenterTest {
 
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
-        SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedSplitView,
-            mockedUserEventTracker, mockedSplitVideoUseCase, mockedGetMediaListFromProjectUseCase,
-            mockedProjectInstanceCache);
+        SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(
+                mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
+                mockedGetMediaListFromProjectUseCase, mockedProjectInstanceCache,
+                mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }
 
     public void setAProject() {
-        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,
-            VideoQuality.Quality.HIGH, VideoFrameRate.FrameRate.FPS25);
+        Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720, VideoQuality.Quality.HIGH,
+                VideoFrameRate.FrameRate.FPS25);
         List<String> productType = new ArrayList<>();
         ProjectInfo projectInfo = new ProjectInfo("title", "description", productType);
         currentProject = new Project(projectInfo, "/path", "private/path", compositionProfile);

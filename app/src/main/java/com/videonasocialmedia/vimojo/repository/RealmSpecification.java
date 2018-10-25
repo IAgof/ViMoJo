@@ -1,9 +1,8 @@
 package com.videonasocialmedia.vimojo.repository;
 
-import com.videonasocialmedia.vimojo.repository.video.RealmVideo;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.RealmVideo;
 
 import io.realm.Realm;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 /**

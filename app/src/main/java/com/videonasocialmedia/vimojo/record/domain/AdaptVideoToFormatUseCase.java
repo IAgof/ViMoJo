@@ -7,10 +7,10 @@ import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelperListener;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
 import java.io.IOException;
@@ -25,14 +25,14 @@ public class AdaptVideoToFormatUseCase {
   private static final int MAX_NUM_TRIES_ADAPTING_VIDEO = 3;
   private MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper = new TranscoderHelper(mediaTranscoder);
-  private VideoToAdaptRepository videoToAdaptRepository;
-  private VideoRepository videoRepository;
+  private VideoToAdaptDataSource videoToAdaptRepository;
+  private MediaRepository mediaRepository;
   private WeakReference<AdaptListener> adaptListener;
 
-  public AdaptVideoToFormatUseCase(VideoToAdaptRepository videoToAdaptRepository,
-                                   VideoRepository videoRepository) {
+  public AdaptVideoToFormatUseCase(VideoToAdaptDataSource videoToAdaptRepository,
+                                   MediaRepository mediaRepository) {
     this.videoToAdaptRepository = videoToAdaptRepository;
-    this.videoRepository = videoRepository;
+    this.mediaRepository = mediaRepository;
   }
 
   public void adaptVideo(Project currentProject, final VideoToAdapt videoToAdapt, final VideonaFormat videoFormat,
@@ -41,10 +41,10 @@ public class AdaptVideoToFormatUseCase {
     videoToAdaptRepository.update(videoToAdapt);
     videoToAdapt.getVideo().setTempPath(currentProject.getProjectPathIntermediateFiles());
     transcoderHelper.adaptVideoWithRotationToDefaultFormatAsync(videoToAdapt.getVideo(),
-        videoFormat, videoToAdapt.getDestVideoPath(), videoToAdapt.getRotation(),
-        new AdaptVideoListener(videoFormat, videoToAdapt.getDestVideoPath(),
-            videoToAdapt.getRotation(), currentProject),
-        currentProject.getProjectPathIntermediateAudioMixedFiles());
+            videoFormat, videoToAdapt.getDestVideoPath(), videoToAdapt.getRotation(),
+            new AdaptVideoListener(videoFormat, videoToAdapt.getDestVideoPath(),
+                    videoToAdapt.getRotation(), currentProject),
+            currentProject.getProjectPathIntermediateAudioMixedFiles());
   }
 
 
@@ -78,8 +78,9 @@ public class AdaptVideoToFormatUseCase {
       video.setTranscodingTask(null);
       video.resetTempPath();
       video.notifyChanges();
-      // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
-      videoRepository.update(video);
+      // TODO(jliarte): 19/07/18 extract this repo call from UC
+      // (jliarte): 18/07/18 this should be enough to update video and asset in backend through corresponding api data source
+      mediaRepository.update(video); // (jliarte): 18/07/17 now we should move the file, notify changes, and launch AV transitions
       notifySuccess(video);
     }
 

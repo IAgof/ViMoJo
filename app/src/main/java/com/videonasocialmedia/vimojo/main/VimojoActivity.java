@@ -18,21 +18,17 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.google.android.gms.analytics.Tracker;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitAppActivity;
 import com.videonasocialmedia.vimojo.main.modules.ActivityPresentersModule;
-import com.videonasocialmedia.vimojo.presentation.views.activity.InitAppActivity;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import javax.inject.Inject;
 
@@ -47,11 +43,12 @@ import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_S
 public abstract class VimojoActivity extends AppCompatActivity {
     private final TrackerDelegate trackerDelegate = new TrackerDelegate();
     protected MixpanelAPI mixpanel;
-    protected Tracker tracker;
     protected boolean criticalPermissionDenied = false;
     protected MultiplePermissionsListener dialogMultiplePermissionsListener;
     @Inject ProjectRepository projectRepository;
     @Inject SharedPreferences sharedPreferences;
+    // TODO: check this injection and its usages
+    @Inject VimojoPresenter vimojoPresenter;
 
     public SystemComponent getSystemComponent() {
         return ((VimojoApplication)getApplication()).getSystemComponent();
@@ -61,6 +58,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSystemComponent().inject(this);
+        getActivityPresentersComponent().inject(this);
         updateThemeApp();
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
@@ -112,20 +110,14 @@ public abstract class VimojoActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mixpanel.flush();
+        vimojoPresenter.onActivityDestroy();
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        JSONObject activityProperties = new JSONObject();
-        try {
-            activityProperties.put(AnalyticsConstants.ACTIVITY, getClass().getSimpleName());
-            mixpanel.track(AnalyticsConstants.TIME_IN_ACTIVITY, activityProperties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        vimojoPresenter.onActivityPause(getClass());
     }
 
     @Override
@@ -136,7 +128,7 @@ public abstract class VimojoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mixpanel.timeEvent(AnalyticsConstants.TIME_IN_ACTIVITY);
+        vimojoPresenter.onActivityStart(getClass());
     }
 
     protected final void closeApp() {
@@ -245,8 +237,6 @@ public abstract class VimojoActivity extends AppCompatActivity {
                 mixpanel.getPeople().identify(mixpanel.getPeople().getDistinctId());
                 mixpanel.getPeople().initPushHandling(ANDROID_PUSH_SENDER_ID);
             }
-            VimojoApplication app = (VimojoApplication) getApplication();
-            tracker = app.getTracker();
         }
     }
 

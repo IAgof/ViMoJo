@@ -12,6 +12,13 @@
 
     <string name="app_out_of_date_message">Se ha expirado el tiempo de prueba de app</string>
 
+    <!-- Init Register Login Activity -->
+    <string name="textview_init_register_login_title">Graba, edita y comparte tus noticias.</string>
+    <string name="textview_init_register_login_message">ViMoJo es una herramienta de uso profesional diseñada para periodistas y medios de comunicación especializados.
+Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesional a través del móvil.</string>
+    <string name="button_text_init_register">Registro gratuito</string>
+    <string name="button_text_init_login">Iniciar sesión</string>
+
     <!-- Record Activity -->
     <string name="chronometerDefault">00:00</string>
     <string name="toast_exit">Pulsa otra vez para salir</string>
@@ -147,6 +154,10 @@
     <string name="dialog_project_remove_message">Borrar proyecto</string>
     <string name="dialog_project_remove_accept">Sí</string>
     <string name="dialog_project_remove_cancel">No</string>
+    <string name="dialog_project_remove_local_only">Sólo en local</string>
+    <string name="dialog_title_update_assets_progress_dialog">Actualizando archivos</string>
+    <string name="dialog_message_update_assets_progress_dialog">Descargando los archivos de la composición, por favor espere.</string>
+    <string name="update_assets_remaining">restantes.</string>
 
     <!-- Detail project activity -->
     <string name="detail_project_title">Título</string>

@@ -8,12 +8,10 @@ import com.videonasocialmedia.videonamediaframework.model.media.Audio;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.pipeline.AudioCompositionExportSession;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 /**
  * Created by alvaro on 16/09/16.

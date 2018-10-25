@@ -18,7 +18,6 @@ public class PlayStoreBillingDelegate implements BillingConnectionListener,
   private final BillingManager billingManager;
   private final BillingDelegateView billingDelegateView;
   private boolean darkThemePurchased = false;
-  private boolean watermarkPurchased = false;
 
   public PlayStoreBillingDelegate(BillingManager billingManager,
                                   BillingDelegateView billingDelegateView) {
@@ -54,17 +53,11 @@ public class PlayStoreBillingDelegate implements BillingConnectionListener,
       if (purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_DARK_THEME) == 0) {
         darkThemePurchased = true;
       }
-      if (purchase.getSku().compareTo(Constants.IN_APP_BILLING_ITEM_WATERMARK) == 0) {
-        watermarkPurchased = true;
-      }
     }
     billingDelegateView.itemDarkThemePurchased(darkThemePurchased);
-    billingDelegateView.itemWatermarkPurchased(watermarkPurchased);
   }
 
   public interface BillingDelegateView {
     void itemDarkThemePurchased(boolean purchased);
-
-    void itemWatermarkPurchased(boolean purchased);
   }
 }

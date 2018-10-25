@@ -8,14 +8,16 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.auth0.GetUserId;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRealmRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
+import com.videonasocialmedia.vimojo.repository.upload.datasource.UploadRealmDataSource;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
 import com.videonasocialmedia.vimojo.sync.presentation.ui.UploadNotification;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VideoApiClient;
 
@@ -44,7 +46,7 @@ public class UploadToPlatformModule {
                                            VideoApiClient videoApiClient,
                                            UserApiClient userApiClient,
                                            UserAuth0Helper userAuth0Helper,
-                                           UploadRepository uploadRepository,
+                                           UploadDataSource uploadRepository,
                                            GetUserId getUserId) {
     return new UploadToPlatform(context, uploadNotification, videoApiClient, userApiClient,
         userAuth0Helper, uploadRepository, getUserId);
@@ -66,12 +68,14 @@ public class UploadToPlatformModule {
   }
 
   @Provides
-  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
-    return new UserAuth0Helper(userApiClient);
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient,
+                                          SharedPreferences sharedPreferences,
+                                          UserEventTracker userEventTracker) {
+    return new UserAuth0Helper(userApiClient, sharedPreferences, userEventTracker);
   }
 
   @Singleton @Provides
-  UploadRepository providesUploadRepository() {
-    return new UploadRealmRepository();
+  UploadDataSource providesUploadRepository() {
+    return new UploadRealmDataSource();
   }
 }

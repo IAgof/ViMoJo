@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.vimojo.sync.helper.ProgressRequestBody;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.Video;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.VideoDto;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,12 +29,11 @@ import static com.videonasocialmedia.vimojo.vimojoapiclient.ApiConstants.MULTIPA
  * <p>Handles video upload calls.</p>
  */
 public class VideoApiClient extends VimojoApiClient {
-
   public static final String VIDEO_API_KEY_TITLE = "title";
   public static final String VIDEO_API_KEY_DESCRIPTION = "description";
   public static final String VIDEO_API_KEY_PRODUCT_TYPE = "productType";
 
-  private Call<Video> videoUploadTask;
+  private Call<VideoDto> videoUploadTask;
 
   public VideoApiClient() {
   }
@@ -47,7 +46,7 @@ public class VideoApiClient extends VimojoApiClient {
    * @return the video upload response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public Video uploadVideo(String authToken, VideoUpload videoUpload)
+  public VideoDto uploadVideo(String authToken, VideoUpload videoUpload)
           throws VimojoApiException, FileNotFoundException {
 
     // create upload service client
@@ -71,7 +70,7 @@ public class VideoApiClient extends VimojoApiClient {
     requestBodyHashMap.put(VIDEO_API_KEY_PRODUCT_TYPE, requestBodyProductTypes);
     videoUploadTask = videoService.uploadVideo(requestBodyHashMap, body);
     try {
-      Response<Video> response = videoUploadTask.execute();
+      Response<VideoDto> response = videoUploadTask.execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {
@@ -94,8 +93,8 @@ public class VideoApiClient extends VimojoApiClient {
    * @return the video upload response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public Call<Video> uploadVideoAsyncWithProgress(String authToken, VideoUpload videoUpload,
-                                                  ProgressRequestBody fileBody)
+  public Call<VideoDto> uploadVideoAsyncWithProgress(String authToken, VideoUpload videoUpload,
+                                                     ProgressRequestBody fileBody)
       throws VimojoApiException, FileNotFoundException {
 
     // create upload service client

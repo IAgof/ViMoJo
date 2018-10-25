@@ -1,8 +1,6 @@
 package com.videonasocialmedia.vimojo.text.domain;
 
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -11,14 +9,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -33,65 +30,69 @@ import javax.inject.Inject;
  */
 public class ModifyVideoTextAndPositionUseCase {
   private static final String LOG_TAG = ModifyVideoTextAndPositionUseCase.class.getSimpleName();
-  private final VideoRepository videoRepository;
   private final RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase;
-  private final VideoToAdaptRepository videoToAdaptRepository;
+  private final VideoToAdaptDataSource videoToAdaptRepository;
   // TODO:(alvaro.martinez) 23/11/16 Use Dagger for this injection
   private final TextToDrawable drawableGenerator =
       new TextToDrawable(VimojoApplication.getAppContext());
   private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper =
       new TranscoderHelper(drawableGenerator, mediaTranscoder);
+  private MediaRepository mediaRepository;
 
   /**
    * Default constructor with video repository.
-   *  @param videoRepository the video repository.
-   * @param videoToAdaptRepository the video to adapt repository
+   *
+   * @param videoToAdaptRepository the video to adapt repository.
+   * @param mediaRepository        the media repository.
    */
-  @Inject public ModifyVideoTextAndPositionUseCase(
-          VideoRepository videoRepository,
+  @Inject
+  public ModifyVideoTextAndPositionUseCase(
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          VideoToAdaptRepository videoToAdaptRepository) {
-    this.videoRepository = videoRepository;
+          VideoToAdaptDataSource videoToAdaptRepository, MediaRepository mediaRepository) {
+    this.mediaRepository = mediaRepository;
     this.relaunchTranscoderTempBackgroundUseCase = relaunchTranscoderTempBackgroundUseCase;
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
-    public void addTextToVideo(Project currentProject, final Video videoToEdit, String text,
+    public ListenableFuture<Video> addTextToVideo(Project currentProject, final Video videoToEdit,
+                                                  String text,
                                String textPosition, boolean isShadowChecked) {
       setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
-      videoRepository.update(videoToEdit);
-
-      if (videoIsBeingAdapted(videoToEdit)) {
-        ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
-        videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
-                applyText(currentProject, videoToEdit, text, textPosition, isShadowChecked)));
-      } else {
-        runTextTranscodingTask(videoToEdit, currentProject);
-      }
+      mediaRepository.update(videoToEdit); // TODO(jliarte): 13/09/18 needed because of text settings change
+      return transcodeVideo(currentProject, videoToEdit, text, textPosition, isShadowChecked);
     }
+
+  private ListenableFuture<Video> transcodeVideo(Project currentProject, Video videoToEdit,
+                                                 String text, String textPosition,
+                                                 boolean isShadowChecked) {
+    if (videoIsBeingAdapted(videoToEdit)) {
+      ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
+      videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
+              applyText(currentProject, videoToEdit, text, textPosition, isShadowChecked)));
+      return videoToEdit.getTranscodingTask();
+    } else {
+      return runTextTranscodingTask(videoToEdit, currentProject);
+    }
+  }
 
   private Function<Video, Video> applyText(final Project currentProject, final Video videoToEdit,
                                            final String text, final String textPosition,
                                            boolean isShadowChecked) {
-    return new Function<Video, Video>() {
-      @Nullable
-      @Override
-      public Video apply(Video input) {
-        setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
-        videoRepository.update(videoToEdit);
-        ListenableFuture<Video> task = runTextTranscodingTask(videoToEdit, currentProject);
-        // TODO(jliarte): 15/09/17 check this and error propagation
-        try {
-          return task.get();
-        } catch (InterruptedException | ExecutionException ex) {
-          // TODO(jliarte): 18/09/17 create an util class to log errors
-          Log.e(LOG_TAG, "Caught exception while applying text after adapting video");
-          Crashlytics.log("Caught exception while applying text after adapting video");
-          Crashlytics.logException(ex);
-          ex.printStackTrace();
-          throw new RuntimeException(ex);
-        }
+    return input -> {
+      setVideoTextParams(videoToEdit, text, textPosition, isShadowChecked, currentProject);
+      mediaRepository.update(videoToEdit); // TODO(jliarte): 13/09/18 needed because of text settings change
+      ListenableFuture<Video> task = runTextTranscodingTask(videoToEdit, currentProject);
+      // TODO(jliarte): 15/09/17 check this and error propagation
+      try {
+        return task.get();
+      } catch (InterruptedException | ExecutionException ex) {
+        // TODO(jliarte): 18/09/17 create an util class to log errors
+        Log.e(LOG_TAG, "Caught exception while applying text after adapting video");
+        Crashlytics.log("Caught exception while applying text after adapting video");
+        Crashlytics.logException(ex);
+        ex.printStackTrace();
+        throw new RuntimeException(ex);
       }
     };
   }
@@ -103,7 +104,7 @@ public class ModifyVideoTextAndPositionUseCase {
   private ListenableFuture<Video> runTextTranscodingTask(Video videoToEdit, Project project) {
     videoToEdit.setTempPath(project.getProjectPathIntermediateFiles());
     videoToEdit.setTranscodingTempFileFinished(false);
-    videoRepository.update(videoToEdit);
+    mediaRepository.update(videoToEdit); // TODO(jliarte): 13/09/18 needed to set tempPath
     ListenableFuture<Video> transcoderTextTask = null;
     try {
       transcoderTextTask = transcoderHelper.updateIntermediateFile(
@@ -117,6 +118,7 @@ public class ModifyVideoTextAndPositionUseCase {
       ioError.printStackTrace();
       handleTranscodingError(videoToEdit, ioError.getMessage(), project);
     }
+    videoToEdit.setTranscodingTask(transcoderTextTask);
     return transcoderTextTask;
   }
 
@@ -132,22 +134,22 @@ public class ModifyVideoTextAndPositionUseCase {
     Log.d(LOG_TAG, "onErrorTranscoding " + video.getTempPath() + " - " + message);
     if (video.getNumTriesToExportVideo() < Constants.MAX_NUM_TRIES_TO_EXPORT_VIDEO) {
       video.increaseNumTriesToExportVideo();
-      VideonaFormat videoFormat = currentProject.getVMComposition().getVideoFormat();
-      Drawable drawableFadeTransitionVideo = currentProject.getVMComposition()
-              .getDrawableFadeTransitionVideo();
-
-      relaunchTranscoderTempBackgroundUseCase.relaunchExport(
-              video,
-              currentProject);
+      relaunchTranscoderTempBackgroundUseCase.relaunchExport(video, currentProject);
     } else {
-      videoRepository.setErrorTranscodingVideo(video,
-              Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TEXT.name());
+      // TODO(jliarte): 10/09/18 should we move this code to caller?
+      video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TEXT.name());
+      video.setTranscodingTempFileFinished(true);
+      mediaRepository.update(video); // TODO(jliarte): 13/09/18 needed to set transcoding error
     }
   }
 
   private void handleTranscodingSuccess(Video video) {
     Log.d(LOG_TAG, "onSuccessTranscoding " + video.getTempPath());
-    videoRepository.setSuccessTranscodingVideo(video);
+    // TODO(jliarte): 10/09/18 should we move this code to caller?
+    video.resetNumTriesToExportVideo();
+    video.setTranscodingTempFileFinished(true);
+    video.setVideoError(null);
+    mediaRepository.update(video); // TODO(jliarte): 13/09/18 needed to set transcoding success. check that is ran in background
   }
 
 

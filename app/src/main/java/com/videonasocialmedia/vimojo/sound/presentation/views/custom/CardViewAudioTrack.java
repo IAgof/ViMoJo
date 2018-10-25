@@ -142,8 +142,8 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
     return new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        listener.setSeekBarProgress(id, progress);
-        switchMuteMedia.setChecked(false);
+//        listener.setSeekBarProgress(id, progress);
+//        switchMuteMedia.setChecked(false);
       }
 
       @Override
@@ -153,7 +153,9 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
 
       @Override
       public void onStopTrackingTouch(SeekBar seekBar) {
-
+        // TODO(jliarte): 14/09/18 moved here to set volume only when user relases seekbar
+        listener.setSeekBarProgress(id, seekBar.getProgress());
+        switchMuteMedia.setChecked(false);
       }
     };
   }

@@ -8,7 +8,7 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthTokenRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.RegisterRequest;
 import com.videonasocialmedia.vimojo.vimojoapiclient.model.AuthToken;
-import com.videonasocialmedia.vimojo.vimojoapiclient.model.User;
+import com.videonasocialmedia.vimojo.vimojoapiclient.model.UserDto;
 
 import retrofit2.Response;
 
@@ -41,13 +41,13 @@ public class AuthApiClient extends VimojoApiClient {
    * @return the user response of the platform service
    * @throws VimojoApiException if an error has occurred in the call.
    */
-  public User register(String username, String email, String password, boolean checkBoxAcceptTermChecked)
+  public UserDto register(String username, String email, String password, boolean checkBoxAcceptTermChecked)
           throws VimojoApiException {
     AuthService authService = getService(AuthService.class);
     RegisterRequest requestBody = new RegisterRequest(username, email, password,
         checkBoxAcceptTermChecked);
     try {
-      Response<User> response = authService.register(requestBody).execute();
+      Response<UserDto> response = authService.register(requestBody).execute();
       if (response.isSuccessful()) {
         return response.body();
       } else {

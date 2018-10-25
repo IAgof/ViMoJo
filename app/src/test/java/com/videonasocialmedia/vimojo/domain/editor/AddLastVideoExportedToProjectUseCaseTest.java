@@ -4,9 +4,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRealmRepository;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
 
 import org.junit.Before;
@@ -27,9 +27,8 @@ import static org.mockito.Mockito.verify;
  */
 
 public class AddLastVideoExportedToProjectUseCaseTest {
+  @Mock ProjectRepository mockedProjectRepository;
 
-  @Mock
-  ProjectRealmRepository mockedProjectRepository;
   @InjectMocks
   AddLastVideoExportedToProjectUseCase injectedUseCase;
   private Project currentProject;
@@ -48,15 +47,6 @@ public class AddLastVideoExportedToProjectUseCaseTest {
 
     assertThat("Date of last modification and videoExportedNavigateToShareActivity are equal ",
         currentProject.getLastModification(), is(currentProject.getDateLastVideoExported()));
-  }
-
-  @Test
-  public void testAddLastVideoExportedToProjectUpdateProjectRepository() {
-    String date = DateUtils.getDateRightNow();
-
-    injectedUseCase.addLastVideoExportedToProject(currentProject, "somePath", date);
-
-    verify(mockedProjectRepository).updateWithDate(currentProject, date);
   }
 
   private void getAProject() {

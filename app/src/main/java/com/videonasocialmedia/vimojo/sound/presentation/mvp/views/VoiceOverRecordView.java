@@ -22,4 +22,6 @@ public interface VoiceOverRecordView {
     void disableRecordButton();
     void showProgressDialog();
     void hideProgressDialog();
+
+  void setAspectRatioVerticalVideos();
 }

@@ -15,4 +15,6 @@ public interface MusicListView {
     void goToDetailActivity(String mediaPath);
     void setVideoFadeTransitionAmongVideos();
     void updateProject();
+
+  void setAspectRatioVerticalVideos();
 }

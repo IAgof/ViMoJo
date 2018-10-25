@@ -1,35 +1,41 @@
 package com.videonasocialmedia.vimojo.main.modules;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.SwitchPreference;
 
-import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.upload.UploadRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateAudioTransitionPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateIntermediateTemporalFilesTransitionsUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateVideoTransitionPreferenceToProjectUseCase;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.UpdateWatermarkPreferenceToProjectUseCase;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
@@ -40,13 +46,8 @@ import dagger.Provides;
 
 @Module
 public class FragmentPresentersModule {
-
   private final ProjectInstanceCache projectInstanceCache;
   private Activity activity;
-  private SwitchPreference transitionAudioPref;
-  private SwitchPreference transitionVideoPref;
-  private SwitchPreference watermarkPref;
-  private SwitchPreference themeAppPref;
   private SettingsFragment settingsFragment;
   private Context context;
   private SharedPreferences sharedPreferences;
@@ -54,26 +55,19 @@ public class FragmentPresentersModule {
 
   public FragmentPresentersModule(
           SettingsFragment settingsFragment, Context context,
-          SharedPreferences sharedPreferences, SwitchPreference transitionsVideoPref,
-          SwitchPreference transitionsAudioPref, SwitchPreference watermarkPref,
-          SwitchPreference themeAppPref, Activity activity) {
+          SharedPreferences sharedPreferences, Activity activity) {
     this.settingsFragment = settingsFragment;
     this.activity = activity;
     this.context = context;
     this.projectInstanceCache = (ProjectInstanceCache) this.activity.getApplication();
     this.currentProject = projectInstanceCache.getCurrentProject();
     this.sharedPreferences = sharedPreferences;
-    this.transitionVideoPref = transitionsVideoPref;
-    this.transitionAudioPref = transitionsAudioPref;
-    this.watermarkPref = watermarkPref;
-    this.themeAppPref = themeAppPref;
   }
 
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-      ProjectRepository projectRepository,
       GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       UpdateAudioTransitionPreferenceToProjectUseCase
@@ -82,22 +76,33 @@ public class FragmentPresentersModule {
                   updateVideoTransitionPreferenceToProjectUseCase,
       UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-      UpdateWatermarkPreferenceToProjectUseCase updateWatermarkPreferenceToProjectUseCase,
-      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-      GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-      BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-      UploadRepository uploadRepository, GetAccount getAccount) {
+          UpdateCompositionWatermark updateCompositionWatermark,
+          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
+          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
+          UploadDataSource uploadDataSource, GetAccount getAccount,
+          UserEventTracker userEventTracker,UpdateComposition updateComposition,
+          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
+          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
+          @Named("hideTransitionPreference") boolean hideTransitionPreference,
+          @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
+          @Named("watermarkIsForced") boolean watermarkIsForced,
+          BackgroundExecutor backgroundExecutor) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
-            transitionVideoPref, transitionAudioPref, watermarkPref, themeAppPref,
-            projectRepository, getMediaListFromProjectUseCase,
+            getMediaListFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase,
             updateAudioTransitionPreferenceToProjectUseCase,
             updateVideoTransitionPreferenceToProjectUseCase,
             updateIntermediateTemporalFilesTransitionsUseCase,
-            updateWatermarkPreferenceToProjectUseCase, relaunchTranscoderTempBackgroundUseCase,
+            updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
             getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadRepository, projectInstanceCache, getAccount);
+            uploadDataSource, projectInstanceCache, getAccount, userEventTracker, updateComposition,
+        vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
+            ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference,
+        watermarkIsForced, backgroundExecutor);
   }
 
   @Provides
@@ -111,51 +116,31 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UpdateAudioTransitionPreferenceToProjectUseCase provideUpdateAudioTransitionPreference(
-      ProjectRepository projectRepository) {
-    return new UpdateAudioTransitionPreferenceToProjectUseCase(projectRepository);
-  }
-
-  @Provides
-  UpdateVideoTransitionPreferenceToProjectUseCase provideUpdateVideoTransitionPreference(
-      ProjectRepository projectRepository) {
-    return new UpdateVideoTransitionPreferenceToProjectUseCase(projectRepository);
-  }
-
-  @Provides
   UpdateIntermediateTemporalFilesTransitionsUseCase provideUpdateIntermediateTempFilesTransitions() {
     return new UpdateIntermediateTemporalFilesTransitionsUseCase();
   }
 
   @Provides
-  UpdateWatermarkPreferenceToProjectUseCase provideUpdateWatermarkPreference(
-          ProjectRepository projectRepository) {
-    return new UpdateWatermarkPreferenceToProjectUseCase(projectRepository);
-  }
-
-  @Provides
   RelaunchTranscoderTempBackgroundUseCase provideGetRelaunchTranscoder(
-          VideoRepository videoRepository) {
-    return new RelaunchTranscoderTempBackgroundUseCase(currentProject, videoRepository);
+          MediaRepository mediaRepository) {
+    return new RelaunchTranscoderTempBackgroundUseCase(currentProject, mediaRepository);
   }
 
   @Provides
-  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(ProjectRepository
-                                                                       projectRepository) {
+  GetVideoFormatFromCurrentProjectUseCase provideoGetVideonaFormat(
+          ProjectRepository projectRepository) {
     return new GetVideoFormatFromCurrentProjectUseCase(projectRepository);
   }
 
   @Provides
   NewClipImporter clipImporterProvider(
           GetVideoFormatFromCurrentProjectUseCase getVideoFormatFromCurrentProjectUseCase,
-          AdaptVideoToFormatUseCase adaptVideosUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscodingUseCase,
-          ProjectRepository projectRepository,
-          VideoRepository videoRepository, VideoToAdaptRepository videoToAdaptRepository,
+          AdaptVideoToFormatUseCase adaptVideosUseCase, VideoDataSource videoRepository,
+          VideoToAdaptDataSource videoToAdaptRepository,
           ApplyAVTransitionsUseCase launchAVTranscoderAddAVTransitionUseCase) {
     return new NewClipImporter(getVideoFormatFromCurrentProjectUseCase, adaptVideosUseCase,
-            launchAVTranscoderAddAVTransitionUseCase, relaunchTranscodingUseCase,
-            projectRepository, videoRepository, videoToAdaptRepository);
+            launchAVTranscoderAddAVTransitionUseCase, videoRepository, videoToAdaptRepository
+    );
   }
 
   @Provides
@@ -164,8 +149,15 @@ public class FragmentPresentersModule {
   }
 
   @Provides
-  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient) {
-    return new UserAuth0Helper(userApiClient);
+  UserAuth0Helper providesUserAuth0Helper(UserApiClient userApiClient,
+                                          SharedPreferences sharedPreferences,
+                                          UserEventTracker userEventTracker) {
+    return new UserAuth0Helper(userApiClient, sharedPreferences, userEventTracker);
+  }
+
+  @Provides
+  DownloadManager provideDownloadManager() {
+    return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
 }

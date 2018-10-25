@@ -8,12 +8,12 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.repository.music.MusicRepository;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
-import com.videonasocialmedia.vimojo.repository.track.TrackRepository;
+import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.composition.repository.datasource.TrackDataSource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +35,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class RemoveAudioUseCaseTest {
 
   @Mock OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
-  @Mock ProjectRepository mockedProjectRepository;
-  @Mock TrackRepository mockedTrackRepository;
-  @Mock MusicRepository mockedMusicRepository;
+  @Mock
+  ProjectRepository mockedProjectRepository;
+  @Mock
+  TrackDataSource mockedTrackRepository;
+  @Mock
+  MusicDataSource mockedMusicRepository;
   private Project currentProject;
 
   @Before
@@ -140,25 +143,6 @@ public class RemoveAudioUseCaseTest {
   }
 
   @Test
-  public void removeMusicUpdateRepositories() throws IllegalItemOnTrack {
-    float defaultVolume = 0.5f;
-    int defaultDuration = 100;
-    Music music = new Music("somePath", defaultVolume, defaultDuration);
-    AudioTrack musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
-    musicTrack.insertItem(music);
-    musicTrack.setPosition(1);
-    assertThat("Project has music ", currentProject.hasMusic(), is(true));
-    RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
-
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
-
-    verify(mockedProjectRepository).update(currentProject);
-    verify(mockedTrackRepository).update(musicTrack);
-    verify(mockedMusicRepository).remove(music);
-  }
-
-  @Test
   public void removeVoiceOverWithOneItemDeleteVoiceOverTrack() throws IllegalItemOnTrack {
     float defaultVolume = 0.5f;
     int defaultDuration = 100;
@@ -209,7 +193,7 @@ public class RemoveAudioUseCaseTest {
   }
 
   private RemoveAudioUseCase getRemoveAudioUseCase() {
-    return new RemoveAudioUseCase(mockedProjectRepository, mockedTrackRepository, mockedMusicRepository);
+    return new RemoveAudioUseCase();
   }
 
   private void getAProject() {

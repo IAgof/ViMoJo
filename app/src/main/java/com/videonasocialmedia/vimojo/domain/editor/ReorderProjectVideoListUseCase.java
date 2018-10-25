@@ -1,6 +1,6 @@
 package com.videonasocialmedia.vimojo.domain.editor;
 
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 
 /**

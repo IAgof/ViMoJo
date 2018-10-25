@@ -33,4 +33,5 @@ public class ApplicationModule {
     return vimojoApplication.getSharedPreferences(
             ConfigPreferences.SETTINGS_SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
   }
+
 }

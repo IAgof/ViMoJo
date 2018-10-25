@@ -34,10 +34,10 @@
 //import com.videonasocialmedia.vimojo.eventbus.events.AddMediaItemToTrackSuccessEvent;
 //import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 //import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
-//import com.videonasocialmedia.vimojo.model.entities.editor.Project;
+//import com.videonasocialmedia.vimojo.cut.domain.model.Project;
 //import com.videonasocialmedia.videonamediaframework.model.media.Video;
 //import com.videonasocialmedia.vimojo.presentation.mvp.views.RecordView;
-//import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+//import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 //import com.videonasocialmedia.vimojo.utils.AnalyticsConstants;
 //import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 //import com.videonasocialmedia.vimojo.utils.Constants;
@@ -73,7 +73,7 @@
 //    public static final long ONE_MB = ONE_KB*1024;
 //    public static final long ONE_GB = ONE_MB*1024;
 //    private final UserEventTracker userEventTracker;
-//    private final VideoRepository videoRepository;
+//    private final VideoDataSource videoRepository;
 //    private boolean firstTimeRecording;
 //    private RecordView recordView;
 //    private SessionConfig config;
@@ -100,7 +100,7 @@
 //    public RecordPresenter(
 //            Context context, RecordView recordView, UserEventTracker userEventTracker,
 //            GLCameraView cameraPreview, SharedPreferences sharedPreferences, boolean externalIntent,
-//            AddVideoToProjectUseCase addVideoToProjectUseCase, VideoRepository videoRepository,
+//            AddVideoToProjectUseCase addVideoToProjectUseCase, VideoDataSource videoRepository,
 //            ApplyAVTransitionsUseCase applyAVTransitionsUseCase,
 //            GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase) {
 //        this.context = context;

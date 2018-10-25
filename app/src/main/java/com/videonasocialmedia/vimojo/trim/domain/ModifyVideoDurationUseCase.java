@@ -2,7 +2,6 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -13,10 +12,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRepository;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
@@ -37,23 +36,23 @@ public class ModifyVideoDurationUseCase {
   static final int AUTOTRIM_MS_RANGE = 10;
   private final String TAG = ModifyVideoDurationUseCase.class.getName();
 
-  VideoRepository videoRepository;
-  VideoToAdaptRepository videoToAdaptRepository;
+  VideoToAdaptDataSource videoToAdaptRepository;
   private final TextToDrawable drawableGenerator =
           new TextToDrawable(VimojoApplication.getAppContext());
   private final MediaTranscoder mediaTranscoder = MediaTranscoder.getInstance();
   protected TranscoderHelper transcoderHelper =
           new TranscoderHelper(drawableGenerator, mediaTranscoder);
+  private MediaRepository mediaRepository; // TODO(jliarte): 12/09/18 explore how to decouple use case from repository calls
 
   /**
    * Default constructor with video repository argument.
    *
-   * @param videoRepository the video repository.
    * @param videoToAdaptRepository the video to adapt repository.
+   * @param mediaRepository        the media repository.
    */
-  @Inject public ModifyVideoDurationUseCase(VideoRepository videoRepository,
-                                            VideoToAdaptRepository videoToAdaptRepository) {
-    this.videoRepository = videoRepository;
+  @Inject public ModifyVideoDurationUseCase(VideoToAdaptDataSource videoToAdaptRepository,
+                                    MediaRepository mediaRepository) {
+    this.mediaRepository = mediaRepository;
     this.videoToAdaptRepository = videoToAdaptRepository;
   }
 
@@ -66,9 +65,13 @@ public class ModifyVideoDurationUseCase {
    */
   public ListenableFuture<Video> trimVideo(final Video videoToEdit, final int startTimeMs,
                                            final int finishTimeMs, Project currentProject) {
-    setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
-    videoRepository.update(videoToEdit);
 
+    setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
+    mediaRepository.update(videoToEdit);
+    return transcodeVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject);
+  }
+
+  private ListenableFuture<Video> transcodeVideo(Video videoToEdit, int startTimeMs, int finishTimeMs, Project currentProject) {
     if (videoIsBeingAdapted(videoToEdit)) {
       ListenableFuture<Video> videoAdaptTask = videoToEdit.getTranscodingTask();
       videoToEdit.setTranscodingTask(Futures.transform(videoAdaptTask,
@@ -90,26 +93,22 @@ public class ModifyVideoDurationUseCase {
 
   private Function<Video, Video> applyTrim(final Project currentProject, final Video videoToEdit,
                                            final int startTimeMs, final int finishTimeMs) {
-    return new Function<Video, Video>() {
-      @Nullable
-      @Override
-      public Video apply(Video input) {
-        // (jliarte): 18/09/17 when this function is applied, start and stop times could have been
-        // modified, as done after adapting video, so we have to store them as parameters here
-        setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
-        videoRepository.update(videoToEdit);
-        ListenableFuture<Video> task = runTrimTranscodingTask(videoToEdit, currentProject);
-        // TODO(jliarte): 15/09/17 check this and error propagation
-        try {
-          return task.get();
-        } catch (InterruptedException | ExecutionException ex) {
-          // TODO(jliarte): 18/09/17 create an util class to log errors
-          Log.e(TAG, "Caught exception while applying trim after adapting video");
-          Crashlytics.log("Caught exception while applying trim after adapting video");
-          Crashlytics.logException(ex);
-          ex.printStackTrace();
-          throw new RuntimeException(ex);
-        }
+    return input -> {
+      // (jliarte): 18/09/17 when this function is applied, start and stop times could have been
+      // modified, as done after adapting video, so we have to store them as parameters here
+      setVideoTrimParams(videoToEdit, startTimeMs, finishTimeMs, currentProject);
+      mediaRepository.update(videoToEdit);
+      ListenableFuture<Video> task = runTrimTranscodingTask(videoToEdit, currentProject);
+      // TODO(jliarte): 15/09/17 check this and error propagation
+      try {
+        return task.get();
+      } catch (InterruptedException | ExecutionException ex) {
+        // TODO(jliarte): 18/09/17 create an util class to log errors
+        Log.e(TAG, "Caught exception while applying trim after adapting video");
+        Crashlytics.log("Caught exception while applying trim after adapting video");
+        Crashlytics.logException(ex);
+        ex.printStackTrace();
+        throw new RuntimeException(ex);
       }
     };
   }
@@ -144,7 +143,11 @@ public class ModifyVideoDurationUseCase {
 
   private void handleTaskSuccess(Video video) {
     Log.d(TAG, "onSuccessTranscoding after trim " + video.getTempPath());
-    videoRepository.setSuccessTranscodingVideo(video);
+    // TODO(jliarte): 10/09/18 should we move this code to listener?
+    video.resetNumTriesToExportVideo();
+    video.setTranscodingTempFileFinished(true);
+    video.setVideoError(null);
+    mediaRepository.update(video);
   }
 
   void handleTaskError(Video video, String message, Project currentProject) {
@@ -153,13 +156,13 @@ public class ModifyVideoDurationUseCase {
       video.increaseNumTriesToExportVideo();
       // TODO(jliarte): 23/10/17 modify here trim times
       randomizeTrimTimes(video);
-      videoRepository.update(video);
+      mediaRepository.update(video);
       runTrimTranscodingTask(video, currentProject);
     } else {
       //trimView.showError(message);
       video.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
       video.setTranscodingTempFileFinished(true);
-      videoRepository.update(video);
+      mediaRepository.update(video);
     }
   }
 

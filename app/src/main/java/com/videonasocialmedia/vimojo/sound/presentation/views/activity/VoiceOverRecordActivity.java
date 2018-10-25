@@ -14,13 +14,12 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
-import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
+import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverRecordPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverRecordView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -100,9 +99,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         super.onResume();
         videonaPlayer.onShown(this);
         presenter.updatePresenter();
-        if (BuildConfig.FEATURE_VERTICAL_VIDEOS) {
-            videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
-        }
     }
 
     @Override
@@ -246,7 +242,8 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
 
     @Override
     public void showError(String errorMessage) {
-        Snackbar.make(videonaPlayer, errorMessage, Snackbar.LENGTH_LONG).show();
+        runOnUiThread(() -> Snackbar
+                .make(videonaPlayer, errorMessage, Snackbar.LENGTH_LONG).show());
     }
 
     @Override
@@ -302,6 +299,11 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
                 }
             }
         });
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos() {
+        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
     @Override

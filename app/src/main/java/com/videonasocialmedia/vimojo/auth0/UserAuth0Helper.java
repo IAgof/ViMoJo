@@ -10,8 +10,11 @@ package com.videonasocialmedia.vimojo.auth0;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -22,7 +25,6 @@ import com.auth0.android.authentication.storage.CredentialsManagerException;
 import com.auth0.android.authentication.storage.SecureCredentialsManager;
 import com.auth0.android.authentication.storage.SharedPreferencesStorage;
 import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
@@ -31,10 +33,14 @@ import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.accountmanager.AccountConstants;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.vimojoapiclient.UserApiClient;
 import com.videonasocialmedia.vimojo.vimojoapiclient.VimojoApiException;
 
 import java.util.HashMap;
+
+import javax.inject.Inject;
 
 /**
  * Created by alvaro on 2/7/18.
@@ -45,25 +51,31 @@ import java.util.HashMap;
  */
 
 public class UserAuth0Helper {
-
   private String LOG_TAG = UserAuth0Helper.class.getCanonicalName();
   private final String AUTH0_PARAMETER_MAIN_COLOR = "main_color";
   private final String AUTH0_PARAMETER_FLAVOUR = "flavour";
+  private final String AUTH0_PREHISTERIC_USER = "prehisteric_user";
   private Auth0 account;
   private AuthenticationAPIClient authenticator;
   private SecureCredentialsManager manager;
   private Context context;
   private final UserApiClient userApiClient;
+  private SharedPreferences sharedPreferences;
+  private UserEventTracker userEventTracker;
 
-  public UserAuth0Helper(UserApiClient userApiClient) {
+  @Inject
+  public UserAuth0Helper(UserApiClient userApiClient, SharedPreferences sharedPreferences,
+                         UserEventTracker userEventTracker) {
     this.context = VimojoApplication.getAppContext();
     account = new Auth0(context);
-    //Configure the account in OIDC conformant mode
+    // Configure the account in OIDC conformant mode
     account.setOIDCConformant(true);
     authenticator = new AuthenticationAPIClient(account);
     manager = new SecureCredentialsManager(context, authenticator,
         new SharedPreferencesStorage(context));
     this.userApiClient = userApiClient;
+    this.sharedPreferences = sharedPreferences;
+    this.userEventTracker = userEventTracker;
   }
 
   public void signOut() {
@@ -74,7 +86,7 @@ public class UserAuth0Helper {
     return manager.hasValidCredentials();
   }
 
-  public void performLogin(Activity activity, AuthCallback authCallback) {
+  public void performLogin(Activity activity, UserAuth0Helper.AuthCallback authCallback) {
     String domain = context.getString(R.string.com_auth0_domain);
     // TODO: 10/7/18 Study how to overwrite from build.gradle debug these string_debug, platform_base included
     String audience = BuildConfig.DEBUG ? context.getString(R.string.com_auth0_audience_debug)
@@ -89,19 +101,47 @@ public class UserAuth0Helper {
         .withScope("openid offline_access profile email")
         .withAudience(String.format(audience.toString(), domain))
         .withParameters(extraConfigParams)
-        .start(activity, authCallback);
+        .start(activity, new com.auth0.android.provider.AuthCallback() {
+          @Override
+          public void onFailure(@NonNull Dialog dialog) {
+            Log.d(LOG_TAG, "Error performLogin onFailure ");
+            authCallback.onFailure(new AuthenticationException("Unknown reason"));
+          }
+
+          @Override
+          public void onFailure(AuthenticationException exception) {
+            Log.d(LOG_TAG, "Error performLogin AuthenticationException "
+                    + exception.getMessage());
+            Crashlytics.log("Error performLogin AuthenticationException: " + exception);
+            authCallback.onFailure(exception);
+          }
+
+          @Override
+          public void onSuccess(@NonNull Credentials credentials) {
+            Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
+            saveCredentials(credentials, authCallback);
+          }
+        });
   }
 
-  public void saveCredentials(Credentials credentials) {
+  private void saveCredentials(Credentials credentials, AuthCallback authCallback) {
     // save credentials, user logged
     manager.saveCredentials(credentials);
-
+    // TODO: 29/8/18 Move tracking to initRegisterLoginPresenter when we only have one access to perform login
+    userEventTracker.trackUserLoggedIn(false);
+    userEventTracker.trackUserAuth0Id(credentials.getIdToken());
     // save account, save platform user id
     getUserProfile(credentials.getAccessToken(),
         new BaseCallback<UserProfile, AuthenticationException>() {
           @Override
           public void onFailure(AuthenticationException error) {
-
+            // TODO(jliarte): 10/07/18 handle this error!
+            Log.e(LOG_TAG, "Error Saving user credentials!!", error);
+            Log.d(LOG_TAG, "onFailure getting user profile AuthenticationException "
+                + error.getMessage());
+            Crashlytics.log("Failure getting user profile AuthenticationException "
+                + error.getMessage());
+            authCallback.onFailure(error);
           }
 
           @Override
@@ -109,23 +149,38 @@ public class UserAuth0Helper {
             // UserId
             String userId = null;
             try {
-              userId = userApiClient.getUserId(credentials.getAccessToken()).getId();
+              // TODO: 29/8/18 Move prehisteric user check to initRegisterLoginPresenter when we only have one access to perform login
+              boolean prehisteric = sharedPreferences.getBoolean(ConfigPreferences.PREHISTERIC_USER, false);
+              userId = userApiClient.getUserId(credentials.getAccessToken(), prehisteric).getId();
               registerAccount(userProfile.getEmail(), "fakePassword",
                   "fakeToken", userId);
+              // TODO: 29/8/18 Move tracking to initRegisterLoginPresenter when we only have one access to perform login
+              userEventTracker.trackUserEmailSet(userProfile.getEmail());
+              userEventTracker.trackUserId(userId);
+              boolean userAliased = sharedPreferences.getBoolean(ConfigPreferences.USER_ALIASED,
+                  false);
+              if (!userAliased) {
+                userEventTracker.aliasUser(userProfile.getEmail());
+                sharedPreferences.edit().putBoolean(ConfigPreferences.USER_ALIASED, true).apply();
+              }
+              authCallback.onSuccess(credentials);
+
             } catch (VimojoApiException vimojoApiException) {
+              // TODO(jliarte): 10/07/18 notify user an error authenticating!!!
+              Log.e(LOG_TAG, "Error saving user credentials while geting user id");
               Log.d(LOG_TAG, "vimojoApiException " + vimojoApiException.getApiErrorCode());
               Crashlytics.log("Error process getting UserId vimojoApiException");
               Crashlytics.logException(vimojoApiException);
+              authCallback.onFailure(new
+                  AuthenticationException(("Error process getting UserId vimojoApiException")));
             }
           }
         });
-
   }
 
-  public void getUserProfile(String accessToken,
-                             BaseCallback<UserProfile, AuthenticationException> baseCallBack) {
-    authenticator.userInfo(accessToken)
-        .start(baseCallBack);
+  public void getUserProfile(String accessToken, BaseCallback<UserProfile,
+          AuthenticationException> baseCallBack) {
+    authenticator.userInfo(accessToken).start(baseCallBack);
   }
 
   public void registerAccount(String email, String fakePassword, String accessToken, String id) {
@@ -141,4 +196,9 @@ public class UserAuth0Helper {
     manager.getCredentials(baseCallback);
   }
 
+  public interface AuthCallback {
+    void onSuccess(Credentials credentials);
+
+    void onFailure(AuthenticationException exception);
+  }
 }

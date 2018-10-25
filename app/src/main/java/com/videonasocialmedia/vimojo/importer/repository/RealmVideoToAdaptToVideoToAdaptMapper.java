@@ -3,8 +3,8 @@ package com.videonasocialmedia.vimojo.importer.repository;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.repository.Mapper;
-import com.videonasocialmedia.vimojo.repository.video.VideoRepository;
-import com.videonasocialmedia.vimojo.repository.video.VideoUUIDSpecification;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoUUIDSpecification;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ import java.util.List;
 
 class RealmVideoToAdaptToVideoToAdaptMapper implements Mapper<RealmVideoToAdapt, VideoToAdapt> {
 
-  private final VideoRepository videoRepository;
+  private final VideoDataSource videoRepository;
 
-  public RealmVideoToAdaptToVideoToAdaptMapper(VideoRepository videoRepository) {
+  public RealmVideoToAdaptToVideoToAdaptMapper(VideoDataSource videoRepository) {
     this.videoRepository = videoRepository;
   }
 

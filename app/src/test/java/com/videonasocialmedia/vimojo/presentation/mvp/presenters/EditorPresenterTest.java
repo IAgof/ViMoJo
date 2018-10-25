@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Profile;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -17,23 +17,28 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
+import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.RemoveVideoFromProjectUseCase;
-import com.videonasocialmedia.vimojo.domain.project.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.model.entities.editor.Project;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideonaPlayerView;
-import com.videonasocialmedia.vimojo.repository.project.ProjectRepository;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.store.billing.BillingManager;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -55,12 +60,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
@@ -71,7 +76,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Log.class})
 public class EditorPresenterTest {
 
-  @Mock private MixpanelAPI mockedMixpanelAPI;
   @Mock EditorActivityView mockedEditorActivityView;
   @Mock VideonaPlayerView mockedVideonaPlayerView;
   @Mock SharedPreferences mockedSharedPreferences;
@@ -88,10 +92,22 @@ public class EditorPresenterTest {
   @Mock SharedPreferences.Editor mockedPreferencesEditor;
   @Mock ProjectRepository mockedProjectRepository;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
+  @Mock SaveComposition mockedSaveComposition;
+  @Mock RemoveMedia mockedRemoveMedia;
+  @Mock UpdateCompositionWatermark mockedUpdateCompositionWatermark;
+  @Mock UpdateComposition mockedUpdateComposition;
   private Project currentProject;
   private boolean hasBeenProjectExported = false;
   private String videoExportedPath = "videoExportedPath";
   private String currentAppliedTheme = "dark";
+  private boolean showWatermarkSwitch;
+  private boolean vimojoStoreAvailable;
+  private boolean vimojoPlatformAvailable;
+  private boolean watermarkIsForced;
+  private boolean hideTutorials;
+  private boolean amIAVerticalApp;
+  @Mock BackgroundExecutor mockedBackgroundExecutor;
+  @Mock ListenableFuture mockedListenableFuture;
 
   @Before
   public void injectMocks() {
@@ -99,38 +115,54 @@ public class EditorPresenterTest {
     PowerMockito.mockStatic(Log.class);
     setAProject();
     when(mockedProjectInstanceCache.getCurrentProject()).thenReturn(currentProject);
+    when(mockedProjectRepository.getLastModifiedProject()).thenReturn(currentProject);
   }
 
   @Test
   public void constructorSetsUserTracker() {
-    UserEventTracker userEventTracker = UserEventTracker.getInstance(mockedMixpanelAPI);
+    UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditorPresenter editorPresenter = new EditorPresenter(mockedEditorActivityView,
             mockedVideonaPlayerView, mockedSharedPreferences, mockedContext, userEventTracker,
             mockedCreateDefaultProjectUseCase, mockedGetMediaListFromProjectUseCase,
             mockedRemoveVideoFromProjectUseCase, mockedGetAudioFromProjectUseCase,
             mocekdGetPreferencesTransitionFromProjectUseCase,
-            mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache);
+            mockedRelaunchTranscoderTempBackgroundUseCase,
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
+            mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
+            mockedUpdateComposition, showWatermarkSwitch, vimojoStoreAvailable,
+            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp,
+            mockedBackgroundExecutor);
 
     assertThat(editorPresenter.userEventTracker, is(userEventTracker));
   }
 
   @Test
-  public void switchPreferenceWatermarkUpdateProjectAndRepository() {
+  public void switchPreferenceWatermarkCallsUseCaseAndUpdateProject() {
     EditorPresenter editorPresenter = getEditorPresenter();
     boolean watermarkActivated = true;
     when(mockedSharedPreferences.edit()).thenReturn(mockedPreferencesEditor);
     assert(!currentProject.hasWatermark());
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).then(new Answer<Runnable>() {
+      @Override
+      public Runnable answer(InvocationOnMock invocation) throws Throwable {
+        Runnable runnable = invocation.getArgument(0);
+        runnable.run();
+        return null;
+      }
+    });
 
     editorPresenter.switchPreference(watermarkActivated, ConfigPreferences.WATERMARK);
 
-    verify(mockedProjectRepository).setWatermarkActivated(currentProject, watermarkActivated);
+    verify(mockedUpdateCompositionWatermark).updateCompositionWatermark(currentProject,
+        watermarkActivated);
+    verify(mockedUpdateComposition).updateComposition(currentProject);
   }
 
   @Test
   public void initCallsInitPreviewFromProjectIfProjectHasNotBeenExported() {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = false;
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(spyEditorPresenter
                     .updatePresenter(hasBeenProjectExported, videoExportedPath, currentAppliedTheme),
@@ -152,6 +184,7 @@ public class EditorPresenterTest {
   public void initCallsInitPreviewFromVideoExportedIfProjectHasBeenExported() {
     EditorPresenter spyEditorPresenter = Mockito.spy(getEditorPresenter());
     boolean hasBeenProjectExported = true;
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(spyEditorPresenter
                     .updatePresenter(hasBeenProjectExported, videoExportedPath, currentAppliedTheme),
@@ -174,6 +207,7 @@ public class EditorPresenterTest {
     currentProject.getMediaTrack().insertItem(video);
     Assert.assertThat("Project has video", currentProject.getVMComposition().hasVideos(), Matchers.is(true));
     EditorPresenter editorPresenter = getEditorPresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(editorPresenter.obtainVideoFromProject(), new FutureCallback<Object>() {
               @Override
@@ -224,6 +258,7 @@ public class EditorPresenterTest {
     }).when(mockedGetMediaListFromProjectUseCase).getMediaListFromProject(any(Project.class),
         any(OnVideosRetrieved.class));
     EditorPresenter editorPresenter = getEditorPresenter();
+    when(mockedBackgroundExecutor.submit(any(Runnable.class))).thenReturn(mockedListenableFuture);
 
     Futures.addCallback(editorPresenter.obtainVideoFromProject(), new FutureCallback<Object>() {
               @Override
@@ -423,13 +458,17 @@ public class EditorPresenterTest {
   }
 
   private EditorPresenter getEditorPresenter() {
-    EditorPresenter editorPresenter = new EditorPresenter(mockedEditorActivityView, mockedVideonaPlayerView,
-        mockedSharedPreferences, mockedContext,
-        mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
-        mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
-        mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
-        mockedRelaunchTranscoderTempBackgroundUseCase, mockedProjectRepository,
-        mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache);
+    EditorPresenter editorPresenter = new EditorPresenter(
+            mockedEditorActivityView, mockedVideonaPlayerView, mockedSharedPreferences,
+            mockedContext, mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
+            mockedGetMediaListFromProjectUseCase, mockedRemoveVideoFromProjectUseCase,
+            mockedGetAudioFromProjectUseCase, mocekdGetPreferencesTransitionFromProjectUseCase,
+            mockedRelaunchTranscoderTempBackgroundUseCase,
+            mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
+            mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
+            mockedUpdateComposition,showWatermarkSwitch, vimojoStoreAvailable,
+            vimojoPlatformAvailable, watermarkIsForced, hideTutorials, amIAVerticalApp,
+            mockedBackgroundExecutor);
     editorPresenter.currentProject = currentProject;
     return editorPresenter;
   }

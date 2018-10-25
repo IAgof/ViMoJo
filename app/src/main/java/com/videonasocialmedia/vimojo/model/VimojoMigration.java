@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.model;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
+import com.videonasocialmedia.vimojo.cameraSettings.model.ResolutionSetting;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.model.sources.ProductTypeProvider;
 import com.videonasocialmedia.vimojo.sources.MusicSource;
@@ -19,7 +20,7 @@ import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
-import static com.videonasocialmedia.vimojo.model.entities.editor.Project.INTERMEDIATE_FILES;
+import static com.videonasocialmedia.vimojo.composition.domain.model.Project.INTERMEDIATE_FILES;
 import static com.videonasocialmedia.vimojo.utils.Constants.*;
 
 /**
@@ -374,7 +375,8 @@ public class VimojoMigration implements RealmMigration {
                       .transform(new RealmObjectSchema.Function() {
                         @Override
                         public void apply(DynamicRealmObject obj) {
-                          obj.setString("resolution", DEFAULT_CAMERA_SETTING_RESOLUTION);
+                          obj.setString("resolution",
+                              ResolutionSetting.CAMERA_SETTING_RESOLUTION_H_720);
                         }
                       })
                     .addField("quality", String.class, FieldAttribute.REQUIRED)
@@ -662,7 +664,7 @@ public class VimojoMigration implements RealmMigration {
      *   public boolean isAcceptedUploadWithMobileNetwork;
      *   public boolean isUploading;
      */
-    // Migrate from version 11 to 12, 20180607. Added UploadRepository
+    // Migrate from version 11 to 12, 20180607. Added UploadDataSource
     if(oldVersion == 12) {
       RealmObjectSchema realmUploadTable = schema.get("RealmUpload");
       if (schema.get("RealmUpload") == null) {
