@@ -70,13 +70,13 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 131 // 20181018
-            versionName "0.21.0" // 20181018
+            versionCode 132 // 20181025
+            versionName "0.22.0" // 20181025
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://platform.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "true"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -139,13 +139,13 @@ android {
         }*/
         thomsonfoundation {
             applicationId "com.videonasocialmedia.vimojo.thomsonfoundation"
-            versionCode 82 // 20181018
-            versionName "0.21.0.fThomsonFoundation" // 20181018
+            versionCode 83 // 20181025
+            versionName "0.22.0.fThomsonFoundation" // 20181025
             resValue "string", "app_out_of_date", "2018-12-31"
             resValue "string", "app_name", "Vimojo Thomson Foundation"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "http://beta.viday.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
+            ext.api_base_url = [debug: "http://beta.vimojo.co/api/v1/", release: "http://beta.viday.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "true"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -177,13 +177,13 @@ android {
         }*/
         m4n {
             applicationId "com.videonasocialmedia.vimojo.m4n"
-            versionCode 49 // 20181018
-            versionName "0.21.0.fMarketForNews" // 20181018
+            versionCode 50 // 20181025
+            versionName "0.22.0.fMarketForNews" // 20181025
             resValue "string", "app_out_of_date", "2018-06-30" // 20180109
             resValue "string", "app_name", "Vimojo Market4News"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://market4news.com/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://market4news.com/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -217,13 +217,13 @@ android {
 
         elconfidencial {
             applicationId "com.videonasocialmedia.vimojo.elconfidencial"
-            versionCode 24 // 20181018
-            versionName "0.21.0.fElConfidencial" // 20181018
+            versionCode 25 // 20181025
+            versionName "0.22.0.fElConfidencial" // 20181025
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo El Confidencial"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -239,13 +239,13 @@ android {
 
         vanitatis {
             applicationId "com.videonasocialmedia.vimojo.vanitatis"
-            versionCode 11 // 20181018
-            versionName "0.21.0.fVanitatis" // 20181018
+            versionCode 12 // 20181025
+            versionName "0.22.0.fVanitatis" // 20181025
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vimojo Vanitatis"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -261,13 +261,13 @@ android {
 
         vishow {
             applicationId "com.videonasocialmedia.vimojo.vishow"
-            versionCode 10 // 20181018
-            versionName "0.21.0.fVishow" // 20181018
+            versionCode 11 // 20181025
+            versionName "0.22.0.fVishow" // 20181025
             resValue "string", "app_out_of_date", "2018-06-30" // 20180522
             resValue "string", "app_name", "Vishow"
             resValue "string", "content_authority", applicationId + '.provider'
             resValue "string", "account_type", applicationId + ".auth0"
-            ext.api_base_url = [debug: "https://beta.viday.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
+            ext.api_base_url = [debug: "https://beta.vimojo.co/api/v1/", release: "https://elconfidencial.vimojo.co/api/v1/"]
             buildConfigField "boolean", "FEATURE_VIMOJO_PLATFORM", "false"
             buildConfigField "boolean", "FEATURE_OUT_OF_DATE", "false"
             buildConfigField "boolean", "FEATURE_AVTRANSTITION", "false"
@@ -313,7 +313,7 @@ android {
     }
     buildTypes {
         release {
-            buildConfigField "String", "MIXPANEL_TOKEN", "\"6f46145c03bf5cf5104bb3536059d994\""
+            buildConfigField "String", "MIXPANEL_TOKEN", "\"634b76e6ee242ce8b803609c7525c985\""
             minifyEnabled true
             manifestPlaceholders = [appNameSuffix:""]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

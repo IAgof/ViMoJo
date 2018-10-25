@@ -76,6 +76,7 @@
     <string name="export_mix_audio">Mixing audio</string>
     <string name="export_mix_audio_error">Error mixing audio</string>
     <string name="export_apply_audio_mixed">Applying mixed audio</string>
+    <string name="export_apply_audio_mixed_error">Error applying mixed audio</string>
     <string name="export_apply_watermark">Applying watermark</string>
     <string name="export_apply_watermark_error">Error applying watermark</string>
     <string name="export">Starting export</string>
@@ -1134,6 +1135,10 @@ limitations under the License. \n
         Music, Benjamin Tissot https://www.bensound.com/royalty-free-music/track/energy \n\n
     </string>
 
+    <string name="licenseFFmpeg">
+        This software uses libraries from the FFmpeg project under the LGPLv2.1
+    </string>
+
 
     <!-- Legal Notice -->
 
@@ -2005,7 +2010,9 @@ users must indicate the reasons why they consider that there is an infringement 
 
 these Guidelines.\n\n
 
-© 2017 VIDEONA SOCIALMEDIA S.L. All rights reserved.
+"This program uses FFmpeg under the LGPLv2.1"\n\n
+
+© 2018 VIDEONA SOCIALMEDIA S.L. All rights reserved.
 
 
     </string>

@@ -26,13 +26,13 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
-import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
+import com.videonasocialmedia.vimojo.utils.FileUtils;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -244,6 +244,11 @@ public class InitAppPresenter extends VimojoPresenter {
     } else {
       initAppView.screenOrientationLandscape();
     }
+    deleteCache();
+  }
+
+  protected void deleteCache() {
+    executeUseCaseCall(() -> FileUtils.cleanDirectory(context.getCacheDir()));
   }
 
   private void setupAds() {

@@ -9,6 +9,7 @@ package com.videonasocialmedia.vimojo.share.presentation.mvp.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -64,6 +65,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -94,6 +96,7 @@ public class ShareVideoPresenterTest {
     private Project currentProject;
     private boolean hasBeenProjectExported = false;
     private String videoExportedPath = "videoExportedPath";
+    @Mock ApplicationInfo mockedApplicationInfo;
     @Mock UpdateComposition mockedUpdateComposition;
     @Mock FetchUserFeatures mockedFetchUserFeatures;
     private boolean ftpPublishingAvailable;
@@ -304,6 +307,7 @@ public class ShareVideoPresenterTest {
     public void exportOrProcessNetworkStartExportIfProjectHasNotBeenExported() {
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         int anyNetwork = OptionsToShareList.typeFtp;
+        when(mockContext.getApplicationInfo()).thenReturn(mockedApplicationInfo);
         boolean hasBeenProjectExported = false;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
 
@@ -353,7 +357,7 @@ public class ShareVideoPresenterTest {
         ShareVideoPresenter spyShareVideoPresenter = Mockito.spy(getShareVideoPresenter());
         boolean hasBeenProjectExported = true;
         when(spyShareVideoPresenter.hasBeenProjectExported()).thenReturn(hasBeenProjectExported);
-        FtpNetwork ftpNetworkSelected = any(FtpNetwork.class);
+        FtpNetwork ftpNetworkSelected = null;
         String videoExportedPath = "";
 
         spyShareVideoPresenter.exportOrProcessNetwork(OptionsToShareList.typeFtp);
