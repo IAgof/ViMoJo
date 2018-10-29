@@ -2,6 +2,8 @@ package com.videonasocialmedia.vimojo.trim.presentation.mvp.views;
 
 import android.widget.RadioButton;
 
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+
 /**
  * Created by jca on 8/7/15.
  */
@@ -25,4 +27,5 @@ public interface TrimView {
 
     void updateRadioButtonToThemeLight(RadioButton buttonNoSelected);
 
+    void navigateTo(Class<EditActivity> editActivityClass, int videoIndexOnTrack);
 }

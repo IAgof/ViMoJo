@@ -18,6 +18,8 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
@@ -31,6 +33,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC;
 import static com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -150,6 +153,31 @@ public class SoundPresenterTest {
     verify(mockedSoundView).showTrackVideo();
     verify(mockedSoundView).showTrackAudioFirst();
     verify(mockedSoundView).showTrackAudioSecond();
+  }
+
+  @Test
+  public void navigateToMusicGoToDetailsIfProjectHasMusic() throws IllegalItemOnTrack {
+    SoundPresenter soundPresenter = getSoundPresenter();
+    //Add music
+    int fakeDuration = 59;
+    Music music = new Music("some/path", Music.DEFAULT_VOLUME, fakeDuration);
+    currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
+    assertThat(currentProject.hasMusic(), is(true));
+
+    soundPresenter.navigateToMusic();
+
+    verify(mockedSoundView).navigateToMusicDetail(MusicDetailActivity.class,
+        currentProject.getMusic().getMediaPath());
+  }
+
+  @Test
+  public void navigateToMusicGoToMusicListIfProjectHasNotMusic() throws IllegalItemOnTrack {
+    SoundPresenter soundPresenter = getSoundPresenter();
+    assertThat(currentProject.hasMusic(), is(false));
+
+    soundPresenter.navigateToMusic();
+
+    verify(mockedSoundView).navigateToMusicList(MusicListActivity.class);
   }
 
   @NonNull

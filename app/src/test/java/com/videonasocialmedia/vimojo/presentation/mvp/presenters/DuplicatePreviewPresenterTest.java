@@ -10,7 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
@@ -55,7 +55,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class DuplicatePreviewPresenterTest {
     @Mock private Context mockedContext;
     @Mock private DuplicateView mockedDuplicateView;
-    @Mock private VMCompositionPlayer mockedVmCompositionPlayerView;
+    @Mock private VideonaPlayer mockedVideonaPlayerView;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private AddVideoToProjectUseCase mockedAddVideoToProjectUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
@@ -76,7 +76,7 @@ public class DuplicatePreviewPresenterTest {
         UserEventTracker userEventTracker = UserEventTracker.getInstance();
         DuplicatePreviewPresenter duplicatePreviewPresenter =
                 new DuplicatePreviewPresenter(mockedContext, mockedDuplicateView,
-                    mockedVmCompositionPlayerView, userEventTracker, mockedAddVideoToProjectUseCase,
+                    mockedVideonaPlayerView, userEventTracker, mockedAddVideoToProjectUseCase,
                     mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp,
                     mockedBackgroundExecutor);
 
@@ -118,7 +118,7 @@ public class DuplicatePreviewPresenterTest {
 
         duplicatePreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVmCompositionPlayerView).attachView(mockedContext);
+        verify(mockedVideonaPlayerView).attachView(mockedContext);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class DuplicatePreviewPresenterTest {
 
         duplicatePreviewPresenter.removePresenter();
 
-        verify(mockedVmCompositionPlayerView).detachView();
+        verify(mockedVideonaPlayerView).detachView();
     }
 
     @Test
@@ -137,7 +137,7 @@ public class DuplicatePreviewPresenterTest {
 
         duplicatePreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVmCompositionPlayerView).initSingleClip(any(VMComposition.class),
+        verify(mockedVideonaPlayerView).initSingleClip(any(VMComposition.class),
             eq(videoIndexOnTrack));
     }
 
@@ -149,7 +149,7 @@ public class DuplicatePreviewPresenterTest {
 
         spyDuplicatePreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVmCompositionPlayerView)
+        verify(mockedVideonaPlayerView)
             .setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
@@ -172,7 +172,7 @@ public class DuplicatePreviewPresenterTest {
     @NonNull
     public DuplicatePreviewPresenter getDuplicatePreviewPresenter() {
         DuplicatePreviewPresenter duplicatePreviewPresenter = new DuplicatePreviewPresenter(
-            mockedContext, mockedDuplicateView, mockedVmCompositionPlayerView, mockedUserEventTracker,
+            mockedContext, mockedDuplicateView, mockedVideonaPlayerView, mockedUserEventTracker,
             mockedAddVideoToProjectUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
             amIAVerticalApp, mockedBackgroundExecutor);
         duplicatePreviewPresenter.currentProject = currentProject;

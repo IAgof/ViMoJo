@@ -23,12 +23,11 @@ import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters.TrimPreviewPresenter;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -47,8 +46,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class VideoTrimActivity extends VimojoActivity implements TrimView, VMCompositionPlayer,
-    RangeSeekBar.OnRangeSeekBarChangeListener, VMCompositionPlayer.VMCompositionPlayerListener,
+public class VideoTrimActivity extends VimojoActivity implements TrimView, VideonaPlayer,
+    RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener,
     RadioGroup.OnCheckedChangeListener {
 
     private String TAG = "VideoTrimActivity";
@@ -96,7 +95,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, VMCom
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         setupActivityViews();
-        setVMCompositionPlayerListener(this);
+        setVideonaPlayerListener(this);
     }
 
     @Override
@@ -134,20 +133,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, VMCom
         return super.onOptionsItemSelected(item);
     }
 
-    public void navigateTo(Class cls) {
-        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
-    }
-
     @Override
     public void onBackPressed() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
-    }
-
-    private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        startActivity(intent);
+        presenter.cancelTrim();
     }
 
     @OnClick(R.id.player_advance_backward_start_trim)
@@ -205,12 +193,11 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, VMCom
     @OnClick(R.id.button_trim_accept)
     public void onClickTrimAccept() {
         presenter.setTrim();
-        navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
     @OnClick(R.id.button_trim_cancel)
     public void onClickTrimCancel() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        presenter.cancelTrim();
     }
 
     @Override
@@ -343,6 +330,13 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, VMCom
     }
 
     @Override
+    public void navigateTo(Class cls, int currentVideoIndex) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        startActivity(intent);
+    }
+
+    @Override
     public void attachView(Context context) {
         videonaPlayer.attachView(context);
     }
@@ -353,9 +347,9 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, VMCom
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
@@ -39,7 +39,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
     private final ProjectInstanceCache projectInstanceCache;
     private Context context;
     private VoiceOverVolumeView voiceOverVolumeView;
-    private final VMCompositionPlayer vmCompositionPlayerView;
+    private final VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private ModifyTrackUseCase modifyTrackUseCase;
@@ -51,8 +51,8 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
 
     @Inject
     public VoiceOverVolumePresenter(
-        Context context, VoiceOverVolumeView voiceOverVolumeView, VMCompositionPlayer
-        vmCompositionPlayerView, ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase
+        Context context, VoiceOverVolumeView voiceOverVolumeView, VideonaPlayer
+        videonaPlayerView, ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase
         removeAudioUseCase, ProjectInstanceCache projectInstanceCache, UpdateComposition
         updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
         UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor,
@@ -60,7 +60,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
-        this.vmCompositionPlayerView = vmCompositionPlayerView;
+        this.videonaPlayerView = videonaPlayerView;
         this.modifyTrackUseCase = modifyTrackUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -72,15 +72,15 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
 
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
-        vmCompositionPlayerView.attachView(context);
+        videonaPlayerView.attachView(context);
         loadPlayerFromProject();
         if (amIAVerticalApp) {
-            vmCompositionPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
     public void removePresenter() {
-        vmCompositionPlayerView.detachView();
+        videonaPlayerView.detachView();
     }
 
     private void loadPlayerFromProject() {
@@ -91,7 +91,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
             illegalItemOnTrack.printStackTrace();
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
-        vmCompositionPlayerView.init(vmCompositionCopy);
+        videonaPlayerView.init(vmCompositionCopy);
     }
 
     public void setVoiceOverVolume(float volume) {

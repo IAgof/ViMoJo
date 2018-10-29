@@ -14,7 +14,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -27,7 +27,6 @@ import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnAddMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.MusicDetailView;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.AddAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
@@ -58,11 +57,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class MusicDetailPresenterTest {
     @Mock private Context mockedContext;
     @Mock private MusicDetailView mockedMusicDetailView;
-    @Mock private VMCompositionPlayer mockedVmCompositionPlayer;
+    @Mock private VideonaPlayer mockedVideonaPlayer;
     @Mock private UserEventTracker mockedUserEventTracker;
-    @Mock private GetAudioFromProjectUseCase mockedGetAudioFromProject;
-    @Mock private GetPreferencesTransitionFromProjectUseCase
-            mockedGetPreferencesTransitionsFromProject;
     @Mock private AddAudioUseCase mockedAddAudioUseCase;
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
     @Mock private ModifyTrackUseCase mockedModifyTrackUseCase;
@@ -269,24 +265,22 @@ public class MusicDetailPresenterTest {
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(
-            mockedContext, mockedMusicDetailView, mockedVmCompositionPlayer, userEventTracker,
-            mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
-            mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
-            mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
-            amIAVerticalApp, mockedRemoveMedia, mockedUpdateTrack, mockedDeleteTrack,
-            mockedBackgroundExecutor);
+            mockedContext, mockedMusicDetailView, mockedVideonaPlayer, userEventTracker,
+            mockedAddAudioUseCase, mockedRemoveAudioUseCase,
+            mockedModifyTrackUseCase, mockedGetMusicListUseCase, mockedProjectInstanceCache,
+            mockedUpdateComposition, amIAVerticalApp, mockedRemoveMedia, mockedUpdateTrack,
+            mockedDeleteTrack, mockedBackgroundExecutor);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }
 
     private MusicDetailPresenter getMusicDetailPresenter() {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(
-            mockedContext, mockedMusicDetailView, mockedVmCompositionPlayer, mockedUserEventTracker,
-            mockedGetAudioFromProject, mockedGetPreferencesTransitionsFromProject,
-            mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedModifyTrackUseCase,
-            mockedGetMusicListUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
-            amIAVerticalApp, mockedRemoveMedia, mockedUpdateTrack, mockedDeleteTrack,
-            mockedBackgroundExecutor);
+            mockedContext, mockedMusicDetailView, mockedVideonaPlayer, mockedUserEventTracker,
+            mockedAddAudioUseCase, mockedRemoveAudioUseCase,
+            mockedModifyTrackUseCase, mockedGetMusicListUseCase, mockedProjectInstanceCache,
+            mockedUpdateComposition, amIAVerticalApp, mockedRemoveMedia, mockedUpdateTrack,
+            mockedDeleteTrack, mockedBackgroundExecutor);
         musicDetailPresenter.currentProject = currentProject;
         return musicDetailPresenter;
     }

@@ -13,7 +13,7 @@ import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
@@ -23,6 +23,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 
 import com.videonasocialmedia.vimojo.presentation.mvp.views.DuplicateView;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -42,7 +43,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
     private final String LOG_TAG = getClass().getSimpleName();
     private Context context;
     private DuplicateView duplicateView;
-    private VMCompositionPlayer vmCompositionPlayerView;
+    private VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private final ProjectInstanceCache projectInstanceCache;
@@ -58,7 +59,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
     @Inject
     public DuplicatePreviewPresenter(
         Context context, DuplicateView duplicateView,
-        VMCompositionPlayer vmCompositionPlayerView,
+        VideonaPlayer videonaPlayerView,
         UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
@@ -66,7 +67,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.duplicateView = duplicateView;
-        this.vmCompositionPlayerView = vmCompositionPlayerView;
+        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -78,15 +79,15 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
         this.videoIndexOnTrack = videoIndexOnTrack;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        vmCompositionPlayerView.attachView(context);
+        videonaPlayerView.attachView(context);
         loadProjectVideo();
         if (amIAVerticalApp) {
-            vmCompositionPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
     public void removePresenter() {
-        vmCompositionPlayerView.detachView();
+        videonaPlayerView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -100,7 +101,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        vmCompositionPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         duplicateView.initDuplicateView(videoCopy);
     }
 
@@ -124,6 +125,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
         userEventTracker.trackClipDuplicated(numDuplicates, currentProject);
         // TODO(jliarte): 18/07/18 deleteme
 //        updateCompositionWithPlatform(currentProject);
+        duplicateView.navigateTo(EditActivity.class, videoIndexOnTrack);
 
     }
 
@@ -134,6 +136,10 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
 
     protected Video getVideoCopy() {
         return new Video(videoToEdit);
+    }
+
+    public void cancelDuplicate() {
+        duplicateView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 }
 

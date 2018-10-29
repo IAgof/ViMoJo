@@ -16,11 +16,10 @@ import android.widget.ImageButton;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.presenters.EditTextPreviewPresenter;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -40,7 +39,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by ruth on 1/09/16.
  */
 public class VideoEditTextActivity extends VimojoActivity implements EditTextView,
-    VMCompositionPlayer, VMCompositionPlayer.VMCompositionPlayerListener {
+    VideonaPlayer, VideonaPlayer.VideonaPlayerListener {
     private static String LOG_TAG = VideoEditTextActivity.class.getName();
 
     @Inject EditTextPreviewPresenter presenter;
@@ -73,7 +72,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
         presenter.setupActivityViews();
-        setVMCompositionPlayerListener(this);
+        setVideonaPlayerListener(this);
     }
 
     @Override
@@ -99,14 +98,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         return super.onOptionsItemSelected(item);
     }
 
-    public void navigateTo(Class cls) {
-        startActivity(new Intent(getApplicationContext(), cls));
-    }
-
     @Override
     public void onBackPressed() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
-        finish();
+        presenter.editTextCancel();
     }
 
     @OnClick(R.id.button_editText_top)
@@ -268,9 +262,9 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override

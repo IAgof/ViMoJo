@@ -17,7 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.TranscoderHelper;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
@@ -62,7 +62,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   private final ProjectInstanceCache projectInstanceCache;
   private Context context;
   private VoiceOverRecordView voiceOverRecordView;
-  private VMCompositionPlayer vmCompositionPlayerView;
+  private VideonaPlayer videonaPlayerView;
   protected UserEventTracker userEventTracker;
   private AddAudioUseCase addAudioUseCase;
   private RemoveAudioUseCase removeAudioUseCase;
@@ -86,8 +86,8 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
 
   @Inject
   public VoiceOverRecordPresenter(
-      Context context, VoiceOverRecordView voiceOverRecordView, VMCompositionPlayer
-      vmCompositionPlayerView, AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
+      Context context, VoiceOverRecordView voiceOverRecordView, VideonaPlayer
+      videonaPlayerView, AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
       removeAudioUseCase, UserEventTracker userEventTracker, ProjectInstanceCache
       projectInstanceCache, UpdateComposition updateComposition, @Named("amIAVerticalApp")
       boolean amIAVerticalApp, UpdateTrack updateTrack, RemoveTrack removeTrack,
@@ -95,7 +95,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
     super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
-    this.vmCompositionPlayerView = vmCompositionPlayerView;
+    this.videonaPlayerView = videonaPlayerView;
     this.addAudioUseCase = addAudioUseCase;
     this.removeAudioUseCase = removeAudioUseCase;
     this.userEventTracker = userEventTracker;
@@ -109,20 +109,20 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   public void updatePresenter() {
     this.currentProject = projectInstanceCache.getCurrentProject();
     currentProject.addListener(this);
-    vmCompositionPlayerView.attachView(context);
+    videonaPlayerView.attachView(context);
     directoryVoiceOverRecorded = currentProject
         .getProjectPathIntermediateAudioFilesVoiceOverRecord();
     loadPlayerFromProject();
     voiceOverRecordView.initVoiceOverView(0, currentProject.getDuration());
     voiceOverRecordView.disablePlayerPlayButton();
     if (amIAVerticalApp) {
-      vmCompositionPlayerView
+      videonaPlayerView
           .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
   }
 
   public void removePresenter() {
-    vmCompositionPlayerView.detachView();
+    videonaPlayerView.detachView();
   }
 
 
@@ -134,11 +134,17 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
       illegalItemOnTrack.printStackTrace();
       Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
     }
-    vmCompositionPlayerView.init(vmCompositionCopy);
-    // Mute all tracks
-    vmCompositionPlayerView.setVideoVolume(0f);
+    videonaPlayerView.init(vmCompositionCopy);
+    muteAllTracks(vmCompositionCopy);
+  }
+
+  private void muteAllTracks(VMComposition vmCompositionCopy) {
+    videonaPlayerView.setVideoVolume(0f);
     if (vmCompositionCopy.hasMusic()) {
-      vmCompositionPlayerView.setMusicVolume(0f);
+      videonaPlayerView.setMusicVolume(0f);
+    }
+    if (vmCompositionCopy.hasVoiceOver()) {
+      videonaPlayerView.setVoiceOverVolume(0f);
     }
   }
 
@@ -173,7 +179,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
     Log.d(LOG_TAG, "startRecording");
     setupAudioRecorder();
     isRecording = true;
-    vmCompositionPlayerView.playPreview();
+    videonaPlayerView.playPreview();
     audioRecorder.startRecording();
     voiceOverRecorded = true;
   }
@@ -181,13 +187,13 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   public void pauseRecording() {
     Log.d(LOG_TAG, "pauseRecording");
     audioRecorder.pauseRecording();
-    vmCompositionPlayerView.pausePreview();
+    videonaPlayerView.pausePreview();
   }
 
   public void resumeRecording() {
     Log.d(LOG_TAG, "resumeRecording");
     audioRecorder.resumeRecording();
-    vmCompositionPlayerView.playPreview();
+    videonaPlayerView.playPreview();
   }
 
   public void stopRecording() {

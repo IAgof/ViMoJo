@@ -7,7 +7,7 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
@@ -16,7 +16,7 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.domain.editor.GetAudioFromProjectUseCase;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -47,16 +47,13 @@ import static com.videonasocialmedia.vimojo.utils.Constants.*;
 /**
  *
  */
-public class MusicDetailPresenter extends VimojoPresenter implements GetMusicFromProjectCallback,
-    ElementChangedListener {
+public class MusicDetailPresenter extends VimojoPresenter implements ElementChangedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
     private Context context;
     private MusicDetailView musicDetailView;
-    private final VMCompositionPlayer vmCompositionPlayerView;
+    private final VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
-    private GetAudioFromProjectUseCase getAudioFromProjectUseCase;
-    private GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase;
     protected Project currentProject;
     private Music musicSelected;
     private AddAudioUseCase addAudioUseCase;
@@ -72,9 +69,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements GetMusicFro
     @Inject
     public MusicDetailPresenter(
         Context context, MusicDetailView musicDetailView,
-        VMCompositionPlayer vmCompositionPlayerView, UserEventTracker userEventTracker,
-        GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-        GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
+        VideonaPlayer videonaPlayerView, UserEventTracker userEventTracker,
         AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
         ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
@@ -84,11 +79,8 @@ public class MusicDetailPresenter extends VimojoPresenter implements GetMusicFro
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.musicDetailView = musicDetailView;
-        this.vmCompositionPlayerView = vmCompositionPlayerView;
+        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
-        this.getAudioFromProjectUseCase = getAudioFromProjectUseCase;
-        this.getPreferencesTransitionFromProjectUseCase =
-            getPreferencesTransitionFromProjectUseCase;
         this.addAudioUseCase = addAudioUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.modifyTrackUseCase = modifyTrackUseCase;
@@ -99,26 +91,32 @@ public class MusicDetailPresenter extends VimojoPresenter implements GetMusicFro
         this.removeMedia = removeMedia;
         this.updateTrack = updateTrack;
         this.removeTrack = removeTrack;
-        musicSelected = new Music("", 0);
     }
 
     public void updatePresenter(String musicPath) {
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        vmCompositionPlayerView.attachView(context);
+        videonaPlayerView.attachView(context);
         musicSelected = retrieveLocalMusic(musicPath);
-        // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support more
-        // than one music, at this moment, music track same as music volume
         musicSelected.setVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
-        loadPlayerFromProject();
         loadMusic();
-        if (getPreferencesTransitionFromProjectUseCase
-                .isVideoFadeTransitionActivated(currentProject)) {
-            musicDetailView.setVideoFadeTransitionAmongVideos();
-        }
         if (amIVerticalApp) {
-            vmCompositionPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
+    }
+
+    private void loadMusic() {
+        Music musicOnProject = currentProject.getMusic();
+        if (musicOnProject!= null && musicOnProject.getMediaPath()
+            .compareTo(musicSelected.getMediaPath()) == 0) {
+            musicOnProject.setVolume(currentProject.getAudioTracks()
+                .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
+            musicDetailView.setMusic(musicOnProject, true);
+            loadPlayerFromProject();
+        } else {
+            musicDetailView.setMusic(musicSelected, false);
+            loadPlayerFromProjectAndMusicSelected(musicSelected);
         }
     }
 
@@ -129,16 +127,35 @@ public class MusicDetailPresenter extends VimojoPresenter implements GetMusicFro
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+            musicDetailView.showError(context.getString(R.string.error));
         }
-        vmCompositionPlayerView.init(vmCompositionCopy);
+        videonaPlayerView.init(vmCompositionCopy);
+    }
+
+    private void loadPlayerFromProjectAndMusicSelected(Music musicSelected) {
+        VMComposition vmCompositionCopy = null;
+        try {
+            vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            illegalItemOnTrack.printStackTrace();
+            Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+            musicDetailView.showError(context.getString(R.string.error));
+        }
+        try {
+            // Add music to copy of VMComposition
+            vmCompositionCopy.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC)
+                .insertItem(musicSelected);
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            illegalItemOnTrack.printStackTrace();
+            Crashlytics.log("Error getting AudioTrack, music track from copy VMComposition "
+                + illegalItemOnTrack);
+            musicDetailView.showError(context.getString(R.string.error));
+        }
+        videonaPlayerView.init(vmCompositionCopy);
     }
 
     public void removePresenter() {
-        vmCompositionPlayerView.detachView();
-    }
-
-    private void loadMusic() {
-        getAudioFromProjectUseCase.getMusicFromProject(currentProject, this);
+        videonaPlayerView.detachView();
     }
 
     public void removeMusic(final Music music) {
@@ -211,20 +228,6 @@ public class MusicDetailPresenter extends VimojoPresenter implements GetMusicFro
                     context.getString(R.string.alert_dialog_title_message_adding_music));
             }
         });
-    }
-
-    @Override
-    public void onMusicRetrieved(Music musicOnProject) {
-        if (musicOnProject!= null && musicOnProject.getMediaPath()
-                .compareTo(musicSelected.getMediaPath()) == 0) {
-            // TODO:(alvaro.martinez) 12/04/17 Delete this force of volume when Vimojo support
-            // more than one music, at this moment, music track same as music volume
-            musicOnProject.setVolume(currentProject.getAudioTracks()
-                .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
-            musicDetailView.setMusic(musicOnProject, true);
-        } else {
-            musicDetailView.setMusic(musicSelected, false);
-        }
     }
 
     public void setVolume(float volume) {

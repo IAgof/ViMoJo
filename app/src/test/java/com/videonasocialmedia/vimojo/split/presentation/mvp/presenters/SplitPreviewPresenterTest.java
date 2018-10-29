@@ -17,7 +17,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
@@ -65,7 +65,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class SplitPreviewPresenterTest {
     @Mock private Context mockedContext;
     @Mock private SplitView mockedSplitView;
-    @Mock private VMCompositionPlayer mockedVmCompositionPlayerView;
+    @Mock private VideonaPlayer mockedVideonaPlayerView;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
@@ -85,7 +85,7 @@ public class SplitPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance();
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedContext,
-                mockedSplitView, mockedVmCompositionPlayerView, userEventTracker, mockedSplitVideoUseCase,
+                mockedSplitView, mockedVideonaPlayerView, userEventTracker, mockedSplitVideoUseCase,
                 mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
@@ -133,7 +133,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.advanceForwardEndSplitting(advancePlayerPrecision);
 
-        verify(mockedVmCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.advanceBackwardStartSplitting(advancePlayerPrecision);
 
-        verify(mockedVmCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -183,7 +183,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.onSeekBarChanged(50);
 
-        verify(mockedVmCompositionPlayerView).seekTo(video.getStartTime() + progress);
+        verify(mockedVideonaPlayerView).seekTo(video.getStartTime() + progress);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVmCompositionPlayerView).attachView(mockedContext);
+        verify(mockedVideonaPlayerView).attachView(mockedContext);
     }
 
     @Test
@@ -203,7 +203,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVmCompositionPlayerView).initSingleClip(any(VMComposition.class),
+        verify(mockedVideonaPlayerView).initSingleClip(any(VMComposition.class),
             eq(videoIndexOnTrack));
     }
 
@@ -213,7 +213,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.removePresenter();
 
-        verify(mockedVmCompositionPlayerView).detachView();
+        verify(mockedVideonaPlayerView).detachView();
     }
 
     @Test
@@ -242,7 +242,7 @@ public class SplitPreviewPresenterTest {
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedContext,
-            mockedSplitView, mockedVmCompositionPlayerView, mockedUserEventTracker,
+            mockedSplitView, mockedVideonaPlayerView, mockedUserEventTracker,
             mockedSplitVideoUseCase, mockedProjectInstanceCache, amIAVerticalApp,
             mockedBackgroundExecutor);
         splitPreviewPresenter.currentProject = currentProject;

@@ -18,7 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -55,7 +55,7 @@ public class EditTextPreviewPresenterTest {
   @Mock private ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private Context mockedContext;
   @Mock private EditTextView mockedEditTextView;
-  @Mock private VMCompositionPlayer mockedVMCompositionPlayerView;
+  @Mock private VideonaPlayer mockedVideonaPlayerView;
   @Mock private UserEventTracker mockedUserEvenTracker;
   @Mock private ModifyVideoTextAndPositionUseCase mockedModifyVideoTextAndPositionUseCase;
   private boolean amIAVerticalApp;
@@ -73,7 +73,7 @@ public class EditTextPreviewPresenterTest {
   public void constructorSetsUserTracker() {
     UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditTextPreviewPresenter editTextPreviewPresenter = new EditTextPreviewPresenter(mockedContext,
-        mockedEditTextView, mockedVMCompositionPlayerView, userEventTracker,
+        mockedEditTextView, mockedVideonaPlayerView, userEventTracker,
         mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, amIAVerticalApp,
         mockedBackgroundExecutor);
 
@@ -97,7 +97,7 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVMCompositionPlayerView).attachView(mockedContext);
+    verify(mockedVideonaPlayerView).attachView(mockedContext);
   }
 
   @Test
@@ -108,7 +108,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVMCompositionPlayerView)
+    verify(mockedVideonaPlayerView)
         .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
   }
 
@@ -119,7 +119,7 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVMCompositionPlayerView).initSingleClip(any(VMComposition.class),
+    verify(mockedVideonaPlayerView).initSingleClip(any(VMComposition.class),
         eq(videoIndexOnTrack));
   }
 
@@ -129,7 +129,7 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.removePresenter();
 
-    verify(mockedVMCompositionPlayerView).detachView();
+    verify(mockedVideonaPlayerView).detachView();
   }
 
   @Test
@@ -139,7 +139,7 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVMCompositionPlayerView).setSeekBarLayoutEnabled(false);
+    verify(mockedVideonaPlayerView).setSeekBarLayoutEnabled(false);
   }
 
   @Test
@@ -185,7 +185,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.setCheckboxShadow(isShadowSelected);
 
-    verify(mockedVMCompositionPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -203,7 +203,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedVMCompositionPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -221,7 +221,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView, atLeast(2)).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedVMCompositionPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -239,7 +239,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedVMCompositionPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -255,7 +255,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.onTextChanged(text);
 
-    verify(mockedVMCompositionPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -282,7 +282,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.playerReady();
 
-    verify(mockedVMCompositionPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
 
   }
@@ -290,7 +290,7 @@ public class EditTextPreviewPresenterTest {
   @NonNull
   private EditTextPreviewPresenter getEditTextPreviewPresenter(){
     return new EditTextPreviewPresenter(mockedContext, mockedEditTextView,
-        mockedVMCompositionPlayerView, mockedUserEvenTracker,
+        mockedVideonaPlayerView, mockedUserEvenTracker,
         mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, amIAVerticalApp,
         mockedBackgroundExecutor);
   }

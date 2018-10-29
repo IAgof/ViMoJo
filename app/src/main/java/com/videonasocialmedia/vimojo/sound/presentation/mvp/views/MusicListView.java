@@ -9,7 +9,6 @@ import java.util.List;
  */
 public interface MusicListView {
     void showMusicList(List<Music> musicList);
-    void goToDetailActivity(String mediaPath);
-    void setVideoFadeTransitionAmongVideos();
     void updateProject();
+    void navigateToDetailMusic(String musicPath);
 }

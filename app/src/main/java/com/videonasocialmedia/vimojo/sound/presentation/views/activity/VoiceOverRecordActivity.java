@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -38,7 +38,7 @@ import butterknife.OnClick;
  * Created by ruth on 14/09/16.
  */
 public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOverRecordView,
-        VMCompositionPlayer, VMCompositionPlayer.VMCompositionPlayerListener, View.OnTouchListener {
+    VideonaPlayer, View.OnTouchListener {
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String TAG = "VoiceOverRecordActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
@@ -82,7 +82,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
         restoreState(savedInstanceState);
         changeVisibilityAndResouceButton();
         videonaPlayer.setSeekBarLayoutEnabled(false);
-        setVMCompositionPlayerListener(this);
         createProgressDialog();
         buttonRecordVoiceOver.setOnTouchListener(this);
     }
@@ -249,16 +248,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
-    public void newClipPlayed(int currentClipIndex) {
-        videonaPlayer.setVideoVolume(volumeMute);
-    }
-
-    @Override
-    public void playerReady() {
-        // Do nothing
-    }
-
-    @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // start recording.
@@ -339,9 +328,9 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override

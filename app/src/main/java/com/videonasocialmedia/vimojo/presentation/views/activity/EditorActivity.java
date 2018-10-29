@@ -31,7 +31,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
@@ -62,7 +62,7 @@ import butterknife.ButterKnife;
  *
  */
 public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
-    VMCompositionPlayer {
+    VideonaPlayer {
   private static String LOG_TAG = EditorActivity.class.getCanonicalName();
   private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
           "editor_activity_has_been_project_exported";
@@ -493,10 +493,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                   vmCompositionPlayerListener) {
+  public void setVideonaPlayerListener(VideonaPlayerListener
+                                                 videonaPlayerListener) {
     runOnUiThread(() -> {
-      videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+      videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     });
   }
 

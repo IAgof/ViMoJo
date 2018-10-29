@@ -16,9 +16,10 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.TrimResultCallback;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
@@ -51,7 +52,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     // and we don't want to create a memory leak
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
-    private VMCompositionPlayer vmCompositionPlayerView;
+    private VideonaPlayer videonaPlayerView;
     private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
@@ -65,7 +66,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
 
     @Inject
     public TrimPreviewPresenter(
-        Context context, TrimView trimView, VMCompositionPlayer vmCompositionPlayerView,
+        Context context, TrimView trimView, VideonaPlayer videonaPlayerView,
         SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
         ProjectInstanceCache projectInstanceCache,
@@ -73,7 +74,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.trimView = trimView;
-        this.vmCompositionPlayerView = vmCompositionPlayerView;
+        this.videonaPlayerView = videonaPlayerView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
@@ -85,16 +86,16 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         this.videoIndexOnTrack = videoIndexOnTrack;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        vmCompositionPlayerView.attachView(context);
+        videonaPlayerView.attachView(context);
         loadProjectVideo();
         if (amIVerticalApp) {
-            vmCompositionPlayerView
+            videonaPlayerView
                 .setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
     public void removePresenter() {
-        vmCompositionPlayerView.detachView();
+        videonaPlayerView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -108,7 +109,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        vmCompositionPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         trimView.refreshDurationTag(videoCopy.getDuration());
         videoDuration = videoCopy.getStopTime() - videoCopy.getStartTime();
         startTimeMs = 0;
@@ -123,6 +124,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
                 .trimVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject),
             new TrimResultCallback(videoToEdit, currentProject));
         trackVideoTrimmed();
+        trimView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
     void trackVideoTrimmed() {
@@ -136,7 +138,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        vmCompositionPlayerView.seekTo(startTimeMs);
+        videonaPlayerView.seekTo(startTimeMs);
     }
 
     public void advanceForwardStartTrimming(int advancePrecision) {
@@ -149,7 +151,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        vmCompositionPlayerView.seekTo(startTimeMs);
+        videonaPlayerView.seekTo(startTimeMs);
     }
 
     public void advanceBackwardEndTrimming(int advancePrecision) {
@@ -162,7 +164,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        vmCompositionPlayerView.seekTo(finishTimeMs);
+        videonaPlayerView.seekTo(finishTimeMs);
     }
 
     public void advanceForwardEndTrimming(int advancePrecision) {
@@ -172,7 +174,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        vmCompositionPlayerView.seekTo(finishTimeMs);
+        videonaPlayerView.seekTo(finishTimeMs);
     }
 
     @Override
@@ -214,7 +216,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     }
 
     public void onRangeSeekBarChanged(Object minValue, Object maxValue) {
-        vmCompositionPlayerView.pausePreview();
+        videonaPlayerView.pausePreview();
         float minValueFloat = (float) minValue;
         float maxValueFloat = (float) maxValue;
         if (isRangeSeekBarLessThanMinTrimOffset(minValueFloat, maxValueFloat)) {
@@ -222,24 +224,24 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
                 startTimeMs = finishTimeMs - MIN_TRIM_OFFSET_MS;
                 trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
                 trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-                vmCompositionPlayerView.seekTo(startTimeMs);
+                videonaPlayerView.seekTo(startTimeMs);
                 return;
             }
             if (finishTimeMs != (int) ( maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
                 finishTimeMs = startTimeMs + MIN_TRIM_OFFSET_MS;
                 trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
                 trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-                vmCompositionPlayerView.seekTo(finishTimeMs);
+                videonaPlayerView.seekTo(finishTimeMs);
                 return;
             }
         }
         if (startTimeMs != (int) ( minValueFloat * Constants.MS_CORRECTION_FACTOR)) {
             startTimeMs = (int) (minValueFloat * Constants.MS_CORRECTION_FACTOR);
-            vmCompositionPlayerView.seekTo(startTimeMs);
+            videonaPlayerView.seekTo(startTimeMs);
         } else {
             if (finishTimeMs != (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
                 finishTimeMs = (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR);
-                vmCompositionPlayerView.seekTo(finishTimeMs);
+                videonaPlayerView.seekTo(finishTimeMs);
             }
         }
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
@@ -247,5 +249,9 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
 
     private boolean isRangeSeekBarLessThanMinTrimOffset(float minValueFloat, float maxValueFloat) {
         return Math.abs(maxValueFloat - minValueFloat) <= Constants.MIN_TRIM_OFFSET;
+    }
+
+    public void cancelTrim() {
+        trimView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 }

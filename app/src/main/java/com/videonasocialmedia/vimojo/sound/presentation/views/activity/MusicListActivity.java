@@ -12,7 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -35,19 +35,16 @@ import butterknife.ButterKnife;
 /**
  *
  */
-public class MusicListActivity extends VimojoActivity implements MusicListView, VMCompositionPlayer,
+public class MusicListActivity extends VimojoActivity implements MusicListView, VideonaPlayer,
         SoundRecyclerViewClickListener{
-    private static final String MUSIC_LIST_PROJECT_POSITION = "music_list_project_position";
 
     @Inject MusicListPresenter presenter;
 
     @BindView(R.id.music_list)
     RecyclerView soundList;
-
     @BindView(R.id.videona_player)
     VideonaPlayerExo videonaPlayer;
     private SoundListAdapter soundAdapter;
-    private int currentProjectPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +53,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView, 
         ButterKnife.bind(this);
         getActivityPresentersComponent().inject(this);
         setupToolbar();
-        restoreState(savedInstanceState);
         initVideoListRecycler();
     }
 
@@ -72,12 +68,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView, 
         presenter.removePresenter();
     }
 
-    private void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            currentProjectPosition = savedInstanceState.getInt(MUSIC_LIST_PROJECT_POSITION, 0);
-        }
-    }
-
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,7 +79,6 @@ public class MusicListActivity extends VimojoActivity implements MusicListView, 
     private void initVideoListRecycler() {
         soundAdapter = new SoundListAdapter();
         soundAdapter.setSoundRecyclerViewClickListener(this);
-        presenter.getAvailableMusic();
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         soundList.setLayoutManager(layoutManager);
@@ -112,30 +101,15 @@ public class MusicListActivity extends VimojoActivity implements MusicListView, 
     }
 
     @Override
-    public void goToDetailActivity(String mediaPath) {
-        navigateToMusicDetailActivity(mediaPath);
-    }
-
-    @Override
-    public void setVideoFadeTransitionAmongVideos() {
-        videonaPlayer.setVideoTransitionFade();
-    }
-
-    @Override
     public void updateProject() {
         presenter.updatePresenter();
     }
 
     @Override
-    public void onClick(Music music) {
-        navigateToMusicDetailActivity(music.getMediaPath());
-    }
-
-    private void navigateToMusicDetailActivity(String mediaPath) {
+    public void navigateToDetailMusic(String musicPath) {
         Intent i = new Intent(VimojoApplication.getAppContext(), MusicDetailActivity.class);
-        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
+        i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, musicPath);
         startActivity(i);
-        finish();
     }
 
     @Override
@@ -149,9 +123,9 @@ public class MusicListActivity extends VimojoActivity implements MusicListView, 
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override
@@ -219,6 +193,12 @@ public class MusicListActivity extends VimojoActivity implements MusicListView, 
     public void setMusicVolume(float volume) {
         videonaPlayer.setMusicVolume(volume);
     }
+
+    @Override
+    public void onClick(Music music) {
+        presenter.selectMusic(music);
+    }
+
 }
 
 

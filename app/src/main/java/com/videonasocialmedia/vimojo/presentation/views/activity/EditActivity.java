@@ -26,7 +26,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.roughike.bottombar.BottomBar;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -58,7 +58,7 @@ import butterknife.Optional;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class EditActivity extends EditorActivity implements EditActivityView,
-        VideoTranscodingErrorNotifier, VMCompositionPlayer.VMCompositionPlayerListener,
+        VideoTranscodingErrorNotifier, VideonaPlayer.VideonaPlayerListener,
         VideonaTimeLine.Listener {
   private static String LOG_TAG = EditActivity.class.getCanonicalName();
 
@@ -111,7 +111,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         setupBottomBar(bottomBar);
         setupFabMenu();
         setupActivityButtons();
-        setVMCompositionPlayerListener(this);
+        setVideonaPlayerListener(this);
       }
 
   private void setupActivityButtons() {

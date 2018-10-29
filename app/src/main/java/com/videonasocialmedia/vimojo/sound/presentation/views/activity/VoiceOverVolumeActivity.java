@@ -9,7 +9,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -30,7 +30,7 @@ import butterknife.OnClick;
  * Created by ruth on 19/09/16.
  */
 public class VoiceOverVolumeActivity extends VimojoActivity implements
-    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView, VMCompositionPlayer {
+    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView, VideonaPlayer {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
     private static final String TAG = "VoiceOverVolumeActivity";
@@ -185,9 +185,9 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -60,7 +60,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class TrimPreviewPresenterTest {
     @Mock private Context mockedContext;
     @Mock private TrimView mockedTrimView;
-    @Mock private VMCompositionPlayer mockedVMCompositionPlayerView;
+    @Mock private VideonaPlayer mockedVideonaPlayerView;
     @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock ModifyVideoDurationUseCase mockedModifyVideoDurationUseCase;
@@ -83,7 +83,7 @@ public class TrimPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance();
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
-                mockedContext, mockedTrimView, mockedVMCompositionPlayerView,
+                mockedContext, mockedTrimView, mockedVideonaPlayerView,
                 mockedSharedPreferences, userEventTracker, mockedModifyVideoDurationUseCase,
                 mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
 
@@ -147,7 +147,7 @@ public class TrimPreviewPresenterTest {
 
         trimPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVMCompositionPlayerView).attachView(mockedContext);
+        verify(mockedVideonaPlayerView).attachView(mockedContext);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class TrimPreviewPresenterTest {
 
         spyTrimPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVMCompositionPlayerView)
+        verify(mockedVideonaPlayerView)
             .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
 
@@ -169,7 +169,7 @@ public class TrimPreviewPresenterTest {
 
         trimPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVMCompositionPlayerView).initSingleClip(any(VMComposition.class),
+        verify(mockedVideonaPlayerView).initSingleClip(any(VMComposition.class),
             eq(videoIndexOnTrack));
     }
 
@@ -179,7 +179,7 @@ public class TrimPreviewPresenterTest {
 
         trimPreviewPresenter.removePresenter();
 
-        verify(mockedVMCompositionPlayerView).detachView();
+        verify(mockedVideonaPlayerView).detachView();
     }
 
     @Test
@@ -191,7 +191,7 @@ public class TrimPreviewPresenterTest {
 
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
         verify(mockedTrimView).refreshDurationTag(anyInt());
-        verify(mockedVMCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class TrimPreviewPresenterTest {
 
         verify(mockedTrimView).updateStartTrimmingRangeSeekBar(anyFloat());
         verify(mockedTrimView).refreshDurationTag(anyInt());
-        verify(mockedVMCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -236,7 +236,7 @@ public class TrimPreviewPresenterTest {
 
         verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(anyFloat());
         verify(mockedTrimView).refreshDurationTag(anyInt());
-        verify(mockedVMCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -265,7 +265,7 @@ public class TrimPreviewPresenterTest {
 
         verify(mockedTrimView).updateFinishTrimmingRangeSeekBar(anyFloat());
         verify(mockedTrimView).refreshDurationTag(anyInt());
-        verify(mockedVMCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -281,7 +281,7 @@ public class TrimPreviewPresenterTest {
         spyTrimPreviewPresenter.onRangeSeekBarChanged(minValue, maxValue);
 
         verify(mockedTrimView).refreshDurationTag(anyInt());
-        verify(mockedVMCompositionPlayerView).seekTo(anyInt());
+        verify(mockedVideonaPlayerView).seekTo(anyInt());
     }
 
     @Test
@@ -298,7 +298,7 @@ public class TrimPreviewPresenterTest {
     @NonNull
     private TrimPreviewPresenter getTrimPreviewPresenter() {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
-                mockedContext, mockedTrimView, mockedVMCompositionPlayerView,
+                mockedContext, mockedTrimView, mockedVideonaPlayerView,
                 mockedSharedPreferences, mockedUserEventTracker, mockedModifyVideoDurationUseCase,
                 mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
         trimPreviewPresenter.currentProject = currentProject;

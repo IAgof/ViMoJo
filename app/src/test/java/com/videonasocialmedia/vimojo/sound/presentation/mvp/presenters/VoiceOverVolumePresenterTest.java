@@ -10,7 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.AudioTrack
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
@@ -47,7 +47,8 @@ public class VoiceOverVolumePresenterTest {
 
   @Mock Context mockedContext;
   @Mock VoiceOverVolumeView mockedVoiceOverVolumeView;
-  @Mock VMCompositionPlayer mockedVMCompositionPlayerView;
+  @Mock
+  VideonaPlayer mockedVideonaPlayerView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
@@ -102,7 +103,7 @@ public class VoiceOverVolumePresenterTest {
 
   private VoiceOverVolumePresenter getVoiceOverVolumePresenter() {
     VoiceOverVolumePresenter voiceOverVolumePresenter = new VoiceOverVolumePresenter(mockedContext,
-        mockedVoiceOverVolumeView, mockedVMCompositionPlayerView, mockedModifyTrackUseCase,
+        mockedVoiceOverVolumeView, mockedVideonaPlayerView, mockedModifyTrackUseCase,
         mockedRemoveAudioUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
         amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack, mockedBackgroundExecutor,
         mockedUserEventTracker);

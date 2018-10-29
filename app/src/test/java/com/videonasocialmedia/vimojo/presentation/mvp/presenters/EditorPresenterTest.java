@@ -13,7 +13,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
@@ -67,7 +67,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class EditorPresenterTest {
 
   @Mock EditorActivityView mockedEditorActivityView;
-  @Mock VMCompositionPlayer mockedVMCompositionPlayerView;
+  @Mock
+  VideonaPlayer mockedVideonaPlayerView;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Activity mockedContext;
   @Mock UserEventTracker mockedUserEventTracker;
@@ -110,7 +111,7 @@ public class EditorPresenterTest {
   public void constructorSetsUserTracker() {
     UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditorPresenter editorPresenter = new EditorPresenter(mockedContext, mockedEditorActivityView,
-        mockedVMCompositionPlayerView, mockedSharedPreferences, userEventTracker,
+        mockedVideonaPlayerView, mockedSharedPreferences, userEventTracker,
         mockedCreateDefaultProjectUseCase, mockedRemoveVideoFromProjectUseCase,
         mockedRelaunchTranscoderTempBackgroundUseCase,
         mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
@@ -212,7 +213,7 @@ public class EditorPresenterTest {
 
   private EditorPresenter getEditorPresenter() {
     EditorPresenter editorPresenter = new EditorPresenter(mockedContext, mockedEditorActivityView,
-        mockedVMCompositionPlayerView, mockedSharedPreferences, mockedUserEventTracker,
+        mockedVideonaPlayerView, mockedSharedPreferences, mockedUserEventTracker,
         mockedCreateDefaultProjectUseCase, mockedRemoveVideoFromProjectUseCase,
         mockedRelaunchTranscoderTempBackgroundUseCase,
         mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,

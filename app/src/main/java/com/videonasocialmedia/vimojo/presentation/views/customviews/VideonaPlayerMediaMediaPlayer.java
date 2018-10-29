@@ -16,12 +16,12 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import com.videonasocialmedia.videonamediaframework.playback.VideonaMediaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.videonamediaframework.playback.customviews.AspectRatioVideoView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import butterknife.OnTouch;
  * Use new Implementation based in ExoPlayer instead: see {@link VideonaPlayerExo}
  * @deprecated
  */
-public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaPlayer,
+public class VideonaPlayerMediaMediaPlayer extends RelativeLayout implements VideonaMediaPlayer,
         SeekBar.OnSeekBarChangeListener {
 
     private final Context context;
@@ -51,9 +51,9 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     @BindView(R.id.button_editor_play_pause)
     ImageButton playButton;
 
-    private String TAG = VideonaPlayerMediaPlayer.class.getCanonicalName();
+    private String TAG = VideonaPlayerMediaMediaPlayer.class.getCanonicalName();
     private View videonaPlayerView;
-    private VideonaPlayer.VideonaPlayerListener videonaPlayerListener;
+    private VideonaMediaPlayer.VideonaPlayerListener videonaPlayerListener;
     private AudioManager audio;
     private MediaPlayer videoPlayer;
     private MediaPlayer musicPlayer;
@@ -78,8 +78,8 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     private Music music;
     private Handler mainHandler;
 
-    /** VideonaPlayer Constructors **/
-    public VideonaPlayerMediaPlayer(Context context) {
+    /** VideonaMediaPlayer Constructors **/
+    public VideonaPlayerMediaMediaPlayer(Context context) {
         super(context);
         this.context = context;
         this.videonaPlayerView = ( (Activity) getContext() ).getLayoutInflater().inflate(R.layout.video_preview, this, true);
@@ -87,7 +87,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
         initVideonaPlayer();
     }
 
-    public VideonaPlayerMediaPlayer(Context context, AttributeSet attrs) {
+    public VideonaPlayerMediaMediaPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         this.videonaPlayerView = ( (Activity) getContext() ).getLayoutInflater().inflate(R.layout.video_preview, this, true);
@@ -95,7 +95,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
         initVideonaPlayer();
     }
 
-    public VideonaPlayerMediaPlayer(Context context, AttributeSet attrs, int defStyle) {
+    public VideonaPlayerMediaMediaPlayer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
         this.videonaPlayerView = ( (Activity) getContext() ).getLayoutInflater().inflate(R.layout.video_preview, this, true);
@@ -109,7 +109,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
         initClipList();
         initSeekBar();
     }
-    /** End of VideonaPlayer Constructors **/
+    /** End of VideonaMediaPlayer Constructors **/
 
     /****
      * Videona player lifecycle methods
@@ -168,7 +168,7 @@ public class VideonaPlayerMediaPlayer extends RelativeLayout implements VideonaP
     }
 
     @Override
-    public void setListener(VideonaPlayer.VideonaPlayerListener videonaPlayerListener) {
+    public void setListener(VideonaMediaPlayer.VideonaPlayerListener videonaPlayerListener) {
         this.videonaPlayerListener = videonaPlayerListener;
     }
 

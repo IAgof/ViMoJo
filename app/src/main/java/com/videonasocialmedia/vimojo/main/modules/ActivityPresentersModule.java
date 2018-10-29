@@ -198,18 +198,15 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   MusicDetailPresenter provideMusicDetailPresenter(
           UserEventTracker userEventTracker,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
           UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
           RemoveMedia removeMedia, UpdateTrack updateTrack,
           RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
     return new MusicDetailPresenter(activity, (MusicDetailView) activity, (MusicDetailActivity)
-            activity, userEventTracker, getAudioFromProjectUseCase,
-            getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
-            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition,
-            amIAVerticalApp, removeMedia, updateTrack, removeTrack, backgroundExecutor);
+            activity, userEventTracker, addAudioUseCase, removeAudioUseCase, modifyTrackUseCase,
+            getMusicListUseCase, projectInstanceCache, updateComposition, amIAVerticalApp,
+            removeMedia, updateTrack, removeTrack, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -238,12 +235,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   MusicListPresenter provideMusicListPresenter(
           GetMusicListUseCase getMusicListUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           @Named("amIAVerticalApp") boolean amIAVerticalApp) {
     return new MusicListPresenter(activity, (MusicListView) activity, (MusicListActivity) activity,
-        getMusicListUseCase, getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-        projectInstanceCache, amIAVerticalApp);
+        getMusicListUseCase, projectInstanceCache, amIAVerticalApp);
   }
 
   @Provides @PerActivity

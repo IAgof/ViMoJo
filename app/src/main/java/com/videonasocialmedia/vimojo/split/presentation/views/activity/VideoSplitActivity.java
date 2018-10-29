@@ -22,12 +22,11 @@ import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -45,7 +44,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
-    SeekBar.OnSeekBarChangeListener, VMCompositionPlayer {
+    SeekBar.OnSeekBarChangeListener, VideonaPlayer {
 
     @Inject SplitPreviewPresenter presenter;
 
@@ -137,20 +136,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         return super.onOptionsItemSelected(item);
     }
 
-    public void navigateTo(Class cls) {
-        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
-    }
-
     @Override
     public void onBackPressed() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
-    }
-
-    private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        startActivity(intent);
-        //finish();
+        presenter.cancelSplit();
     }
 
     @OnClick(R.id.player_advance_low_backward_start_split)
@@ -186,12 +174,11 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     @OnClick(R.id.button_split_accept)
     public void onClickSplitAccept() {
         presenter.splitVideo();
-        navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
     @OnClick(R.id.button_split_cancel)
     public void onClickSplitCancel() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        presenter.cancelSplit();
     }
 
     @Override
@@ -225,9 +212,9 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override
@@ -320,5 +307,10 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         presenter.updatePresenter(videoIndexOnTrack);
     }
 
-
+    @Override
+    public void navigateTo(Class cls, int currentVideoIndex) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        startActivity(intent);
+    }
 }

@@ -29,7 +29,7 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
@@ -48,7 +48,7 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
-    VMCompositionPlayer {
+    VideonaPlayer {
     private static final String NUM_DUPLICATE_VIDEOS = "num_duplicate_videos";
     private static final String TAG = "VideoDuplicateActivity";
 
@@ -144,16 +144,9 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         finish();
     }
 
-    private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(this, cls);
-        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        startActivity(intent);
-        finish();
-    }
-
     @Override
     public void onBackPressed() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        presenter.cancelDuplicate();
     }
 
     @Override
@@ -165,12 +158,11 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @OnClick(R.id.button_duplicate_accept)
     public void onClickDuplicateAccept() {
         presenter.duplicateVideo(numDuplicateVideos);
-        navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
     @OnClick(R.id.button_duplicate_cancel)
     public void onClickDuplicateCancel() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        presenter.cancelDuplicate();
     }
 
     @Override
@@ -178,6 +170,28 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
         updateDecrementVideoButton();
         showThumbVideo(imageThumbLeft, video);
         showThumbVideo(imageThumbRight, video);
+    }
+
+    @Override
+    public void navigateTo(Class cls, int currentVideoIndex) {
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void updateProject() {
+        presenter.updatePresenter(videoIndexOnTrack);
+    }
+
+    @Override
+    public void showError(String errorMessage) {
+        runOnUiThread(() -> {
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, errorMessage,
+                Snackbar.LENGTH_SHORT);
+            snackbar.show();
+        });
     }
 
     private void updateDecrementVideoButton() {
@@ -202,9 +216,9 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener
-                                                       vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener
+                                                   videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override
@@ -271,20 +285,6 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Override
     public void setMusicVolume(float volume) {
         videonaPlayer.setMusicVolume(volume);
-    }
-
-    @Override
-    public void updateProject() {
-        presenter.updatePresenter(videoIndexOnTrack);
-    }
-
-    @Override
-    public void showError(String errorMessage) {
-        runOnUiThread(() -> {
-            Snackbar snackbar = Snackbar.make(coordinatorLayout, errorMessage,
-                Snackbar.LENGTH_SHORT);
-            snackbar.show();
-        });
     }
 
     private void showThumbVideo(ImageView imageThumbLeft, Video video) {

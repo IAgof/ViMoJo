@@ -10,7 +10,7 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -35,7 +35,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
     private Context context;
     private EditTextView editTextView;
-    private VMCompositionPlayer vmCompositionPlayerView;
+    private VideonaPlayer videonaPlayerView;
     private final ProjectInstanceCache projectInstanceCache;
     private Video videoToEdit;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
@@ -51,14 +51,14 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
 
     @Inject
     public EditTextPreviewPresenter(
-        Context context, EditTextView editTextView, VMCompositionPlayer vmCompositionPlayerView,
+        Context context, EditTextView editTextView, VideonaPlayer videonaPlayerView,
         UserEventTracker userEventTracker, ModifyVideoTextAndPositionUseCase
         modifyVideoTextAndPositionUseCase, ProjectInstanceCache projectInstanceCache,
         @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.editTextView = editTextView;
-        this.vmCompositionPlayerView = vmCompositionPlayerView;
+        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -74,17 +74,17 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         this.videoIndexOnTrack = videoToEditTextIndex;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        vmCompositionPlayerView.attachView(context);
-        vmCompositionPlayerView.setSeekBarLayoutEnabled(false);
+        videonaPlayerView.attachView(context);
+        videonaPlayerView.setSeekBarLayoutEnabled(false);
         loadProjectVideo();
         if (amIAVerticalApp) {
-            vmCompositionPlayerView
+            videonaPlayerView
                 .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
     public void removePresenter() {
-        vmCompositionPlayerView.detachView();
+        videonaPlayerView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -98,7 +98,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        vmCompositionPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         if (videoCopy.hasText()) {
             positionSelected = videoCopy.getClipTextPosition();
             editTextView.setPositionEditText(positionSelected);
@@ -153,7 +153,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     public void setCheckboxShadow(boolean isShadowChecked) {
         this.textHasShadow = isShadowChecked;
         if (isPlayerReady) {
-            vmCompositionPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+            videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
                 Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
         }
     }
@@ -162,7 +162,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.TOP.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        vmCompositionPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
@@ -170,7 +170,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.CENTER.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        vmCompositionPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
@@ -178,13 +178,13 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.BOTTOM.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        vmCompositionPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
     public void onTextChanged(String text) {
         textSelected = text;
-        vmCompositionPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
@@ -194,7 +194,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
 
     public void playerReady() {
         isPlayerReady = true;
-        vmCompositionPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 }

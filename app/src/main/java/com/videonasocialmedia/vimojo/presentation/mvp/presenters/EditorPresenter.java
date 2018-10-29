@@ -18,7 +18,7 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
@@ -54,8 +54,6 @@ import javax.inject.Named;
  * {@link com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter},
  * and {@link com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter}
  * with common functionalities for three views and drawer setup and management.
- * This class it's also the one in charge handling
- * {@link com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer}.
  */
 public class EditorPresenter extends VimojoPresenter
         implements PlayStoreBillingDelegate.BillingDelegateView {
@@ -66,7 +64,7 @@ public class EditorPresenter extends VimojoPresenter
   private final String THEME_LIGHT = "light";
   private final BillingManager billingManager;
   private EditorActivityView editorActivityView;
-  private final VMCompositionPlayer vmCompositionPlayerView;
+  private final VideonaPlayer videonaPlayerView;
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor preferencesEditor;
   protected UserEventTracker userEventTracker;
@@ -90,25 +88,25 @@ public class EditorPresenter extends VimojoPresenter
 
   @Inject
   public EditorPresenter(
-          Context context, EditorActivityView editorActivityView, VMCompositionPlayer
-          vmCompositionPlayerView, SharedPreferences sharedPreferences, UserEventTracker
+      Context context, EditorActivityView editorActivityView, VideonaPlayer
+      videonaPlayerView, SharedPreferences sharedPreferences, UserEventTracker
           userEventTracker, CreateDefaultProjectUseCase createDefaultProjectUseCase,
-          RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-          RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          NewClipImporter newClipImporter, BillingManager billingManager,
-          ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
-          RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
-          UpdateComposition updateComposition,
-          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
-          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
-          @Named("watermarkIsForced") boolean watermarkIsForced,
-          @Named("hideTutorials") boolean hideTutorials,
-          @Named("amIAVerticalApp") boolean amIAVerticalApp,
-          BackgroundExecutor backgroundExecutor) {
+      RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
+      RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
+      NewClipImporter newClipImporter, BillingManager billingManager,
+      ProjectInstanceCache projectInstanceCache, SaveComposition saveComposition,
+      RemoveMedia removeMedia, UpdateCompositionWatermark updateCompositionWatermark,
+      UpdateComposition updateComposition,
+      @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
+      @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
+      @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+      @Named("watermarkIsForced") boolean watermarkIsForced,
+      @Named("hideTutorials") boolean hideTutorials,
+      @Named("amIAVerticalApp") boolean amIAVerticalApp,
+      BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.editorActivityView = editorActivityView;
-    this.vmCompositionPlayerView = vmCompositionPlayerView;
+    this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
     this.userEventTracker = userEventTracker;
@@ -141,7 +139,7 @@ public class EditorPresenter extends VimojoPresenter
       setupTutorial();
       updateDrawerHeaderWithCurrentProject();
       setupWatermarkDrawerSwitch();
-      vmCompositionPlayerView.attachView(context);
+      videonaPlayerView.attachView(context);
       setupPlayer(hasBeenProjectExported, videoPath);
     });
   }
@@ -153,14 +151,14 @@ public class EditorPresenter extends VimojoPresenter
       initPreviewFromVideoExported(videoPath);
     }
     if (amIAVerticalApp) {
-      vmCompositionPlayerView
+      videonaPlayerView
           .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
   }
 
   protected void initPreviewFromVideoExported(String videoPath) {
     Video videoExported = new Video(videoPath, Video.DEFAULT_VOLUME);
-    vmCompositionPlayerView.initSingleVideo(videoExported);
+    videonaPlayerView.initSingleVideo(videoExported);
   }
 
   protected void initPreviewFromProject() {
@@ -171,7 +169,7 @@ public class EditorPresenter extends VimojoPresenter
       illegalItemOnTrack.printStackTrace();
       Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
     }
-    vmCompositionPlayerView.init(vmCompositionCopy);
+    videonaPlayerView.init(vmCompositionCopy);
     List<Video> videoList;
     videoList = (List<Video>) vmCompositionCopy.getMediaTrack().getItems().listIterator();
     checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videoList);
@@ -184,7 +182,7 @@ public class EditorPresenter extends VimojoPresenter
     if (vimojoStoreAvailable) {
       billingManager.destroy();
     }
-    vmCompositionPlayerView.detachView();
+    videonaPlayerView.detachView();
   }
 
   private void setupVimojoPlatformLink() {

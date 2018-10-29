@@ -1,5 +1,7 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.views;
 
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
+
 /**
  * Created by jca on 8/7/15.
  */
@@ -14,4 +16,6 @@ public interface SplitView {
     void refreshTimeTag(int currentPosition);
 
     void updateProject();
+
+    void navigateTo(Class<EditActivity> editActivityClass, int videoIndexOnTrack);
 }

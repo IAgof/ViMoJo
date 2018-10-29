@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -13,7 +14,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
@@ -23,6 +24,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import javax.inject.Inject;
 
@@ -36,7 +38,7 @@ import butterknife.Optional;
  */
 
 public class SoundActivity extends EditorActivity implements SoundView,
-    VMCompositionPlayer.VMCompositionPlayerListener, CardViewAudioTrackListener{
+    VideonaPlayer.VideonaPlayerListener, CardViewAudioTrackListener{
 
   private static final String TAG = "SoundActivity";
   private final int ID_BUTTON_FAB_TOP=1;
@@ -78,7 +80,7 @@ public class SoundActivity extends EditorActivity implements SoundView,
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
       setupFab();
-      setVMCompositionPlayerListener(this);
+      setVideonaPlayerListener(this);
   }
 
   @Override
@@ -129,7 +131,7 @@ public class SoundActivity extends EditorActivity implements SoundView,
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-            navigateTo(MusicListActivity.class);
+            presenter.navigateToMusic();
             break;
           case ID_BUTTON_FAB_BOTTOM:
             fabMenu.collapse();
@@ -235,6 +237,18 @@ public class SoundActivity extends EditorActivity implements SoundView,
     updatePlayerVideos();
     seekToClip(currentVideoIndex);
   }
+
+  @Override
+  public void navigateToMusicDetail(Class<MusicDetailActivity> musicDetailActivityClass, String mediaPath) {
+    Intent i = new Intent(this, MusicDetailActivity.class);
+    i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
+    startActivity(i);
+  }
+
+  @Override
+  public void navigateToMusicList(Class<MusicListActivity> musicListActivityClass) {
+    Intent intent = new Intent(this, musicListActivityClass);
+    startActivity(intent);  }
 
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {

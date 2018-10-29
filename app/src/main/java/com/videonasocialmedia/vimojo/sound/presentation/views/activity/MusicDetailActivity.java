@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VMCompositionPlayer;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -36,7 +36,7 @@ import butterknife.OnClick;
 import butterknife.Optional;
 
 public class MusicDetailActivity extends VimojoActivity implements MusicDetailView,
-    VMCompositionPlayer, SeekBar.OnSeekBarChangeListener{
+    VideonaPlayer, SeekBar.OnSeekBarChangeListener{
 
     private String MUSIC_DETAIL_POSITION_VOLUME = "sound_volume_position";
 
@@ -144,12 +144,9 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Override
     public void setMusic(Music music, boolean scene) {
         musicSelectedOptions(scene);
-        // TODO: 19/10/18 delete set player from composition
-        //videonaPlayer.setMusic(music);
         updateCoverInfo(music);
         seekBarVolume.setProgress((int)(music.getVolume()*100));
         this.music = music;
-        videonaPlayer.playPreview();
     }
 
     private void updateCoverInfo(Music music) {
@@ -164,11 +161,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     public void goToSoundActivity() {
         Intent i = new Intent(VimojoApplication.getAppContext(), SoundActivity.class);
         startActivity(i);
-    }
-
-    @Override
-    public void setVideoFadeTransitionAmongVideos() {
-        videonaPlayer.setVideoTransitionFade();
     }
 
     @Override
@@ -237,8 +229,8 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
-    public void setVMCompositionPlayerListener(VMCompositionPlayerListener vmCompositionPlayerListener) {
-        videonaPlayer.setVMCompositionPlayerListener(vmCompositionPlayerListener);
+    public void setVideonaPlayerListener(VideonaPlayerListener videonaPlayerListener) {
+        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     }
 
     @Override
