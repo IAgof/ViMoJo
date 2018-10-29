@@ -17,7 +17,7 @@ public interface ShareVideoView {
 
   void loadExportedVideoPreview(String mediaPath);
 
-  void showVideoExportError(int cause, Exception exception);
+  void showVideoExportError(int cause);
 
   void showExportProgress(int progressMsg);
 

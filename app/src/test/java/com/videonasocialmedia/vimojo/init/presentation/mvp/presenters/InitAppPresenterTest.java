@@ -14,7 +14,6 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultPro
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
-import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -74,6 +73,15 @@ public class InitAppPresenterTest {
     initAppPresenter.init();
 
     verify(mockedRunSyncAdapterHelper).runSyncAdapterPeriodically();
+  }
+
+  @Test
+  public void initAppCallsDeleteCacheDir() {
+    InitAppPresenter spyInitAppPresenter = spy(getInitAppPresenter());
+
+    spyInitAppPresenter.init();
+
+    verify(spyInitAppPresenter).deleteCache();
   }
 
   @Test
