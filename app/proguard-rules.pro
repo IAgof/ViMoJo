@@ -245,14 +245,10 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 
 # Mp4parser, coremedia
--dontwarn com.googlecode.mp4parser.**
+-dontwarn org.mp4parser.**
 
--keep public class * implements com.coremedia.**
--keep public class * implements com.googlecode.**
--keep public class * implements com.mp4parser.**
--keep class com.coremedia.**
--keep class com.googlecode.** { *; }
--keep class com.mp4parser.** { *; }
+-keep public class * implements org.mp4parser.**
+-keep class org.mp4parser.** { *; }
 
 # Samsung SDK
 -keep class com.samsung.** { *; }
@@ -261,3 +257,6 @@
 
 # dagger2 https://github.com/google/dagger/issues/645
 -dontwarn com.google.errorprone.annotations.*
+
+#################################### SLF4J #####################################
+-dontwarn org.slf4j.**

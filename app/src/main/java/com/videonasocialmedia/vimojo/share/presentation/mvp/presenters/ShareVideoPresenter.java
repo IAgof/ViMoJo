@@ -22,6 +22,7 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddLastVideoExportedToProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnExportFinishedListener;
@@ -35,7 +36,6 @@ import com.videonasocialmedia.vimojo.share.presentation.mvp.views.ShareVideoView
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.sync.model.VideoUpload;
 import com.videonasocialmedia.vimojo.sync.presentation.UploadToPlatform;
-import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.DateUtils;
@@ -63,6 +63,7 @@ import static com.videonasocialmedia.vimojo.utils.AnalyticsConstants.SOCIAL_NETW
  * Presenter class for {@link com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity}
  */
 public class ShareVideoPresenter extends VimojoPresenter {
+
   private String LOG_TAG = ShareVideoPresenter.class.getCanonicalName();
   private Context context;
   private ObtainNetworksToShareUseCase obtainNetworksToShareUseCase;
@@ -227,12 +228,15 @@ public class ShareVideoPresenter extends VimojoPresenter {
   protected void startExport(int typeNetworkSelected) {
     shareVideoViewReference.get().showProgressDialogVideoExporting();
     isAppExportingProject = true;
-    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, new OnExportFinishedListener() {
+    String nativeLibPath = context.getApplicationInfo().nativeLibraryDir;
+    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, nativeLibPath,
+        new OnExportFinishedListener() {
       @Override
       public void onExportError(int error, Exception exception) {
         Crashlytics.log("Error exporting: " + error);
+        Crashlytics.logException(exception);
         if (shareVideoViewReference.get() != null) {
-          shareVideoViewReference.get().showVideoExportError(error, exception);
+          shareVideoViewReference.get().showVideoExportError(error);
           isAppExportingProject = false;
         }
       }

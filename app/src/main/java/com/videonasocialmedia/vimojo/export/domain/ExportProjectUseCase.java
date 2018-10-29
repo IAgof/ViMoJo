@@ -52,7 +52,7 @@ public class ExportProjectUseCase implements ExportListener {
    * Main use case method.
    */
   public void export(Project currentProject, String pathWatermark,
-                     OnExportFinishedListener onExportFinishedListener) {
+                     String nativeLibPath, OnExportFinishedListener onExportFinishedListener) {
     this.project = currentProject;
     String tempPathIntermediateAudioFilesDirectory =
             project.getProjectPathIntermediateAudioMixedFiles();
@@ -68,7 +68,7 @@ public class ExportProjectUseCase implements ExportListener {
     try {
       ListenableFuture<List<Video>> adaptVideoTasks = getAdaptingVideoTasks();
       Futures.transform(adaptVideoTasks, (Function<List<Video>, Object>) input -> {
-        vmCompositionExportSession.exportAsyncronously();
+        vmCompositionExportSession.exportAsyncronously(nativeLibPath);
         return null;
       });
     } catch (NoSuchElementException exception) {

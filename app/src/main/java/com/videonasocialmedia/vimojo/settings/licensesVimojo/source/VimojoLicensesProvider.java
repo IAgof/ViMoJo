@@ -65,6 +65,7 @@ public class VimojoLicensesProvider {
     licenseList.add(new LicenseVimojo("OkHttp", context.getString(R.string.licenseOkhttp)));
     licenseList.add(new LicenseVimojo("Auth0", context.getString(R.string.licenseAuth0)));
     licenseList.add(new LicenseVimojo("Video intro", context.getString(R.string.licenseIntroRegisterLoginVideo)));
+    licenseList.add(new LicenseVimojo("FFmpeg", context.getString(R.string.licenseFFmpeg)));
 
   }
 }
