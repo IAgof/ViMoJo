@@ -97,6 +97,7 @@ public class AssetApiClient extends VimojoApiClient {
             .withCreatedBy(asset.getCreatedBy()).build();
     List<AssetDto> existingAssets = this.query(accessToken, query);
     if (existingAssets == null ) {
+      // TODO: 30/10/18 Review how to manage QUERY_ERROR and if it is necessary remove element
       throw new VimojoApiException(-1, VimojoApiException.QUERY_ERROR);
     }
     if (existingAssets.size() == 0) {
