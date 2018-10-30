@@ -9,6 +9,7 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
@@ -345,10 +346,12 @@ public class ActivityPresentersModule {
   TrimPreviewPresenter provideTrimPresenter(
           SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
           ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+          UpdateMedia updateMedia, UpdateComposition updateComposition,
           @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
     return new TrimPreviewPresenter(activity, (VideoTrimActivity) activity,
         (VideoTrimActivity) activity, sharedPreferences, userEventTracker,
-        modifyVideoDurationUseCase, projectInstanceCache, amIAVerticalApp, backgroundExecutor);
+        modifyVideoDurationUseCase, projectInstanceCache, updateMedia, updateComposition,
+        amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -460,11 +463,12 @@ public class ActivityPresentersModule {
   EditTextPreviewPresenter provideEditTextPreviewPresenter(
               UserEventTracker userEventTracker,
               ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
+              UpdateMedia updateMedia, UpdateComposition updateComposition,
               @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor
               backgroundExecutor) {
     return new EditTextPreviewPresenter(activity, (VideoEditTextActivity) activity,
         (VideoEditTextActivity) activity, userEventTracker, modifyVideoTextAndPositionUseCase,
-        projectInstanceCache, amIAVerticalApp, backgroundExecutor);
+        projectInstanceCache, updateMedia, updateComposition, amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -674,4 +678,13 @@ public class ActivityPresentersModule {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
+  @Provides
+  UpdateMedia provideUpdateMedia(MediaRepository mediaRepository) {
+    return new UpdateMedia(mediaRepository);
+  }
+
+  @Provides
+  UpdateComposition provideUpdateComposition(ProjectRepository projectRepository) {
+    return new UpdateComposition(projectRepository);
+  }
 }

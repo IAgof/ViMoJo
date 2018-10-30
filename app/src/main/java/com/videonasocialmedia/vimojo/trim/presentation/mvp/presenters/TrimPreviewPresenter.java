@@ -17,7 +17,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
@@ -46,6 +48,8 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     private final ProjectInstanceCache projectInstanceCache;
     private Video videoToEdit;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
+    private UpdateMedia updateMedia;
+    private UpdateComposition updateComposition;
     private final Context context;
     // View reference. We use as a WeakReference
     // because the Activity could be destroyed at any time
@@ -69,8 +73,9 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         Context context, TrimView trimView, VideonaPlayer videonaPlayerView,
         SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
         ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-        ProjectInstanceCache projectInstanceCache,
-        @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+        ProjectInstanceCache projectInstanceCache, UpdateMedia updateMedia,
+        UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.trimView = trimView;
@@ -79,6 +84,8 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         this.userEventTracker = userEventTracker;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.updateMedia = updateMedia;
+        this.updateComposition = updateComposition;
         this.amIVerticalApp = amIAVerticalApp;
     }
 
@@ -122,7 +129,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     public void setTrim() {
         addCallback(modifyVideoDurationUseCase
                 .trimVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject),
-            new TrimResultCallback(videoToEdit, currentProject));
+            new TrimResultCallback(videoToEdit, currentProject, updateMedia, updateComposition));
         trackVideoTrimmed();
         trimView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }

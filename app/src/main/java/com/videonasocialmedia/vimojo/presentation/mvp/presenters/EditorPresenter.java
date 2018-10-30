@@ -158,6 +158,9 @@ public class EditorPresenter extends VimojoPresenter
 
   protected void initPreviewFromVideoExported(String videoPath) {
     Video videoExported = new Video(videoPath, Video.DEFAULT_VOLUME);
+    // Reset, detach, attach view.
+    videonaPlayerView.detachView();
+    videonaPlayerView.attachView(context);
     videonaPlayerView.initSingleVideo(videoExported);
   }
 

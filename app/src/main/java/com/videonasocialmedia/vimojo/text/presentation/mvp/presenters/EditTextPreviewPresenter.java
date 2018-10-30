@@ -12,6 +12,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -39,6 +41,8 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     private final ProjectInstanceCache projectInstanceCache;
     private Video videoToEdit;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
+    private UpdateMedia updateMedia;
+    private UpdateComposition updateComposition;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private final String THEME_DARK = "dark";
@@ -54,7 +58,9 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         Context context, EditTextView editTextView, VideonaPlayer videonaPlayerView,
         UserEventTracker userEventTracker, ModifyVideoTextAndPositionUseCase
         modifyVideoTextAndPositionUseCase, ProjectInstanceCache projectInstanceCache,
-        @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+        UpdateMedia updateMedia, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.editTextView = editTextView;
@@ -62,6 +68,8 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         this.userEventTracker = userEventTracker;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.updateMedia = updateMedia;
+        this.updateComposition = updateComposition;
         this.amIAVerticalApp = amIAVerticalApp;
     }
 
@@ -110,11 +118,11 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
             }
         }
     }
-
     public void setTextToVideo() {
         addCallback(modifyVideoTextAndPositionUseCase
                 .addTextToVideo(currentProject, videoToEdit, textSelected, positionSelected,
-                    textHasShadow), new ClipTextResultCallback());
+                    textHasShadow), new ClipTextResultCallback(currentProject, updateMedia,
+                    updateComposition));
         userEventTracker.trackClipAddedText(positionSelected, textSelected.length(),
             textHasShadow, currentProject);
         editTextView.navigateTo(EditActivity.class, videoIndexOnTrack);

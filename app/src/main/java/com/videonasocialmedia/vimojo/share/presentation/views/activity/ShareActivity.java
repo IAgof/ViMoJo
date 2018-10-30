@@ -525,8 +525,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     runOnUiThread(() -> {
       if (destPath != null) {
         projectHasBeenExported = true;
-        presenter.updateHasBeenProjectExported(true);
-        presenter.addVideoExportedToProject(mediaPath);
         initVideoPlayerFromFilePath(mediaPath);
       }
       exportDialog.dismiss();

@@ -19,7 +19,9 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -58,6 +60,8 @@ public class EditTextPreviewPresenterTest {
   @Mock private VideonaPlayer mockedVideonaPlayerView;
   @Mock private UserEventTracker mockedUserEvenTracker;
   @Mock private ModifyVideoTextAndPositionUseCase mockedModifyVideoTextAndPositionUseCase;
+  @Mock private UpdateMedia mockedUpdateMedia;
+  @Mock private UpdateComposition mockedUpdateComposition;
   private boolean amIAVerticalApp;
   @Mock private BackgroundExecutor mockedBackgroundExecutor;
   private Project currentProject;
@@ -74,8 +78,8 @@ public class EditTextPreviewPresenterTest {
     UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditTextPreviewPresenter editTextPreviewPresenter = new EditTextPreviewPresenter(mockedContext,
         mockedEditTextView, mockedVideonaPlayerView, userEventTracker,
-        mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, amIAVerticalApp,
-        mockedBackgroundExecutor);
+        mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, mockedUpdateMedia,
+        mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
 
     assertThat(editTextPreviewPresenter.userEventTracker, is(userEventTracker));
   }
@@ -291,7 +295,8 @@ public class EditTextPreviewPresenterTest {
   private EditTextPreviewPresenter getEditTextPreviewPresenter(){
     return new EditTextPreviewPresenter(mockedContext, mockedEditTextView,
         mockedVideonaPlayerView, mockedUserEvenTracker,
-        mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, amIAVerticalApp,
+        mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, mockedUpdateMedia,
+        mockedUpdateComposition, amIAVerticalApp,
         mockedBackgroundExecutor);
   }
   private void setAProjectWithSomeVideoWithText() throws IllegalItemOnTrack {

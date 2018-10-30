@@ -21,6 +21,7 @@ import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrame
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -67,7 +68,8 @@ public class TrimPreviewPresenterTest {
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
     @Mock CompositionApiClient mockedCompositionApiClient;
     private Project currentProject;
-    @Mock UpdateComposition mockedUpdateComposition;
+    @Mock private UpdateMedia mockedUpdateMedia;
+    @Mock private UpdateComposition mockedUpdateComposition;
     private boolean amIAVerticalApp;
     @Mock BackgroundExecutor mockedBackgroundExecutor;
     @Mock private ListenableFuture mockedListenableFuture;
@@ -85,7 +87,8 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedContext, mockedTrimView, mockedVideonaPlayerView,
                 mockedSharedPreferences, userEventTracker, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
+                mockedProjectInstanceCache, mockedUpdateMedia, mockedUpdateComposition,
+                amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(trimPreviewPresenter.userEventTracker, is(userEventTracker));
     }
@@ -300,7 +303,8 @@ public class TrimPreviewPresenterTest {
         TrimPreviewPresenter trimPreviewPresenter = new TrimPreviewPresenter(
                 mockedContext, mockedTrimView, mockedVideonaPlayerView,
                 mockedSharedPreferences, mockedUserEventTracker, mockedModifyVideoDurationUseCase,
-                mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
+                mockedProjectInstanceCache, mockedUpdateMedia, mockedUpdateComposition,
+                amIAVerticalApp, mockedBackgroundExecutor);
         trimPreviewPresenter.currentProject = currentProject;
         return trimPreviewPresenter;
     }
