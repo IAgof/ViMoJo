@@ -62,7 +62,6 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   private final ProjectInstanceCache projectInstanceCache;
   private Context context;
   private VoiceOverRecordView voiceOverRecordView;
-  private VideonaPlayer videonaPlayerView;
   protected UserEventTracker userEventTracker;
   private AddAudioUseCase addAudioUseCase;
   private RemoveAudioUseCase removeAudioUseCase;
@@ -86,16 +85,14 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
 
   @Inject
   public VoiceOverRecordPresenter(
-      Context context, VoiceOverRecordView voiceOverRecordView, VideonaPlayer
-      videonaPlayerView, AddAudioUseCase addAudioUseCase, RemoveAudioUseCase
-      removeAudioUseCase, UserEventTracker userEventTracker, ProjectInstanceCache
+      Context context, VoiceOverRecordView voiceOverRecordView, AddAudioUseCase addAudioUseCase,
+      RemoveAudioUseCase removeAudioUseCase, UserEventTracker userEventTracker, ProjectInstanceCache
       projectInstanceCache, UpdateComposition updateComposition, @Named("amIAVerticalApp")
       boolean amIAVerticalApp, UpdateTrack updateTrack, RemoveTrack removeTrack,
       BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.context = context;
     this.voiceOverRecordView = voiceOverRecordView;
-    this.videonaPlayerView = videonaPlayerView;
     this.addAudioUseCase = addAudioUseCase;
     this.removeAudioUseCase = removeAudioUseCase;
     this.userEventTracker = userEventTracker;
@@ -109,20 +106,23 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   public void updatePresenter() {
     this.currentProject = projectInstanceCache.getCurrentProject();
     currentProject.addListener(this);
-    videonaPlayerView.attachView(context);
+    voiceOverRecordView.attachView(context);
     directoryVoiceOverRecorded = currentProject
         .getProjectPathIntermediateAudioFilesVoiceOverRecord();
     loadPlayerFromProject();
     voiceOverRecordView.initVoiceOverView(0, currentProject.getDuration());
     voiceOverRecordView.disablePlayerPlayButton();
     if (amIAVerticalApp) {
-      videonaPlayerView
+      voiceOverRecordView
           .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
   }
 
-  public void removePresenter() {
-    videonaPlayerView.detachView();
+  public void pausePresenter() {
+    if(isRecording()){
+      pauseRecording();
+    }
+    voiceOverRecordView.detachView();
   }
 
 
@@ -134,17 +134,17 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
       illegalItemOnTrack.printStackTrace();
       Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
     }
-    videonaPlayerView.init(vmCompositionCopy);
+    voiceOverRecordView.init(vmCompositionCopy);
     muteAllTracks(vmCompositionCopy);
   }
 
   private void muteAllTracks(VMComposition vmCompositionCopy) {
-    videonaPlayerView.setVideoVolume(0f);
+    voiceOverRecordView.setVideoVolume(0f);
     if (vmCompositionCopy.hasMusic()) {
-      videonaPlayerView.setMusicVolume(0f);
+      voiceOverRecordView.setMusicVolume(0f);
     }
     if (vmCompositionCopy.hasVoiceOver()) {
-      videonaPlayerView.setVoiceOverVolume(0f);
+      voiceOverRecordView.setVoiceOverVolume(0f);
     }
   }
 
@@ -179,7 +179,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
     Log.d(LOG_TAG, "startRecording");
     setupAudioRecorder();
     isRecording = true;
-    videonaPlayerView.playPreview();
+    voiceOverRecordView.playPreview();
     audioRecorder.startRecording();
     voiceOverRecorded = true;
   }
@@ -187,13 +187,13 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   public void pauseRecording() {
     Log.d(LOG_TAG, "pauseRecording");
     audioRecorder.pauseRecording();
-    videonaPlayerView.pausePreview();
+    voiceOverRecordView.pausePreview();
   }
 
   public void resumeRecording() {
     Log.d(LOG_TAG, "resumeRecording");
     audioRecorder.resumeRecording();
-    videonaPlayerView.playPreview();
+    voiceOverRecordView.playPreview();
   }
 
   public void stopRecording() {

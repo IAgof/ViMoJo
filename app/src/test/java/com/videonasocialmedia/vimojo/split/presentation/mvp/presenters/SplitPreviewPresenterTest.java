@@ -65,7 +65,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class SplitPreviewPresenterTest {
     @Mock private Context mockedContext;
     @Mock private SplitView mockedSplitView;
-    @Mock private VideonaPlayer mockedVideonaPlayerView;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
@@ -85,7 +84,7 @@ public class SplitPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance();
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedContext,
-                mockedSplitView, mockedVideonaPlayerView, userEventTracker, mockedSplitVideoUseCase,
+                mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
                 mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
@@ -133,7 +132,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.advanceForwardEndSplitting(advancePlayerPrecision);
 
-        verify(mockedVideonaPlayerView).seekTo(anyInt());
+        verify(mockedSplitView).seekTo(anyInt());
     }
 
     @Test
@@ -158,7 +157,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.advanceBackwardStartSplitting(advancePlayerPrecision);
 
-        verify(mockedVideonaPlayerView).seekTo(anyInt());
+        verify(mockedSplitView).seekTo(anyInt());
     }
 
     @Test
@@ -183,7 +182,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.onSeekBarChanged(50);
 
-        verify(mockedVideonaPlayerView).seekTo(video.getStartTime() + progress);
+        verify(mockedSplitView).seekTo(video.getStartTime() + progress);
     }
 
     @Test
@@ -193,7 +192,7 @@ public class SplitPreviewPresenterTest {
 
         presenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVideonaPlayerView).attachView(mockedContext);
+        verify(mockedSplitView).attachView(mockedContext);
     }
 
     @Test
@@ -203,17 +202,16 @@ public class SplitPreviewPresenterTest {
 
         presenter.updatePresenter(videoIndexOnTrack);
 
-        verify(mockedVideonaPlayerView).initSingleClip(any(VMComposition.class),
-            eq(videoIndexOnTrack));
+        verify(mockedSplitView).initSingleClip(any(VMComposition.class), eq(videoIndexOnTrack));
     }
 
     @Test
-    public void removePresenterDetachPlayerView() {
+    public void pausePresenterDetachPlayerView() {
         SplitPreviewPresenter presenter = getSplitPreviewPresenter();
 
-        presenter.removePresenter();
+        presenter.pausePresenter();
 
-        verify(mockedVideonaPlayerView).detachView();
+        verify(mockedSplitView).detachView();
     }
 
     @Test
@@ -242,9 +240,8 @@ public class SplitPreviewPresenterTest {
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedContext,
-            mockedSplitView, mockedVideonaPlayerView, mockedUserEventTracker,
-            mockedSplitVideoUseCase, mockedProjectInstanceCache, amIAVerticalApp,
-            mockedBackgroundExecutor);
+            mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
+            mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }

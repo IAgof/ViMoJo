@@ -47,8 +47,6 @@ public class VoiceOverVolumePresenterTest {
 
   @Mock Context mockedContext;
   @Mock VoiceOverVolumeView mockedVoiceOverVolumeView;
-  @Mock
-  VideonaPlayer mockedVideonaPlayerView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock ProjectInstanceCache mockedProjectInstanceCache;
@@ -103,10 +101,9 @@ public class VoiceOverVolumePresenterTest {
 
   private VoiceOverVolumePresenter getVoiceOverVolumePresenter() {
     VoiceOverVolumePresenter voiceOverVolumePresenter = new VoiceOverVolumePresenter(mockedContext,
-        mockedVoiceOverVolumeView, mockedVideonaPlayerView, mockedModifyTrackUseCase,
-        mockedRemoveAudioUseCase, mockedProjectInstanceCache, mockedUpdateComposition,
-        amIAVerticalApp, mockedUpdateTrack, mockedRemoveTrack, mockedBackgroundExecutor,
-        mockedUserEventTracker);
+        mockedVoiceOverVolumeView, mockedModifyTrackUseCase, mockedRemoveAudioUseCase,
+        mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack,
+        mockedRemoveTrack, mockedBackgroundExecutor, mockedUserEventTracker);
     voiceOverVolumePresenter.currentProject = currentProject;
     return voiceOverVolumePresenter;
   }

@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -44,7 +43,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
-    SeekBar.OnSeekBarChangeListener, VideonaPlayer {
+    SeekBar.OnSeekBarChangeListener {
 
     @Inject SplitPreviewPresenter presenter;
 
@@ -101,7 +100,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.removePresenter();
+        presenter.pausePresenter();
     }
 
     @Override
@@ -212,34 +211,8 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void setVideonaPlayerListener(VideonaPlayerListener
-                                                   videonaPlayerListener) {
-        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
-    }
-
-    @Override
-    public void init(VMComposition vmComposition) {
-        videonaPlayer.init(vmComposition);
-    }
-
-    @Override
     public void initSingleClip(VMComposition vmComposition, int clipPosition) {
         videonaPlayer.initSingleClip(vmComposition, clipPosition);
-    }
-
-    @Override
-    public void initSingleVideo(Video video) {
-        videonaPlayer.initSingleVideo(video);
-    }
-
-    @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
-    }
-
-    @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
     }
 
     @Override
@@ -248,39 +221,8 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void seekToClip(int position) {
-        videonaPlayer.seekToClip(position);
-    }
-
-    @Override
-    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
-    }
-
-    @Override
     public void setAspectRatioVerticalVideos(int height) {
         videonaPlayer.setAspectRatioVerticalVideos(height);
-    }
-
-    @Override
-    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                             int height) {
-        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
-    }
-
-    @Override
-    public void setVideoVolume(float volume) {
-        videonaPlayer.setVideoVolume(volume);
-    }
-
-    @Override
-    public void setVoiceOverVolume(float volume) {
-        videonaPlayer.setVoiceOverVolume(volume);
-    }
-
-    @Override
-    public void setMusicVolume(float volume) {
-        videonaPlayer.setMusicVolume(volume);
     }
 
     @Override

@@ -61,8 +61,7 @@ import butterknife.ButterKnife;
 /**
  *
  */
-public abstract class EditorActivity extends VimojoActivity implements EditorActivityView,
-    VideonaPlayer {
+public abstract class EditorActivity extends VimojoActivity implements EditorActivityView {
   private static String LOG_TAG = EditorActivity.class.getCanonicalName();
   private static final String EDITOR_ACTIVITY_HAS_BEEN_PROJECT_EXPORTED =
           "editor_activity_has_been_project_exported";
@@ -148,7 +147,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @Override
   protected void onPause() {
     super.onPause();
-    editorPresenter.removePresenter();
+    editorPresenter.pausePresenter();
   }
 
   @Override
@@ -492,9 +491,17 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     });
   }
 
+
   @Override
-  public void setVideonaPlayerListener(VideonaPlayerListener
-                                                 videonaPlayerListener) {
+  public void setAspectRatioVerticalVideos(int height) {
+    runOnUiThread(() -> {
+      videonaPlayer.setAspectRatioVerticalVideos(height);
+    });
+  }
+
+  @Override
+  public void setVideonaPlayerListener(VideonaPlayer.VideonaPlayerListener
+                                           videonaPlayerListener) {
     runOnUiThread(() -> {
       videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
     });
@@ -504,13 +511,6 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   public void init(VMComposition vmComposition) {
     runOnUiThread(() -> {
       videonaPlayer.init(vmComposition);
-    });
-  }
-
-  @Override
-  public void initSingleClip(VMComposition vmComposition, int clipPosition) {
-    runOnUiThread(() -> {
-      videonaPlayer.initSingleClip(vmComposition, clipPosition);
     });
   }
 
@@ -536,38 +536,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   }
 
   @Override
-  public void seekTo(int timeInMsec) {
-    runOnUiThread(() -> {
-      videonaPlayer.seekTo(timeInMsec);
-    });
-  }
-
-  @Override
   public void seekToClip(int clipPosition) {
     runOnUiThread(() -> {
       videonaPlayer.seekToClip(clipPosition);
-    });
-  }
-
-  @Override
-  public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-    runOnUiThread(() -> {
-      videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
-    });
-  }
-
-  @Override
-  public void setAspectRatioVerticalVideos(int height) {
-    runOnUiThread(() -> {
-      videonaPlayer.setAspectRatioVerticalVideos(height);
-    });
-  }
-
-  @Override
-  public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                           int height) {
-    runOnUiThread(() -> {
-      videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
     });
   }
 
@@ -591,6 +562,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       videonaPlayer.setMusicVolume(volume);
     });
   }
+
 
   public ListenableFuture<?> updatePlayerVideos() {
     return editorPresenter.obtainVideoFromProject();

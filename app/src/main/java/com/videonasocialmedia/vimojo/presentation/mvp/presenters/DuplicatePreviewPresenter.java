@@ -43,7 +43,6 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
     private final String LOG_TAG = getClass().getSimpleName();
     private Context context;
     private DuplicateView duplicateView;
-    private VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private final ProjectInstanceCache projectInstanceCache;
@@ -59,7 +58,6 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
     @Inject
     public DuplicatePreviewPresenter(
         Context context, DuplicateView duplicateView,
-        VideonaPlayer videonaPlayerView,
         UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
@@ -67,7 +65,6 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.duplicateView = duplicateView;
-        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
         this.addVideoToProjectUseCase = addVideoToProjectUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -79,15 +76,15 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
         this.videoIndexOnTrack = videoIndexOnTrack;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        videonaPlayerView.attachView(context);
+        duplicateView.attachView(context);
         loadProjectVideo();
         if (amIAVerticalApp) {
-            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            duplicateView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        duplicateView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -101,7 +98,7 @@ public class DuplicatePreviewPresenter extends VimojoPresenter implements Elemen
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        duplicateView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         duplicateView.initDuplicateView(videoCopy);
     }
 

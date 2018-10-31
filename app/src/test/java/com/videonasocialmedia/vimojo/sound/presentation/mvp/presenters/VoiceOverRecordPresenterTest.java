@@ -59,8 +59,6 @@ public class VoiceOverRecordPresenterTest {
 
   @Mock Context mockedContext;
   @Mock VoiceOverRecordView mockedVoiceOverRecordView;
-  @Mock
-  VideonaPlayer mockedVideonaPlayerView;
   @Mock AddAudioUseCase mockedAddAudioUseCase;
   @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
   @Mock UserEventTracker mockedUserEventTracker;
@@ -202,8 +200,8 @@ public class VoiceOverRecordPresenterTest {
 
   private VoiceOverRecordPresenter getVoiceOverRecorderPresenter(){
     VoiceOverRecordPresenter voiceOverRecordPresenter = new VoiceOverRecordPresenter(
-            mockedContext, mockedVoiceOverRecordView, mockedVideonaPlayerView,
-            mockedAddAudioUseCase, mockedRemoveAudioUseCase, mockedUserEventTracker,
+            mockedContext, mockedVoiceOverRecordView, mockedAddAudioUseCase,
+            mockedRemoveAudioUseCase, mockedUserEventTracker,
             mockedProjectInstanceCache, mockedUpdateComposition, amIAVerticalApp, mockedUpdateTrack,
             mockedRemoveTrack, mockedBackgroundExecutor);
     voiceOverRecordPresenter.currentProject = currentProject;

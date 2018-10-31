@@ -9,7 +9,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -30,7 +29,7 @@ import butterknife.OnClick;
  * Created by ruth on 19/09/16.
  */
 public class VoiceOverVolumeActivity extends VimojoActivity implements
-    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView, VideonaPlayer {
+    SeekBar.OnSeekBarChangeListener, VoiceOverVolumeView {
     private static final String SOUND_VOLUME_POSITION_VOLUME = "sound_volume_position";
     private static final String VOICE_OVER_RECORDED_PATH = "voice_over_recorded_path";
     private static final String TAG = "VoiceOverVolumeActivity";
@@ -67,11 +66,6 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         presenter.updatePresenter();
@@ -80,7 +74,7 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.removePresenter();
+        presenter.pausePresenter();
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -147,9 +141,7 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        textSeekBarVolume.setText(progress+" % ");
-        videonaPlayer.setVoiceOverVolume(progress *0.01f);
-        videonaPlayer.setVideoVolume((1-(progress*0.01f)));
+        presenter.setVolumeProgress(progress);
         currentSoundVolumePosition = progress;
     }
 
@@ -175,6 +167,11 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
+    public void updateTagVolume(String percentageVolume) {
+        textSeekBarVolume.setText(percentageVolume);
+    }
+
+    @Override
     public void attachView(Context context) {
         videonaPlayer.attachView(context);
     }
@@ -185,65 +182,8 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
-    public void setVideonaPlayerListener(VideonaPlayerListener
-                                                   videonaPlayerListener) {
-        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
-    }
-
-    @Override
     public void init(VMComposition vmComposition) {
         videonaPlayer.init(vmComposition);
-    }
-
-    @Override
-    public void initSingleClip(VMComposition vmComposition, int clipPosition) {
-        videonaPlayer.initSingleClip(vmComposition, clipPosition);
-    }
-
-    @Override
-    public void initSingleVideo(Video video) {
-        videonaPlayer.initSingleVideo(video);
-    }
-
-    @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
-    }
-
-    @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
-    }
-
-    @Override
-    public void seekTo(int timeInMsec) {
-        videonaPlayer.seekTo(timeInMsec);
-    }
-
-    @Override
-    public void seekToClip(int position) {
-        videonaPlayer.seekToClip(position);
-    }
-
-    @Override
-    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
-    }
-
-    @Override
-    public void setAspectRatioVerticalVideos(int height) {
-        videonaPlayer.setAspectRatioVerticalVideos(height);
-    }
-
-    @Override
-    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                             int height) {
-        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
-    }
-
-    @Override
-    public void setVideoVolume(float volume) {
-        videonaPlayer.setVideoVolume(volume);
     }
 
     @Override
@@ -252,7 +192,7 @@ public class VoiceOverVolumeActivity extends VimojoActivity implements
     }
 
     @Override
-    public void setMusicVolume(float volume) {
-        videonaPlayer.setMusicVolume(volume);
+    public void setAspectRatioVerticalVideos(int height) {
+        videonaPlayer.setAspectRatioVerticalVideos(height);
     }
 }

@@ -39,7 +39,7 @@ import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
  * Created by ruth on 1/09/16.
  */
 public class VideoEditTextActivity extends VimojoActivity implements EditTextView,
-    VideonaPlayer, VideonaPlayer.VideonaPlayerListener {
+    VideonaPlayer.VideonaPlayerListener {
     private static String LOG_TAG = VideoEditTextActivity.class.getName();
 
     @Inject EditTextPreviewPresenter presenter;
@@ -72,7 +72,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
         button_editText_center.setSelected(true);
         button_ediText_bottom.setSelected(false);
         presenter.setupActivityViews();
-        setVideonaPlayerListener(this);
     }
 
     @Override
@@ -84,7 +83,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.removePresenter();
+        presenter.pausePresenter();
     }
 
     @Override
@@ -262,44 +261,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    public void setVideonaPlayerListener(VideonaPlayerListener
-                                                   videonaPlayerListener) {
-        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
-    }
-
-    @Override
-    public void init(VMComposition vmComposition) {
-        videonaPlayer.init(vmComposition);
+    public void setVideonaPlayerListener() {
+        videonaPlayer.setVideonaPlayerListener(this);
     }
 
     @Override
     public void initSingleClip(VMComposition vmComposition, int clipPosition) {
         videonaPlayer.initSingleClip(vmComposition, clipPosition);
-    }
-
-    @Override
-    public void initSingleVideo(Video video) {
-        videonaPlayer.initSingleVideo(video);
-    }
-
-    @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
-    }
-
-    @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
-    }
-
-    @Override
-    public void seekTo(int timeInMsec) {
-        videonaPlayer.seekTo(timeInMsec);
-    }
-
-    @Override
-    public void seekToClip(int position) {
-        videonaPlayer.seekToClip(position);
     }
 
     @Override
@@ -316,21 +284,6 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
                              int height) {
         videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
-    }
-
-    @Override
-    public void setVideoVolume(float volume) {
-        videonaPlayer.setVideoVolume(volume);
-    }
-
-    @Override
-    public void setVoiceOverVolume(float volume) {
-        videonaPlayer.setVoiceOverVolume(volume);
-    }
-
-    @Override
-    public void setMusicVolume(float volume) {
-        videonaPlayer.setMusicVolume(volume);
     }
 
     @Override

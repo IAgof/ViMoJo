@@ -57,7 +57,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class MusicDetailPresenterTest {
     @Mock private Context mockedContext;
     @Mock private MusicDetailView mockedMusicDetailView;
-    @Mock private VideonaPlayer mockedVideonaPlayer;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private AddAudioUseCase mockedAddAudioUseCase;
     @Mock private RemoveAudioUseCase mockedRemoveAudioUseCase;
@@ -265,7 +264,7 @@ public class MusicDetailPresenterTest {
     @NonNull
     private MusicDetailPresenter getMusicDetailPresenter(UserEventTracker userEventTracker) {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(
-            mockedContext, mockedMusicDetailView, mockedVideonaPlayer, userEventTracker,
+            mockedContext, mockedMusicDetailView, userEventTracker,
             mockedAddAudioUseCase, mockedRemoveAudioUseCase,
             mockedModifyTrackUseCase, mockedGetMusicListUseCase, mockedProjectInstanceCache,
             mockedUpdateComposition, amIAVerticalApp, mockedRemoveMedia, mockedUpdateTrack,
@@ -276,7 +275,7 @@ public class MusicDetailPresenterTest {
 
     private MusicDetailPresenter getMusicDetailPresenter() {
         MusicDetailPresenter musicDetailPresenter = new MusicDetailPresenter(
-            mockedContext, mockedMusicDetailView, mockedVideonaPlayer, mockedUserEventTracker,
+            mockedContext, mockedMusicDetailView, mockedUserEventTracker,
             mockedAddAudioUseCase, mockedRemoveAudioUseCase,
             mockedModifyTrackUseCase, mockedGetMusicListUseCase, mockedProjectInstanceCache,
             mockedUpdateComposition, amIAVerticalApp, mockedRemoveMedia, mockedUpdateTrack,

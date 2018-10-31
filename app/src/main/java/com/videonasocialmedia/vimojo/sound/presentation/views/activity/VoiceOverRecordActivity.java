@@ -38,7 +38,7 @@ import butterknife.OnClick;
  * Created by ruth on 14/09/16.
  */
 public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOverRecordView,
-    VideonaPlayer, View.OnTouchListener {
+    View.OnTouchListener {
     private static final String VOICE_OVER_POSITION = "voice_over_position";
     private static final String TAG = "VoiceOverRecordActivity";
     private static final String STATE_BUTTON_RECORD = "state_button_record";
@@ -95,10 +95,7 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @Override
     protected void onPause() {
         super.onPause();
-        if(presenter.isRecording()){
-            presenter.pauseRecording();
-        }
-        presenter.removePresenter();
+        presenter.pausePresenter();
     }
 
     private void createProgressDialog() {
@@ -328,24 +325,13 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     }
 
     @Override
-    public void setVideonaPlayerListener(VideonaPlayerListener
-                                                   videonaPlayerListener) {
-        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
+    public void setAspectRatioVerticalVideos(int height) {
+        videonaPlayer.setAspectRatioVerticalVideos(height);
     }
 
     @Override
     public void init(VMComposition vmComposition) {
         videonaPlayer.init(vmComposition);
-    }
-
-    @Override
-    public void initSingleClip(VMComposition vmComposition, int clipPosition) {
-        videonaPlayer.initSingleClip(vmComposition, clipPosition);
-    }
-
-    @Override
-    public void initSingleVideo(Video video) {
-        videonaPlayer.initSingleVideo(video);
     }
 
     @Override
@@ -356,32 +342,6 @@ public class VoiceOverRecordActivity extends VimojoActivity implements VoiceOver
     @Override
     public void pausePreview() {
         videonaPlayer.pausePreview();
-    }
-
-    @Override
-    public void seekTo(int timeInMsec) {
-        videonaPlayer.seekTo(timeInMsec);
-    }
-
-    @Override
-    public void seekToClip(int position) {
-        videonaPlayer.seekToClip(position);
-    }
-
-    @Override
-    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
-    }
-
-    @Override
-    public void setAspectRatioVerticalVideos(int height) {
-        videonaPlayer.setAspectRatioVerticalVideos(height);
-    }
-
-    @Override
-    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                             int height) {
-        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
     }
 
     @Override

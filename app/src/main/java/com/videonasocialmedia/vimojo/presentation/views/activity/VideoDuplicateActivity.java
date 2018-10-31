@@ -29,7 +29,6 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
@@ -47,8 +46,7 @@ import butterknife.OnClick;
 
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView,
-    VideonaPlayer {
+public class VideoDuplicateActivity extends VimojoActivity implements DuplicateView {
     private static final String NUM_DUPLICATE_VIDEOS = "num_duplicate_videos";
     private static final String TAG = "VideoDuplicateActivity";
 
@@ -106,7 +104,7 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.removePresenter();
+        presenter.pausePresenter();
     }
 
     private void setupActivityButtons() {
@@ -216,75 +214,13 @@ public class VideoDuplicateActivity extends VimojoActivity implements DuplicateV
     }
 
     @Override
-    public void setVideonaPlayerListener(VideonaPlayerListener
-                                                   videonaPlayerListener) {
-        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
-    }
-
-    @Override
-    public void init(VMComposition vmComposition) {
-        videonaPlayer.init(vmComposition);
-    }
-
-    @Override
     public void initSingleClip(VMComposition vmComposition, int clipPosition) {
         videonaPlayer.initSingleClip(vmComposition, clipPosition);
     }
 
     @Override
-    public void initSingleVideo(Video video) {
-        videonaPlayer.initSingleVideo(video);
-    }
-
-    @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
-    }
-
-    @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
-    }
-
-    @Override
-    public void seekTo(int timeInMsec) {
-        videonaPlayer.seekTo(timeInMsec);
-    }
-
-    @Override
-    public void seekToClip(int position) {
-        videonaPlayer.seekToClip(position);
-    }
-
-    @Override
-    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
-    }
-
-    @Override
     public void setAspectRatioVerticalVideos(int height) {
         videonaPlayer.setAspectRatioVerticalVideos(height);
-    }
-
-    @Override
-    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                             int height) {
-        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
-    }
-
-    @Override
-    public void setVideoVolume(float volume) {
-        videonaPlayer.setVideoVolume(volume);
-    }
-
-    @Override
-    public void setVoiceOverVolume(float volume) {
-        videonaPlayer.setVoiceOverVolume(volume);
-    }
-
-    @Override
-    public void setMusicVolume(float volume) {
-        videonaPlayer.setMusicVolume(volume);
     }
 
     private void showThumbVideo(ImageView imageThumbLeft, Video video) {

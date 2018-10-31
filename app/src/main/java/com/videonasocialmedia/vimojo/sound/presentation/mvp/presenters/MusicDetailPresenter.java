@@ -52,7 +52,6 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
     private final ProjectInstanceCache projectInstanceCache;
     private Context context;
     private MusicDetailView musicDetailView;
-    private final VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private Music musicSelected;
@@ -69,17 +68,15 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
     @Inject
     public MusicDetailPresenter(
         Context context, MusicDetailView musicDetailView,
-        VideonaPlayer videonaPlayerView, UserEventTracker userEventTracker,
-        AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
-        ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
-        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        UserEventTracker userEventTracker, AddAudioUseCase addAudioUseCase,
+        RemoveAudioUseCase removeAudioUseCase, ModifyTrackUseCase modifyTrackUseCase,
+        GetMusicListUseCase getMusicListUseCase, ProjectInstanceCache projectInstanceCache,
+        UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
         RemoveMedia removeMedia, UpdateTrack updateTrack, RemoveTrack removeTrack,
         BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.musicDetailView = musicDetailView;
-        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
         this.addAudioUseCase = addAudioUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
@@ -96,13 +93,13 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
     public void updatePresenter(String musicPath) {
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        videonaPlayerView.attachView(context);
+        musicDetailView.attachView(context);
         musicSelected = retrieveLocalMusic(musicPath);
         musicSelected.setVolume(currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getVolume());
         loadMusic();
         if (amIVerticalApp) {
-            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            musicDetailView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
@@ -129,7 +126,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
             musicDetailView.showError(context.getString(R.string.error));
         }
-        videonaPlayerView.init(vmCompositionCopy);
+        musicDetailView.init(vmCompositionCopy);
     }
 
     private void loadPlayerFromProjectAndMusicSelected(Music musicSelected) {
@@ -151,11 +148,11 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
                 + illegalItemOnTrack);
             musicDetailView.showError(context.getString(R.string.error));
         }
-        videonaPlayerView.init(vmCompositionCopy);
+        musicDetailView.init(vmCompositionCopy);
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        musicDetailView.detachView();
     }
 
     public void removeMusic(final Music music) {

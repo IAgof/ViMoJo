@@ -46,7 +46,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
-public class VideoTrimActivity extends VimojoActivity implements TrimView, VideonaPlayer,
+public class VideoTrimActivity extends VimojoActivity implements TrimView,
     RangeSeekBar.OnRangeSeekBarChangeListener, VideonaPlayer.VideonaPlayerListener,
     RadioGroup.OnCheckedChangeListener {
 
@@ -95,7 +95,6 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, Video
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
         setupActivityViews();
-        setVideonaPlayerListener(this);
     }
 
     @Override
@@ -112,7 +111,7 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, Video
     @Override
     protected void onPause() {
         super.onPause();
-        presenter.removePresenter();
+        presenter.pausePresenter();
     }
 
     private void setupActivityViews() {
@@ -347,29 +346,8 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, Video
     }
 
     @Override
-    public void setVideonaPlayerListener(VideonaPlayerListener
-                                                   videonaPlayerListener) {
-        videonaPlayer.setVideonaPlayerListener(videonaPlayerListener);
-    }
-
-    @Override
-    public void init(VMComposition vmComposition) {
-        videonaPlayer.init(vmComposition);
-    }
-
-    @Override
     public void initSingleClip(VMComposition vmComposition, int clipPosition) {
         videonaPlayer.initSingleClip(vmComposition, clipPosition);
-    }
-
-    @Override
-    public void initSingleVideo(Video video) {
-        videonaPlayer.initSingleVideo(video);
-    }
-
-    @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
     }
 
     @Override
@@ -383,38 +361,12 @@ public class VideoTrimActivity extends VimojoActivity implements TrimView, Video
     }
 
     @Override
-    public void seekToClip(int position) {
-        videonaPlayer.seekToClip(position);
-    }
-
-    @Override
-    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
+    public void setVideonaPlayerListener() {
+        videonaPlayer.setVideonaPlayerListener(this);
     }
 
     @Override
     public void setAspectRatioVerticalVideos(int height) {
         videonaPlayer.setAspectRatioVerticalVideos(height);
-    }
-
-    @Override
-    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                             int height) {
-        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
-    }
-
-    @Override
-    public void setVideoVolume(float volume) {
-        videonaPlayer.setVideoVolume(volume);
-    }
-
-    @Override
-    public void setVoiceOverVolume(float volume) {
-        videonaPlayer.setVoiceOverVolume(volume);
-    }
-
-    @Override
-    public void setMusicVolume(float volume) {
-        videonaPlayer.setMusicVolume(volume);
     }
 }

@@ -37,7 +37,6 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
     private Context context;
     private EditTextView editTextView;
-    private VideonaPlayer videonaPlayerView;
     private final ProjectInstanceCache projectInstanceCache;
     private Video videoToEdit;
     private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
@@ -55,16 +54,14 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
 
     @Inject
     public EditTextPreviewPresenter(
-        Context context, EditTextView editTextView, VideonaPlayer videonaPlayerView,
-        UserEventTracker userEventTracker, ModifyVideoTextAndPositionUseCase
-        modifyVideoTextAndPositionUseCase, ProjectInstanceCache projectInstanceCache,
-        UpdateMedia updateMedia, UpdateComposition updateComposition,
+        Context context, EditTextView editTextView, UserEventTracker userEventTracker,
+        ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase, ProjectInstanceCache
+        projectInstanceCache, UpdateMedia updateMedia, UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp,
         BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.editTextView = editTextView;
-        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -82,17 +79,18 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         this.videoIndexOnTrack = videoToEditTextIndex;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        videonaPlayerView.attachView(context);
-        videonaPlayerView.setSeekBarLayoutEnabled(false);
+        editTextView.attachView(context);
+        editTextView.setVideonaPlayerListener();
+        editTextView.setSeekBarLayoutEnabled(false);
         loadProjectVideo();
         if (amIAVerticalApp) {
-            videonaPlayerView
+            editTextView
                 .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        editTextView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -106,7 +104,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        editTextView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         if (videoCopy.hasText()) {
             positionSelected = videoCopy.getClipTextPosition();
             editTextView.setPositionEditText(positionSelected);
@@ -161,7 +159,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     public void setCheckboxShadow(boolean isShadowChecked) {
         this.textHasShadow = isShadowChecked;
         if (isPlayerReady) {
-            videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+            editTextView.setImageText(textSelected, positionSelected, textHasShadow,
                 Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
         }
     }
@@ -170,7 +168,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.TOP.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
@@ -178,7 +176,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.CENTER.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
@@ -186,13 +184,13 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.BOTTOM.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
     public void onTextChanged(String text) {
         textSelected = text;
-        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 
@@ -202,7 +200,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
 
     public void playerReady() {
         isPlayerReady = true;
-        videonaPlayerView.setImageText(textSelected, positionSelected, textHasShadow,
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
             Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 }

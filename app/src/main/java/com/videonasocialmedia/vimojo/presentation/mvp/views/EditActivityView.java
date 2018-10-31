@@ -15,32 +15,18 @@ import java.util.List;
  * @author Juan Javier Cabanas Abascal
  */
 public interface EditActivityView {
-
   void showError(int causeTextResource);
-
   void showMessage(int stringToast);
-
   void updateVideoList(List<Video> movieList);
-
   void enableEditActions();
-
   void disableEditActions();
-
   void enableBottomBar();
-
   void disableBottomBar();
-
   void changeAlphaBottomBar(float alpha);
-
   void showDialogMediasNotFound();
-
   void enableFabText(boolean isEnable);
-
   void goToRecordOrGallery();
-
   void updatePlayerVideoListChanged();
-
   void seekToClip(int toPosition);
-
   void disableEditTextAction();
 }

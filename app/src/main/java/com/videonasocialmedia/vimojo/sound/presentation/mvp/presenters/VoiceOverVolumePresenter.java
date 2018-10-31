@@ -39,7 +39,6 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
     private final ProjectInstanceCache projectInstanceCache;
     private Context context;
     private VoiceOverVolumeView voiceOverVolumeView;
-    private final VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private ModifyTrackUseCase modifyTrackUseCase;
@@ -51,16 +50,15 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
 
     @Inject
     public VoiceOverVolumePresenter(
-        Context context, VoiceOverVolumeView voiceOverVolumeView, VideonaPlayer
-        videonaPlayerView, ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase
-        removeAudioUseCase, ProjectInstanceCache projectInstanceCache, UpdateComposition
-        updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        Context context, VoiceOverVolumeView voiceOverVolumeView,
+        ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
+        ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
         UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor,
         UserEventTracker userEventTracker) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.voiceOverVolumeView = voiceOverVolumeView;
-        this.videonaPlayerView = videonaPlayerView;
         this.modifyTrackUseCase = modifyTrackUseCase;
         this.removeAudioUseCase = removeAudioUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -72,15 +70,15 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
 
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
-        videonaPlayerView.attachView(context);
+        voiceOverVolumeView.attachView(context);
         loadPlayerFromProject();
         if (amIAVerticalApp) {
-            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            voiceOverVolumeView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        voiceOverVolumeView.detachView();
     }
 
     private void loadPlayerFromProject() {
@@ -91,7 +89,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
             illegalItemOnTrack.printStackTrace();
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
-        videonaPlayerView.init(vmCompositionCopy);
+        voiceOverVolumeView.init(vmCompositionCopy);
     }
 
     public void setVoiceOverVolume(float volume) {
@@ -128,5 +126,10 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
                         }
                     });
         });
+    }
+
+    public void setVolumeProgress(int progress) {
+        voiceOverVolumeView.setVoiceOverVolume(progress *0.01f);
+        voiceOverVolumeView.updateTagVolume(progress+" % ");
     }
 }

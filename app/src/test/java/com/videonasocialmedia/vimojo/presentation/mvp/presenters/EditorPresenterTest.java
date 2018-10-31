@@ -67,8 +67,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class EditorPresenterTest {
 
   @Mock EditorActivityView mockedEditorActivityView;
-  @Mock
-  VideonaPlayer mockedVideonaPlayerView;
   @Mock SharedPreferences mockedSharedPreferences;
   @Mock Activity mockedContext;
   @Mock UserEventTracker mockedUserEventTracker;
@@ -111,9 +109,8 @@ public class EditorPresenterTest {
   public void constructorSetsUserTracker() {
     UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditorPresenter editorPresenter = new EditorPresenter(mockedContext, mockedEditorActivityView,
-        mockedVideonaPlayerView, mockedSharedPreferences, userEventTracker,
-        mockedCreateDefaultProjectUseCase, mockedRemoveVideoFromProjectUseCase,
-        mockedRelaunchTranscoderTempBackgroundUseCase,
+        mockedSharedPreferences, userEventTracker, mockedCreateDefaultProjectUseCase,
+        mockedRemoveVideoFromProjectUseCase, mockedRelaunchTranscoderTempBackgroundUseCase,
         mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
         mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
         mockedUpdateComposition, showWatermarkSwitch, vimojoStoreAvailable,
@@ -213,9 +210,8 @@ public class EditorPresenterTest {
 
   private EditorPresenter getEditorPresenter() {
     EditorPresenter editorPresenter = new EditorPresenter(mockedContext, mockedEditorActivityView,
-        mockedVideonaPlayerView, mockedSharedPreferences, mockedUserEventTracker,
-        mockedCreateDefaultProjectUseCase, mockedRemoveVideoFromProjectUseCase,
-        mockedRelaunchTranscoderTempBackgroundUseCase,
+        mockedSharedPreferences, mockedUserEventTracker, mockedCreateDefaultProjectUseCase,
+        mockedRemoveVideoFromProjectUseCase, mockedRelaunchTranscoderTempBackgroundUseCase,
         mockedNewClipImporter, mockedBillingManager, mockedProjectInstanceCache,
         mockedSaveComposition, mockedRemoveMedia, mockedUpdateCompositionWatermark,
         mockedUpdateComposition, showWatermarkSwitch, vimojoStoreAvailable,

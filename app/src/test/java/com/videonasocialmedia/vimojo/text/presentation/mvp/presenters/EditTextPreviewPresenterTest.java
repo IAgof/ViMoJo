@@ -57,7 +57,6 @@ public class EditTextPreviewPresenterTest {
   @Mock private ProjectInstanceCache mockedProjectInstanceCache;
   @Mock private Context mockedContext;
   @Mock private EditTextView mockedEditTextView;
-  @Mock private VideonaPlayer mockedVideonaPlayerView;
   @Mock private UserEventTracker mockedUserEvenTracker;
   @Mock private ModifyVideoTextAndPositionUseCase mockedModifyVideoTextAndPositionUseCase;
   @Mock private UpdateMedia mockedUpdateMedia;
@@ -77,9 +76,9 @@ public class EditTextPreviewPresenterTest {
   public void constructorSetsUserTracker() {
     UserEventTracker userEventTracker = UserEventTracker.getInstance();
     EditTextPreviewPresenter editTextPreviewPresenter = new EditTextPreviewPresenter(mockedContext,
-        mockedEditTextView, mockedVideonaPlayerView, userEventTracker,
-        mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, mockedUpdateMedia,
-        mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
+        mockedEditTextView, userEventTracker, mockedModifyVideoTextAndPositionUseCase,
+        mockedProjectInstanceCache, mockedUpdateMedia, mockedUpdateComposition, amIAVerticalApp,
+        mockedBackgroundExecutor);
 
     assertThat(editTextPreviewPresenter.userEventTracker, is(userEventTracker));
   }
@@ -101,7 +100,7 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVideonaPlayerView).attachView(mockedContext);
+    verify(mockedEditTextView).attachView(mockedContext);
   }
 
   @Test
@@ -112,7 +111,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVideonaPlayerView)
+    verify(mockedEditTextView)
         .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
   }
 
@@ -123,17 +122,16 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVideonaPlayerView).initSingleClip(any(VMComposition.class),
-        eq(videoIndexOnTrack));
+    verify(mockedEditTextView).initSingleClip(any(VMComposition.class), eq(videoIndexOnTrack));
   }
 
   @Test
-  public void removePresenterDetachPlayerView() {
+  public void pausePresenterDetachPlayerView() {
     EditTextPreviewPresenter editTextPreviewPresenter = getEditTextPreviewPresenter();
 
-    editTextPreviewPresenter.removePresenter();
+    editTextPreviewPresenter.pausePresenter();
 
-    verify(mockedVideonaPlayerView).detachView();
+    verify(mockedEditTextView).detachView();
   }
 
   @Test
@@ -143,7 +141,7 @@ public class EditTextPreviewPresenterTest {
 
     editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
 
-    verify(mockedVideonaPlayerView).setSeekBarLayoutEnabled(false);
+    verify(mockedEditTextView).setSeekBarLayoutEnabled(false);
   }
 
   @Test
@@ -189,7 +187,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.setCheckboxShadow(isShadowSelected);
 
-    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -207,7 +205,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -225,7 +223,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView, atLeast(2)).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -243,7 +241,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -259,7 +257,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.onTextChanged(text);
 
-    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
   }
 
@@ -286,7 +284,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.playerReady();
 
-    verify(mockedVideonaPlayerView).setImageText(text, textPosition, isShadowSelected,
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
         Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
 
   }
@@ -294,10 +292,8 @@ public class EditTextPreviewPresenterTest {
   @NonNull
   private EditTextPreviewPresenter getEditTextPreviewPresenter(){
     return new EditTextPreviewPresenter(mockedContext, mockedEditTextView,
-        mockedVideonaPlayerView, mockedUserEvenTracker,
-        mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache, mockedUpdateMedia,
-        mockedUpdateComposition, amIAVerticalApp,
-        mockedBackgroundExecutor);
+        mockedUserEvenTracker, mockedModifyVideoTextAndPositionUseCase, mockedProjectInstanceCache,
+        mockedUpdateMedia, mockedUpdateComposition, amIAVerticalApp, mockedBackgroundExecutor);
   }
   private void setAProjectWithSomeVideoWithText() throws IllegalItemOnTrack {
     Profile compositionProfile = new Profile(VideoResolution.Resolution.HD720,

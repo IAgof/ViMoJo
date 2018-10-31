@@ -43,7 +43,6 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     private Video videoToEdit;
 
     private SplitView splitView;
-    private VideonaPlayer videonaPlayerView;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private int maxSeekBarSplit;
@@ -54,7 +53,6 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
 
     @Inject
     public SplitPreviewPresenter(Context context, SplitView splitView,
-                                 VideonaPlayer videonaPlayerView,
                                  UserEventTracker userEventTracker,
                                  SplitVideoUseCase splitVideoUseCase,
                                  ProjectInstanceCache projectInstanceCache,
@@ -63,7 +61,6 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.splitView = splitView;
-        this.videonaPlayerView = videonaPlayerView;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -74,15 +71,15 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         this.videoIndexOnTrack = videoIndexOnTrack;
         currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        videonaPlayerView.attachView(context);
+        splitView.attachView(context);
         loadProjectVideo();
         if (amIAVerticalApp) {
-            videonaPlayerView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+            splitView.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        splitView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -96,7 +93,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        splitView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         maxSeekBarSplit =  videoCopy.getStopTime() - videoCopy.getStartTime();
         splitView.initSplitView(maxSeekBarSplit);
     }
@@ -120,14 +117,14 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         }
         splitView.updateSplitSeekbar(currentSplitPosition);
         splitView.refreshTimeTag(currentSplitPosition);
-        videonaPlayerView.seekTo(videoToEdit.getStartTime() + currentSplitPosition);
+        splitView.seekTo(currentSplitPosition);
     }
 
     public void advanceForwardEndSplitting(int advancePlayerPrecision) {
         currentSplitPosition = currentSplitPosition + advancePlayerPrecision;
         splitView.updateSplitSeekbar(Math.min(maxSeekBarSplit, currentSplitPosition));
         splitView.refreshTimeTag(currentSplitPosition);
-        videonaPlayerView.seekTo(videoToEdit.getStartTime() + currentSplitPosition);
+        splitView.seekTo(currentSplitPosition);
     }
 
     @Override
@@ -137,7 +134,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
 
     public void onSeekBarChanged(int progress) {
         currentSplitPosition = progress;
-        videonaPlayerView.seekTo(videoToEdit.getStartTime() + progress);
+        splitView.seekTo(progress);
         splitView.refreshTimeTag(progress);
     }
 

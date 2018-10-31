@@ -64,7 +64,6 @@ public class EditorPresenter extends VimojoPresenter
   private final String THEME_LIGHT = "light";
   private final BillingManager billingManager;
   private EditorActivityView editorActivityView;
-  private final VideonaPlayer videonaPlayerView;
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor preferencesEditor;
   protected UserEventTracker userEventTracker;
@@ -88,9 +87,8 @@ public class EditorPresenter extends VimojoPresenter
 
   @Inject
   public EditorPresenter(
-      Context context, EditorActivityView editorActivityView, VideonaPlayer
-      videonaPlayerView, SharedPreferences sharedPreferences, UserEventTracker
-          userEventTracker, CreateDefaultProjectUseCase createDefaultProjectUseCase,
+      Context context, EditorActivityView editorActivityView, SharedPreferences sharedPreferences,
+      UserEventTracker userEventTracker, CreateDefaultProjectUseCase createDefaultProjectUseCase,
       RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       NewClipImporter newClipImporter, BillingManager billingManager,
@@ -106,7 +104,6 @@ public class EditorPresenter extends VimojoPresenter
       BackgroundExecutor backgroundExecutor) {
     super(backgroundExecutor, userEventTracker);
     this.editorActivityView = editorActivityView;
-    this.videonaPlayerView = videonaPlayerView;
     this.sharedPreferences = sharedPreferences;
     this.context = context;
     this.userEventTracker = userEventTracker;
@@ -139,7 +136,7 @@ public class EditorPresenter extends VimojoPresenter
       setupTutorial();
       updateDrawerHeaderWithCurrentProject();
       setupWatermarkDrawerSwitch();
-      videonaPlayerView.attachView(context);
+      editorActivityView.attachView(context);
       setupPlayer(hasBeenProjectExported, videoPath);
     });
   }
@@ -151,7 +148,7 @@ public class EditorPresenter extends VimojoPresenter
       initPreviewFromVideoExported(videoPath);
     }
     if (amIAVerticalApp) {
-      videonaPlayerView
+      editorActivityView
           .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
     }
   }
@@ -159,9 +156,9 @@ public class EditorPresenter extends VimojoPresenter
   protected void initPreviewFromVideoExported(String videoPath) {
     Video videoExported = new Video(videoPath, Video.DEFAULT_VOLUME);
     // Reset, detach, attach view.
-    videonaPlayerView.detachView();
-    videonaPlayerView.attachView(context);
-    videonaPlayerView.initSingleVideo(videoExported);
+    editorActivityView.detachView();
+    editorActivityView.attachView(context);
+    editorActivityView.initSingleVideo(videoExported);
   }
 
   protected void initPreviewFromProject() {
@@ -172,7 +169,7 @@ public class EditorPresenter extends VimojoPresenter
       illegalItemOnTrack.printStackTrace();
       Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
     }
-    videonaPlayerView.init(vmCompositionCopy);
+    editorActivityView.init(vmCompositionCopy);
     List<Video> videoList;
     videoList = (List<Video>) vmCompositionCopy.getMediaTrack().getItems().listIterator();
     checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videoList);
@@ -181,11 +178,11 @@ public class EditorPresenter extends VimojoPresenter
     newClipImporter.relaunchUnfinishedAdaptTasks(currentProject);
   }
 
-  public void removePresenter() {
+  public void pausePresenter() {
     if (vimojoStoreAvailable) {
       billingManager.destroy();
     }
-    videonaPlayerView.detachView();
+    editorActivityView.detachView();
   }
 
   private void setupVimojoPlatformLink() {

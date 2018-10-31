@@ -56,7 +56,6 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     // and we don't want to create a memory leak
     //private WeakReference<TrimView> trimView;
     private TrimView trimView;
-    private VideonaPlayer videonaPlayerView;
     private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
@@ -66,20 +65,18 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     protected int startTimeMs;
     protected int finishTimeMs;
     protected final int MIN_TRIM_OFFSET_MS = 350;
-    private int videoDuration;
+    private int videoFileDuration;
 
     @Inject
     public TrimPreviewPresenter(
-        Context context, TrimView trimView, VideonaPlayer videonaPlayerView,
-        SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
-        ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+        Context context, TrimView trimView, SharedPreferences sharedPreferences,
+        UserEventTracker userEventTracker, ModifyVideoDurationUseCase modifyVideoDurationUseCase,
         ProjectInstanceCache projectInstanceCache, UpdateMedia updateMedia,
         UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
         BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.trimView = trimView;
-        this.videonaPlayerView = videonaPlayerView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
@@ -93,16 +90,17 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         this.videoIndexOnTrack = videoIndexOnTrack;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        videonaPlayerView.attachView(context);
+        trimView.attachView(context);
+        trimView.setVideonaPlayerListener();
         loadProjectVideo();
         if (amIVerticalApp) {
-            videonaPlayerView
+            trimView
                 .setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        trimView.detachView();
     }
 
     private void loadProjectVideo() {
@@ -116,14 +114,14 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
         Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
-        videonaPlayerView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        trimView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         trimView.refreshDurationTag(videoCopy.getDuration());
-        videoDuration = videoCopy.getStopTime() - videoCopy.getStartTime();
-        startTimeMs = 0;
-        finishTimeMs = videoDuration;
-        trimView.showTrimBar(videoDuration);
-        trimView.updateStartTrimmingRangeSeekBar(0);
-        trimView.updateFinishTrimmingRangeSeekBar(videoCopy.getDuration() / Constants.MS_CORRECTION_FACTOR);
+        videoFileDuration = videoCopy.getFileDuration();
+        startTimeMs = videoCopy.getStartTime();
+        finishTimeMs = videoCopy.getStopTime();
+        trimView.showTrimBar(videoCopy.getFileDuration());
+        trimView.updateStartTrimmingRangeSeekBar(videoCopy.getStartTime() / Constants.MS_CORRECTION_FACTOR);
+        trimView.updateFinishTrimmingRangeSeekBar(videoCopy.getStopTime() / Constants.MS_CORRECTION_FACTOR);
     }
 
     public void setTrim() {
@@ -145,7 +143,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        videonaPlayerView.seekTo(startTimeMs);
+        updatePlayer();
     }
 
     public void advanceForwardStartTrimming(int advancePrecision) {
@@ -158,7 +156,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        videonaPlayerView.seekTo(startTimeMs);
+        updatePlayer();
     }
 
     public void advanceBackwardEndTrimming(int advancePrecision) {
@@ -171,17 +169,17 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        videonaPlayerView.seekTo(finishTimeMs);
+        updatePlayer();
     }
 
     public void advanceForwardEndTrimming(int advancePrecision) {
         finishTimeMs = finishTimeMs + advancePrecision;
-        if (finishTimeMs > videoDuration) {
-            finishTimeMs = videoDuration;
+        if (finishTimeMs > videoFileDuration) {
+            finishTimeMs = videoFileDuration;
         }
         trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        videonaPlayerView.seekTo(finishTimeMs);
+        updatePlayer();
     }
 
     @Override
@@ -223,7 +221,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
     }
 
     public void onRangeSeekBarChanged(Object minValue, Object maxValue) {
-        videonaPlayerView.pausePreview();
+        trimView.pausePreview();
         float minValueFloat = (float) minValue;
         float maxValueFloat = (float) maxValue;
         if (isRangeSeekBarLessThanMinTrimOffset(minValueFloat, maxValueFloat)) {
@@ -231,27 +229,41 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
                 startTimeMs = finishTimeMs - MIN_TRIM_OFFSET_MS;
                 trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
                 trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-                videonaPlayerView.seekTo(startTimeMs);
+                updatePlayer();
                 return;
             }
             if (finishTimeMs != (int) ( maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
                 finishTimeMs = startTimeMs + MIN_TRIM_OFFSET_MS;
                 trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
                 trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-                videonaPlayerView.seekTo(finishTimeMs);
+                updatePlayer();
                 return;
             }
         }
         if (startTimeMs != (int) ( minValueFloat * Constants.MS_CORRECTION_FACTOR)) {
             startTimeMs = (int) (minValueFloat * Constants.MS_CORRECTION_FACTOR);
-            videonaPlayerView.seekTo(startTimeMs);
         } else {
             if (finishTimeMs != (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
                 finishTimeMs = (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR);
-                videonaPlayerView.seekTo(finishTimeMs);
             }
         }
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        updatePlayer();
+    }
+
+    private void updatePlayer() {
+        VMComposition vmCompositionCopy = null;
+        try {
+            vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            illegalItemOnTrack.printStackTrace();
+            Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+        }
+        Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
+        videoCopy.setStartTime(startTimeMs);
+        videoCopy.setStopTime(finishTimeMs);
+        trimView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        trimView.seekTo(0);
     }
 
     private boolean isRangeSeekBarLessThanMinTrimOffset(float minValueFloat, float maxValueFloat) {

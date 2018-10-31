@@ -23,20 +23,18 @@ import javax.inject.Named;
 public class MusicListPresenter implements ElementChangedListener {
     private final Context context;
     private MusicListView musicListView;
-    private final VideonaPlayer videonaPlayerView;
     private final GetMusicListUseCase getMusicListUseCase;
     private Project currentProject;
     private final ProjectInstanceCache projectInstanceCache;
     protected boolean amIVerticalApp;
 
     @Inject
-    public MusicListPresenter(Context context, MusicListView musicListView, VideonaPlayer
-        videonaPlayerView, GetMusicListUseCase getMusicListUseCase,
+    public MusicListPresenter(Context context, MusicListView musicListView,
+                              GetMusicListUseCase getMusicListUseCase,
                               ProjectInstanceCache projectInstanceCache,
                               @Named("amIAVerticalApp") boolean amIAVerticalApp) {
         this.context = context;
         this.musicListView = musicListView;
-        this.videonaPlayerView = videonaPlayerView;
         this.getMusicListUseCase = getMusicListUseCase;
         this.projectInstanceCache = projectInstanceCache;
         this.amIVerticalApp = amIAVerticalApp;
@@ -45,10 +43,10 @@ public class MusicListPresenter implements ElementChangedListener {
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        videonaPlayerView.attachView(context);
+        musicListView.attachView(context);
         loadPlayerFromProject();
         if (amIVerticalApp) {
-            videonaPlayerView
+            musicListView
                 .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
         musicListView.showMusicList(getMusicListUseCase.getAppMusic());
@@ -62,11 +60,11 @@ public class MusicListPresenter implements ElementChangedListener {
             illegalItemOnTrack.printStackTrace();
             Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
         }
-        videonaPlayerView.init(vmCompositionCopy);
+        musicListView.init(vmCompositionCopy);
     }
 
-    public void removePresenter() {
-        videonaPlayerView.detachView();
+    public void pausePresenter() {
+        musicListView.detachView();
     }
 
     @Override

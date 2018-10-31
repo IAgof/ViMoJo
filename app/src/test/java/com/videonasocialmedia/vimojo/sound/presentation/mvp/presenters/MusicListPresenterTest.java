@@ -45,7 +45,6 @@ public class MusicListPresenterTest {
 
   @Mock private Context mockedContext;
   @Mock private MusicListView mockedMusicListView;
-  @Mock private VideonaPlayer mockedVideonaPlayerView;
   @Mock private GetMusicListUseCase mockedGetMusicListUseCase;
   @Mock private ProjectInstanceCache mockedProjectInstanceCache;
   private boolean amIAVerticalApp;
@@ -74,7 +73,7 @@ public class MusicListPresenterTest {
 
     spyMusicListPresenter.updatePresenter();
 
-    verify(mockedVideonaPlayerView)
+    verify(mockedMusicListView)
         .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
   }
 
@@ -84,7 +83,7 @@ public class MusicListPresenterTest {
 
     musicListPresenter.updatePresenter();
 
-    verify(mockedVideonaPlayerView).init(any(VMComposition.class));
+    verify(mockedMusicListView).init(any(VMComposition.class));
   }
 
   @Test
@@ -93,16 +92,16 @@ public class MusicListPresenterTest {
 
     musicListPresenter.updatePresenter();
 
-    verify(mockedVideonaPlayerView).attachView(mockedContext);
+    verify(mockedMusicListView).attachView(mockedContext);
   }
 
   @Test
-  public void removePresenterDetachPlayerView() {
+  public void pausePresenterDetachPlayerView() {
     MusicListPresenter musicListPresenter = getMusicListPresenter();
 
-    musicListPresenter.removePresenter();
+    musicListPresenter.pausePresenter();
 
-    verify(mockedVideonaPlayerView).detachView();
+    verify(mockedMusicListView).detachView();
   }
 
   @Test
@@ -116,8 +115,7 @@ public class MusicListPresenterTest {
   }
 
   private MusicListPresenter getMusicListPresenter() {
-    return new MusicListPresenter(mockedContext, mockedMusicListView,
-        mockedVideonaPlayerView, mockedGetMusicListUseCase,
+    return new MusicListPresenter(mockedContext, mockedMusicListView, mockedGetMusicListUseCase,
         mockedProjectInstanceCache, amIAVerticalApp);
   }
 
