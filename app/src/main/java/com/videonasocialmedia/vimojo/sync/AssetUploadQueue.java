@@ -118,6 +118,11 @@ public class AssetUploadQueue {
               Log.d(LOG_TAG, "VimojoApiException.NETWORK_ERROR");
               // TODO: 21/6/18 inform user
               break;
+            case VimojoApiException.QUERY_ERROR:
+              Log.d(LOG_TAG, "VimojoApiException.QUERY_ERROR");
+              // TODO: 30/10/18 Review how to manage QUERY_ERROR and if it is necessary remove element
+              removeHeadElement(getQueue());
+              break;
             default:
               retryItemUpload(element);
           }

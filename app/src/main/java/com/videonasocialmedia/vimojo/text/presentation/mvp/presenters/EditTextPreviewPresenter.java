@@ -5,27 +5,26 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
-import com.google.common.util.concurrent.Futures;
-import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
+import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.text.domain.ClipTextResultCallback;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
 import com.videonasocialmedia.vimojo.text.presentation.mvp.views.EditTextView;
-import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
+import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,85 +33,97 @@ import javax.inject.Named;
  * Created by ruth on 1/09/16.
  */
 
-public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChangedListener {
+public class EditTextPreviewPresenter extends VimojoPresenter implements ElementChangedListener {
     private final String LOG_TAG = EditTextPreviewPresenter.class.getSimpleName();
-    private final ProjectInstanceCache projectInstanceCache;
-
-    private TextToDrawable drawableGenerator;
-
-    private Video videoToEdit;
-
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
-    private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
-
-
-    private EditTextView editTextView;
     private Context context;
+    private EditTextView editTextView;
+    private final ProjectInstanceCache projectInstanceCache;
+    private Video videoToEdit;
+    private ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase;
+    private UpdateMedia updateMedia;
+    private UpdateComposition updateComposition;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private final String THEME_DARK = "dark";
-    private int videoToEditTextIndex;
-    private boolean amIAVerticalApp;
-    private boolean isShadowChecked;
-
+    private int videoIndexOnTrack;
+    protected boolean amIAVerticalApp;
+    private String positionSelected = TextEffect.TextPosition.CENTER.name();
+    private String textSelected = "";
+    private boolean textHasShadow = false;
+    protected boolean isPlayerReady = false;
 
     @Inject
     public EditTextPreviewPresenter(
-            EditTextView editTextView, Context context, UserEventTracker userEventTracker,
-            GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-            ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
-            ProjectInstanceCache projectInstanceCache,
-            @Named("amIAVerticalApp") boolean amIAVerticalApp) {
-        this.editTextView = editTextView;
+        Context context, EditTextView editTextView, UserEventTracker userEventTracker,
+        ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase, ProjectInstanceCache
+        projectInstanceCache, UpdateMedia updateMedia, UpdateComposition updateComposition,
+        @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        BackgroundExecutor backgroundExecutor) {
+        super(backgroundExecutor, userEventTracker);
         this.context = context;
+        this.editTextView = editTextView;
         this.userEventTracker = userEventTracker;
-        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoTextAndPositionUseCase = modifyVideoTextAndPositionUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.updateMedia = updateMedia;
+        this.updateComposition = updateComposition;
         this.amIAVerticalApp = amIAVerticalApp;
     }
 
-    public void init(int videoToEditTextIndex) {
-        this.videoToEditTextIndex = videoToEditTextIndex;
+    public void setupActivityViews() {
+        updateColorButton();
+        updateColorText();
     }
 
-    public void updatePresenter() {
+    public void updatePresenter(int videoToEditTextIndex) {
+        this.videoIndexOnTrack = videoToEditTextIndex;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        List<Media> videoList = getMediaListFromProjectUseCase.getMediaListFromProject(currentProject);
-        if (videoList != null) {
-            ArrayList<Video> v = new ArrayList<>();
-            videoToEdit = (Video) videoList.get(videoToEditTextIndex);
-            v.add(videoToEdit);
-            if (videoToEdit.hasClipTextShadow()) {
-                isShadowChecked = true;
+        editTextView.attachView(context);
+        editTextView.setVideonaPlayerListener();
+        editTextView.setSeekBarLayoutEnabled(false);
+        loadProjectVideo();
+        if (amIAVerticalApp) {
+            editTextView
+                .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+        }
+    }
+
+    public void pausePresenter() {
+        editTextView.detachView();
+    }
+
+    private void loadProjectVideo() {
+        videoToEdit = (Video) currentProject.getVMComposition().getMediaTrack().getItems()
+            .get(videoIndexOnTrack);
+        VMComposition vmCompositionCopy = null;
+        try {
+            vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            illegalItemOnTrack.printStackTrace();
+            Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+        }
+        Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
+        editTextView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        if (videoCopy.hasText()) {
+            positionSelected = videoCopy.getClipTextPosition();
+            editTextView.setPositionEditText(positionSelected);
+            textSelected = videoCopy.getClipText();
+            editTextView.setEditText(textSelected);
+            textHasShadow = videoCopy.hasClipTextShadow();
+            if (textHasShadow) {
                 editTextView.setCheckboxShadow(true);
             }
-            onVideosRetrieved(v);
         }
-        if (amIAVerticalApp) {
-            editTextView.setAspectRatioVerticalVideos();
-        }
-
     }
-
-    @Override
-    public void onVideosRetrieved(List<Video> videoList) {
-        editTextView.showPreview(videoList);
-    }
-
-    @Override
-    public void onNoVideosRetrieved() {
-        editTextView.showError("No videos");
-    }
-
-    public void setTextToVideo(String text, TextEffect.TextPosition textPositionSelected) {
-        Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
-        Futures.addCallback(modifyVideoTextAndPositionUseCase
-                .addTextToVideo(currentProject, videoToEdit, text, textPositionSelected.name(),
-                    isShadowChecked), new ClipTextResultCallback(), backgroundExecutor);
-        userEventTracker.trackClipAddedText(textPositionSelected.name(), text.length(),
-            isShadowChecked, currentProject);
+    public void setTextToVideo() {
+        addCallback(modifyVideoTextAndPositionUseCase
+                .addTextToVideo(currentProject, videoToEdit, textSelected, positionSelected,
+                    textHasShadow), new ClipTextResultCallback(currentProject, updateMedia,
+                    updateComposition));
+        userEventTracker.trackClipAddedText(positionSelected, textSelected.length(),
+            textHasShadow, currentProject);
+        editTextView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
     @Override
@@ -120,16 +131,16 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
         editTextView.updateProject();
     }
 
-  public void updateColorButton() {
-      TypedValue currentTheme = getCurrentTheme();
-      if (currentTheme.string.equals(THEME_DARK)) {
-          editTextView.updateButtonToThemeDark();
-      } else {
-          editTextView.updateButtonToThemeLight();
-      }
-  }
+    private void updateColorButton() {
+        TypedValue currentTheme = getCurrentTheme();
+        if (currentTheme.string.equals(THEME_DARK)) {
+            editTextView.updateButtonToThemeDark();
+        } else {
+            editTextView.updateButtonToThemeLight();
+        }
+    }
 
-    public void updateColorText() {
+    private void updateColorText() {
         TypedValue currentTheme = getCurrentTheme();
         if (currentTheme.string.equals(THEME_DARK)) {
             editTextView.updateTextToThemeDark();
@@ -139,14 +150,58 @@ public class EditTextPreviewPresenter implements OnVideosRetrieved, ElementChang
     }
 
     @NonNull
-    public TypedValue getCurrentTheme() {
+    private TypedValue getCurrentTheme() {
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
         return outValue;
     }
 
     public void setCheckboxShadow(boolean isShadowChecked) {
-        this.isShadowChecked = isShadowChecked;
+        this.textHasShadow = isShadowChecked;
+        if (isPlayerReady) {
+            editTextView.setImageText(textSelected, positionSelected, textHasShadow,
+                Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        }
+    }
+
+    public void onClickPositionTop() {
+        positionSelected = TextEffect.TextPosition.TOP.name();
+        editTextView.setPositionEditText(positionSelected);
+        editTextView.hideKeyboard();
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    }
+
+    public void onClickPositionCenter() {
+        positionSelected = TextEffect.TextPosition.CENTER.name();
+        editTextView.setPositionEditText(positionSelected);
+        editTextView.hideKeyboard();
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    }
+
+    public void onClickPositionBottom() {
+        positionSelected = TextEffect.TextPosition.BOTTOM.name();
+        editTextView.setPositionEditText(positionSelected);
+        editTextView.hideKeyboard();
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    }
+
+    public void onTextChanged(String text) {
+        textSelected = text;
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    }
+
+    public void editTextCancel() {
+        editTextView.navigateTo(EditActivity.class, videoIndexOnTrack);
+    }
+
+    public void playerReady() {
+        isPlayerReady = true;
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
+            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
     }
 }
 

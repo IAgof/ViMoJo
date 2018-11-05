@@ -10,6 +10,8 @@ import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -210,5 +212,15 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   @Override
   public void onObjectUpdated() {
     soundView.updatePlayer();
+  }
+
+  public void navigateToMusic() {
+    if (currentProject.hasMusic()) {
+      soundView.navigateToMusicDetail(MusicDetailActivity.class,
+          currentProject.getMusic().getMediaPath());
+    } else {
+      soundView.navigateToMusicList(MusicListActivity.class);
+    }
+
   }
 }

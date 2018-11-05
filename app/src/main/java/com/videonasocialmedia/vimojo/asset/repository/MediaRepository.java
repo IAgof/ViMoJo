@@ -34,14 +34,17 @@ public class MediaRepository extends VimojoRepository<Media> {
   private VideoRealmDataSource videoRealmDataSource;
   private MusicRealmDataSource musicRealmDataSource;
   private MediaApiDataSource mediaApiDataSource;
+  private final boolean cloudBackupAvailable;
 
   @Inject
   public MediaRepository(VideoRealmDataSource videoRealmDataSource,
                          MusicRealmDataSource musicRealmDataSource,
-                         MediaApiDataSource mediaApiDataSource) {
+                         MediaApiDataSource mediaApiDataSource,
+                         boolean cloudBackupAvailable) {
     this.videoRealmDataSource = videoRealmDataSource;
     this.musicRealmDataSource = musicRealmDataSource;
     this.mediaApiDataSource = mediaApiDataSource;
+    this.cloudBackupAvailable = cloudBackupAvailable;
   }
 
   @Override
@@ -53,7 +56,9 @@ public class MediaRepository extends VimojoRepository<Media> {
     } else {
       Log.e(LOG_TAG, "Trying to update media that is not video or music " + item.toString());
     }
-    mediaApiDataSource.add(item);
+    if (cloudBackupAvailable) {
+      mediaApiDataSource.add(item);
+    }
   }
 
   @Override
@@ -72,7 +77,9 @@ public class MediaRepository extends VimojoRepository<Media> {
     } else {
       Log.e(LOG_TAG, "Trying to update media that is not video or music " + item.toString());
     }
-    mediaApiDataSource.update(item);
+    if (cloudBackupAvailable) {
+      mediaApiDataSource.update(item);
+    }
   }
 
   @Override
@@ -87,7 +94,7 @@ public class MediaRepository extends VimojoRepository<Media> {
       }
     }
 
-    if (policy.useRemote()) {
+    if (policy.useRemote() && cloudBackupAvailable) {
       mediaApiDataSource.remove(item);
     }
   }

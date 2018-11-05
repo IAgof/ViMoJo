@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.views.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
 import com.videonasocialmedia.vimojo.utils.FabUtils;
+import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import javax.inject.Inject;
 
@@ -35,8 +37,8 @@ import butterknife.Optional;
  * Created by ruth on 4/10/16.
  */
 
-public class SoundActivity extends EditorActivity implements VideonaPlayer.VideonaPlayerListener,
-    SoundView, CardViewAudioTrackListener{
+public class SoundActivity extends EditorActivity implements SoundView,
+    VideonaPlayer.VideonaPlayerListener, CardViewAudioTrackListener{
 
   private static final String TAG = "SoundActivity";
   private final int ID_BUTTON_FAB_TOP=1;
@@ -78,6 +80,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
       setupFab();
+      setVideonaPlayerListener(this);
   }
 
   @Override
@@ -128,7 +131,7 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
         switch (fab.getId()){
           case ID_BUTTON_FAB_TOP:
             fabMenu.collapse();
-            navigateTo(MusicListActivity.class);
+            presenter.navigateToMusic();
             break;
           case ID_BUTTON_FAB_BOTTOM:
             fabMenu.collapse();
@@ -235,12 +238,27 @@ public class SoundActivity extends EditorActivity implements VideonaPlayer.Video
     seekToClip(currentVideoIndex);
   }
 
+  @Override
+  public void navigateToMusicDetail(Class<MusicDetailActivity> musicDetailActivityClass, String mediaPath) {
+    Intent i = new Intent(this, MusicDetailActivity.class);
+    i.putExtra(IntentConstants.MUSIC_DETAIL_SELECTED, mediaPath);
+    startActivity(i);
+  }
+
+  @Override
+  public void navigateToMusicList(Class<MusicListActivity> musicListActivityClass) {
+    Intent intent = new Intent(this, musicListActivityClass);
+    startActivity(intent);  }
+
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
     this.currentVideoIndex = currentClipIndex;
     videoTrack.updateClipSelection(currentClipIndex);
-    presenter.updateClipPlayed(com.videonasocialmedia.videonamediaframework.model.Constants
-        .INDEX_MEDIA_TRACK);
+  }
+
+  @Override
+  public void playerReady() {
+    // Do nothing
   }
 
   @Override

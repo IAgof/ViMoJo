@@ -1,27 +1,31 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.views;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import android.content.Context;
 
-import java.util.List;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 
 /**
  * Created by ruth on 15/09/16.
  */
 public interface VoiceOverRecordView {
     void initVoiceOverView(int startTime, int maxSeekBar);
-    void bindVideoList(List<Video> movieList);
-    void resetPreview();
-    void playVideo();
-    void pauseVideo();
     void navigateToVoiceOverVolumeActivity(String voiceOverRecordedPath);
     void showError(String errorMessage);
-    void setVideoFadeTransitionAmongVideos();
-    void setAudioFadeTransitionAmongVideos();
     void updateProject();
     void resetVoiceOverRecorded();
     void disableRecordButton();
     void showProgressDialog();
     void hideProgressDialog();
+    void disablePlayerPlayButton();
 
-  void setAspectRatioVerticalVideos();
+    // Player Views
+    void attachView(Context context);
+    void detachView();
+    void setAspectRatioVerticalVideos(int height);
+    void init(VMComposition vmComposition);
+    void playPreview();
+    void pausePreview();
+    void setVideoVolume(float volume);
+    void setVoiceOverVolume(float volume);
+    void setMusicVolume(float volume);
 }

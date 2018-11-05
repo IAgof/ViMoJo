@@ -33,8 +33,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
-import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.ftp.presentation.services.FtpUploaderService;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
@@ -66,7 +64,7 @@ import butterknife.Optional;
  * Activity for sharing video final render to different networks and save locally.
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
-    VideonaPlayer.VideonaPlayerListener, OnOptionsToShareListClickListener {
+    OnOptionsToShareListClickListener {
 
   private String LOG_TAG = ShareActivity.class.getCanonicalName();
 
@@ -527,8 +525,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     runOnUiThread(() -> {
       if (destPath != null) {
         projectHasBeenExported = true;
-        presenter.updateHasBeenProjectExported(true);
-        presenter.addVideoExportedToProject(mediaPath);
         initVideoPlayerFromFilePath(mediaPath);
       }
       exportDialog.dismiss();

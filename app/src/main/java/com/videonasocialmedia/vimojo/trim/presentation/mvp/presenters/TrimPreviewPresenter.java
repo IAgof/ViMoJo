@@ -7,49 +7,50 @@
 
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.presenters;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.RadioButton;
 
-import com.google.common.util.concurrent.Futures;
-import com.videonasocialmedia.videonamediaframework.model.media.Media;
+import com.crashlytics.android.Crashlytics;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.trim.domain.ModifyVideoDurationUseCase;
 import com.videonasocialmedia.vimojo.trim.domain.TrimResultCallback;
 import com.videonasocialmedia.vimojo.trim.presentation.mvp.views.TrimView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import static com.videonasocialmedia.vimojo.utils.Constants.MIN_TRIM_OFFSET;
+import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.Constants.MS_CORRECTION_FACTOR;
 
 /**
  * Created by vlf on 7/7/15.
  */
-public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRetrieved,
-    ElementChangedListener {
+public class TrimPreviewPresenter extends VimojoPresenter implements ElementChangedListener {
     private final String LOG_TAG = getClass().getSimpleName();
     private final ProjectInstanceCache projectInstanceCache;
-
     private Video videoToEdit;
-
-    private GetMediaListFromProjectUseCase getMediaListFromProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
-
+    private UpdateMedia updateMedia;
+    private UpdateComposition updateComposition;
+    private final Context context;
     // View reference. We use as a WeakReference
     // because the Activity could be destroyed at any time
     // and we don't want to create a memory leak
@@ -58,116 +59,127 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
     private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
-    private int videoToTrimIndex;
-    private boolean amIVerticalApp;
+    private int videoIndexOnTrack;
+    protected boolean amIVerticalApp;
+    private Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
+    protected int startTimeMs;
+    protected int finishTimeMs;
+    protected final int MIN_TRIM_OFFSET_MS = 350;
+    private int videoFileDuration;
 
     @Inject
     public TrimPreviewPresenter(
-        TrimView trimView, SharedPreferences sharedPreferences,
-        UserEventTracker userEventTracker,
-        GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-        ModifyVideoDurationUseCase modifyVideoDurationUseCase,
-        ProjectInstanceCache projectInstanceCache,
-        @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
+        Context context, TrimView trimView, SharedPreferences sharedPreferences,
+        UserEventTracker userEventTracker, ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+        ProjectInstanceCache projectInstanceCache, UpdateMedia updateMedia,
+        UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+        BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
+        this.context = context;
         this.trimView = trimView;
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
-        this.getMediaListFromProjectUseCase = getMediaListFromProjectUseCase;
         this.modifyVideoDurationUseCase = modifyVideoDurationUseCase;
         this.projectInstanceCache = projectInstanceCache;
+        this.updateMedia = updateMedia;
+        this.updateComposition = updateComposition;
         this.amIVerticalApp = amIAVerticalApp;
     }
 
-    public void init(int videoToTrimIndex) {
-        this.videoToTrimIndex = videoToTrimIndex;
-    }
-
-    public void updatePresenter() {
+    public void updatePresenter(int videoIndexOnTrack) {
+        this.videoIndexOnTrack = videoIndexOnTrack;
         this.currentProject = projectInstanceCache.getCurrentProject();
         currentProject.addListener(this);
-        List<Media> videoList = getMediaListFromProjectUseCase
-                .getMediaListFromProject(currentProject);
-        if (videoList != null) {
-            ArrayList<Video> v = new ArrayList<>();
-            videoToEdit = (Video) videoList.get(videoToTrimIndex);
-            v.add(videoToEdit);
-            onVideosRetrieved(v);
-        }
+        trimView.attachView(context);
+        trimView.setVideonaPlayerListener();
+        loadProjectVideo();
         if (amIVerticalApp) {
-            trimView.setAspectRatioVerticalVideos();
+            trimView
+                .setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
     }
 
-    @Override
-    public void onVideosRetrieved(List<Video> videoList) {
-        trimView.showPreview(videoList);
-        Video video = videoList.get(0);
-        trimView.showTrimBar(video.getStartTime(), video.getStopTime(), video.getFileDuration());
-        trimView.refreshDurationTag(video.getDuration());
+    public void pausePresenter() {
+        trimView.detachView();
     }
 
-    @Override
-    public void onNoVideosRetrieved() {
-        trimView.showError("No videos");
+    private void loadProjectVideo() {
+        videoToEdit = (Video) currentProject.getVMComposition().getMediaTrack().getItems()
+            .get(videoIndexOnTrack);
+        VMComposition vmCompositionCopy = null;
+        try {
+            vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            illegalItemOnTrack.printStackTrace();
+            Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+        }
+        Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
+        trimView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        trimView.refreshDurationTag(videoCopy.getDuration());
+        videoFileDuration = videoCopy.getFileDuration();
+        startTimeMs = videoCopy.getStartTime();
+        finishTimeMs = videoCopy.getStopTime();
+        trimView.showTrimBar(videoCopy.getFileDuration());
+        trimView.updateStartTrimmingRangeSeekBar(videoCopy.getStartTime() / Constants.MS_CORRECTION_FACTOR);
+        trimView.updateFinishTrimmingRangeSeekBar(videoCopy.getStopTime() / Constants.MS_CORRECTION_FACTOR);
     }
 
-    public void setTrim(int startTimeMs, int finishTimeMs) {
-        Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor(); // TODO(jliarte): 13/09/18 explore the use of a background thread pool for all the app
-        Futures.addCallback(modifyVideoDurationUseCase
-                        .trimVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject),
-                new TrimResultCallback(videoToEdit, currentProject), backgroundExecutor);
+    public void setTrim() {
+        addCallback(modifyVideoDurationUseCase
+                .trimVideo(videoToEdit, startTimeMs, finishTimeMs, currentProject),
+            new TrimResultCallback(videoToEdit, currentProject, updateMedia, updateComposition));
         trackVideoTrimmed();
+        trimView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }
 
     void trackVideoTrimmed() {
         userEventTracker.trackClipTrimmed(currentProject);
     }
 
-    public void advanceBackwardStartTrimming(int advancePrecision, int startTimeMs) {
-        float adjustSeekBarMinPosition = (float) (startTimeMs - advancePrecision)
-            / MS_CORRECTION_FACTOR;
-        trimView.updateStartTrimmingRangeSeekBar(Math.max(0, adjustSeekBarMinPosition));
+    public void advanceBackwardStartTrimming(int advancePrecision) {
+        startTimeMs = startTimeMs - advancePrecision;
+        if (startTimeMs < 0) {
+            startTimeMs = 0;
+        }
+        trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
+        trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        updatePlayer();
     }
 
-    public void advanceForwardStartTrimming(int advancePrecision, int startTimeMs,
-                                            int finishTimeMs) {
-        if (((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET) {
+    public void advanceForwardStartTrimming(int advancePrecision) {
+        if (((finishTimeMs - startTimeMs)) <= MIN_TRIM_OFFSET_MS) {
             return;
         }
-        float adjustSeekBarMinPosition = (float) (startTimeMs + advancePrecision)
-            / MS_CORRECTION_FACTOR;
-        if (Math.abs(adjustSeekBarMinPosition - (float) finishTimeMs / MS_CORRECTION_FACTOR)
-            < MIN_TRIM_OFFSET) {
-            adjustSeekBarMinPosition = ((float) finishTimeMs / MS_CORRECTION_FACTOR)
-                - MIN_TRIM_OFFSET;
+        startTimeMs = startTimeMs + advancePrecision;
+        if (Math.abs(finishTimeMs - startTimeMs) < MIN_TRIM_OFFSET_MS) {
+            startTimeMs = finishTimeMs - MIN_TRIM_OFFSET_MS ;
         }
-        trimView.updateStartTrimmingRangeSeekBar(Math.min(adjustSeekBarMinPosition,
-            ((float) finishTimeMs / MS_CORRECTION_FACTOR)));
+        trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
+        trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        updatePlayer();
     }
 
-    public void advanceBackwardEndTrimming(int advancePrecision, int startTimeMs,
-                                           int finishTimeMs) {
-        if (((finishTimeMs - startTimeMs) / MS_CORRECTION_FACTOR) <= MIN_TRIM_OFFSET) {
+    public void advanceBackwardEndTrimming(int advancePrecision) {
+        if ((finishTimeMs - startTimeMs)  <= MIN_TRIM_OFFSET_MS) {
             return;
         }
-
-        float adjustSeekBarMaxPosition = (float) (finishTimeMs - advancePrecision)
-            / MS_CORRECTION_FACTOR;
-        if (Math.abs(adjustSeekBarMaxPosition - (float) startTimeMs / MS_CORRECTION_FACTOR)
-            < MIN_TRIM_OFFSET) {
-            adjustSeekBarMaxPosition = (startTimeMs / MS_CORRECTION_FACTOR) + MIN_TRIM_OFFSET;
+        finishTimeMs = finishTimeMs - advancePrecision;
+        if (finishTimeMs - startTimeMs < MIN_TRIM_OFFSET_MS) {
+            finishTimeMs = startTimeMs + MIN_TRIM_OFFSET_MS;
         }
-        trimView.updateFinishTrimmingRangeSeekBar(Math.max(adjustSeekBarMaxPosition,
-            ((float) startTimeMs / MS_CORRECTION_FACTOR) - MIN_TRIM_OFFSET));
+        trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
+        trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        updatePlayer();
     }
 
-    public void advanceForwardEndTrimming(int advancePrecision, int finishTimeMs) {
-
-        float maxRangeSeekBarValue = (float) videoToEdit.getFileDuration() / MS_CORRECTION_FACTOR;
-        float adjustSeekBarMaxPosition = Math.min(maxRangeSeekBarValue,
-            (float) (finishTimeMs + advancePrecision) / MS_CORRECTION_FACTOR);
-        trimView.updateFinishTrimmingRangeSeekBar(adjustSeekBarMaxPosition);
+    public void advanceForwardEndTrimming(int advancePrecision) {
+        finishTimeMs = finishTimeMs + advancePrecision;
+        if (finishTimeMs > videoFileDuration) {
+            finishTimeMs = videoFileDuration;
+        }
+        trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
+        trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        updatePlayer();
     }
 
     @Override
@@ -208,4 +220,57 @@ public class TrimPreviewPresenter extends VimojoPresenter implements OnVideosRet
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
 
+    public void onRangeSeekBarChanged(Object minValue, Object maxValue) {
+        trimView.pausePreview();
+        float minValueFloat = (float) minValue;
+        float maxValueFloat = (float) maxValue;
+        if (isRangeSeekBarLessThanMinTrimOffset(minValueFloat, maxValueFloat)) {
+            if (startTimeMs != (int) ( minValueFloat * Constants.MS_CORRECTION_FACTOR)) {
+                startTimeMs = finishTimeMs - MIN_TRIM_OFFSET_MS;
+                trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
+                trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+                updatePlayer();
+                return;
+            }
+            if (finishTimeMs != (int) ( maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
+                finishTimeMs = startTimeMs + MIN_TRIM_OFFSET_MS;
+                trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
+                trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+                updatePlayer();
+                return;
+            }
+        }
+        if (startTimeMs != (int) ( minValueFloat * Constants.MS_CORRECTION_FACTOR)) {
+            startTimeMs = (int) (minValueFloat * Constants.MS_CORRECTION_FACTOR);
+        } else {
+            if (finishTimeMs != (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
+                finishTimeMs = (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR);
+            }
+        }
+        trimView.refreshDurationTag(finishTimeMs - startTimeMs);
+        updatePlayer();
+    }
+
+    private void updatePlayer() {
+        VMComposition vmCompositionCopy = null;
+        try {
+            vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
+        } catch (IllegalItemOnTrack illegalItemOnTrack) {
+            illegalItemOnTrack.printStackTrace();
+            Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+        }
+        Video videoCopy = (Video) vmCompositionCopy.getMediaTrack().getItems().get(videoIndexOnTrack);
+        videoCopy.setStartTime(startTimeMs);
+        videoCopy.setStopTime(finishTimeMs);
+        trimView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
+        trimView.seekTo(0);
+    }
+
+    private boolean isRangeSeekBarLessThanMinTrimOffset(float minValueFloat, float maxValueFloat) {
+        return Math.abs(maxValueFloat - minValueFloat) <= Constants.MIN_TRIM_OFFSET;
+    }
+
+    public void cancelTrim() {
+        trimView.navigateTo(EditActivity.class, videoIndexOnTrack);
+    }
 }

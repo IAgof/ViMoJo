@@ -8,6 +8,7 @@ public class VimojoApiException extends Exception {
   public static final String UNKNOWN_ERROR = "Unknown Error";
   public static final String NETWORK_ERROR = "Network Error";
   public static final String UNAUTHORIZED = "Unauthorized";
+  public static final String QUERY_ERROR = "Query Error";
   private final int httpCode;
   private final String apiErrorCode;
 

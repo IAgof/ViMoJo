@@ -1,27 +1,25 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.views;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import android.content.Context;
 
-import java.util.List;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 
 /**
  * Created by jca on 8/7/15.
  */
 public interface SplitView {
-
-    void initSplitView(int startTime, int maxSeekBar);
-
-    void playPreview();
-
-    void pausePreview();
-
-    void showPreview(List<Video> movieList);
-
+    void initSplitView(int maxSeekBar);
     void showError(int stringResourceId);
-
     void updateSplitSeekbar(int progress);
-
+    void refreshTimeTag(int currentPosition);
     void updateProject();
+    void navigateTo(Class<EditActivity> editActivityClass, int videoIndexOnTrack);
 
-  void setAspectRatioVerticalVideos();
+    // Player views
+    void attachView(Context context);
+    void detachView();
+    void setAspectRatioVerticalVideos(int height);
+    void initSingleClip(VMComposition vmComposition, int clipPosition);
+    void seekTo(int timeInMsec);
 }
