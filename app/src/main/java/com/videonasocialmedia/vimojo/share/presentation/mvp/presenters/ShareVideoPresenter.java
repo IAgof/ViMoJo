@@ -248,6 +248,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
           shareVideoViewReference.get().loadExportedVideoPreview(videoPath);
           processNetworkClicked(typeNetworkSelected, videoPath);
           isAppExportingProject = false;
+          updateHasBeenProjectExported(true);
+          addVideoExportedToProject(videoPath);
         }
       }
 

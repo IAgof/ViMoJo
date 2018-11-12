@@ -1,47 +1,33 @@
 package com.videonasocialmedia.vimojo.trim.presentation.mvp.views;
 
+import android.content.Context;
 import android.widget.RadioButton;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
-import java.util.List;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 
 /**
  * Created by jca on 8/7/15.
  */
 public interface TrimView {
-
-    void showTrimBar(int videoStartTime, int videoStopTime, int videoFileDuration);
-
+    void showTrimBar(int videoDuration);
     void refreshDurationTag(int duration);
-
-    void refreshStartTimeTag(int startTime);
-
-    void refreshStopTimeTag(int stopTime);
-
-    void playPreview();
-
-    void pausePreview();
-
-    void seekTo(int timeInMsec);
-
-    void showPreview(List<Video> movieList);
-
-    void showError(String message);
-
-    void updateStartTrimmingRangeSeekBar(float minValue);
-
-    void updateFinishTrimmingRangeSeekBar(float maxValue);
-
+    void updateStartTrimmingRangeSeekBar(float startValue);
+    void updateFinishTrimmingRangeSeekBar(float finishValue);
     void updateProject();
-
     void updateViewToThemeDark();
-
     void updateViewToThemeLight();
-
     void updateRadioButtonToThemeDark(RadioButton buttonNoSelected);
-
     void updateRadioButtonToThemeLight(RadioButton buttonNoSelected);
+    void navigateTo(Class<EditActivity> editActivityClass, int videoIndexOnTrack);
 
-  void setAspectRatioVerticalVideos();
+    // Player views
+    void attachView(Context context);
+    void detachView();
+    void setAspectRatioVerticalVideos(int height);
+    void initSingleClip(VMComposition vmComposition, int clipPosition);
+    void pausePreview();
+    void seekTo(int timeInMsec);
+    void setVideonaPlayerListener();
 }

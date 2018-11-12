@@ -111,6 +111,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         setupBottomBar(bottomBar);
         setupFabMenu();
         setupActivityButtons();
+        setVideonaPlayerListener(this);
       }
 
   private void setupActivityButtons() {
@@ -462,12 +463,16 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
     public void newClipPlayed(int currentClipIndex) {
         Log.d(LOG_TAG, "newClipPlayed");
-        //super needed, avoid recursion
-        super.newClipPlayed(currentClipIndex);
         currentVideoIndex = currentClipIndex;
         videonaTimeLine.setSelectedClip(currentClipIndex);
         videonaTimeLine.scrollToPosition(currentClipIndex);
+
     }
+
+  @Override
+  public void playerReady() {
+    // Do nothing
+  }
 
   @Override
     public void onBackPressed() {

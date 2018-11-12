@@ -1,39 +1,32 @@
 package com.videonasocialmedia.vimojo.text.presentation.mvp.views;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
-
-import java.util.List;
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 
 /**
  * Created by ruth on 1/09/16.
  */
 public interface EditTextView {
-
-    //void showTrimBar(int videoStartTime, int videoStopTime, int videoFileDuration);
-
-    void playPreview();
-
-    void pausePreview();
-
-    void seekTo(int timeInMsec);
-
-    void showPreview(List<Video> movieList);
-
-    void showError(String message);
-
     void updateProject();
-
     void updateButtonToThemeDark();
-
     void updateButtonToThemeLight();
-
     void updateTextToThemeDark();
-
     void updateTextToThemeLight();
-
     void setCheckboxShadow(boolean shadowActivated);
+    void setPositionEditText(String position);
+    void setEditText(String textSelected);
+    void hideKeyboard();
+    void showKeyboard();
+    void navigateTo(Class cls, int currentVideoIndex);
 
-  void setAspectRatioVerticalVideos();
+    // Player Views
+    void attachView(Context context);
+    void detachView();
+    void setVideonaPlayerListener();
+    void setSeekBarLayoutEnabled(boolean seekBarEnabled);
+    void setAspectRatioVerticalVideos(int height);
+    void initSingleClip(VMComposition vmComposition, int clipPosition);
+    void setImageText(String text, String textPosition, boolean textWithShadow, int width, int height);
 }

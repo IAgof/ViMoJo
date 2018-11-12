@@ -95,14 +95,18 @@ public class AssetApiClient extends VimojoApiClient {
     // TODO(jliarte): 14/08/18 add createdBy
     AssetQuery query = AssetQuery.Builder.create().withHash(asset.getHash())
             .withCreatedBy(asset.getCreatedBy()).build();
-    List<AssetDto> exisitingAssets = this.query(accessToken, query);
-    if (exisitingAssets.size() == 0) {
+    List<AssetDto> existingAssets = this.query(accessToken, query);
+    if (existingAssets == null ) {
+      // TODO: 30/10/18 Review how to manage QUERY_ERROR and if it is necessary remove element
+      throw new VimojoApiException(-1, VimojoApiException.QUERY_ERROR);
+    }
+    if (existingAssets.size() == 0) {
       File file = new File(asset.getPath());
       RequestBody requestFile = RequestBody.create(okhttp3.MediaType.parse(MIME_TYPE_VIDEO), file);
       // MultipartBody.Part is used to send also the actual file name
       body = MultipartBody.Part.createFormData(MULTIPART_NAME_DATA, file.getName(), requestFile);
     } else {
-      requestBodyHashMap.put(ASSET_API_KEY_ID, createPartFromString(exisitingAssets.get(0).getId()));
+      requestBodyHashMap.put(ASSET_API_KEY_ID, createPartFromString(existingAssets.get(0).getId()));
     }
 
     // TODO(jliarte): 13/08/18 set project id

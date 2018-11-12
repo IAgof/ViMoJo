@@ -21,14 +21,17 @@ import javax.inject.Inject;
  */
 public class TrimResultCallback implements FutureCallback<Video> {
   private static final String LOG_TAG = TrimResultCallback.class.getSimpleName();
-  @Inject UpdateMedia updateMedia;
-  @Inject UpdateComposition updateComposition;
+  private UpdateMedia updateMedia;
+  private UpdateComposition updateComposition;
   private Project currentProject;
   private Video videoToEdit;
 
-  public TrimResultCallback(Video videoToEdit, Project currentProject) {
+  public TrimResultCallback(Video videoToEdit, Project currentProject, UpdateMedia updateMedia,
+                            UpdateComposition updateComposition) {
     this.currentProject = currentProject;
     this.videoToEdit = videoToEdit;
+    this.updateMedia = updateMedia;
+    this.updateComposition = updateComposition;
   }
 
   @Override

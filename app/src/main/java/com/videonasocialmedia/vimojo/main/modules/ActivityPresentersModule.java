@@ -9,6 +9,7 @@ import com.videonasocialmedia.camera.customview.AutoFitTextureView;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
@@ -98,8 +99,11 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOver
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverRecordActivity;
+import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverVolumeActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
@@ -170,30 +174,22 @@ public class ActivityPresentersModule {
 
   @Provides @PerActivity
   VoiceOverVolumePresenter provideVoiceOverVolumePresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase, ModifyTrackUseCase
-                  modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
+          ModifyTrackUseCase modifyTrackUseCase, RemoveAudioUseCase removeAudioUseCase,
           UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
           UpdateTrack updateTrack, RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor,
           UserEventTracker userEventTracker) {
     return new VoiceOverVolumePresenter(activity, (VoiceOverVolumeView) activity,
-            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            getAudioFromProjectUseCase, modifyTrackUseCase, removeAudioUseCase,
-            projectInstanceCache, updateComposition, amIAVerticalApp, updateTrack, removeTrack,
-            backgroundExecutor, userEventTracker);
+            modifyTrackUseCase, removeAudioUseCase, projectInstanceCache, updateComposition,
+            amIAVerticalApp, updateTrack, removeTrack, backgroundExecutor, userEventTracker);
   }
 
   @Provides @PerActivity
   VoiceOverRecordPresenter provideVoiceOverRecordPresenter(
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           UserEventTracker userEventTracker, UpdateComposition updateComposition,
           @Named("amIAVerticalApp") boolean amIAVerticalApp, UpdateTrack updateTrack,
           RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
     return new VoiceOverRecordPresenter(activity, (VoiceOverRecordActivity) activity,
-            getMediaListFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
             addAudioUseCase, removeAudioUseCase, userEventTracker, projectInstanceCache,
             updateComposition, amIAVerticalApp, updateTrack, removeTrack, backgroundExecutor);
   }
@@ -201,19 +197,15 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   MusicDetailPresenter provideMusicDetailPresenter(
           UserEventTracker userEventTracker,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           AddAudioUseCase addAudioUseCase, RemoveAudioUseCase removeAudioUseCase,
           ModifyTrackUseCase modifyTrackUseCase, GetMusicListUseCase getMusicListUseCase,
           UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
           RemoveMedia removeMedia, UpdateTrack updateTrack,
           RemoveTrack removeTrack, BackgroundExecutor backgroundExecutor) {
-    return new MusicDetailPresenter((MusicDetailView) activity, activity, userEventTracker,
-            getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
-            getPreferencesTransitionFromProjectUseCase, addAudioUseCase, removeAudioUseCase,
-            modifyTrackUseCase, getMusicListUseCase, projectInstanceCache, updateComposition,
-            amIAVerticalApp, removeMedia, updateTrack, removeTrack, backgroundExecutor);
+    return new MusicDetailPresenter(activity, (MusicDetailView) activity,userEventTracker,
+            addAudioUseCase, removeAudioUseCase, modifyTrackUseCase, getMusicListUseCase,
+            projectInstanceCache, updateComposition, amIAVerticalApp,
+            removeMedia, updateTrack, removeTrack, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -242,13 +234,9 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   MusicListPresenter provideMusicListPresenter(
           GetMusicListUseCase getMusicListUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-          GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
           @Named("amIAVerticalApp") boolean amIAVerticalApp) {
-    return new MusicListPresenter((MusicListView) activity, activity, getMusicListUseCase,
-            getMediaListFromProjectUseCase, getAudioFromProjectUseCase,
-            getPreferencesTransitionFromProjectUseCase, projectInstanceCache, amIAVerticalApp);
+    return new MusicListPresenter(activity, (MusicListView) activity, getMusicListUseCase,
+        projectInstanceCache, amIAVerticalApp);
   }
 
   @Provides @PerActivity
@@ -295,12 +283,11 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   DuplicatePreviewPresenter provideDuplicatePresenter(
           UserEventTracker userEventTracker, AddVideoToProjectUseCase addVideoToProjectUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
           BackgroundExecutor backgroundExecutor) {
-    return new DuplicatePreviewPresenter((VideoDuplicateActivity) activity, userEventTracker,
-            addVideoToProjectUseCase, getMediaListFromProjectUseCase, projectInstanceCache,
-            updateComposition, amIAVerticalApp, backgroundExecutor);
+    return new DuplicatePreviewPresenter(activity, (VideoDuplicateActivity) activity,
+        userEventTracker, addVideoToProjectUseCase, projectInstanceCache, updateComposition,
+        amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -347,20 +334,19 @@ public class ActivityPresentersModule {
           GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
           BackgroundExecutor backgroundExecutor) {
-    return new SplitPreviewPresenter((VideoSplitActivity) activity, userEventTracker,
-            splitVideoUseCase, getMediaListFromProjectUseCase, projectInstanceCache,
-            updateComposition, amIAVerticalApp, backgroundExecutor);
+    return new SplitPreviewPresenter(activity, (VideoSplitActivity) activity, userEventTracker,
+        splitVideoUseCase, projectInstanceCache, amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
   TrimPreviewPresenter provideTrimPresenter(
           SharedPreferences sharedPreferences, UserEventTracker userEventTracker,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
           ModifyVideoDurationUseCase modifyVideoDurationUseCase,
+          UpdateMedia updateMedia, UpdateComposition updateComposition,
           @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor backgroundExecutor) {
-    return new TrimPreviewPresenter((VideoTrimActivity) activity, sharedPreferences,
-        userEventTracker, getMediaListFromProjectUseCase, modifyVideoDurationUseCase,
-        projectInstanceCache, amIAVerticalApp, backgroundExecutor);
+    return new TrimPreviewPresenter(activity, (VideoTrimActivity) activity, sharedPreferences,
+        userEventTracker, modifyVideoDurationUseCase, projectInstanceCache, updateMedia,
+        updateComposition, amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -420,10 +406,7 @@ public class ActivityPresentersModule {
       UserEventTracker userEventTracker,
       SharedPreferences sharedPreferences,
       CreateDefaultProjectUseCase createDefaultProjectUseCase,
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       RemoveVideoFromProjectUseCase removeVideoFromProjectUseCase,
-      GetAudioFromProjectUseCase getAudioFromProjectUseCase,
-      GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
       NewClipImporter newClipImporter, BillingManager billingManager,
       SaveComposition saveComposition, UpdateComposition updateComposition,
@@ -435,15 +418,12 @@ public class ActivityPresentersModule {
       @Named("hideTutorials") boolean hideTutorials,
       @Named("amIAVerticalApp") boolean amIAVerticalApp,
       BackgroundExecutor backgroundExecutor) {
-    return new EditorPresenter((EditorActivity) activity, (EditorActivity) activity,
-            sharedPreferences, activity, userEventTracker, createDefaultProjectUseCase,
-            getMediaListFromProjectUseCase, removeVideoFromProjectUseCase,
-            getAudioFromProjectUseCase, getPreferencesTransitionFromProjectUseCase,
-            relaunchTranscoderTempBackgroundUseCase, newClipImporter,
-            billingManager, projectInstanceCache, saveComposition, removeMedia,
-            updateWatermark, updateComposition, showWatermarkSwitch,
-            vimojoStoreAvailable, vimojoPlatformAvailable, watermarkIsForced, hideTutorials,
-            amIAVerticalApp, backgroundExecutor);
+    return new EditorPresenter(activity, (EditorActivity) activity,
+            sharedPreferences, userEventTracker, createDefaultProjectUseCase,
+            removeVideoFromProjectUseCase, relaunchTranscoderTempBackgroundUseCase, newClipImporter,
+            billingManager, projectInstanceCache, saveComposition, removeMedia, updateWatermark,
+            updateComposition, showWatermarkSwitch, vimojoStoreAvailable, vimojoPlatformAvailable,
+            watermarkIsForced, hideTutorials, amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -477,12 +457,13 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   EditTextPreviewPresenter provideEditTextPreviewPresenter(
               UserEventTracker userEventTracker,
-              GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
               ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase,
-              @Named("amIAVerticalApp") boolean amIAVerticalApp) {
-    return new EditTextPreviewPresenter((VideoEditTextActivity) activity, activity,
-        userEventTracker, getMediaListFromProjectUseCase,
-        modifyVideoTextAndPositionUseCase, projectInstanceCache, amIAVerticalApp);
+              UpdateMedia updateMedia, UpdateComposition updateComposition,
+              @Named("amIAVerticalApp") boolean amIAVerticalApp, BackgroundExecutor
+              backgroundExecutor) {
+    return new EditTextPreviewPresenter(activity, (VideoEditTextActivity) activity,
+        userEventTracker, modifyVideoTextAndPositionUseCase, projectInstanceCache, updateMedia,
+        updateComposition, amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity
@@ -692,4 +673,13 @@ public class ActivityPresentersModule {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
   }
 
+  @Provides
+  UpdateMedia provideUpdateMedia(MediaRepository mediaRepository) {
+    return new UpdateMedia(mediaRepository);
+  }
+
+  @Provides
+  UpdateComposition provideUpdateComposition(ProjectRepository projectRepository) {
+    return new UpdateComposition(projectRepository);
+  }
 }

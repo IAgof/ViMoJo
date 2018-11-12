@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.config.Configuration;
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
+import com.videonasocialmedia.vimojo.asset.repository.datasource.MediaApiDataSource;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoRealmDataSource;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
@@ -82,6 +84,15 @@ public class DataRepositoriesModule {
 
     JobManagerBackgroundScheduler jobManagerBackgroundScheduler = new JobManagerBackgroundScheduler(jobManager);
     return jobManagerBackgroundScheduler;
+  }
+
+  @Singleton @Provides
+  MediaRepository provideMediaRepository(
+      VideoRealmDataSource videoRealmDataSource, MusicRealmDataSource musicRealmDataSource,
+      MediaApiDataSource mediaApiDataSource,
+      @Named("cloudBackupAvailable") boolean cloudBackupAvailable) {
+    return new MediaRepository(videoRealmDataSource, musicRealmDataSource, mediaApiDataSource,
+        cloudBackupAvailable);
   }
 
 }

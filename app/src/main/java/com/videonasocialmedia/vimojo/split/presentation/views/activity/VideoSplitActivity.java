@@ -10,6 +10,7 @@ package com.videonasocialmedia.vimojo.split.presentation.views.activity;
  *
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -19,19 +20,16 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.TimeUtils;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -42,13 +40,10 @@ import butterknife.OnClick;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_HIGH;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_LOW;
 import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECISION_MEDIUM;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
     SeekBar.OnSeekBarChangeListener {
-    private static final String SPLIT_POSITION = "split_position";
-    private static final String SPLIT_VIDEO_POSITION = "split_video_position";
 
     @Inject SplitPreviewPresenter presenter;
 
@@ -74,10 +69,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     ImageButton playerAdanceHighForwardEndSplit;
 
     int videoIndexOnTrack;
-    private Video video;
-    private int currentSplitPosition = 0;
-    private int currentVideoPosition = 0;
-    private int startTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +84,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
-
-        restoreState(savedInstanceState);
-        presenter.init(videoIndexOnTrack);
     }
 
     @Override
@@ -106,25 +94,18 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     @Override
     protected void onResume() {
         super.onResume();
-        videonaPlayer.onShown(this);
-        presenter.updatePresenter();
+        presenter.updatePresenter(videoIndexOnTrack);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videonaPlayer.onPause();
+        presenter.pausePresenter();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        videonaPlayer.onDestroy();
     }
 
     public void setupActivityButtons() {
@@ -138,13 +119,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         tintButton(playerAdanceLowForwardEndSplit, button_color);
         tintButton(playerAdanceMediumForwardEndSplit, button_color);
         tintButton(playerAdanceHighForwardEndSplit, button_color);
-    }
-
-    private void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            currentSplitPosition = savedInstanceState.getInt(SPLIT_POSITION, 0);
-            currentVideoPosition = savedInstanceState.getInt(SPLIT_VIDEO_POSITION, 0);
-        }
     }
 
     @Override
@@ -161,82 +135,56 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         return super.onOptionsItemSelected(item);
     }
 
-    public void navigateTo(Class cls) {
-        startActivity(new Intent(VimojoApplication.getAppContext(), cls));
-    }
-
     @Override
     public void onBackPressed() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SPLIT_VIDEO_POSITION, videonaPlayer.getCurrentPosition()  );
-        outState.putInt(SPLIT_POSITION, currentSplitPosition);
-        super.onSaveInstanceState(outState);
-    }
-
-    private void navigateTo(Class cls, int currentVideoIndex) {
-        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
-        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-        startActivity(intent);
-        //finish();
+        presenter.cancelSplit();
     }
 
     @OnClick(R.id.player_advance_low_backward_start_split)
     public void onClickAdvanceLowBackwardStart(){
-        presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_LOW, currentSplitPosition);
+        presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_LOW);
     }
 
     @OnClick(R.id.player_advance_medium_backward_start_split)
     public void onClickAdvanceMediumBackwardStart(){
-      presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM, currentSplitPosition);
+      presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
     }
 
     @OnClick(R.id.player_advance_high_backward_start_split)
     public void onClickAdvanceHighBackwardStart(){
-      presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_HIGH, currentSplitPosition);
+      presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
     }
 
     @OnClick(R.id.player_advance_low_forward_end_split)
     public void onClickAdvanceLowForwardEnd(){
-        presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_LOW, currentSplitPosition);
+        presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_LOW);
     }
 
     @OnClick(R.id.player_advance_medium_forward_end_split)
     public void onClickAdvanceMediumForwardEnd(){
-      presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM, currentSplitPosition);
+      presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
     }
 
     @OnClick(R.id.player_advance_high_forward_end_split)
     public void onClickAdvanceHighForwardEnd(){
-      presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_HIGH, currentSplitPosition);
+      presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
     }
 
     @OnClick(R.id.button_split_accept)
     public void onClickSplitAccept() {
-        presenter.splitVideo(videoIndexOnTrack, currentSplitPosition);
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        presenter.splitVideo();
     }
 
     @OnClick(R.id.button_split_cancel)
     public void onClickSplitCancel() {
-        navigateTo(EditActivity.class, videoIndexOnTrack);
+        presenter.cancelSplit();
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-            currentSplitPosition = progress;
-            refreshTimeTag(currentSplitPosition);
-            videonaPlayer.seekClipToTime(video.getStartTime() + progress);
-            videonaPlayer.setSeekBarProgress(progress);
+            presenter.onSeekBarChanged(progress);
         }
-    }
-
-    private void refreshTimeTag(int currentPosition) {
-        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition + startTime));
     }
 
     @Override
@@ -248,29 +196,33 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
-    public void initSplitView(int startTime, int maxSeekBar) {
+    public void initSplitView(int maxSeekBar) {
         splitSeekBar.setMax(maxSeekBar);
-        splitSeekBar.setProgress(currentSplitPosition);
-        this.startTime = startTime;
-        refreshTimeTag(currentSplitPosition);
     }
 
     @Override
-    public void playPreview() {
-        videonaPlayer.playPreview();
+    public void attachView(Context context) {
+        videonaPlayer.attachView(context);
     }
 
     @Override
-    public void pausePreview() {
-        videonaPlayer.pausePreview();
+    public void detachView() {
+        videonaPlayer.detachView();
     }
 
     @Override
-    public void showPreview(List<Video> movieList) {
-        // (alvaro.martinez) 4/10/17 work on a copy to not modify original one until user accepts text
-        video = new Video(movieList.get(0));
-        videonaPlayer.initPreviewLists(movieList);
-        videonaPlayer.initPreview(currentVideoPosition);
+    public void initSingleClip(VMComposition vmComposition, int clipPosition) {
+        videonaPlayer.initSingleClip(vmComposition, clipPosition);
+    }
+
+    @Override
+    public void seekTo(int timeInMsec) {
+        videonaPlayer.seekTo(timeInMsec);
+    }
+
+    @Override
+    public void setAspectRatioVerticalVideos(int height) {
+        videonaPlayer.setAspectRatioVerticalVideos(height);
     }
 
     @Override
@@ -284,18 +236,23 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
   @Override
   public void updateSplitSeekbar(int progress) {
-    onProgressChanged(splitSeekBar, progress, true);
     splitSeekBar.setProgress(progress);
   }
 
     @Override
-    public void updateProject() {
-        presenter.updatePresenter();
+    public void refreshTimeTag(int currentPosition) {
+        timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(currentPosition));
     }
 
     @Override
-    public void setAspectRatioVerticalVideos() {
-        videonaPlayer.setAspectRatioVerticalVideos(DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
+    public void updateProject() {
+        presenter.updatePresenter(videoIndexOnTrack);
     }
 
+    @Override
+    public void navigateTo(Class cls, int currentVideoIndex) {
+        Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
+        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        startActivity(intent);
+    }
 }

@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.main;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDataSource;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.main.modules.ApplicationModule;
@@ -46,6 +47,7 @@ public interface SystemComponent {
   CameraSettingsDataSource getCameraRepository();
   BackgroundScheduler provideBackgroundScheduler();
   BackgroundExecutor provideBackgroundExecutor();
+  MediaRepository getMediaRepository();
   void inject(VimojoActivity activity);
   void inject(SyncService syncService);
   void inject(UploadBroadcastReceiver uploadBroadcastReceiver);
