@@ -128,6 +128,10 @@
     <string name="editTextActionLabel">Done</string>
     <string name="titleVideosNotFound">Videos not found in device</string>
     <string name="messageVideosNotFound">Some videos will not be loaded into project</string>
+    <string name="text_edit_trim">Trim</string>
+    <string name="text_edit_split">Split</string>
+    <string name="text_edit_duplicate">Duplicate</string>
+    <string name="text_edit_text">Text</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">The maximum number of lines to draw is two</string>
@@ -159,6 +163,8 @@
     <string name="dialog_title_update_assets_progress_dialog">Updating composition assets</string>
     <string name="dialog_message_update_assets_progress_dialog">Downloading files for your composition, please wait.</string>
     <string name="update_assets_remaining">remaining.</string>
+    <string name="gallery_project_new">New project</string>
+    <string name="project_list_empty_error">Error getting my projects</string>
 
     <!-- Detail project activity -->
     <string name="detail_project_title">Title</string>
@@ -2553,6 +2559,5 @@ and Conditions.\n\n
 
     <string name="vimojo_platform_base_debug">https://beta.vimojo.co</string>
     <string name="com_auth0_audience_debug">https://vimojo.auth/api</string>
-
 
 </resources>

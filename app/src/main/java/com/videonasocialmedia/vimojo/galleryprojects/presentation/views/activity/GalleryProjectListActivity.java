@@ -13,6 +13,8 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,6 +53,8 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   @Nullable
   @BindView(R.id.text_dialog)
   EditText editTextDialog;
+  @BindView(R.id.coordinatorLayout_gallery_project_list)
+  CoordinatorLayout coordinatorLayout;
 
   private GalleryProjectListAdapter projectAdapter;
   private BroadcastReceiver completionReceiver;
@@ -173,11 +177,11 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   }
 
   @Override
-  public void createDefaultProject() {
+  public void createDefaultProjectListEmpty() {
     // TODO(jliarte): 20/04/18 review this workflow
     // TODO(jliarte): 20/04/18 generic transition drawable to allow change in build phase?
     Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
-    presenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+    presenter.createNewProjectListEmpty(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
             drawableFadeTransitionVideo);
     navigateTo(GoToRecordOrGalleryActivity.class);
   }
@@ -218,6 +222,19 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   }
 
   @Override
+  public void goToRecordOrGalleryScreen() {
+    navigateTo(GoToRecordOrGalleryActivity.class);
+  }
+
+  @Override
+  public void showErrorNoProjectsFound() {
+    String message = getString(R.string.project_list_empty_error);
+    Snackbar snackbar = Snackbar.make(coordinatorLayout, message,
+        Snackbar.LENGTH_LONG);
+    snackbar.show();
+  }
+
+  @Override
   public void goToEditActivity(Project project) {
     presenter.goToEdit(project);
   }
@@ -235,6 +252,13 @@ public class GalleryProjectListActivity extends VimojoActivity implements Galler
   @OnClick(R.id.backButton)
   public void onClickBackButton() {
     super.onBackPressed();
+  }
+
+  @OnClick(R.id.gallery_project_new)
+  public void onClickNewProject() {
+    Drawable drawableFadeTransitionVideo = getDrawable(R.drawable.alpha_transition_white);
+    presenter.createNewProject(Constants.PATH_APP, Constants.PATH_APP_ANDROID,
+        drawableFadeTransitionVideo);
   }
 
 }
