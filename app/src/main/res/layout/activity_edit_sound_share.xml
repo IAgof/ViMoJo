@@ -28,21 +28,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/fab_edit_room"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_gravity="bottom|end"
-        app:fab_addButtonColorNormal="@color/colorAccent"
-        app:fab_addButtonColorPressed="@color/colorAccent"
-        app:backgroundTint="?attr/colorAccent"
-        app:layout_behavior="com.videonasocialmedia.vimojo.presentation.views.custombehaviors.FloatingActionMenuButtonBehavior"
-        app:layout_anchor="@id/bottomBar"
-        app:layout_anchorGravity="top|end">
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

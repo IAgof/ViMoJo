@@ -387,6 +387,10 @@
     <string name="drawerProjectLocation">Project location</string>
     <string name="drawerProjectDate">Project date</string>
     <string name="drawerProjectCurrent">Current project</string>
+    <string name="drawerSendFeedback">Send Feedback</string>
+    <string name="menuRecord">Record</string>
+    <string name="menuMusic">Music</string>
+    <string name="menuVoiceOver">Voice over</string>
 
     <!-- VimojoStoreActivity -->
     <string name="buy_now">Buy now</string>
@@ -2549,5 +2553,6 @@ and Conditions.\n\n
 
     <string name="vimojo_platform_base_debug">https://beta.vimojo.co</string>
     <string name="com_auth0_audience_debug">https://vimojo.auth/api</string>
+
 
 </resources>

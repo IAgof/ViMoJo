@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 Videona Socialmedia SL
+  ~ http://www.videona.com
+  ~ info@videona.com
+  ~ All rights reserved
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.views.activity.EditorActivity"
+    >
+
+    <item
+        android:id="@+id/action_toolbar_music"
+        android:icon="@drawable/toolbar_music"
+        android:title="@string/menuMusic"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/action_toolbar_voice_over"
+        android:icon="@drawable/toolbar_voice_over"
+        android:title="@string/menuVoiceOver"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/action_toolbar_record"
+        android:icon="@drawable/common_navigate_record"
+        android:title="@string/menuRecord"
+        app:showAsAction="always"
+        />
+
+</menu>

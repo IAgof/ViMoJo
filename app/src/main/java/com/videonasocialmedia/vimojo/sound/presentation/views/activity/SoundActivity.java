@@ -5,25 +5,28 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditorActivity;
+import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.SoundPresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
-import com.videonasocialmedia.vimojo.utils.FabUtils;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 
 import javax.inject.Inject;
@@ -62,12 +65,14 @@ public class SoundActivity extends EditorActivity implements SoundView,
   @Nullable @BindView(R.id.button_sound_warning_transcoding_file)
   ImageButton warningTranscodingFilesButton;
 
-  @BindView(R.id.fab_edit_room)
-  FloatingActionsMenu fabMenu;
+  @BindView(R.id.edit_activity_drawer_layout)
+  DrawerLayout drawerLayout;
+  @BindView(R.id.coordinatorLayout)
+  CoordinatorLayout coordinatorLayout;
+
   private int currentVideoIndex = 0;
 
   private boolean voiceOverActivated;
-  private FloatingActionButton fabVoiceOver;
   private String warningTranscodingFilesMessage;
 
   @Override
@@ -79,7 +84,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
       getActivityPresentersComponent().inject(this);
       bottomBar.selectTabWithId(R.id.tab_sound);
       setupBottomBar(bottomBar);
-      setupFab();
       setVideonaPlayerListener(this);
   }
 
@@ -97,9 +101,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
   @Override
   protected void onPause() {
     super.onPause();
-    if (voiceOverActivated) {
-      removeFabVoiceOver();
-    }
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -115,34 +116,40 @@ public class SoundActivity extends EditorActivity implements SoundView,
     });
   }
 
-  private void setupFab() {
-    addAndConfigurateFabButton(ID_BUTTON_FAB_TOP, R.drawable.activity_edit_sound_music_normal,
-        R.color.colorWhite);
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+      if (voiceOverActivated) {
+        getMenuInflater().inflate(R.menu.menu_sound_activity, menu);
+      } else {
+        getMenuInflater().inflate(R.menu.menu_sound_activity_basic, menu);
+      }
+      return true;
+    }
+    return super.onCreateOptionsMenu(menu);
   }
 
-  protected void addAndConfigurateFabButton(int id, int icon, int color) {
-    FloatingActionButton newFabMini = FabUtils.createNewFabMini(id, icon, color);
-    onClickFabButton(newFabMini);
-    fabMenu.addButton(newFabMini);
-  }
-
-  protected void onClickFabButton(final FloatingActionButton fab) {
-    fab.setOnClickListener(v -> {
-        switch (fab.getId()){
-          case ID_BUTTON_FAB_TOP:
-            fabMenu.collapse();
-            presenter.navigateToMusic();
-            break;
-          case ID_BUTTON_FAB_BOTTOM:
-            fabMenu.collapse();
-            navigateTo(VoiceOverRecordActivity.class);
-            break;
-        }
-    });
-  }
-
-  private void removeFabVoiceOver() {
-    fabMenu.removeButton(fabVoiceOver);
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    switch (item.getItemId()) {
+      case R.id.action_toolbar_record:
+        navigateTo(RecordCamera2Activity.class);
+        return true;
+      case R.id.action_toolbar_music:
+        navigateTo(MusicListActivity.class);
+        return true;
+      case R.id.action_toolbar_voice_over:
+        navigateTo(VoiceOverRecordActivity.class);
+        return true;
+      case android.R.id.home:
+        drawerLayout.openDrawer(GravityCompat.START);
+        return true;
+      default:
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -153,10 +160,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
   @Override
   public void addVoiceOverOptionToFab() {
     voiceOverActivated = true;
-    fabVoiceOver = FabUtils.createNewFabMini(ID_BUTTON_FAB_BOTTOM,
-        R.drawable.activity_edit_sound_voice_normal,R.color.colorWhite);
-    onClickFabButton(fabVoiceOver);
-    fabMenu.addButton(fabVoiceOver);
   }
 
   @Override

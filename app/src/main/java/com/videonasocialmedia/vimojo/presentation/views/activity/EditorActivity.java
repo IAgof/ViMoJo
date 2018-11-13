@@ -7,9 +7,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -46,8 +45,8 @@ import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActi
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialEditorActivity;
 import com.videonasocialmedia.vimojo.tutorial.presentation.mvp.views.activity.TutorialRecordActivity;
-import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.userProfile.presentation.views.UserProfileActivity;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 
@@ -82,8 +81,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   NavigationView navigationView;
   @BindView(R.id.container_navigator)
   LinearLayout navigator;
-  @BindView(R.id.fab_edit_room)
-  FloatingActionsMenu fabMenu;
+  @BindView(R.id.coordinatorLayout)
+  CoordinatorLayout coordinatorLayout;
   @Nullable
   @BindView(R.id.switch_theme_dark)
   SwitchCompat switchTheme;
@@ -207,6 +206,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 case R.id.menu_navview_settings:
                   navigateTo(SettingsActivity.class);
                   return false;
+                case R.id.menu_navview_send_feedback:
+                  navigateToMail("mailto:info@videona.com");
+                  return false;
                 case R.id.menu_navview_tutorial_edition:
                   navigateTo(TutorialEditorActivity.class);
                   return false;
@@ -240,42 +242,12 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
       ab.setHomeAsUpIndicator(R.drawable.ic_nav_menu);
       ab.setDisplayHomeAsUpEnabled(true);
     }
+
+
   }
 
   private boolean checkIfThemeDarkIsSelected() {
     return editorPresenter.getPreferenceThemeApp();
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-      getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
-      return true;
-    }
-    return super.onCreateOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    switch (item.getItemId()) {
-      case R.id.action_settings_edit_options:
-        navigateTo(SettingsActivity.class);
-        return true;
-      case R.id.action_settings_edit_gallery:
-        navigateTo(GalleryActivity.class);
-        return true;
-      case R.id.action_settings_suggestions:
-        navigateToMail("mailto:info@videona.com");
-        return true;
-      case android.R.id.home:
-        drawerLayout.openDrawer(GravityCompat.START);
-        return true;
-      default:
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   protected void inflateLinearLayout(int linearLayoutContainer, int layoutToAdd) {
@@ -359,13 +331,13 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
 
   @Override
   public void showError(final int stringToast) {
-    Snackbar snackbar = Snackbar.make(fabMenu, stringToast, Snackbar.LENGTH_LONG);
+    Snackbar snackbar = Snackbar.make(coordinatorLayout, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
   }
 
   @Override
   public void showMessage(final int stringToast) {
-    Snackbar snackbar = Snackbar.make(fabMenu, stringToast, Snackbar.LENGTH_LONG);
+    Snackbar snackbar = Snackbar.make(coordinatorLayout, stringToast, Snackbar.LENGTH_LONG);
     snackbar.show();
   }
 
@@ -643,5 +615,4 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     this.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
     return (String) outValue.string;
   }
-
 }

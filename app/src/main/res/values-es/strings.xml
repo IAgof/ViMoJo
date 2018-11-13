@@ -361,6 +361,8 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="drawerProjectLocation">Localización</string>
     <string name="drawerProjectDate">Fecha</string>
     <string name="drawerProjectCurrent">Proyecto actual</string>
+    <string name="drawerSendFeedback">Sugerencias</string>
+    <string name="menuRecord">Grabar</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>

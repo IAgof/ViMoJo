@@ -401,7 +401,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:11.8.0'
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.karumi:dexter:2.2.2'
     implementation 'commons-net:commons-net:3.5'
     implementation 'com.jcraft:jsch:0.1.53'
