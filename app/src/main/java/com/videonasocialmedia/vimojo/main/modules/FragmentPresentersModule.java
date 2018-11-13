@@ -68,7 +68,6 @@ public class FragmentPresentersModule {
   @Provides
   @PerFragment
   PreferencesPresenter providePreferencePresenter(
-      GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
       GetPreferencesTransitionFromProjectUseCase getPreferencesTransitionFromProjectUseCase,
       UpdateAudioTransitionPreferenceToProjectUseCase
                   updateAudioTransitionPreferenceToProjectUseCase,
@@ -76,33 +75,23 @@ public class FragmentPresentersModule {
                   updateVideoTransitionPreferenceToProjectUseCase,
       UpdateIntermediateTemporalFilesTransitionsUseCase
                   updateIntermediateTemporalFilesTransitionsUseCase,
-          UpdateCompositionWatermark updateCompositionWatermark,
           RelaunchTranscoderTempBackgroundUseCase relaunchTranscoderTempBackgroundUseCase,
-          GetVideoFormatFromCurrentProjectUseCase getVideonaFormatFromCurrentProjectUseCase,
-          BillingManager billingManager, UserAuth0Helper userAuth0Helper,
-          UploadDataSource uploadDataSource, GetAccount getAccount,
-          UserEventTracker userEventTracker,UpdateComposition updateComposition,
-          @Named("vimojoStoreAvailable") boolean vimojoStoreAvailable,
-          @Named("showWatermarkSwitch") boolean showWatermarkSwitch,
-          @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
+          UploadDataSource uploadDataSource, UserEventTracker userEventTracker,
+          UpdateComposition updateComposition,
           @Named("ftpPublishingAvailable") boolean ftpPublishingAvailable,
           @Named("hideTransitionPreference") boolean hideTransitionPreference,
           @Named("showMoreAppsPreference") boolean showMoreAppsPreference,
-          @Named("watermarkIsForced") boolean watermarkIsForced,
           BackgroundExecutor backgroundExecutor) {
     return new PreferencesPresenter(
             settingsFragment, context, sharedPreferences,
-            getMediaListFromProjectUseCase,
             getPreferencesTransitionFromProjectUseCase,
             updateAudioTransitionPreferenceToProjectUseCase,
             updateVideoTransitionPreferenceToProjectUseCase,
             updateIntermediateTemporalFilesTransitionsUseCase,
-            updateCompositionWatermark, relaunchTranscoderTempBackgroundUseCase,
-            getVideonaFormatFromCurrentProjectUseCase, billingManager, userAuth0Helper,
-            uploadDataSource, projectInstanceCache, getAccount, userEventTracker, updateComposition,
-        vimojoStoreAvailable, showWatermarkSwitch, vimojoPlatformAvailable,
+            relaunchTranscoderTempBackgroundUseCase,
+            uploadDataSource, projectInstanceCache, userEventTracker, updateComposition,
             ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference,
-        watermarkIsForced, backgroundExecutor);
+            backgroundExecutor);
   }
 
   @Provides

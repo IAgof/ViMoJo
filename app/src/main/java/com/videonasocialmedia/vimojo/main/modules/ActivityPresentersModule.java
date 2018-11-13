@@ -13,6 +13,7 @@ import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsMapperSupportedListUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.domain.GetCameraSettingsUseCase;
 import com.videonasocialmedia.vimojo.cameraSettings.presentation.mvp.presenters.CameraSettingsPresenter;
@@ -78,6 +79,7 @@ import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCa
 import com.videonasocialmedia.vimojo.repository.music.MusicDataSource;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepository;
 import com.videonasocialmedia.vimojo.repository.project.ProfileRepositoryFromCameraSettings;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.domain.GetLicenseVimojoListUseCase;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseDetailPresenter;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.presenters.LicenseListPresenter;
@@ -470,11 +472,12 @@ public class ActivityPresentersModule {
   UserProfilePresenter provideUserProfilePresenter(
           SharedPreferences sharedPreferences, ObtainLocalVideosUseCase obtainLocalVideosUseCase,
           UserAuth0Helper userAuth0Helper, FetchUserFeatures fetchUserFeatures,
+          GetAccount getAccount, UploadDataSource uploadDataSource,
           @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
           BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
-    return new  UserProfilePresenter((UserProfileView) activity, sharedPreferences,
-        obtainLocalVideosUseCase, userAuth0Helper, fetchUserFeatures, vimojoPlatformAvailable,
-        backgroundExecutor, userEventTracker);
+    return new  UserProfilePresenter(activity, (UserProfileView) activity, sharedPreferences,
+        obtainLocalVideosUseCase, userAuth0Helper, fetchUserFeatures, getAccount, uploadDataSource,
+        vimojoPlatformAvailable, backgroundExecutor, userEventTracker);
   }
 
   @Provides @PerActivity

@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.views;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +19,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 import com.videonasocialmedia.vimojo.R;
+import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters.UserProfilePresenter;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
@@ -263,6 +266,12 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
     });
   }
 
+  @Override
+  public void navigateToInitRegisterLogin() {
+    Intent intent = new Intent(VimojoApplication.getAppContext(), InitRegisterLoginActivity.class);
+    startActivity(intent);
+  }
+
   @OnClick(R.id.backButton)
   public void onBackButtonClicked(){
     onBackPressed();
@@ -280,6 +289,35 @@ public class UserProfileActivity extends VimojoActivity implements UserProfileVi
 
   private boolean isEmptyField(TextView textView) {
     return textView.getText().toString().equals("");
+  }
+
+  @OnClick(R.id.user_profile_sign_out)
+  public void onClickSignOut() {
+    AlertDialog dialog = createSignOutDialog();
+    dialog.show();
+  }
+
+  private AlertDialog createSignOutDialog() {
+    DialogInterface.OnClickListener signOutListener = new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int which) {
+        switch (which) {
+          case DialogInterface.BUTTON_POSITIVE:
+            presenter.signOutConfirmed();
+            break;
+          case DialogInterface.BUTTON_NEGATIVE:
+            break;
+        }
+      }
+    };
+    AlertDialog.Builder builder = new AlertDialog.Builder(
+        this, R.style.VideonaDialog);
+    return builder.setMessage(getString(R.string.sign_out_message_dialog))
+        .setTitle(getString(R.string.sign_out_title_dialog))
+        .setPositiveButton(getString(R.string.accept_sign_out), signOutListener)
+        .setNegativeButton(getString(R.string.cancel_sign_out), signOutListener)
+//                            .withCode(REQUEST_CODE_SIGN_OUT)
+        .create();
   }
 
 }
