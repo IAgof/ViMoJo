@@ -96,8 +96,7 @@
                         android:id="@+id/radio_group_trim_advance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
+                        android:padding="8dp"
                         android:orientation="horizontal">
 
                         <RadioButton
@@ -107,7 +106,8 @@
                             android:layout_height="wrap_content"
                             android:button="@null"
                             android:gravity="center"
-                            android:background="@color/colorTransparent"
+                            android:padding="8dp"
+                            android:background="@drawable/button_text_rectangle_with_corners_background"
                             android:text="300 ms"
                             android:textColor="@color/colorAccent"
                             android:textSize="12sp"/>
@@ -119,7 +119,10 @@
                             android:layout_height="wrap_content"
                             android:button="@null"
                             android:gravity="center"
-                            android:background="@color/colorTransparent"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp"
+                            android:padding="8dp"
+                            android:background="@drawable/button_text_rectangle_with_corners_background"
                             android:text="600 ms"
                             android:textSize="12sp"/>
 
@@ -130,7 +133,8 @@
                             android:layout_height="wrap_content"
                             android:button="@null"
                             android:gravity="center"
-                            android:background="@color/colorTransparent"
+                            android:padding="8dp"
+                            android:background="@drawable/button_text_rectangle_with_corners_background"
                             android:text="1200 ms"
                             android:textSize="12sp"/>
 
