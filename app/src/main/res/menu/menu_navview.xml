@@ -71,6 +71,11 @@
             android:title="@string/drawerSettings"/>
 
         <item
+            android:id="@+id/menu_navview_send_feedback"
+            android:icon="@drawable/activity_drawer_send_feedback"
+            android:title="@string/drawerSendFeedback"/>
+
+        <item
             android:id="@+id/menu_navview_shopping"
             android:title="@string/drawerStoreTitle">
             <menu>

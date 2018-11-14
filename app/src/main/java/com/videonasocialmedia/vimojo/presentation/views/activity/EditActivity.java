@@ -15,23 +15,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.roughike.bottombar.BottomBar;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
-
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -41,9 +41,7 @@ import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSpli
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.FabUtils;
 import com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.VideonaTimeLine;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +80,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Nullable @BindView(R.id.videona_time_line)
   VideonaTimeLine videonaTimeLine;
 
-    @Nullable @BindView(R.id.fab_edit_room)
-    FloatingActionsMenu fabMenu;
     @Nullable @BindView(R.id.bottomBar)
     BottomBar bottomBar;
     @Nullable @BindView(R.id.relative_layout_activity_edit)
@@ -92,7 +88,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     ImageButton warningTranscodingFilesButton;
 
     private int currentVideoIndex = 0;
-    private FloatingActionButton newFab;
 
   private String warningTranscodingFilesMessage;
 
@@ -109,10 +104,39 @@ public class EditActivity extends EditorActivity implements EditActivityView,
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
           }
         setupBottomBar(bottomBar);
-        setupFabMenu();
         setupActivityButtons();
         setVideonaPlayerListener(this);
       }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
+        return true;
+    }
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    switch (item.getItemId()) {
+      case R.id.action_toolbar_record:
+        navigateTo(RecordCamera2Activity.class);
+        return true;
+      case R.id.action_toolbar_video_gallery:
+        navigateTo(GalleryActivity.class);
+        return true;
+      case android.R.id.home:
+        drawerLayout.openDrawer(GravityCompat.START);
+        return true;
+      default:
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
 
   private void setupActivityButtons() {
     String currentTheme = editPresenter.getCurrentTheme();
@@ -138,34 +162,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
           break;
         case (R.id.tab_share):
           navigateTo(ShareActivity.class);
-          break;
-      }
-    });
-  }
-
-   private void setupFabMenu() {
-     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP,
-             R.drawable.common_navigate_record, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER,
-             R.drawable.common_navigate_gallery, R.color.colorWhite);
-  }
-
-  private void addAndConfigurateFabButton(int id, int icon, int color) {
-    newFab = FabUtils.createNewFabMini(id, icon, color);
-    onClickFabButton(newFab);
-    fabMenu.addButton(newFab);
-  }
-
-  private void onClickFabButton(final FloatingActionButton fab) {
-    fab.setOnClickListener(v -> {
-      switch (fab.getId()){
-        case ID_BUTTON_FAB_TOP:
-          fabMenu.collapse();
-            navigateTo(RecordCamera2Activity.class);
-            break;
-        case ID_BUTTON_FAB_CENTER:
-          fabMenu.collapse();
-          navigateTo(GalleryActivity.class);
           break;
       }
     });

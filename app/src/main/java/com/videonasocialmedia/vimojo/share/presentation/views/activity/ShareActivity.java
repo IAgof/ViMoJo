@@ -28,7 +28,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.roughike.bottombar.BottomBar;
@@ -87,8 +86,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Nullable
   @BindView(R.id.bottomBar)
   BottomBar bottomBar;
-  @BindView(R.id.fab_edit_room)
-  FloatingActionsMenu fabMenu;
   @Nullable
   @BindView(R.id.fab_share_room)
   FloatingActionButton fabShareRoom;
@@ -114,7 +111,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     initOptionsShareList();
     bottomBar.selectTabWithId(R.id.tab_share);
     setupBottomBar(bottomBar);
-    hideFab();
     initBarProgressDialog();
     checkNetworksAvailable();
   }
@@ -216,10 +212,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     optionsToShareList.setLayoutManager(
         new LinearLayoutManager(this, orientation, false));
     optionsToShareList.setAdapter(optionsShareAdapter);
-  }
-
-  private void hideFab() {
-    fabMenu.setVisibility(View.GONE);
   }
 
   @Override
