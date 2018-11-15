@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
 package com.videonasocialmedia.vimojo.text.presentation.views.activity;
 
 import android.content.Context;
@@ -14,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
@@ -42,7 +48,8 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     VideonaPlayer.VideonaPlayerListener {
     private static String LOG_TAG = VideoEditTextActivity.class.getName();
 
-    @Inject EditTextPreviewPresenter presenter;
+    @Inject
+    EditTextPreviewPresenter presenter;
 
     @BindView(R.id.text_activityText)
     EditText clipText;
@@ -87,39 +94,23 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-               onBackPressed();
-                return true;
-            default:
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onBackPressed() {
         presenter.editTextCancel();
     }
 
     @OnClick(R.id.button_editText_top)
     public void onClickAddTextTop(){
-      presenter.onClickPositionTop();
+        presenter.onClickPositionTop();
     }
 
     @OnClick(R.id.button_editText_center)
     public void onClickAddTextCenter() {
-      presenter.onClickPositionCenter();
+        presenter.onClickPositionCenter();
     }
 
     @OnClick(R.id.button_editText_bottom)
     public void onClickAddTextBottom() {
-      presenter.onClickPositionBottom();
-    }
-
-    @NonNull
-    private String getTextFromEditText() {
-        return clipText.getText().toString();
+        presenter.onClickPositionBottom();
     }
 
     @OnClick(R.id.button_editText_accept)
@@ -143,7 +134,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @OnClick(R.id.button_editText_cancel)
     public void onClickEditTextCancel() {
-      presenter.editTextCancel();
+        presenter.editTextCancel();
     }
 
     @OnTouch(R.id.text_activityText)
@@ -163,7 +154,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void updateButtonToThemeDark() {
-      tintEditButtons(R.color.button_color_theme_dark);
+        tintEditButtons(R.color.button_color_theme_dark);
     }
 
     @Override
@@ -173,7 +164,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void updateTextToThemeDark() {
-      tintText(R.color.textColorDark);
+        tintText(R.color.textColorDark);
     }
 
     @Override
@@ -212,22 +203,22 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void hideKeyboard() {
-      InputMethodManager keyboard =
-          (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-      keyboard.hideSoftInputFromWindow(clipText.getWindowToken(), 0);
+        InputMethodManager keyboard =
+            (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(clipText.getWindowToken(), 0);
     }
 
     @Override
     public void showKeyboard() {
-      InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
-      imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
+        InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     @Override
     public void navigateTo(Class cls, int currentVideoIndex) {
-      Intent intent = new Intent(this, cls);
-      intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
-      startActivity(intent);
+        Intent intent = new Intent(this, cls);
+        intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
+        startActivity(intent);
     }
 
     @OnCheckedChanged(R.id.edit_text_checkbox)
@@ -240,14 +231,14 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     private void tintEditButtons(int tintList) {
-      tintButton(button_editText_top, tintList);
-      tintButton(button_editText_center, tintList);
-      tintButton(button_ediText_bottom, tintList);
+        tintButton(button_editText_top, tintList);
+        tintButton(button_editText_center, tintList);
+        tintButton(button_ediText_bottom, tintList);
     }
 
     @OnTextChanged(R.id.text_activityText)
     void onTextChanged() {
-      presenter.onTextChanged(clipText.getText().toString());
+        presenter.onTextChanged(clipText.getText().toString());
     }
 
     @Override
@@ -271,19 +262,13 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
     }
 
     @Override
-    public void setSeekBarLayoutEnabled(boolean seekBarEnabled) {
-        videonaPlayer.setSeekBarLayoutEnabled(seekBarEnabled);
-    }
-
-    @Override
     public void setAspectRatioVerticalVideos(int height) {
         videonaPlayer.setAspectRatioVerticalVideos(height);
     }
 
     @Override
-    public void setImageText(String text, String textPosition, boolean textWithShadow, int width,
-                             int height) {
-        videonaPlayer.setImageText(text, textPosition, textWithShadow, width, height);
+    public void setImageText(String text, String textPosition, boolean textWithShadow) {
+        videonaPlayer.setImageText(text, textPosition, textWithShadow);
     }
 
     @Override
@@ -292,8 +277,7 @@ public class VideoEditTextActivity extends VimojoActivity implements EditTextVie
 
     @Override
     public void playerReady() {
-      clipText.requestFocus();
-      showKeyboard();
-      presenter.playerReady();
+        clipText.requestFocus();
+        presenter.playerReady();
     }
 }

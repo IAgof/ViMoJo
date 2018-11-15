@@ -8,6 +8,8 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.RadioButton;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
@@ -22,6 +24,7 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.split.domain.VideoAndCompositionUpdaterOnSplitSuccess;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.views.SplitView;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
+import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -41,8 +44,8 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     private Context context;
     private SplitVideoUseCase splitVideoUseCase;
     private Video videoToEdit;
-
     private SplitView splitView;
+    private SharedPreferences sharedPreferences;
     protected UserEventTracker userEventTracker;
     protected Project currentProject;
     private int maxSeekBarSplit;
@@ -53,6 +56,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
 
     @Inject
     public SplitPreviewPresenter(Context context, SplitView splitView,
+                                 SharedPreferences sharedPreferences,
                                  UserEventTracker userEventTracker,
                                  SplitVideoUseCase splitVideoUseCase,
                                  ProjectInstanceCache projectInstanceCache,
@@ -61,6 +65,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         super(backgroundExecutor, userEventTracker);
         this.context = context;
         this.splitView = splitView;
+        this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
         this.projectInstanceCache = projectInstanceCache;
@@ -140,5 +145,38 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
 
     public void cancelSplit() {
         splitView.navigateTo(EditActivity.class, videoIndexOnTrack);
+    }
+
+    public void setupActivityViews() {
+        updateViewsAccordingTheme();
+    }
+
+    private void updateViewsAccordingTheme() {
+        if (isThemeDarkActivated()) {
+            splitView.updateViewToThemeDark();
+        } else {
+            splitView.updateViewToThemeLight();
+        }
+    }
+
+    public void updateRadioButtonsWithTheme(RadioButton radioButtonLow,
+                                            RadioButton radioButtonMedium,
+                                            RadioButton radioButtonHigh) {
+        updateRadioButtonAccordingTheme(radioButtonLow);
+        updateRadioButtonAccordingTheme(radioButtonMedium);
+        updateRadioButtonAccordingTheme(radioButtonHigh);
+    }
+
+    private void updateRadioButtonAccordingTheme(RadioButton buttonNoSelected) {
+        if (isThemeDarkActivated()) {
+            splitView.updateRadioButtonToThemeDark(buttonNoSelected);
+        } else {
+            splitView.updateRadioButtonToThemeLight(buttonNoSelected);
+        }
+    }
+
+    private boolean isThemeDarkActivated() {
+        return sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
+            com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
     }
 }

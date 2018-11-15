@@ -199,7 +199,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         updateRadioButtonAccordingTheme(radioButtonHigh);
     }
 
-    void updateViewsAccordingTheme() {
+    private void updateViewsAccordingTheme() {
         if (isThemeDarkActivated()) {
             trimView.updateViewToThemeDark();
         } else {

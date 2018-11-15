@@ -86,7 +86,6 @@ import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.pr
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseDetailView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.mvp.views.LicenseListView;
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.source.VimojoLicensesProvider;
-import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
 import com.videonasocialmedia.vimojo.share.domain.GetFtpListUseCase;
 import com.videonasocialmedia.vimojo.share.domain.ObtainNetworksToShareUseCase;
 import com.videonasocialmedia.vimojo.share.presentation.mvp.presenters.ShareVideoPresenter;
@@ -101,11 +100,8 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOver
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters.VoiceOverVolumePresenter;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.VoiceOverVolumeView;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverRecordActivity;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.VoiceOverVolumeActivity;
 import com.videonasocialmedia.vimojo.split.domain.SplitVideoUseCase;
 import com.videonasocialmedia.vimojo.split.presentation.mvp.presenters.SplitPreviewPresenter;
 import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSplitActivity;
@@ -331,13 +327,13 @@ public class ActivityPresentersModule {
   }
 
   @Provides @PerActivity
-  SplitPreviewPresenter provideSplitPresenter(
+  SplitPreviewPresenter provideSplitPresenter(SharedPreferences sharedPreferences,
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
-          GetMediaListFromProjectUseCase getMediaListFromProjectUseCase,
-          UpdateComposition updateComposition, @Named("amIAVerticalApp") boolean amIAVerticalApp,
+          @Named("amIAVerticalApp") boolean amIAVerticalApp,
           BackgroundExecutor backgroundExecutor) {
-    return new SplitPreviewPresenter(activity, (VideoSplitActivity) activity, userEventTracker,
-        splitVideoUseCase, projectInstanceCache, amIAVerticalApp, backgroundExecutor);
+    return new SplitPreviewPresenter(activity, (VideoSplitActivity) activity, sharedPreferences,
+        userEventTracker, splitVideoUseCase, projectInstanceCache, amIAVerticalApp,
+        backgroundExecutor);
   }
 
   @Provides @PerActivity

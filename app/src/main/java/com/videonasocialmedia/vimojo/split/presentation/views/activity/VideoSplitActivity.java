@@ -15,13 +15,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -43,7 +45,7 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
-    SeekBar.OnSeekBarChangeListener {
+    SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
 
     @Inject SplitPreviewPresenter presenter;
 
@@ -55,18 +57,18 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     SeekBar splitSeekBar;
     @BindView(R.id.coordinator_layout_video_split)
     CoordinatorLayout coordinatorLayout;
-    @BindView(R.id.player_advance_low_backward_start_split)
-    ImageButton playerAdvanceLowBackwardStartSplit;
-    @BindView(R.id.player_advance_medium_backward_start_split)
-    ImageButton playerAdvanceMediumBackwardStartSplit;
-    @BindView(R.id.player_advance_high_backward_start_split)
-    ImageButton playerAdvanceHighBackwardStartSplit;
-    @BindView(R.id.player_advance_low_forward_end_split)
-    ImageButton playerAdanceLowForwardEndSplit;
-    @BindView(R.id.player_advance_medium_forward_end_split)
-    ImageButton playerAdanceMediumForwardEndSplit;
-    @BindView(R.id.player_advance_high_forward_end_split)
-    ImageButton playerAdanceHighForwardEndSplit;
+    @BindView(R.id.radio_group_split_advance)
+    RadioGroup radioGroupSplit;
+    @BindView(R.id.radio_button_split_advance_low)
+    RadioButton buttonSelectAdvanceLow;
+    @BindView(R.id.radio_button_split_advance_medium)
+    RadioButton buttonSelectAdvanceMedium;
+    @BindView(R.id.radio_button_split_advance_high)
+    RadioButton buttonSelectAdvanceHigh;
+    @BindView(R.id.player_advance_backward_split)
+    ImageButton playerAdvanceBackwardSplit;
+    @BindView(R.id.player_advance_forward_split)
+    ImageButton playerAdvanceForwardSplit;
 
     int videoIndexOnTrack;
 
@@ -75,15 +77,16 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_split);
         ButterKnife.bind(this);
-
         getActivityPresentersComponent().inject(this);
-        setupActivityButtons();
         splitSeekBar.setProgress(0);
         splitSeekBar.setOnSeekBarChangeListener(this);
         timeTag.setText(TimeUtils.toFormattedTimeWithMilliSecond(0));
 
         Intent intent = getIntent();
         videoIndexOnTrack = intent.getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
+        radioGroupSplit.setOnCheckedChangeListener(this);
+        buttonSelectAdvanceMedium.setChecked(true);
+        setupActivityViews();
     }
 
     @Override
@@ -103,22 +106,17 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         presenter.pausePresenter();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    public void setupActivityButtons() {
-      tintSplitButtons(R.color.button_color_theme_light);
-    }
+  private void setupActivityViews() {
+    presenter.setupActivityViews();
+  }
 
     private void tintSplitButtons(int button_color) {
-        tintButton(playerAdvanceLowBackwardStartSplit, button_color);
-        tintButton(playerAdvanceMediumBackwardStartSplit, button_color);
-        tintButton(playerAdvanceHighBackwardStartSplit, button_color);
-        tintButton(playerAdanceLowForwardEndSplit, button_color);
-        tintButton(playerAdanceMediumForwardEndSplit, button_color);
-        tintButton(playerAdanceHighForwardEndSplit, button_color);
+        tintButton(playerAdvanceBackwardSplit, button_color);
+        tintButton(playerAdvanceForwardSplit, button_color);
+    }
+
+    private void tintDurationTag(int color) {
+        timeTag.setTextColor(getResources().getColor(color));
     }
 
     @Override
@@ -138,36 +136,6 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     @Override
     public void onBackPressed() {
         presenter.cancelSplit();
-    }
-
-    @OnClick(R.id.player_advance_low_backward_start_split)
-    public void onClickAdvanceLowBackwardStart(){
-        presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_LOW);
-    }
-
-    @OnClick(R.id.player_advance_medium_backward_start_split)
-    public void onClickAdvanceMediumBackwardStart(){
-      presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
-    }
-
-    @OnClick(R.id.player_advance_high_backward_start_split)
-    public void onClickAdvanceHighBackwardStart(){
-      presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
-    }
-
-    @OnClick(R.id.player_advance_low_forward_end_split)
-    public void onClickAdvanceLowForwardEnd(){
-        presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_LOW);
-    }
-
-    @OnClick(R.id.player_advance_medium_forward_end_split)
-    public void onClickAdvanceMediumForwardEnd(){
-      presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
-    }
-
-    @OnClick(R.id.player_advance_high_forward_end_split)
-    public void onClickAdvanceHighForwardEnd(){
-      presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
     }
 
     @OnClick(R.id.button_split_accept)
@@ -250,9 +218,99 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
+    public void updateViewToThemeDark() {
+        tintSplitButtons(R.color.button_trim_color_theme_dark);
+        tintDurationTag(R.color.textColorDark);
+    }
+
+    @Override
+    public void updateViewToThemeLight() {
+        tintSplitButtons(R.color.button_trim_color_theme_light);
+        tintDurationTag(R.color.textColorLight);
+    }
+
+    @Override
+    public void updateRadioButtonToThemeDark(RadioButton radioButton) {
+        radioButton.setTextColor(ContextCompat.getColorStateList(this,
+            R.color.button_trim_color_theme_dark));
+    }
+
+    @Override
+    public void updateRadioButtonToThemeLight(RadioButton radioButton) {
+        radioButton.setTextColor(ContextCompat.getColorStateList(this,
+            R.color.button_trim_color_theme_light));
+    }
+
+    @Override
     public void navigateTo(Class cls, int currentVideoIndex) {
         Intent intent = new Intent(VimojoApplication.getAppContext(), cls);
         intent.putExtra(Constants.CURRENT_VIDEO_INDEX, currentVideoIndex);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.player_advance_backward_split)
+    public void onClickAdvanceBackward(){
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_LOW);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceBackwardStartSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
+        }
+    }
+
+    @OnClick(R.id.player_advance_forward_split)
+    public void onClickAdvanceForward(){
+        if (buttonSelectAdvanceLow.isChecked()) {
+            presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_LOW);
+        }
+        if (buttonSelectAdvanceMedium.isChecked()) {
+            presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_MEDIUM);
+        }
+        if (buttonSelectAdvanceHigh.isChecked()) {
+            presenter.advanceForwardEndSplitting(ADVANCE_PLAYER_PRECISION_HIGH);
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        if (buttonSelectAdvanceLow.isChecked()) {
+            showPlayerAdvanceLow();
+        }
+        if(buttonSelectAdvanceMedium.isChecked()) {
+            showPlayerAdvanceMedium();
+        }
+        if(buttonSelectAdvanceHigh.isChecked()) {
+            showPlayerAdvanceHigh();
+        }
+        updateRadioButtons();
+    }
+
+    private void updateRadioButtons() {
+        presenter.updateRadioButtonsWithTheme(buttonSelectAdvanceLow, buttonSelectAdvanceMedium,
+            buttonSelectAdvanceHigh);
+    }
+
+    private void showPlayerAdvanceLow() {
+        playerAdvanceBackwardSplit.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+        playerAdvanceForwardSplit.setImageResource
+            (R.drawable.activity_edit_player_advance_low);
+    }
+
+    private void showPlayerAdvanceMedium() {
+        playerAdvanceBackwardSplit.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+        playerAdvanceForwardSplit.setImageResource
+            (R.drawable.activity_edit_player_advance_medium);
+    }
+
+    private void showPlayerAdvanceHigh() {
+        playerAdvanceBackwardSplit.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
+        playerAdvanceForwardSplit.setImageResource
+            (R.drawable.activity_edit_player_advance_high);
     }
 }

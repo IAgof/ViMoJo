@@ -1,6 +1,7 @@
 package com.videonasocialmedia.vimojo.split.presentation.mvp.views;
 
 import android.content.Context;
+import android.widget.RadioButton;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
@@ -15,6 +16,10 @@ public interface SplitView {
     void refreshTimeTag(int currentPosition);
     void updateProject();
     void navigateTo(Class<EditActivity> editActivityClass, int videoIndexOnTrack);
+    void updateViewToThemeDark();
+    void updateViewToThemeLight();
+    void updateRadioButtonToThemeDark(RadioButton radioButton);
+    void updateRadioButtonToThemeLight(RadioButton radioButton);
 
     // Player views
     void attachView(Context context);

@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2018 Videona Socialmedia SL
+ * http://www.videona.com
+ * info@videona.com
+ * All rights reserved
+ */
+
 package com.videonasocialmedia.vimojo.text.presentation.mvp.presenters;
 
 
@@ -7,16 +14,15 @@ import android.util.TypedValue;
 
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.effects.TextEffect;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
+import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
-import com.videonasocialmedia.vimojo.composition.domain.model.Project;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
 import com.videonasocialmedia.vimojo.text.domain.ClipTextResultCallback;
 import com.videonasocialmedia.vimojo.text.domain.ModifyVideoTextAndPositionUseCase;
@@ -56,7 +62,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     public EditTextPreviewPresenter(
         Context context, EditTextView editTextView, UserEventTracker userEventTracker,
         ModifyVideoTextAndPositionUseCase modifyVideoTextAndPositionUseCase, ProjectInstanceCache
-        projectInstanceCache, UpdateMedia updateMedia, UpdateComposition updateComposition,
+            projectInstanceCache, UpdateMedia updateMedia, UpdateComposition updateComposition,
         @Named("amIAVerticalApp") boolean amIAVerticalApp,
         BackgroundExecutor backgroundExecutor) {
         super(backgroundExecutor, userEventTracker);
@@ -81,12 +87,12 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         currentProject.addListener(this);
         editTextView.attachView(context);
         editTextView.setVideonaPlayerListener();
-        editTextView.setSeekBarLayoutEnabled(false);
         loadProjectVideo();
         if (amIAVerticalApp) {
             editTextView
                 .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
+        editTextView.showKeyboard();
     }
 
     public void pausePresenter() {
@@ -118,9 +124,9 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     }
     public void setTextToVideo() {
         addCallback(modifyVideoTextAndPositionUseCase
-                .addTextToVideo(currentProject, videoToEdit, textSelected, positionSelected,
-                    textHasShadow), new ClipTextResultCallback(currentProject, updateMedia,
-                    updateComposition));
+            .addTextToVideo(currentProject, videoToEdit, textSelected, positionSelected,
+                textHasShadow), new ClipTextResultCallback(currentProject, updateMedia,
+            updateComposition));
         userEventTracker.trackClipAddedText(positionSelected, textSelected.length(),
             textHasShadow, currentProject);
         editTextView.navigateTo(EditActivity.class, videoIndexOnTrack);
@@ -159,8 +165,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
     public void setCheckboxShadow(boolean isShadowChecked) {
         this.textHasShadow = isShadowChecked;
         if (isPlayerReady) {
-            editTextView.setImageText(textSelected, positionSelected, textHasShadow,
-                Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+            editTextView.setImageText(textSelected, positionSelected, textHasShadow);
         }
     }
 
@@ -168,30 +173,28 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
         positionSelected = TextEffect.TextPosition.TOP.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
-            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow);
     }
 
     public void onClickPositionCenter() {
         positionSelected = TextEffect.TextPosition.CENTER.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
-            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow);
     }
 
     public void onClickPositionBottom() {
         positionSelected = TextEffect.TextPosition.BOTTOM.name();
         editTextView.setPositionEditText(positionSelected);
         editTextView.hideKeyboard();
-        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
-            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow);
     }
 
     public void onTextChanged(String text) {
         textSelected = text;
-        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
-            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        if (isPlayerReady) {
+            editTextView.setImageText(textSelected, positionSelected, textHasShadow);
+        }
     }
 
     public void editTextCancel() {
@@ -200,8 +203,7 @@ public class EditTextPreviewPresenter extends VimojoPresenter implements Element
 
     public void playerReady() {
         isPlayerReady = true;
-        editTextView.setImageText(textSelected, positionSelected, textHasShadow,
-            Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+        editTextView.setImageText(textSelected, positionSelected, textHasShadow);
     }
 }
 
