@@ -101,6 +101,7 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         splitView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
         maxSeekBarSplit =  videoCopy.getStopTime() - videoCopy.getStartTime();
         splitView.initSplitView(maxSeekBarSplit);
+        splitView.setVideonaPlayerListener();
     }
 
     public void splitVideo() {

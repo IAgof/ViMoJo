@@ -265,6 +265,11 @@ public class SoundActivity extends EditorActivity implements SoundView,
   }
 
   @Override
+  public void updatedSeekbarProgress(int progress) {
+    // Do nothing
+  }
+
+  @Override
   public void setSeekBarProgress(int id, int seekBarProgress) {
     presenter.setTrackVolume(id, seekBarProgress);
 

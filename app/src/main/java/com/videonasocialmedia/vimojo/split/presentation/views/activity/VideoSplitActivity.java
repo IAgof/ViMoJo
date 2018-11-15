@@ -24,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
+import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayerExo;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -45,7 +46,8 @@ import static com.videonasocialmedia.vimojo.utils.Constants.ADVANCE_PLAYER_PRECI
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 public class VideoSplitActivity extends VimojoActivity implements SplitView,
-    SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
+    SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener,
+    VideonaPlayer.VideonaPlayerListener {
 
     @Inject SplitPreviewPresenter presenter;
 
@@ -179,6 +181,11 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
     }
 
     @Override
+    public void setVideonaPlayerListener() {
+      videonaPlayer.setVideonaPlayerListener(this);
+    }
+
+  @Override
     public void initSingleClip(VMComposition vmComposition, int clipPosition) {
         videonaPlayer.initSingleClip(vmComposition, clipPosition);
     }
@@ -313,4 +320,20 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
         playerAdvanceForwardSplit.setImageResource
             (R.drawable.activity_edit_player_advance_high);
     }
+
+  @Override
+  public void newClipPlayed(int currentClipIndex) {
+    // Do nothing
+  }
+
+  @Override
+  public void playerReady() {
+    // Do nothing
+  }
+
+  @Override
+  public void updatedSeekbarProgress(int progress) {
+    splitSeekBar.setProgress(progress);
+    refreshTimeTag(progress);
+  }
 }

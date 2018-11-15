@@ -24,6 +24,7 @@ public interface SplitView {
     // Player views
     void attachView(Context context);
     void detachView();
+    void setVideonaPlayerListener();
     void setAspectRatioVerticalVideos(int height);
     void initSingleClip(VMComposition vmComposition, int clipPosition);
     void seekTo(int timeInMsec);

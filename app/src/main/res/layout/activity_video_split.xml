@@ -184,7 +184,6 @@
 
             </android.support.v7.widget.CardView>
 
-
             <android.support.v7.widget.CardView
                 android:id="@+id/cancel_accept_split_cardview"
                 android:layout_width="match_parent"
@@ -195,7 +194,6 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 style="?attr/cardViewStyle">
-
 
                 <ImageButton
                     android:id="@+id/button_split_cancel"
