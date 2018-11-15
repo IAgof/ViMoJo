@@ -65,7 +65,7 @@
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
     <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
     <string name="upload_video_register_login">For uploading videos, you need to register or login first.</string>
-    <string name="upload_video_complete_project_info">For uploading videos, you need to complete project details.</string>
+    <string name="upload_video_complete_project_info">Do you want to add project details information before uploading video?</string>
     <string name="progress_dialog_title_checking_info_user">Checking info</string>
     <string name="progress_dialog_message_checking_user_auth">Checking user auth</string>
     <string name="cancel_exportation">Cancel</string>

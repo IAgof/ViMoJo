@@ -68,7 +68,7 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="upload_video_with_mobile_network">¿Quieres subir vídeo usando los datos de tu tarifa móvil?</string>
     <string name="connect_to_network">Por favor, conecte su móvil a la red móvil o wifi</string>
     <string name="upload_video_register_login">Para subir vídeos, primero tiene que registrarse o inicar sesión</string>
-    <string name="upload_video_complete_project_info">Para subir vídeos necesita completar toda la información de proyecto</string>
+    <string name="upload_video_complete_project_info">¿Quieres completar la información del proyecto antes de subir el vídeo?</string>
     <string name="progress_dialog_title_checking_info_user">Comprobando información</string>
     <string name="progress_dialog_message_checking_user_auth">Comprobando autenticación</string>
     <string name="cancel_exportation">Cancelar</string>
