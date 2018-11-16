@@ -51,7 +51,6 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     private int maxSeekBarSplit;
     private int videoIndexOnTrack;
     private boolean amIAVerticalApp;
-
     private int currentSplitPosition = 0;
 
     @Inject
@@ -179,5 +178,9 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     private boolean isThemeDarkActivated() {
         return sharedPreferences.getBoolean(ConfigPreferences.THEME_APP_DARK,
             com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_THEME_DARK_STATE);
+    }
+
+    public void setCurrentSplitPosition(int currentSplitPosition) {
+        this.currentSplitPosition = currentSplitPosition;
     }
 }

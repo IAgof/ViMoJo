@@ -143,7 +143,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        updatePlayer();
+        updatePlayer(0);
     }
 
     public void advanceForwardStartTrimming(int advancePrecision) {
@@ -156,7 +156,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        updatePlayer();
+        updatePlayer(0);
     }
 
     public void advanceBackwardEndTrimming(int advancePrecision) {
@@ -169,7 +169,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        updatePlayer();
+        updatePlayer(finishTimeMs - startTimeMs);
     }
 
     public void advanceForwardEndTrimming(int advancePrecision) {
@@ -179,7 +179,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         }
         trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        updatePlayer();
+        updatePlayer(finishTimeMs - startTimeMs);
     }
 
     @Override
@@ -229,29 +229,30 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
                 startTimeMs = finishTimeMs - MIN_TRIM_OFFSET_MS;
                 trimView.updateStartTrimmingRangeSeekBar(startTimeMs / MS_CORRECTION_FACTOR);
                 trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-                updatePlayer();
+                updatePlayer(0);
                 return;
             }
             if (finishTimeMs != (int) ( maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
                 finishTimeMs = startTimeMs + MIN_TRIM_OFFSET_MS;
                 trimView.updateFinishTrimmingRangeSeekBar(finishTimeMs / MS_CORRECTION_FACTOR);
                 trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-                updatePlayer();
+                updatePlayer(finishTimeMs - startTimeMs);
                 return;
             }
         }
         if (startTimeMs != (int) ( minValueFloat * Constants.MS_CORRECTION_FACTOR)) {
             startTimeMs = (int) (minValueFloat * Constants.MS_CORRECTION_FACTOR);
+            updatePlayer(0);
         } else {
             if (finishTimeMs != (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR)) {
                 finishTimeMs = (int) (maxValueFloat * Constants.MS_CORRECTION_FACTOR);
+                updatePlayer(finishTimeMs - startTimeMs);
             }
         }
         trimView.refreshDurationTag(finishTimeMs - startTimeMs);
-        updatePlayer();
     }
 
-    private void updatePlayer() {
+    private void updatePlayer(int timeMs) {
         VMComposition vmCompositionCopy = null;
         try {
             vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
@@ -263,7 +264,7 @@ public class TrimPreviewPresenter extends VimojoPresenter implements ElementChan
         videoCopy.setStartTime(startTimeMs);
         videoCopy.setStopTime(finishTimeMs);
         trimView.initSingleClip(vmCompositionCopy, videoIndexOnTrack);
-        trimView.seekTo(0);
+        trimView.seekTo(timeMs);
     }
 
     private boolean isRangeSeekBarLessThanMinTrimOffset(float minValueFloat, float maxValueFloat) {

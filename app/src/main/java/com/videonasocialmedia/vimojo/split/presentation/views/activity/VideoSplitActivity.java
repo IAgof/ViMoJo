@@ -333,6 +333,7 @@ public class VideoSplitActivity extends VimojoActivity implements SplitView,
 
   @Override
   public void updatedSeekbarProgress(int progress) {
+    presenter.setCurrentSplitPosition(progress);
     splitSeekBar.setProgress(progress);
     refreshTimeTag(progress);
   }
