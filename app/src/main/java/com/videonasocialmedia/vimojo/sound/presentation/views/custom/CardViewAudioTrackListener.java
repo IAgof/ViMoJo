@@ -9,4 +9,5 @@ public interface CardViewAudioTrackListener {
   void setSwitchMuteAudio(int id, boolean isChecked);
   void onClickExpandInfoTrack(int positionInTrack);
   void onClickMediaClip(int position, int trackId);
+  void onClickDeleteAudio(int id);
 }

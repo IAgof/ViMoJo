@@ -223,10 +223,12 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   SoundPresenter provideSoundPresenter(
           ModifyTrackUseCase modifyTrackUseCase, UpdateComposition updateComposition,
-          @Named("voiceOverAvailable") boolean voiceOverAvailable,
+          RemoveAudioUseCase removeAudioUseCase, RemoveMedia removeMedia, UpdateTrack updateTrack,
+          RemoveTrack removeTrack, @Named("voiceOverAvailable") boolean voiceOverAvailable,
           BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
-    return new SoundPresenter((SoundActivity) activity, modifyTrackUseCase, projectInstanceCache,
-        updateComposition, voiceOverAvailable, backgroundExecutor, userEventTracker);
+    return new SoundPresenter(activity, (SoundActivity) activity, modifyTrackUseCase, projectInstanceCache,
+        updateComposition, removeAudioUseCase, removeMedia, updateTrack, removeTrack,
+        voiceOverAvailable, backgroundExecutor, userEventTracker);
   }
 
   @Provides @PerActivity

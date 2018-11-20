@@ -14,6 +14,8 @@ import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MusicListView;
 import com.videonasocialmedia.vimojo.utils.Constants;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -49,7 +51,17 @@ public class MusicListPresenter implements ElementChangedListener {
             musicListView
                 .setAspectRatioVerticalVideos(Constants.DEFAULT_PLAYER_HEIGHT_VERTICAL_MODE);
         }
-        musicListView.showMusicList(getMusicListUseCase.getAppMusic());
+        List<Music> musicList = getMusicListUseCase.getAppMusic();
+        if (currentProject.hasMusic()) {
+            int positionSelected = 0;
+            for(Music music: musicList) {
+                if (music.getTitle().equals(currentProject.getMusic().getTitle())) {
+                    positionSelected = musicList.indexOf(music);
+                }
+            }
+            musicListView.showMusicSelected(positionSelected);
+        }
+        musicListView.showMusicList(musicList);
     }
 
     private void loadPlayerFromProject() {

@@ -615,4 +615,10 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
     this.getTheme().resolveAttribute(R.attr.themeName, outValue, true);
     return (String) outValue.string;
   }
+
+  public void resetPlayer() {
+    videonaPlayer.detachView();
+    videonaPlayer.attachView(this);
+    editorPresenter.resetPlayer();
+  }
 }

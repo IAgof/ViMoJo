@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.Constants;
@@ -46,8 +47,10 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -77,6 +80,7 @@ public class MusicDetailPresenterTest {
     @Mock BackgroundExecutor mockedBackgroundExecutor;
     @Mock ListenableFuture mockedListenableFuture;
     @Mock FutureCallback mockedFutureCallback;
+    @Mock Crashlytics mockedCrashlytics;
 
     @Before
     public void injectMocks() {
@@ -171,14 +175,13 @@ public class MusicDetailPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnRemoveMediaFinishedListener listener = invocation.getArgument(3);
+                OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
                 // TODO: 7/9/18 Fix today this test
                 List<Media> removedMedias = null;
                 listener.onRemoveMediaItemFromTrackSuccess(removedMedias);
                 return null;
             }
         }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(music),
-            eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
             any(OnRemoveMediaFinishedListener.class));
         doAnswer(new Answer() {
             @Override
@@ -200,24 +203,23 @@ public class MusicDetailPresenterTest {
 
         verify(mockedUserEventTracker).trackMusicSet(currentProject);
         verify(mockedUpdateComposition).updateComposition(currentProject);
-        verify(mockedMusicDetailView).goToSoundActivity();
     }
 
     @Test
     public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
+        doNothing().when(mockedCrashlytics).log(anyString());
         Music music = new Music(1, "Music title", 2,
             3, "Music Author", "3", 0);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                OnRemoveMediaFinishedListener listener = invocation.getArgument(3);
+                OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
                 listener.onRemoveMediaItemFromTrackError();
                 return null;
             }
         }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(music),
-            eq(Constants.INDEX_AUDIO_TRACK_MUSIC),
             any(OnRemoveMediaFinishedListener.class));
 
         musicDetailPresenter.removeMusic(music);

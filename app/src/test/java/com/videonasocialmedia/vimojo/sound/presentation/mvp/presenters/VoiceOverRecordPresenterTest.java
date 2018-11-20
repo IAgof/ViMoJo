@@ -156,12 +156,11 @@ public class VoiceOverRecordPresenterTest {
     doAnswer(new Answer() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
-        OnRemoveMediaFinishedListener listener = invocation.getArgument(3);
+        OnRemoveMediaFinishedListener listener = invocation.getArgument(2);
         listener.onRemoveMediaItemFromTrackError();
         return null;
       }
     }).when(mockedRemoveAudioUseCase).removeMusic(eq(currentProject), eq(voiceOver),
-            eq(Constants.INDEX_AUDIO_TRACK_VOICE_OVER),
             Matchers.any(OnRemoveMediaFinishedListener.class));
     VoiceOverRecordPresenter injectedPresenter = getVoiceOverRecorderPresenter();
     when(mockedBackgroundExecutor.submit(any(Runnable.class))).then((Answer<Runnable>) invocation

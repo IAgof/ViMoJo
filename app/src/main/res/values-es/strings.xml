@@ -725,7 +725,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="preposition_of">de</string>
     <string name="alert_dialog_title_music">Música</string>
     <string name="alert_dialog_title_message_adding_music">Problema añadiendo música al proyecto</string>
-    <string name="alert_dialog_title_message_removing_music">Problema borrando música del proyecto</string>
+    <string name="error_removing_audio">Problema borrando música del proyecto</string>
 
 
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>

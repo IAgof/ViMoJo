@@ -11,7 +11,7 @@ public interface SoundView {
 
     void hideVoiceOverTrack();
 
-    void addVoiceOverOptionToFab();
+    void addVoiceOverOptionToToolbar();
 
     void setVideoVolume(float volume);
 
@@ -37,4 +37,10 @@ public interface SoundView {
                                String mediaPath);
 
     void navigateToMusicList(Class<MusicListActivity> musicListActivityClass);
+
+    void showError(String message);
+
+    void resetPlayer();
+
+    void updateAudioTracks();
 }

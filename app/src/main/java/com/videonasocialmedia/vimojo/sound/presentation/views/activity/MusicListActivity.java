@@ -100,6 +100,12 @@ public class MusicListActivity extends VimojoActivity implements MusicListView,
     }
 
     @Override
+    public void showMusicSelected(int positionSelected) {
+        soundList.scrollToPosition(positionSelected);
+        soundAdapter.updateSelection(positionSelected);
+    }
+
+    @Override
     public void updateProject() {
         presenter.updatePresenter();
     }

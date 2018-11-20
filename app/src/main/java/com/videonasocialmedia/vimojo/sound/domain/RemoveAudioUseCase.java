@@ -13,6 +13,8 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE;
+
 /**
  * Created by alvaro on 1/06/17.
  */
@@ -27,13 +29,19 @@ public class RemoveAudioUseCase {
   }
 
   // Remove audio only delete track if it is not music track.
-  public void removeMusic(Project currentProject, Music music, int trackIndex,
+  public void removeMusic(Project currentProject, Music music,
                           OnRemoveMediaFinishedListener listener) {
     this.currentProject = currentProject;
+    int trackIndex;
+    if (music.getTitle().equals(MUSIC_AUDIO_VOICEOVER_TITLE)){
+      trackIndex = Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
+    } else {
+      trackIndex = Constants.INDEX_AUDIO_TRACK_MUSIC;
+    }
     Track audioTrack = currentProject.getAudioTracks().get(trackIndex);
-    updateTrackPosition(audioTrack, trackIndex, listener);
     removeMusicInTrack(music, listener, audioTrack);
-    removeEmptyVoiceOverTrack(audioTrack, currentProject, listener);
+    updateTrackPosition(audioTrack, trackIndex, listener);
+    //removeEmptyVoiceOverTrack(audioTrack, currentProject, listener);
   }
 
   private void removeEmptyVoiceOverTrack(Track audioTrack, Project currentProject, OnRemoveMediaFinishedListener listener) {

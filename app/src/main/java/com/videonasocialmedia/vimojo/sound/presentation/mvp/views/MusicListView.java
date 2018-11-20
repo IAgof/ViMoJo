@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface MusicListView {
     void showMusicList(List<Music> musicList);
+    void showMusicSelected(int positionSelected);
     void updateProject();
     void navigateToDetailMusic(String musicPath);
 
