@@ -68,8 +68,6 @@ import butterknife.OnTouch;
 import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_AUTO;
 import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_MANUAL;
 import static com.videonasocialmedia.camera.camera2.Camera2FocusHelper.AF_MODE_REGIONS;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED;
-import static com.videonasocialmedia.vimojo.utils.Constants.DEFAULT_CAMERA_SETTINGS_CAMERA_ID_SELECTED_VERTICAL_APP;
 import static com.videonasocialmedia.vimojo.utils.UIUtils.tintButton;
 
 /**
@@ -362,6 +360,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
     keepScreenOn();
     ButterKnife.bind(this);
     setupActivityButtons();
+    setupSlideSeekBar();
 //    configChronometer(); // TODO(jliarte): 26/06/17 make sure this is not needed anymore
     configShowThumbAndNumberClips();
 
@@ -461,6 +460,9 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   private void setupSlideSeekBar() {
     slideSeekBar.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
+  }
+
+  private void setupExposureTimeSeekBar() {
     if (amIAVerticalApp) {
       exposureTimeSeekBarVertical.setOnSeekBarChangeListener(recordActivitySeekBarChangeListener);
     } else {
@@ -1306,6 +1308,17 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
   public void showGridModeSelectionSubmenu() {
     gridButton.setSelected(true);
     gridModeSubmenuCardview.setVisibility(View.VISIBLE);
+    // Select grid mode line by default if has been not selected any grid mode.
+    boolean isSomeGridActivated = false;
+    for (ImageButton gridModeButton : supportedGridModeButtons) {
+      if (gridModeButton.isSelected()) {
+        isSomeGridActivated = true;
+      }
+    }
+    if (!isSomeGridActivated) {
+      selectGridButton(gridModeButtons.get(GRID_MODE_LINES));
+      presenter.setGridMode(GRID_MODE_LINES);
+    }
   }
 
   @Override
@@ -1623,7 +1636,7 @@ public class RecordCamera2Activity extends VimojoActivity implements RecordCamer
 
   @Override
   public void enableExposureTimeSeekBar() {
-    setupSlideSeekBar();
+    setupExposureTimeSeekBar();
     if (amIAVerticalApp) {
       exposureTimeSeekBarVertical.setEnabled(true);
     } else {
