@@ -105,7 +105,7 @@
                 android:maxLines="2"
                 android:ems="30"
                 android:textSize="13sp"
-                android:background="@drawable/rectangle_edittext"
+                android:background="@drawable/button_text_rectangle_with_corners_background"
                 android:hint="@string/edit_text_hint_VideoEditText"
                 android:textColorHint="?android:attr/textColorSecondary"
                 android:imeOptions="actionDone"

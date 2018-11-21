@@ -8,6 +8,7 @@ package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
@@ -65,6 +66,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class SplitPreviewPresenterTest {
     @Mock private Context mockedContext;
     @Mock private SplitView mockedSplitView;
+    @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
@@ -84,7 +86,7 @@ public class SplitPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance();
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedContext,
-                mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
+                mockedSplitView, mockedSharedPreferences, userEventTracker, mockedSplitVideoUseCase,
                 mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
@@ -240,8 +242,9 @@ public class SplitPreviewPresenterTest {
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedContext,
-            mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
-            mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
+            mockedSplitView, mockedSharedPreferences, mockedUserEventTracker,
+            mockedSplitVideoUseCase, mockedProjectInstanceCache, amIAVerticalApp,
+            mockedBackgroundExecutor);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;
     }

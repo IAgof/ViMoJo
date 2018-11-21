@@ -170,8 +170,10 @@ public class EditorPresenter extends VimojoPresenter
       Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
     }
     editorActivityView.init(vmCompositionCopy);
-    List<Video> videoList;
-    videoList = (List<Video>) vmCompositionCopy.getMediaTrack().getItems().listIterator();
+    List<Video> videoList = new ArrayList<>();
+    for (Media media: vmCompositionCopy.getMediaTrack().getItems()) {
+      videoList.add((Video) media);
+    }
     checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videoList);
     List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
     //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
@@ -386,5 +388,10 @@ public class EditorPresenter extends VimojoPresenter
     return this.executeUseCaseCall(() -> {
       initPreviewFromProject();
     });
+  }
+
+  public void resetPlayer() {
+    this.currentProject = projectInstanceCache.getCurrentProject();
+    initPreviewFromProject();
   }
 }

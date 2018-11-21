@@ -1,6 +1,9 @@
 package com.videonasocialmedia.vimojo.userProfile.presentation.mvp.presenters;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,11 +14,16 @@ import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.crashlytics.android.Crashlytics;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
+import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnVideosRetrieved;
+import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.userProfile.presentation.mvp.views.UserProfileView;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
@@ -33,26 +41,33 @@ import javax.inject.Named;
  */
 public class UserProfilePresenter extends VimojoPresenter {
   private String LOG_TAG = UserProfilePresenter.class.getCanonicalName();
+  private Context context;
   private final SharedPreferences sharedPreferences;
   private final UserProfileView userProfileView;
   private final ObtainLocalVideosUseCase obtainLocalVideosUseCase;
   protected final UserAuth0Helper userAuth0Helper;
   private FetchUserFeatures fetchUserFeatures;
+  private GetAccount getAccount;
+  private UploadDataSource uploadDataSource;
   protected boolean vimojoPlatformAvailable;
 
   @Inject
   public UserProfilePresenter(
-      UserProfileView view, SharedPreferences sharedPreferences,
+      Context context, UserProfileView view, SharedPreferences sharedPreferences,
       ObtainLocalVideosUseCase obtainLocalVideosUseCase, UserAuth0Helper userAuth0Helper,
-      FetchUserFeatures fetchUserFeatures,
+      FetchUserFeatures fetchUserFeatures, GetAccount getAccount,
+      UploadDataSource uploadDataSource,
       @Named("vimojoPlatformAvailable") boolean vimojoPlatformAvailable,
       BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
     super(backgroundExecutor, userEventTracker);
+    this.context = context;
     this.userProfileView = view;
     this.sharedPreferences = sharedPreferences;
     this.obtainLocalVideosUseCase = obtainLocalVideosUseCase;
     this.userAuth0Helper = userAuth0Helper;
     this.fetchUserFeatures = fetchUserFeatures;
+    this.getAccount = getAccount;
+    this.uploadDataSource = uploadDataSource;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
   }
 
@@ -158,5 +173,34 @@ public class UserProfilePresenter extends VimojoPresenter {
             userProfileView.showPreferenceUserPic(userProfile.getPictureURL());
           }
         });
+  }
+
+  public void signOutConfirmed() {
+    userAuth0Helper.signOut();
+    deletePendingVideosToUpload();
+    ListenableFuture<Account> accountFuture =
+        executeUseCaseCall(() -> getAccount.getCurrentAccount(context));
+    Futures.addCallback(accountFuture, new FutureCallback<Account>() {
+      @Override
+      public void onSuccess(Account account) {
+        AccountManager am = AccountManager.get(context);
+        if (am != null && account != null) {
+          Log.d(LOG_TAG, "removeAccount");
+          am.removeAccount(account, null, null);
+          userProfileView.navigateToInitRegisterLogin();
+        }
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        // (jliarte): 22/01/18 no account present? do nothing
+      }
+    });
+  }
+
+  private void deletePendingVideosToUpload() {
+    if (uploadDataSource.getAllVideosToUpload().size() > 0) {
+      uploadDataSource.removeAllVideosToUpload();
+    }
   }
 }

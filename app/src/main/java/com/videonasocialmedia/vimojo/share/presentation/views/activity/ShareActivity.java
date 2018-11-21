@@ -308,12 +308,18 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       builder.setMessage(getResources().getString(R.string.upload_video_complete_project_info));
       final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
         switch (which) {
-          case DialogInterface.BUTTON_NEUTRAL:
+          case DialogInterface.BUTTON_POSITIVE:
             navigateToProjectDetails();
+            break;
+          case DialogInterface.BUTTON_NEGATIVE:
+            presenter.userDoesNotWantToCompleteProjectDetails();
             break;
         }
       };
-      builder.setCancelable(false).setNeutralButton("OK", dialogClickListener).show();
+      builder.setCancelable(false)
+          .setNegativeButton(getString(R.string.no), dialogClickListener)
+          .setPositiveButton(getString(R.string.yes), dialogClickListener)
+          .show();
     });
   }
 

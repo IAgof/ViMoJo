@@ -131,7 +131,7 @@ public class GalleryProjectListPresenterTest {
 
     spyGalleryProjectListPresenter.updateProjectList();
 
-    verify(mockedGalleryProjectListView).createDefaultProject();
+    verify(mockedGalleryProjectListView).createDefaultProjectListEmpty();
   }
 
   @Test

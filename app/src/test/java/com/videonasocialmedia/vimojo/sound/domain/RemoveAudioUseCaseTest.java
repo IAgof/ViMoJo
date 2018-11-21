@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -35,12 +36,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class RemoveAudioUseCaseTest {
 
   @Mock OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @Mock
-  TrackDataSource mockedTrackRepository;
-  @Mock
-  MusicDataSource mockedMusicRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   private Project currentProject;
 
   @Before
@@ -70,8 +66,7 @@ public class RemoveAudioUseCaseTest {
     assertThat("VoiceOverTrack position is 2 ", voiceOverTrack.getPosition(), is(2));
     RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
+    removeAudioUseCase.removeMusic(currentProject, music, mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has updated voice over track position to 1 ",
         voiceOverTrack.getPosition(), is(1));
@@ -89,8 +84,7 @@ public class RemoveAudioUseCaseTest {
     assertThat("MusicTrack position is 1 ", musicTrack.getPosition(), is(1));
     RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
+    removeAudioUseCase.removeMusic(currentProject, music, mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has reStart music track position to 0",
         musicTrack.getPosition(), is(0));
@@ -108,8 +102,7 @@ public class RemoveAudioUseCaseTest {
     assertThat("MusicTrack has one item ", musicTrack.getItems().size(), is(1));
     RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
+    removeAudioUseCase.removeMusic(currentProject, music, mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has delete item on music track",
         musicTrack.getItems().size(), is(0));
@@ -133,8 +126,7 @@ public class RemoveAudioUseCaseTest {
     assertThat("Music track mute is trackMute", musicTrack.isMuted(), is(trackMute));
     RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
+    removeAudioUseCase.removeMusic(currentProject, music, mockedOnRemoveMediaFinishedListener);
 
     AudioTrack updatedMusicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     assertThat("UseCase has update track volume to default", updatedMusicTrack.getVolume(),
@@ -152,6 +144,7 @@ public class RemoveAudioUseCaseTest {
     musicTrack.setPosition(1);
     currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    voiceOver.setTitle(MUSIC_AUDIO_VOICEOVER_TITLE);
     AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);
@@ -161,8 +154,7 @@ public class RemoveAudioUseCaseTest {
         .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER).getItems().size(), is(1));
     RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    removeAudioUseCase.removeMusic(currentProject, voiceOver, Constants.INDEX_AUDIO_TRACK_VOICE_OVER,
-        mockedOnRemoveMediaFinishedListener);
+    removeAudioUseCase.removeMusic(currentProject, voiceOver, mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has removed voice over track", currentProject.getAudioTracks().size(), is(1));
   }
@@ -186,8 +178,7 @@ public class RemoveAudioUseCaseTest {
         .get(Constants.INDEX_AUDIO_TRACK_MUSIC).getItems().size(), is(1));
     RemoveAudioUseCase removeAudioUseCase = getRemoveAudioUseCase();
 
-    removeAudioUseCase.removeMusic(currentProject, music, Constants.INDEX_AUDIO_TRACK_MUSIC,
-        mockedOnRemoveMediaFinishedListener);
+    removeAudioUseCase.removeMusic(currentProject, music, mockedOnRemoveMediaFinishedListener);
 
     assertThat("UseCase has removed voice over track", currentProject.getAudioTracks().size(), is(2));
   }

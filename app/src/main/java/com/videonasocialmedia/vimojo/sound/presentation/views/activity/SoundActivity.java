@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -44,8 +45,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
     VideonaPlayer.VideonaPlayerListener, CardViewAudioTrackListener{
 
   private static final String TAG = "SoundActivity";
-  private final int ID_BUTTON_FAB_TOP=1;
-  private final int ID_BUTTON_FAB_BOTTOM=3;
 
   @Inject SoundPresenter presenter;
 
@@ -158,7 +157,7 @@ public class SoundActivity extends EditorActivity implements SoundView,
   }
 
   @Override
-  public void addVoiceOverOptionToFab() {
+  public void addVoiceOverOptionToToolbar() {
     voiceOverActivated = true;
   }
 
@@ -184,12 +183,13 @@ public class SoundActivity extends EditorActivity implements SoundView,
 
   @Override
   public void bindTrack(Track track) {
-    switch (track.getId()) {
-      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
-        videoTrack.setListener(this);
-        videoTrack.setTrack(track);
-        break;
-      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
+    runOnUiThread(() -> {
+      switch (track.getId()) {
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_MEDIA_TRACK:
+          videoTrack.setListener(this);
+          videoTrack.setTrack(track);
+          break;
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
           if (track.getPosition() == 1) {
             firstAudioTrack.setListener(this);
             firstAudioTrack.setTrack(track);
@@ -197,17 +197,18 @@ public class SoundActivity extends EditorActivity implements SoundView,
             secondAudioTrack.setListener(this);
             secondAudioTrack.setTrack(track);
           }
-        break;
-      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
-        if (track.getPosition() == 1) {
-          firstAudioTrack.setListener(this);
-          firstAudioTrack.setTrack(track);
-        } else {
-          secondAudioTrack.setListener(this);
-          secondAudioTrack.setTrack(track);
-        }
-        break;
-    }
+          break;
+        case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+          if (track.getPosition() == 1) {
+            firstAudioTrack.setListener(this);
+            firstAudioTrack.setTrack(track);
+          } else {
+            secondAudioTrack.setListener(this);
+            secondAudioTrack.setTrack(track);
+          }
+          break;
+      }
+    });
   }
 
   @Override
@@ -217,12 +218,16 @@ public class SoundActivity extends EditorActivity implements SoundView,
 
   @Override
   public void showTrackAudioFirst() {
-    firstAudioTrack.setVisibility(View.VISIBLE);
+    runOnUiThread(() -> {
+      firstAudioTrack.setVisibility(View.VISIBLE);
+    });
   }
 
   @Override
   public void showTrackAudioSecond() {
-    secondAudioTrack.setVisibility(View.VISIBLE);
+    runOnUiThread(() -> {
+      secondAudioTrack.setVisibility(View.VISIBLE);
+    });
   }
 
   @Override
@@ -253,6 +258,33 @@ public class SoundActivity extends EditorActivity implements SoundView,
     Intent intent = new Intent(this, musicListActivityClass);
     startActivity(intent);  }
 
+  @Override
+  public void showError(String message) {
+    runOnUiThread(() -> {
+      Snackbar snackbar = Snackbar.make(coordinatorLayout, message,
+          Snackbar.LENGTH_LONG);
+      snackbar.show();
+    });
+  }
+
+  @Override
+  public void resetPlayer() {
+    // update player in EditorActivity
+    runOnUiThread(() -> {
+      super.resetPlayer();
+    });
+  }
+
+  @Override
+  public void updateAudioTracks() {
+    runOnUiThread(() -> {
+      firstAudioTrack.setVisibility(View.GONE);
+      secondAudioTrack.setVisibility(View.GONE);
+      focusOnView(videoTrack);
+      scrollViewTimeLineAudioBlocks.scrollTo(0, 0);
+    });
+  }
+
   @Nullable @Override
   public void newClipPlayed(int currentClipIndex) {
     this.currentVideoIndex = currentClipIndex;
@@ -261,6 +293,11 @@ public class SoundActivity extends EditorActivity implements SoundView,
 
   @Override
   public void playerReady() {
+    // Do nothing
+  }
+
+  @Override
+  public void updatedSeekbarProgress(int progress) {
     // Do nothing
   }
 
@@ -305,6 +342,46 @@ public class SoundActivity extends EditorActivity implements SoundView,
         videoTrack.updateClipSelection(position);
         break;
     }
+  }
+
+  @Override
+  public void onClickDeleteAudio(int id) {
+    pausePreview();
+    boolean deleteMusic = false;
+    boolean deleteVoiceOver = false;
+    switch (id){
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_MUSIC:
+        deleteMusic = true;
+        break;
+      case com.videonasocialmedia.videonamediaframework.model.Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
+        deleteVoiceOver = true;
+        break;
+    }
+    // Dialog delete music
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.VideonaDialog);
+    builder.setMessage(getResources().getString(R.string.dialog_sound_delete_music));
+    boolean finalDeleteMusic = deleteMusic;
+    boolean finalDeleteVoiceOver = deleteVoiceOver;
+    final DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_POSITIVE:
+          if (finalDeleteMusic) {
+            presenter.deleteMusic();
+            break;
+          }
+          if (finalDeleteVoiceOver) {
+            presenter.deleteVoiceOver();
+            break;
+          }
+          break;
+        case DialogInterface.BUTTON_NEGATIVE:
+
+          break;
+      }
+    };
+    builder.setCancelable(true)
+        .setPositiveButton(R.string.dialog_sound_accept_delete, dialogClickListener)
+        .setNegativeButton(R.string.dialog_sound_cancel_delete, dialogClickListener).show();
   }
 
   private final void focusOnView(final View view) {

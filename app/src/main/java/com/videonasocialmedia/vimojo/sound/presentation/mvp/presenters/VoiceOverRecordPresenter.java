@@ -282,7 +282,7 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
 //    Music voiceOver = (Music) currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_VOICE_OVER).getItems().get(0);
     Music voiceOver = currentProject.getVoiceOver();
     executeUseCaseCall(() -> {
-      removeAudioUseCase.removeMusic(currentProject, voiceOver, INDEX_AUDIO_TRACK_VOICE_OVER,
+      removeAudioUseCase.removeMusic(currentProject, voiceOver,
               new OnRemoveMediaFinishedListener() {
                 @Override
                 public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
@@ -354,7 +354,6 @@ public class VoiceOverRecordPresenter extends VimojoPresenter implements Element
   private void handleTranscodingSuccess(String outputFilePath) {
     voiceOverRecordView.hideProgressDialog();
     Music voiceOver = getVoiceOverAsMusic(outputFilePath);
-    // TODO: 19/10/2017 Delete voice over from UI, not recording a new one.
     if (currentProject.hasVoiceOver()) {
       deletePreviousVoiceOver();
     }

@@ -471,6 +471,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   }
 
   @Override
+  public void updatedSeekbarProgress(int progress) {
+    // Do nothing
+  }
+
+  @Override
     public void onBackPressed() {
         navigateTo(RecordCamera2Activity.class);
     }

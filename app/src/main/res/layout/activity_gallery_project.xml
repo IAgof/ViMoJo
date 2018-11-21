@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
-    android:id="@+id/coordinatorLayout"
+    android:id="@+id/coordinatorLayout_gallery_project_list"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".sound.presentation.views.activity.MusicListActivity">
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:layout_margin="8dp"
-            android:paddingLeft="3dp"
-            android:src="@drawable/common_back_arrow_toolbar"/>
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_margin="8dp"
+                android:paddingLeft="3dp"
+                android:src="@drawable/common_back_arrow_toolbar"
+                android:layout_centerInParent="true"
+                android:layout_alignParentLeft="true"
+                />
+
+            <Button
+                android:id="@+id/gallery_project_new"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_margin="8dp"
+                android:paddingLeft="3dp"
+                android:text="@string/gallery_project_new"
+                android:textAllCaps="false"
+                android:layout_centerInParent="true"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
 
         <com.victor.loading.book.BookLoading
             android:id="@+id/bookloading_view"

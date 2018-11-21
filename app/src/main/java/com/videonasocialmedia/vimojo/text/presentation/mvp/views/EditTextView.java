@@ -3,7 +3,7 @@ package com.videonasocialmedia.vimojo.text.presentation.mvp.views;
 import android.content.Context;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+
 
 /**
  * Created by ruth on 1/09/16.
@@ -25,8 +25,7 @@ public interface EditTextView {
     void attachView(Context context);
     void detachView();
     void setVideonaPlayerListener();
-    void setSeekBarLayoutEnabled(boolean seekBarEnabled);
     void setAspectRatioVerticalVideos(int height);
     void initSingleClip(VMComposition vmComposition, int clipPosition);
-    void setImageText(String text, String textPosition, boolean textWithShadow, int width, int height);
+    void setImageText(String text, String textPosition, boolean textWithShadow);
 }

@@ -98,6 +98,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private boolean showAds;
   private boolean showSocialNetworksDecision;
   private boolean uploadToPlatformAvailable;
+  private boolean userHasCompletedDialogDetailProject = false;
 
   @Inject
   public ShareVideoPresenter(
@@ -289,7 +290,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
       return;
     }
 
-    if (!areThereProjectFieldsCompleted(currentProject)) {
+    if (!areThereProjectFieldsCompleted(currentProject) && !userHasCompletedDialogDetailProject) {
       shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
       return;
     }
@@ -461,5 +462,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
   private void fetchUserFeatures() {
     fetchUserFeatures.fetch();
+  }
+
+  public void userDoesNotWantToCompleteProjectDetails() {
+    this.userHasCompletedDialogDetailProject = true;
+    processNetworkClicked(OptionsToShareList.typeVimojoNetwork, videoPath);
   }
 }

@@ -56,31 +56,11 @@ public interface PreferencesView {
 
     void setTransitionsPref(String key, boolean value);
 
-    void setWatermarkSwitchPref(boolean value);
-
-    void setThemeDarkAppPref (String key, boolean value);
-
     void hideFtpsViews();
-
-    void hideWatermarkPreference();
-
-    void itemDarkThemePurchased();
-
-    void setVimojoStoreAvailable();
-
-  void setWatermarkSwitch();
-
-    void deactivateDarkTheme();
-
-    void setupUserAuthentication(boolean userLoggedIn);
-
-  void hideRegisterLoginView();
 
     void showMoreAppsSection();
 
     void hideMoreAppsSection();
 
     void hideTransitions();
-
-  void navigateToInitRegisterLogin();
 }

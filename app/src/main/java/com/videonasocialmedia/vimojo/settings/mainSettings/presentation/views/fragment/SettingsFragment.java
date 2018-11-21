@@ -1,8 +1,6 @@
 package com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -55,20 +53,13 @@ public class SettingsFragment extends PreferenceFragment implements
   // TODO:(alvaro.martinez) 12/01/18 Now we only use one FTP, not two. Implement feature, I want to add more FTPs
   //protected PreferenceCategory ftp2Pref;
   protected PreferenceCategory transitionCategory;
-  protected PreferenceCategory watermarkPrefCategory;
   protected PreferenceCategory moreAppsPrefCategory;
-  protected PreferenceCategory authPrefCategory;
   protected SwitchPreference transitionsVideoPref;
   protected SwitchPreference transitionsAudioPref;
-  protected SwitchPreference watermarkSwitchPref;
-  protected SwitchPreference themeappSwitchPref;
   protected Context context;
   protected SharedPreferences sharedPreferences;
   protected SharedPreferences.Editor editor;
   protected MixpanelAPI mixpanel;
-  private boolean darkThemePurchased = false;
-  private boolean vimojoStoreAvailable = false;
-  private boolean showWatermarkSwitch = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +84,6 @@ public class SettingsFragment extends PreferenceFragment implements
     super.onPause();
     sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferencesPresenter);
-    preferencesPresenter.pausePresenter();
   }
 
   private FragmentPresentersComponent initComponent() {
@@ -113,13 +103,11 @@ public class SettingsFragment extends PreferenceFragment implements
             Context.MODE_PRIVATE);
     editor = sharedPreferences.edit();
 
-    setupWatermark();
     setupAboutUs();
     setupPrivacyPolicy();
     setupTermOfService();
     setupLicense();
     setupLegalNotice();
-    setupThemeApp();
     setupTransitions();
   }
 
@@ -128,15 +116,6 @@ public class SettingsFragment extends PreferenceFragment implements
         findPreference(ConfigPreferences.TRANSITION_VIDEO);
     transitionsAudioPref = (SwitchPreference)
         findPreference(ConfigPreferences.TRANSITION_AUDIO);
-  }
-
-  private void setupWatermark() {
-    watermarkSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.WATERMARK);
-  }
-
-  private void setupThemeApp() {
-    // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
-    themeappSwitchPref = (SwitchPreference) findPreference(ConfigPreferences.THEME_APP_DARK);
   }
 
   @Override
@@ -154,14 +133,6 @@ public class SettingsFragment extends PreferenceFragment implements
     footerText.setText(text);
 
     return viewRoot;
-  }
-
-  private void updateIconLockItemsInAPP(SwitchPreference switchPreference, boolean isPurchased) {
-    if (isPurchased) {
-      switchPreference.setIcon(context.getDrawable(R.drawable.ic_unlocked));
-    } else {
-      switchPreference.setIcon(context.getDrawable(R.drawable.ic_locked));
-    }
   }
 
   @Override
@@ -211,16 +182,6 @@ public class SettingsFragment extends PreferenceFragment implements
   }
 
   @Override
-  public void setWatermarkSwitchPref(boolean value) {
-    watermarkSwitchPref.setChecked(value);
-  }
-
-  @Override
-  public void setThemeDarkAppPref(String key, boolean isActivate) {
-    themeappSwitchPref.setChecked(isActivate);
-  }
-
-  @Override
   public void showError(int message) {
     Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
   }
@@ -236,60 +197,6 @@ public class SettingsFragment extends PreferenceFragment implements
         if (ftp2Pref != null) {
             getPreferenceScreen().removePreference(ftp2Pref);
         }*/
-  }
-
-  @Override
-  public void hideWatermarkPreference() {
-    watermarkPrefCategory = (PreferenceCategory)
-            findPreference(getString(R.string.title_watermark_section));
-    if (watermarkPrefCategory != null) {
-      getPreferenceScreen().removePreference(watermarkPrefCategory);
-    }
-  }
-
-  @Override
-  public void itemDarkThemePurchased() {
-    darkThemePurchased = true;
-    updateIconLockItemsInAPP(themeappSwitchPref, darkThemePurchased);
-  }
-
-  @Override
-  public void setVimojoStoreAvailable() {
-    vimojoStoreAvailable = true;
-  }
-
-  @Override
-  public void setWatermarkSwitch() {
-    showWatermarkSwitch = true;
-  }
-
-  @Override
-  public void deactivateDarkTheme() {
-    darkThemePurchased = false;
-    themeappSwitchPref.setChecked(false);
-  }
-
-  @Override
-  public void setupUserAuthentication(final boolean userLoggedIn) {
-    getActivity().runOnUiThread(() -> {
-      final Preference authSetting = findPreference("auth");
-      if (userLoggedIn) {
-        authSetting.setTitle(R.string.sign_out);
-      } else {
-        authSetting.setTitle(R.string.sign_in_register);
-      }
-      authSetting.setOnPreferenceClickListener(
-              new AuthPreferenceClickListener(userLoggedIn));
-    });
-  }
-
-  @Override
-  public void hideRegisterLoginView() {
-    authPrefCategory = (PreferenceCategory)
-            findPreference(getString(R.string.titleUserSection));
-    if (authPrefCategory != null) {
-      getPreferenceScreen().removePreference(authPrefCategory);
-    }
   }
 
   @Override
@@ -329,62 +236,10 @@ public class SettingsFragment extends PreferenceFragment implements
     }
   }
 
-  @Override
-  public void navigateToInitRegisterLogin() {
-    Intent intent = new Intent(VimojoApplication.getAppContext(), InitRegisterLoginActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
-
-  private AlertDialog createSignOutDialog() {
-    DialogInterface.OnClickListener signOutListener = new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int which) {
-        switch (which) {
-          case DialogInterface.BUTTON_POSITIVE:
-            preferencesPresenter.signOutConfirmed();
-            break;
-          case DialogInterface.BUTTON_NEGATIVE:
-            break;
-        }
-      }
-    };
-    AlertDialog.Builder builder = new AlertDialog.Builder(
-            getActivity(), R.style.VideonaDialog);
-    return builder.setMessage(getString(R.string.sign_out_message_dialog))
-            .setTitle(getString(R.string.sign_out_title_dialog))
-            .setPositiveButton(getString(R.string.accept_sign_out), signOutListener)
-            .setNegativeButton(getString(R.string.cancel_sign_out), signOutListener)
-//                            .withCode(REQUEST_CODE_SIGN_OUT)
-            .create();
-  }
-
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     Preference connectionPref = findPreference(key);
-    if (key.equals(ConfigPreferences.THEME_APP_DARK)) {
-      if (isDarkThemeAvailable()) {
-        // TODO(jliarte): 27/10/17 improve default theme setting with a build constant
-        preferencesPresenter.trackThemeApp(sharedPreferences.getBoolean(key, false));
-        restartActivity();
-      } else if (!darkThemePurchased && themeappSwitchPref.isChecked()) {
-        themeappSwitchPref.setChecked(false);
-      } else {
-        navigateTo(VimojoStoreActivity.class);
-      }
-      return;
-    }
-    if (key.equals(ConfigPreferences.WATERMARK)) {
-      if (!isWatermarkAvailable()) {
-        if (!watermarkSwitchPref.isChecked()) {
-          watermarkSwitchPref.setChecked(true);
-        } else {
-          navigateTo(VimojoStoreActivity.class);
-        }
-      }
-      return;
-    }
     if (key.compareTo(ConfigPreferences.TRANSITION_VIDEO) == 0
             || key.compareTo(ConfigPreferences.TRANSITION_AUDIO) == 0) {
       return;
@@ -397,20 +252,6 @@ public class SettingsFragment extends PreferenceFragment implements
     preferencesPresenter.trackQualityAndResolutionAndFrameRateUserTraits(key,
             sharedPreferences.getString(key, ""));
     }
-
-  private boolean isDarkThemeAvailable() {
-    return darkThemePurchased || !vimojoStoreAvailable;
-  }
-
-  private boolean isWatermarkAvailable() {
-    return showWatermarkSwitch;
-  }
-
-  private void restartActivity() {
-    getActivity().finish();
-    Intent intent = getActivity().getIntent();
-    getActivity().startActivity(intent);
-  }
 
   private void setupLegalNotice() {
     Preference legalNoticePref = findPreference(ConfigPreferences.LEGAL_NOTICE);
@@ -476,22 +317,5 @@ public class SettingsFragment extends PreferenceFragment implements
   private void navigateTo(Class activity) {
     Intent intent = new Intent(VimojoApplication.getAppContext(), activity);
     startActivity(intent);
-  }
-
-  private class AuthPreferenceClickListener implements Preference.OnPreferenceClickListener {
-    private final boolean userLoggedIn;
-
-    public AuthPreferenceClickListener(boolean userLoggedIn) {
-      this.userLoggedIn = userLoggedIn;
-    }
-
-    @Override
-    public boolean onPreferenceClick(Preference preference) {
-      if (userLoggedIn) {
-        AlertDialog dialog = createSignOutDialog();
-        dialog.show();
-      }
-      return true;
-    }
   }
 }
