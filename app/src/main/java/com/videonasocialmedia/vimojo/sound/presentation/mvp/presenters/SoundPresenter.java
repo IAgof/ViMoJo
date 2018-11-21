@@ -268,12 +268,8 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
                     Log.d(LOG_TAG, "onRemoveMediaItemFromTrackSuccess onSuccess");
                     if(music.getTitle().equals(MUSIC_AUDIO_VOICEOVER_TITLE)) {
                       userEventTracker.trackVoiceOverRemoved(currentProject);
-                      Track voiceOverTrack = currentProject.getVMComposition().getAudioTracks()
-                          .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
                     } else {
                       userEventTracker.trackMusicRemoved(currentProject);
-                      Track musicTrack = currentProject.getVMComposition().getAudioTracks()
-                          .get(Constants.INDEX_AUDIO_TRACK_MUSIC);
                     }
                     soundView.updateAudioTracks();
                     soundView.resetPlayer();

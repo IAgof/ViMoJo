@@ -139,6 +139,12 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="edit">Editar</string>
     <string name="edit_text_checkbox">Sombreado</string>
 
+    <!-- Sound activity -->
+    <string name="dialog_sound_delete_music">¿Quieres borrar esta pista de audio?</string>
+    <string name="dialog_sound_accept_delete">si</string>
+    <string name="dialog_sound_cancel_delete">no</string>
+    <string name="error_removing_audio">Problema borrando música del proyecto</string>
+
     <!-- Gallery activity -->
     <string name="galleryProjectActivityTitle">Proyectos</string>
     <string name="confirmDeleteTitle">Eliminar</string>
@@ -725,8 +731,6 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="preposition_of">de</string>
     <string name="alert_dialog_title_music">Música</string>
     <string name="alert_dialog_title_message_adding_music">Problema añadiendo música al proyecto</string>
-    <string name="error_removing_audio">Problema borrando música del proyecto</string>
-
 
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
     <string name="menuGallery">Galería</string>

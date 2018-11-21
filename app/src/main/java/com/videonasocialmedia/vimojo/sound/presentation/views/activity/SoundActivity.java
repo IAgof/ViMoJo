@@ -45,8 +45,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
     VideonaPlayer.VideonaPlayerListener, CardViewAudioTrackListener{
 
   private static final String TAG = "SoundActivity";
-  private final int ID_BUTTON_FAB_TOP=1;
-  private final int ID_BUTTON_FAB_BOTTOM=3;
 
   @Inject SoundPresenter presenter;
 
@@ -220,12 +218,16 @@ public class SoundActivity extends EditorActivity implements SoundView,
 
   @Override
   public void showTrackAudioFirst() {
-    firstAudioTrack.setVisibility(View.VISIBLE);
+    runOnUiThread(() -> {
+      firstAudioTrack.setVisibility(View.VISIBLE);
+    });
   }
 
   @Override
   public void showTrackAudioSecond() {
-    secondAudioTrack.setVisibility(View.VISIBLE);
+    runOnUiThread(() -> {
+      secondAudioTrack.setVisibility(View.VISIBLE);
+    });
   }
 
   @Override
