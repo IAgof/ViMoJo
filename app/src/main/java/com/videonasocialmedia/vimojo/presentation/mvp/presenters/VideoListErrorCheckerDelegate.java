@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,10 @@ public class VideoListErrorCheckerDelegate {
         if (video.getVideoError() != null) {
           message = message + video.getVideoError();
         }
+      }
+      // Check temp files path
+      if (video.getTempPath() != null && !(new File(video.getTempPath()).exists())) {
+        failedVideos.add(video);
       }
     }
     if (failedVideos.size() > 0) {
