@@ -14,6 +14,7 @@ public interface MusicDetailView {
     void goToSoundActivity();
     void showError(String message);
     void updateProject();
+    void sendCrashlyticsLog(String messageLog);
 
     // Player views
     void attachView(Context context);
@@ -21,4 +22,5 @@ public interface MusicDetailView {
     void setAspectRatioVerticalVideos(int height);
     void init(VMComposition vmComposition);
     void playPreview();
+
 }

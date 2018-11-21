@@ -113,7 +113,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
             vmCompositionCopy = new VMComposition(currentProject.getVMComposition());
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
-            Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
+            musicDetailView.sendCrashlyticsLog("Error getting copy VMComposition " + illegalItemOnTrack);
             musicDetailView.showError(context.getString(R.string.error));
         }
         try {
@@ -127,12 +127,12 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
                 .insertItem(musicSelected);
         } catch (IllegalItemOnTrack illegalItemOnTrack) {
             illegalItemOnTrack.printStackTrace();
-            Crashlytics.log("Error getting AudioTrack, music track from copy VMComposition "
+            musicDetailView.sendCrashlyticsLog("Error getting AudioTrack, music track from copy VMComposition "
                 + illegalItemOnTrack);
             musicDetailView.showError(context.getString(R.string.error));
         } catch (IllegalOrphanTransitionOnTrack illegalOrphanTransitionOnTrack) {
             illegalOrphanTransitionOnTrack.printStackTrace();
-            Crashlytics.log("Error getting AudioTrack, removing previous music track from copy VMComposition "
+            musicDetailView.sendCrashlyticsLog("Error getting AudioTrack, removing previous music track from copy VMComposition "
                 + illegalOrphanTransitionOnTrack);
             musicDetailView.showError(context.getString(R.string.error));
         }
@@ -163,7 +163,7 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
                             @Override
                             public void onFailure(Throwable t) {
                                 Log.e(LOG_TAG, "Error updating composition on removeMusic.success", t);
-                                Crashlytics.log("Error updating composition on removeMusic.success " + t);
+                                musicDetailView.sendCrashlyticsLog("Error updating composition on removeMusic.success " + t);
                                 musicDetailView.showError(context
                                     .getString(R.string.error_removing_audio));
                             }
@@ -171,9 +171,9 @@ public class MusicDetailPresenter extends VimojoPresenter implements ElementChan
             }
             @Override
             public void onRemoveMediaItemFromTrackError() {
-                Crashlytics.log("Music detail, onRemoveMediaItemFromTrackError");
                 musicDetailView.showError(context
                     .getString(R.string.error_removing_audio));
+                musicDetailView.sendCrashlyticsLog("Music detail, onRemoveMediaItemFromTrackError");
             }
 
               @Override

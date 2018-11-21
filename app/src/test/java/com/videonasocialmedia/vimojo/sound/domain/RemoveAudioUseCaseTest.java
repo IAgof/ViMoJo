@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.videonasocialmedia.vimojo.utils.Constants.MUSIC_AUDIO_VOICEOVER_TITLE;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -35,12 +36,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class RemoveAudioUseCaseTest {
 
   @Mock OnRemoveMediaFinishedListener mockedOnRemoveMediaFinishedListener;
-  @Mock
-  ProjectRepository mockedProjectRepository;
-  @Mock
-  TrackDataSource mockedTrackRepository;
-  @Mock
-  MusicDataSource mockedMusicRepository;
+  @Mock ProjectRepository mockedProjectRepository;
   private Project currentProject;
 
   @Before
@@ -148,6 +144,7 @@ public class RemoveAudioUseCaseTest {
     musicTrack.setPosition(1);
     currentProject.getAudioTracks().add(new AudioTrack(Constants.INDEX_AUDIO_TRACK_VOICE_OVER));
     Music voiceOver = new Music("somePath", defaultVolume, defaultDuration);
+    voiceOver.setTitle(MUSIC_AUDIO_VOICEOVER_TITLE);
     AudioTrack voiceOverTrack = currentProject.getAudioTracks()
             .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
     voiceOverTrack.insertItem(voiceOver);

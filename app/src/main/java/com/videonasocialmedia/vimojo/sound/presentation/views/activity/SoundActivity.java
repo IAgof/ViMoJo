@@ -140,7 +140,7 @@ public class SoundActivity extends EditorActivity implements SoundView,
         navigateTo(RecordCamera2Activity.class);
         return true;
       case R.id.action_toolbar_music:
-        presenter.navigateToMusic();
+        navigateTo(MusicListActivity.class);
         return true;
       case R.id.action_toolbar_voice_over:
         navigateTo(VoiceOverRecordActivity.class);

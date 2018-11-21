@@ -244,10 +244,6 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
     soundView.updatePlayer();
   }
 
-  public void navigateToMusic() {
-    soundView.navigateToMusicList(MusicListActivity.class);
-  }
-
   public void deleteMusic() {
     removeItem(currentProject.getMusic());
   }

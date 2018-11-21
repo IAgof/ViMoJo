@@ -39,68 +39,56 @@ public class RemoveAudioUseCase {
       trackIndex = Constants.INDEX_AUDIO_TRACK_MUSIC;
     }
     Track audioTrack = currentProject.getAudioTracks().get(trackIndex);
-    removeMusicInTrack(music, listener, audioTrack);
-    updateTrackPosition(audioTrack, trackIndex, listener);
-    //removeEmptyVoiceOverTrack(audioTrack, currentProject, listener);
-  }
-
-  private void removeEmptyVoiceOverTrack(Track audioTrack, Project currentProject, OnRemoveMediaFinishedListener listener) {
-    if (trackIsEmpty(audioTrack) && isVoiceOverTrack(audioTrack)) {
-      currentProject.getAudioTracks().remove(audioTrack);
-      listener.onTrackRemoved(audioTrack);
+    removeMusicInTrack(listener, audioTrack);
+    if (trackIndex == Constants.INDEX_AUDIO_TRACK_VOICE_OVER) {
+      removeEmptyAudioTrack(audioTrack, currentProject, listener);
     }
+    updateOtherAudioTrackPosition(trackIndex, listener);
   }
 
-  private boolean trackIsEmpty(Track audioTrack) {
-    return audioTrack.getItems().size() == 0;
+  private void removeEmptyAudioTrack(Track audioTrack, Project currentProject,
+                                     OnRemoveMediaFinishedListener listener) {
+    currentProject.getAudioTracks().remove(audioTrack);
+    listener.onTrackRemoved(audioTrack);
   }
 
-  private boolean isVoiceOverTrack(Track audioTrack) {
-    return audioTrack.getId() == Constants.INDEX_AUDIO_TRACK_VOICE_OVER;
-  }
-
-  // TODO:(alvaro.martinez) 19/06/17 delete this when vimojo support multiple audio items.
-  private void updateTrackDefaultVolume(Track audioTrack) {
-    audioTrack.setVolume(Music.DEFAULT_VOLUME);
-    audioTrack.setMute(false);
-  }
-
-  private void updateTrackPosition(Track audioTrack, int trackIndex,
-                                   OnRemoveMediaFinishedListener listener) {
-    audioTrack.setPosition(RESET_POSITION);
+  private void updateOtherAudioTrackPosition(int trackIndex,
+                                             OnRemoveMediaFinishedListener listener) {
+    Track musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
     switch (trackIndex) {
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
+        // Reset default audio track music
+        resetDefaultAudioTrackMusic(musicTrack);
         if (currentProject.hasVoiceOver()) {
           Track voiceOverTrack = currentProject.getAudioTracks()
               .get(Constants.INDEX_AUDIO_TRACK_VOICE_OVER);
           voiceOverTrack.setPosition(FIRST_POSITION);
+          listener.onTrackUpdated(voiceOverTrack);
         }
         break;
       case Constants.INDEX_AUDIO_TRACK_VOICE_OVER:
         if (currentProject.hasMusic()) {
-          Track musicTrack = currentProject.getAudioTracks().get(Constants.INDEX_AUDIO_TRACK_MUSIC);
           musicTrack.setPosition(FIRST_POSITION);
+          listener.onTrackUpdated(musicTrack);
         }
         break;
     }
-    listener.onTrackUpdated(audioTrack);
   }
 
-  private void removeMusicInTrack(Music music, OnRemoveMediaFinishedListener listener,
+  private void resetDefaultAudioTrackMusic(Track musicTrack) {
+    musicTrack.setPosition(RESET_POSITION);
+    musicTrack.setMute(false);
+    musicTrack.setVolume(Music.DEFAULT_VOLUME);
+  }
+
+  private void removeMusicInTrack(OnRemoveMediaFinishedListener listener,
                                   Track audioTrack) {
-    for (Media audio: audioTrack.getItems()) {
-      if (audio.equals(music)) {
-        try {
-          audioTrack.deleteItem(audio);
-          listener.onRemoveMediaItemFromTrackSuccess(Collections.singletonList(audio));
-        } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
-          listener.onRemoveMediaItemFromTrackError();
-        }
-      }
-    }
-    if (trackIsEmpty(audioTrack)) {
-      updateTrackDefaultVolume(audioTrack);
-      listener.onTrackUpdated(audioTrack);
+    try {
+      Media media = audioTrack.getItems().get(0);
+      audioTrack.deleteItem(media);
+      listener.onRemoveMediaItemFromTrackSuccess(Collections.singletonList(media));
+    } catch (IllegalItemOnTrack | IllegalOrphanTransitionOnTrack exception) {
+      listener.onRemoveMediaItemFromTrackError();
     }
   }
 

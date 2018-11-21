@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -161,6 +162,11 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     @Override
     public void updateProject() {
         presenter.updatePresenter(musicPath);
+    }
+
+    @Override
+    public void sendCrashlyticsLog(String messageLog) {
+        Crashlytics.log(messageLog);
     }
 
     @Override

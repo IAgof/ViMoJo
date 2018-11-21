@@ -165,31 +165,6 @@ public class SoundPresenterTest {
     verify(mockedSoundView).showTrackAudioSecond();
   }
 
-  @Test
-  public void navigateToMusicGoToDetailsIfProjectHasMusic() throws IllegalItemOnTrack {
-    SoundPresenter soundPresenter = getSoundPresenter();
-    //Add music
-    int fakeDuration = 59;
-    Music music = new Music("some/path", Music.DEFAULT_VOLUME, fakeDuration);
-    currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
-    assertThat(currentProject.hasMusic(), is(true));
-
-    soundPresenter.navigateToMusic();
-
-    verify(mockedSoundView).navigateToMusicDetail(MusicDetailActivity.class,
-        currentProject.getMusic().getMediaPath());
-  }
-
-  @Test
-  public void navigateToMusicGoToMusicListIfProjectHasNotMusic() throws IllegalItemOnTrack {
-    SoundPresenter soundPresenter = getSoundPresenter();
-    assertThat(currentProject.hasMusic(), is(false));
-
-    soundPresenter.navigateToMusic();
-
-    verify(mockedSoundView).navigateToMusicList(MusicListActivity.class);
-  }
-
   @NonNull
   private SoundPresenter getSoundPresenter() {
     SoundPresenter soundPresenter = new SoundPresenter(mockedContext, mockedSoundView,

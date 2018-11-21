@@ -209,7 +209,6 @@ public class MusicDetailPresenterTest {
     public void removeMusicCallsShowErrorOnRemoveMediaItemFromTrackError() {
         MusicDetailPresenter musicDetailPresenter =
             getMusicDetailPresenter(mockedUserEventTracker);
-        doNothing().when(mockedCrashlytics).log(anyString());
         Music music = new Music(1, "Music title", 2,
             3, "Music Author", "3", 0);
         doAnswer(new Answer() {
@@ -225,6 +224,7 @@ public class MusicDetailPresenterTest {
         musicDetailPresenter.removeMusic(music);
 
         verify(mockedMusicDetailView).showError(null);
+        verify(mockedMusicDetailView).sendCrashlyticsLog(anyString());
     }
 
     @Test
