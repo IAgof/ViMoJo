@@ -68,13 +68,8 @@ public class VideoRealmDataSource implements VideoDataSource {
 
   @Override
   public void update(Video item) {
-    update(item, null);
-  }
-
-  @Override
-  public void update(final Video item, final RealmProject project) {
     Realm.getDefaultInstance().executeTransaction(
-            realm -> realm.copyToRealmOrUpdate(toRealmVideoMapper.map(item)));
+        realm -> realm.copyToRealmOrUpdate(toRealmVideoMapper.map(item)));
   }
 
   @Override

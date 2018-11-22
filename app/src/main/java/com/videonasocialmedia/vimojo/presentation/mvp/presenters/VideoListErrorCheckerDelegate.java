@@ -20,16 +20,21 @@ public class VideoListErrorCheckerDelegate {
     ArrayList<Video> failedVideos = new ArrayList<>();
     for (Video video : videoList) {
       ListenableFuture transcodingJob = video.getTranscodingTask();
+      boolean addFailedVideoToList = false;
       if ((transcodingJob != null && transcodingJob.isCancelled())
               || ((video.getVideoError() != null && !video.getVideoError().isEmpty()))) {
-        failedVideos.add(video);
+        addFailedVideoToList = true;
         // TODO(jliarte): 2/05/17 after retrieving videos from repository transcodingJob will always be null
         if (video.getVideoError() != null) {
           message = message + video.getVideoError();
         }
       }
       // Check temp files path
-      if (video.getTempPath() != null && !(new File(video.getTempPath()).exists())) {
+      if (video.isTranscodingTempFileFinished() && video.getTempPath() != null
+          && !(new File(video.getTempPath()).exists())) {
+        addFailedVideoToList = true;
+      }
+      if (addFailedVideoToList) {
         failedVideos.add(video);
       }
     }

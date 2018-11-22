@@ -11,10 +11,8 @@ import java.util.List;
  */
 
 public interface VideoDataSource extends DataSource<Video> {
-  void update(Video item, RealmProject realmProject);
 
   List<Video> getAllVideos();
-
   void removeAllVideos();
 
 }

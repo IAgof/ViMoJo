@@ -6,6 +6,7 @@ package com.videonasocialmedia.vimojo.trim.domain;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.util.concurrent.FutureCallback;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
@@ -50,6 +51,6 @@ public class TrimResultCallback implements FutureCallback<Video> {
     videoToEdit.setVideoError(Constants.ERROR_TRANSCODING_TEMP_FILE_TYPE.TRIM.name());
     videoToEdit.setTranscodingTempFileFinished(true);
     updateMedia.update(videoToEdit);
-//    trimView.showError(); // TODO(jliarte): 12/09/18 should show an error here? view probably will not longer be active
+    Crashlytics.log("Error trimming video");
   }
 }

@@ -19,11 +19,11 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositio
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.OnRemoveMediaFinishedListener;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoListErrorCheckerDelegate;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
 import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
-import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
@@ -56,6 +56,8 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
   private RemoveMedia removeMedia;
   private UpdateTrack updateTrack;
   private RemoveTrack removeTrack;
+  final VideoListErrorCheckerDelegate videoListErrorCheckerDelegate
+      = new VideoListErrorCheckerDelegate();
 
   @Inject
   public SoundPresenter(
@@ -83,10 +85,18 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
       this.currentProject = projectInstanceCache.getCurrentProject();
       this.currentProject.addListener(this);
       checkVoiceOverFeatureToggle();
-      // TODO:(alvaro.martinez) 22/03/17 Player should be in charge of these checks from
-      // VMComposition
       retrieveTracks();
+      checkVideoListTempFiles();
     }
+
+  private void checkVideoListTempFiles() {
+    List<Video> videoList = new ArrayList<>();
+    for (Media media: currentProject.getMediaTrack().getItems()) {
+      videoList.add((Video) media);
+    }
+    videoListErrorCheckerDelegate.checkWarningMessageVideosRetrieved(
+        videoList, this);
+  }
 
   private void retrieveTracks() {
     if (currentProject.getVMComposition().hasVideos()) {
@@ -202,8 +212,7 @@ public class SoundPresenter extends VimojoPresenter implements VideoTranscodingE
 
   @Override
   public void showWarningTempFile(ArrayList<Video> failedVideos) {
-    // TODO(jliarte): 23/07/17 should modify view with failed clips?
-    soundView.showWarningTempFile();
+    soundView.showWarningTempFile(failedVideos);
   }
 
   @Override

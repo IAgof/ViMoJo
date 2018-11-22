@@ -15,6 +15,7 @@ import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
@@ -230,7 +231,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
     shareVideoViewReference.get().showProgressDialogVideoExporting();
     isAppExportingProject = true;
     String nativeLibPath = context.getApplicationInfo().nativeLibraryDir;
-    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, nativeLibPath,
+    TextToDrawable drawableGenerator = new TextToDrawable(context);
+    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, nativeLibPath, drawableGenerator,
         new OnExportFinishedListener() {
       @Override
       public void onExportError(int error, Exception exception) {

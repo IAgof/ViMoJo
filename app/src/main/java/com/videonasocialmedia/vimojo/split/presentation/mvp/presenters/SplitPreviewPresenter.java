@@ -15,7 +15,8 @@ import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.ElementChangedListener;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -43,6 +44,8 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
     private final ProjectInstanceCache projectInstanceCache;
     private Context context;
     private SplitVideoUseCase splitVideoUseCase;
+    private UpdateComposition updateComposition;
+    private UpdateMedia updateMedia;
     private Video videoToEdit;
     private SplitView splitView;
     private SharedPreferences sharedPreferences;
@@ -58,6 +61,8 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
                                  SharedPreferences sharedPreferences,
                                  UserEventTracker userEventTracker,
                                  SplitVideoUseCase splitVideoUseCase,
+                                 UpdateComposition updateComposition,
+                                 UpdateMedia updateMedia,
                                  ProjectInstanceCache projectInstanceCache,
                                  @Named("amIAVerticalApp") boolean amIAVerticalApp,
                                  BackgroundExecutor backgroundExecutor) {
@@ -67,6 +72,8 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         this.sharedPreferences = sharedPreferences;
         this.userEventTracker = userEventTracker;
         this.splitVideoUseCase = splitVideoUseCase;
+        this.updateComposition = updateComposition;
+        this.updateMedia = updateMedia;
         this.projectInstanceCache = projectInstanceCache;
         this.amIAVerticalApp = amIAVerticalApp;
     }
@@ -107,7 +114,8 @@ public class SplitPreviewPresenter extends VimojoPresenter implements ElementCha
         // TODO(jliarte): 18/07/18 deal with this case for updating project and videos
         executeUseCaseCall(() -> splitVideoUseCase
                 .splitVideo(currentProject, videoToEdit, videoIndexOnTrack, currentSplitPosition,
-                        new VideoAndCompositionUpdaterOnSplitSuccess(currentProject)));
+                        new VideoAndCompositionUpdaterOnSplitSuccess(updateComposition,
+                            updateMedia)));
         trackSplitVideo();
         splitView.navigateTo(EditActivity.class, videoIndexOnTrack);
     }
