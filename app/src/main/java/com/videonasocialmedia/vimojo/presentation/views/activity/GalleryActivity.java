@@ -1,21 +1,31 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -25,6 +35,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPre
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
+import com.videonasocialmedia.vimojo.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,6 +54,7 @@ import butterknife.OnClick;
 public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageChangeListener,
         GalleryPagerView, OnSelectionModeListener {
     public final String TAG = getClass().getCanonicalName();
+    public static final int REQUEST_CODE_IMPORT_VIDEO = 1;
     private final String MASTERS_FRAGMENT_TAG="MASTERS";
     private final String EDITED_FRAGMENT_TAG="EDITED";
 
@@ -61,6 +73,11 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     private int selectedPage = 0;
     private int countVideosSelected = 0;
     private AlertDialog dialog;
+    private Dialog exportDialog;
+    private AdView adView;
+    private View exportDialogView;
+    private TextView exportDialogMessage;
+    private Uri videoImportedUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,17 +95,16 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         setupViewPager(savedInstanceState);
         setupPagerTabStrip();
         Log.d(TAG, "....done!!");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        initImportProgressDialog();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         galleryPagerPresenter.updatePresenter();
+        if (videoImportedUri != null) {
+            galleryPagerPresenter.importVideo(Utils.getPath(this, videoImportedUri));
+        }
     }
 
     @Override
@@ -111,6 +127,13 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         vpPager.setOnPageChangeListener(this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getFragmentManager().putFragment(outState, MASTERS_FRAGMENT_TAG, adapterViewPager.getItem(0));
+        getFragmentManager().putFragment(outState, EDITED_FRAGMENT_TAG, adapterViewPager.getItem(1));
+    }
+
     private List<Video> getSelectedVideos() {
         List<Video> result = new ArrayList<>();
         for (int i = 0; i < adapterViewPager.getCount(); i++) {
@@ -123,10 +146,10 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        getFragmentManager().putFragment(outState, MASTERS_FRAGMENT_TAG, adapterViewPager.getItem(0));
-        getFragmentManager().putFragment(outState, EDITED_FRAGMENT_TAG, adapterViewPager.getItem(1));
+    protected void onRestoreInstanceState(Bundle inState){
+        super.onRestoreInstanceState(inState);
+        setupViewPager(inState);
+        setupPagerTabStrip();
     }
 
     @Override
@@ -142,6 +165,37 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     public void onPageScrollStateChanged(int state) {
     }
 
+    @Override
+    public void showAdsView() {
+        adView = exportDialogView.findViewById(R.id.adView);
+        adView.loadAd(new AdRequest.Builder().build());
+        exportDialog.setContentView(exportDialogView);
+    }
+
+    @Override
+    public void hideAdsView() {
+        CardView adsCardView = exportDialogView.findViewById(R.id.adsCardView);
+        adsCardView.setVisibility(View.GONE);
+        exportDialog.setContentView(exportDialogView);
+    }
+
+    @Override
+    public void showImportingError(String message) {
+        if (exportDialog.isShowing()) {
+            exportDialog.dismiss();
+        }
+        Snackbar snackbar = Snackbar.make(videoCounter, message,
+            Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
+    @Override
+    public void showImportingDialog() {
+        runOnUiThread(() -> {
+            exportDialog.show();
+        });
+    }
+
     @OnClick(R.id.button_ok_gallery)
     public void onClick() {
         List<Video> videoList;
@@ -151,16 +205,47 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         }
     }
 
-//    private List<Video> getSelectedVideosFromFragment(int selectedFragmentId) {
-//        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedFragmentId);
-//        return selectedFragment.getSelectedVideoList();
-//
-//    }
-//
-//    private List<Video> getSelectedVideosFromCurrentFragment() {
-//        VideoGalleryFragment selectedFragment = adapterViewPager.getItem(selectedPage);
-//        return selectedFragment.getSelectedVideoList();
-//    }
+    @OnClick(R.id.fab_gallery)
+    public void onClickFabGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, REQUEST_CODE_IMPORT_VIDEO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // When an Video is picked
+        if (requestCode == REQUEST_CODE_IMPORT_VIDEO && resultCode == RESULT_OK
+            && null != data) {
+            videoImportedUri = data.getData();
+            Log.e(TAG, "-----------------------import video------------------");
+            Log.e(TAG, videoImportedUri.toString());
+        }
+    }
+
+    private void initImportProgressDialog() {
+        LayoutInflater dialogLayout = LayoutInflater.from(GalleryActivity.this);
+        exportDialogView = dialogLayout.inflate(R.layout.dialog_progress_export, null);
+
+        exportDialog = new Dialog(GalleryActivity.this, R.style.VideonaDialog);
+        //exportDialog.setContentView(DialogView);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(exportDialog.getWindow().getAttributes());
+        lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        lp.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.65);
+        exportDialog.getWindow().setAttributes(lp);
+
+        exportDialogMessage = (TextView) exportDialogView.findViewById(R.id.exportDialogMessage);
+
+        Button cancel = (Button) exportDialogView.findViewById(R.id.cancel_btn);
+        cancel.setOnClickListener(v -> {
+            exportDialog.dismiss();
+        });
+        exportDialog.setCancelable(false);
+        exportDialog.setCanceledOnTouchOutside(false);
+
+    }
 
     @OnClick(R.id.button_cancel_gallery)
     public void goBack() {
@@ -229,6 +314,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void navigate() {
+        if (exportDialog.isShowing()) {
+            exportDialog.dismiss();
+        }
             Intent intent;
             intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
             startActivity(intent);

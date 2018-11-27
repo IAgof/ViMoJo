@@ -9,6 +9,8 @@ import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -21,6 +23,7 @@ public class VideoToAdaptRealmDataSource implements VideoToAdaptDataSource {
   protected Mapper<VideoToAdapt, RealmVideoToAdapt> toRealmVideoToAdaptMapper;
   private VideoToAdaptMemoryDataSource cache;
 
+  @Inject
   public VideoToAdaptRealmDataSource() {
     VideoDataSource videoRepository = new VideoRealmDataSource();
     this.toVideoToAdaptMapper = new RealmVideoToAdaptToVideoToAdaptMapper(videoRepository);

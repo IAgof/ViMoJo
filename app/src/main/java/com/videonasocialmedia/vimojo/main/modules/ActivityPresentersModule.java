@@ -295,10 +295,11 @@ public class ActivityPresentersModule {
           AddVideoToProjectUseCase addVideoToProjectUseCase,
           ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences sharedPreferences,
           UpdateComposition updateComposition, SetCompositionResolution setCompositionResolution,
-          BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
+          NewClipImporter newClipImporter, BackgroundExecutor backgroundExecutor,
+          UserEventTracker userEventTracker) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
             applyAVTransitionsUseCase, sharedPreferences, projectInstanceCache, updateComposition,
-            setCompositionResolution, backgroundExecutor, userEventTracker);
+            setCompositionResolution, newClipImporter, backgroundExecutor, userEventTracker);
   }
 
  /* @Provides @PerActivity

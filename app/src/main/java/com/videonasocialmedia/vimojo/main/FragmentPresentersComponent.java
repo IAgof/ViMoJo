@@ -3,6 +3,7 @@ package com.videonasocialmedia.vimojo.main;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
 import com.videonasocialmedia.vimojo.main.modules.FeatureToggleModule;
 import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
+import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.fragment.SettingsFragment;
 
 import dagger.Component;
@@ -15,5 +16,6 @@ import dagger.Component;
 @Component(dependencies = {SystemComponent.class},
         modules = { FragmentPresentersModule.class, FeatureToggleModule.class })
 public interface FragmentPresentersComponent {
+  void inject(VideoGalleryFragment fragment);
   void inject(SettingsFragment fragment);
 }
