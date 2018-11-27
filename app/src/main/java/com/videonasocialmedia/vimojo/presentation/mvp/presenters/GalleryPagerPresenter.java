@@ -16,6 +16,7 @@ import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
@@ -25,17 +26,22 @@ import com.videonasocialmedia.vimojo.composition.domain.usecase.SetCompositionRe
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
+import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
+import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
 import com.videonasocialmedia.vimojo.view.BackgroundExecutor;
 import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This class is used for adding new videos to the project.
@@ -48,6 +54,7 @@ public class GalleryPagerPresenter extends VimojoPresenter
     private final SharedPreferences preferences;
     private final AddVideoToProjectUseCase addVideoToProjectUseCase;
     private final GalleryPagerView galleryPagerView;
+    private boolean showAds;
     protected Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
@@ -59,6 +66,8 @@ public class GalleryPagerPresenter extends VimojoPresenter
     MediaMetadataRetriever metadataRetriever;
     private final UpdateComposition updateComposition;
     private SetCompositionResolution setCompositionResolution;
+    private NewClipImporter newClipImporter;
+    private ListenableFuture<Video> importingVideoJob;
 
     /**
      * Constructor.
@@ -68,7 +77,8 @@ public class GalleryPagerPresenter extends VimojoPresenter
         AddVideoToProjectUseCase addVideoToProjectUseCase,
         ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
-        SetCompositionResolution setCompositionResolution, BackgroundExecutor backgroundExecutor,
+        SetCompositionResolution setCompositionResolution, NewClipImporter newClipImporter,
+        @Named("showAds") boolean showAds, BackgroundExecutor backgroundExecutor,
         UserEventTracker userEventTracker) {
         super(backgroundExecutor, userEventTracker);
         this.galleryPagerView = galleryPagerView;
@@ -81,10 +91,17 @@ public class GalleryPagerPresenter extends VimojoPresenter
         metadataRetriever = new MediaMetadataRetriever();
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
+        this.newClipImporter = newClipImporter;
+        this.showAds = showAds;
     }
 
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
+        if (showAds) {
+            galleryPagerView.showAdsView();
+        } else {
+            galleryPagerView.hideAdsView();
+        }
     }
 
     public void addVideoListToProject(List<Video> videoList) {
@@ -117,10 +134,12 @@ public class GalleryPagerPresenter extends VimojoPresenter
             public void onAddMediaItemToTrackSuccess(Media video) {
                 // TODO(jliarte): 18/07/18 check if this UC call should be inside if
                 // TODO(jliarte): 18/07/18 should update project or add new media to project?
-                executeUseCaseCall(() -> updateComposition.updateComposition(currentProject));
-                if (!differentVideoFormat) {
-                    galleryPagerView.navigate();
-                }
+                executeUseCaseCall(() -> {
+                    updateComposition.updateComposition(currentProject);
+                    if (!differentVideoFormat) {
+                        galleryPagerView.navigate();
+                    }
+                });
             }
 
             @Override
@@ -226,6 +245,66 @@ public class GalleryPagerPresenter extends VimojoPresenter
                 return VideoResolution.Resolution.HD720;
             default:
                 return null;
+        }
+    }
+
+    public void importVideo(String realPathFromURI) {
+        galleryPagerView.showImportingDialog();
+        executeUseCaseCall(() -> {
+            if (realPathFromURI.contains(Constants.PATH_APP_MASTERS)
+                || realPathFromURI.contains(Constants.PATH_APP_EDITED)) {
+                Log.e(LOG_TAG, "Video already in vimojo!!");
+                loadVideoListToProject(Collections.singletonList(
+                    new Video(realPathFromURI, Video.DEFAULT_VOLUME)));
+            } else {
+                final Video video = new Video(realPathFromURI, Video.DEFAULT_VOLUME);
+                importingVideo(video);
+            }
+        });
+    }
+
+    private void importingVideo(Video video) {
+        importingVideoJob
+            = newClipImporter.adaptVideoToVideonaFormat(currentProject, video,
+            currentProject.numberOfClips(), 0, 0);
+        try {
+            importingVideoJob.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            galleryPagerView.showImportingError("Interrupted exception");
+            return;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            galleryPagerView.showImportingError("Executed exception");
+            return;
+        }
+        addVideoListToProject(Collections.singletonList(
+            new Video(video.getMediaPath(), Video.DEFAULT_VOLUME)));
+    }
+
+    private void loadVideoListToProject(List<Video> videoList) {
+        try {
+            List<Video> checkedVideoList = filterVideosWithResolutionDifferentFromProjectResolution(videoList);
+            if (listErrorVideoIds.size() > 0) {
+                galleryPagerView.showDialogVideosNotAddedFromGallery(listErrorVideoIds);
+                differentVideoFormat = true;
+            }
+            addVideoToProject(checkedVideoList);
+        } catch (Exception errorLoadingVideoList) {
+            // TODO(jliarte): 13/06/17 I'm unable to find the error that is generating these bugs:
+            // https://fabric.io/rtve4/android/apps/com.videonasocialmedia.vimojo.rtve/issues/59391686be077a4dccd740b9
+            // https://fabric.io/vimojo-rtve/android/apps/com.videonasocialmedia.vimojo.main/issues/5920d048be077a4dcc014b98
+            // so this is a workarround while discovering the origin of the bug
+            errorLoadingVideoList.printStackTrace();
+            Log.e(LOG_TAG, "Error while loading videos from gallery", errorLoadingVideoList);
+            Crashlytics.log("Error in GalleryPagerPresenter.filterVideosWithResolutionDifferentFromProjectResolution");
+            Crashlytics.logException(errorLoadingVideoList);
+        }
+    }
+
+    public void cancelImportingVideo() {
+        if (importingVideoJob != null && !importingVideoJob.isDone()) {
+            importingVideoJob.cancel(true);
         }
     }
 

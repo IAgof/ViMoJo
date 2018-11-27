@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp">
         <TextView
-            android:id="@+id/exportDialogTitle"
+            android:id="@+id/transcodingDialogTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center|left"
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp">
         <TextView
-            android:id="@+id/exportDialogMessage"
+            android:id="@+id/transcodingDialogMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

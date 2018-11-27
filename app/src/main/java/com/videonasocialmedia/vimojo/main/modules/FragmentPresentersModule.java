@@ -2,26 +2,28 @@ package com.videonasocialmedia.vimojo.main.modules;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.videonasocialmedia.vimojo.asset.repository.MediaRepository;
 import com.videonasocialmedia.vimojo.asset.repository.datasource.VideoDataSource;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
-import com.videonasocialmedia.vimojo.auth0.accountmanager.GetAccount;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
-import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateCompositionWatermark;
 import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
+import com.videonasocialmedia.vimojo.domain.ObtainLocalVideosUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.GetMediaListFromProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
-import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
 import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
+import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptRealmDataSource;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.internals.di.PerFragment;
+import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
+import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.record.domain.AdaptVideoToFormatUseCase;
 import com.videonasocialmedia.vimojo.repository.upload.UploadDataSource;
 import com.videonasocialmedia.vimojo.settings.mainSettings.domain.GetPreferencesTransitionFromProjectUseCase;
@@ -46,7 +48,8 @@ import dagger.Provides;
 
 @Module
 public class FragmentPresentersModule {
-  private final ProjectInstanceCache projectInstanceCache;
+  private ProjectInstanceCache projectInstanceCache;
+  private Fragment fragment;
   private Activity activity;
   private SettingsFragment settingsFragment;
   private Context context;
@@ -59,9 +62,13 @@ public class FragmentPresentersModule {
     this.settingsFragment = settingsFragment;
     this.activity = activity;
     this.context = context;
-    this.projectInstanceCache = (ProjectInstanceCache) this.activity.getApplication();
+    this.projectInstanceCache = (ProjectInstanceCache) activity.getApplication();
     this.currentProject = projectInstanceCache.getCurrentProject();
     this.sharedPreferences = sharedPreferences;
+  }
+
+  public FragmentPresentersModule(Fragment fragment) {
+    this.fragment = fragment;
   }
 
   // For singleton objects, annotate with same scope as component, i.e. @PerFragment
@@ -92,6 +99,12 @@ public class FragmentPresentersModule {
             uploadDataSource, projectInstanceCache, userEventTracker, updateComposition,
             ftpPublishingAvailable, hideTransitionPreference, showMoreAppsPreference,
             backgroundExecutor);
+  }
+
+  @Provides
+  @PerFragment
+  VideoGalleryPresenter providesVideoGalleryPresenter() {
+    return new VideoGalleryPresenter((VideoGalleryFragment) fragment);
   }
 
   @Provides
@@ -133,6 +146,18 @@ public class FragmentPresentersModule {
   }
 
   @Provides
+  AdaptVideoToFormatUseCase proviedAdaptVideoToFormatUseCase(
+      VideoToAdaptRealmDataSource videoToAdaptRealmDataSource, MediaRepository mediaRepository) {
+    return new AdaptVideoToFormatUseCase(videoToAdaptRealmDataSource, mediaRepository);
+  }
+
+  @Provides
+  ApplyAVTransitionsUseCase provideLaunchTranscoderAddAVTransition(
+      MediaRepository mediaRepository) {
+    return  new ApplyAVTransitionsUseCase(currentProject, mediaRepository);
+  }
+
+  @Provides
   BillingManager providesBillingManager() {
     return new BillingManager();
   }
@@ -147,6 +172,11 @@ public class FragmentPresentersModule {
   @Provides
   DownloadManager provideDownloadManager() {
     return (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+  }
+
+  @Provides
+  ObtainLocalVideosUseCase provideObtainLocalVideosUseCase() {
+    return new ObtainLocalVideosUseCase();
   }
 
 }

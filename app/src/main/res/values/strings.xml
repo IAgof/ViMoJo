@@ -159,6 +159,8 @@
     <string name="error_video_format">Video format different to video project </string>
     <string name="dialog_accept_delete_clip">Yes</string>
     <string name="dialog_cancel_delete_clip">No</string>
+    <string name="gallery_dialog_title">Add video</string>
+    <string name="gallery_dialog_message">Importing video to project</string>
 
     <!-- Gallery projects activity -->
     <string name="galleryProjectActivityTitle">Projects</string>

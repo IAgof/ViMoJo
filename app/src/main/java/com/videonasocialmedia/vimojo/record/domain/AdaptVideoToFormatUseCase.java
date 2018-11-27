@@ -2,6 +2,7 @@ package com.videonasocialmedia.vimojo.record.domain;
 
 import android.util.Log;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.transcoder.MediaTranscoder;
 import com.videonasocialmedia.transcoder.video.format.VideonaFormat;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
@@ -13,8 +14,11 @@ import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+
+import static com.videonasocialmedia.vimojo.utils.Constants.FOLDER_NAME_VIMOJO_TEMP;
 
 /**
  * Created by alvaro on 3/02/17.
@@ -35,12 +39,13 @@ public class AdaptVideoToFormatUseCase {
     this.mediaRepository = mediaRepository;
   }
 
-  public void adaptVideo(Project currentProject, final VideoToAdapt videoToAdapt, final VideonaFormat videoFormat,
-                         AdaptListener listener) throws IOException {
+  public ListenableFuture<Video> adaptVideo(Project currentProject, final VideoToAdapt videoToAdapt,
+                                            final VideonaFormat videoFormat,
+                                            AdaptListener listener) throws IOException {
     this.adaptListener = new WeakReference<>(listener);
     videoToAdaptRepository.update(videoToAdapt);
     videoToAdapt.getVideo().setTempPath(currentProject.getProjectPathIntermediateFiles());
-    transcoderHelper.adaptVideoWithRotationToDefaultFormatAsync(videoToAdapt.getVideo(),
+    return transcoderHelper.adaptVideoWithRotationToDefaultFormatAsync(videoToAdapt.getVideo(),
             videoFormat, videoToAdapt.getDestVideoPath(), videoToAdapt.getRotation(),
             new AdaptVideoListener(videoFormat, videoToAdapt.getDestVideoPath(),
                     videoToAdapt.getRotation(), currentProject),
@@ -67,8 +72,11 @@ public class AdaptVideoToFormatUseCase {
       Log.d(TAG, "onSuccessTranscoding adapting video " + video.getMediaPath());
       VideoToAdapt videoToAdapt = videoToAdaptRepository.remove(video.getMediaPath());
       if (videoToAdapt != null) {
-        FileUtils.removeFile(video.getMediaPath());
-        Log.d(TAG, "deleting " + video.getMediaPath());
+        File temporalRecorded = new File(video.getMediaPath());
+        if (temporalRecorded.getParentFile().getName().equals(FOLDER_NAME_VIMOJO_TEMP)) {
+          FileUtils.removeFile(video.getMediaPath());
+          Log.d(TAG, "deleting " + video.getMediaPath());
+        }
         video.setMediaPath(videoToAdapt.getDestVideoPath());
       } else {
         Log.e(TAG, "Null video in retrieved video to adapt!! for video " + video.getMediaPath());
