@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This class is used for adding new videos to the project.
@@ -53,6 +54,7 @@ public class GalleryPagerPresenter extends VimojoPresenter
     private final SharedPreferences preferences;
     private final AddVideoToProjectUseCase addVideoToProjectUseCase;
     private final GalleryPagerView galleryPagerView;
+    private boolean showAds;
     protected Project currentProject;
     private final ArrayList<Integer> listErrorVideoIds = new ArrayList<>();
     private final Context context;
@@ -65,6 +67,7 @@ public class GalleryPagerPresenter extends VimojoPresenter
     private final UpdateComposition updateComposition;
     private SetCompositionResolution setCompositionResolution;
     private NewClipImporter newClipImporter;
+    private ListenableFuture<Video> importingVideoJob;
 
     /**
      * Constructor.
@@ -75,7 +78,8 @@ public class GalleryPagerPresenter extends VimojoPresenter
         ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences preferences,
         ProjectInstanceCache projectInstanceCache, UpdateComposition updateComposition,
         SetCompositionResolution setCompositionResolution, NewClipImporter newClipImporter,
-        BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
+        @Named("showAds") boolean showAds, BackgroundExecutor backgroundExecutor,
+        UserEventTracker userEventTracker) {
         super(backgroundExecutor, userEventTracker);
         this.galleryPagerView = galleryPagerView;
         this.context = context;
@@ -88,11 +92,16 @@ public class GalleryPagerPresenter extends VimojoPresenter
         this.projectInstanceCache = projectInstanceCache;
         this.updateComposition = updateComposition;
         this.newClipImporter = newClipImporter;
+        this.showAds = showAds;
     }
 
     public void updatePresenter() {
         this.currentProject = projectInstanceCache.getCurrentProject();
-        galleryPagerView.showAdsView();
+        if (showAds) {
+            galleryPagerView.showAdsView();
+        } else {
+            galleryPagerView.hideAdsView();
+        }
     }
 
     public void addVideoListToProject(List<Video> videoList) {
@@ -255,11 +264,11 @@ public class GalleryPagerPresenter extends VimojoPresenter
     }
 
     private void importingVideo(Video video) {
-        ListenableFuture<Video> importerJob
+        importingVideoJob
             = newClipImporter.adaptVideoToVideonaFormat(currentProject, video,
             currentProject.numberOfClips(), 0, 0);
         try {
-            importerJob.get();
+            importingVideoJob.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
             galleryPagerView.showImportingError("Interrupted exception");
@@ -290,6 +299,12 @@ public class GalleryPagerPresenter extends VimojoPresenter
             Log.e(LOG_TAG, "Error while loading videos from gallery", errorLoadingVideoList);
             Crashlytics.log("Error in GalleryPagerPresenter.filterVideosWithResolutionDifferentFromProjectResolution");
             Crashlytics.logException(errorLoadingVideoList);
+        }
+    }
+
+    public void cancelImportingVideo() {
+        if (importingVideoJob != null && !importingVideoJob.isDone()) {
+            importingVideoJob.cancel(true);
         }
     }
 

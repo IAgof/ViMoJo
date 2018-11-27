@@ -83,6 +83,7 @@ public class GalleryPagerPresenterTest {
   @Mock BackgroundExecutor mockedBackgroundExecutor;
   @Mock UserEventTracker mockedUserEventTracker;
   @Mock NewClipImporter mockedNewClipImporter;
+  private boolean showAds;
 
   @Before
   public void injectMocks() {
@@ -220,7 +221,7 @@ public class GalleryPagerPresenterTest {
             mockedApplyAVTransitionsUseCase,
             mockedSharedPreferences,
             mockedProjectInstanceCache, mockedUpdateComposition,
-            mockedSetCompositionResolution, mockedNewClipImporter, mockedBackgroundExecutor,
+            mockedSetCompositionResolution, mockedNewClipImporter, showAds, mockedBackgroundExecutor,
             mockedUserEventTracker);
   }
 

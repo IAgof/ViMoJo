@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.share.presentation.views.activity;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,20 +15,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.roughike.bottombar.BottomBar;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.vimojo.R;
@@ -47,6 +39,7 @@ import com.videonasocialmedia.vimojo.share.presentation.views.adapter.OptionsToS
 import com.videonasocialmedia.vimojo.utils.Constants;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.utils.dialog.transcoding.TranscodingDialog;
 
 import java.io.File;
 import java.util.List;
@@ -63,7 +56,7 @@ import butterknife.Optional;
  * Activity for sharing video final render to different networks and save locally.
  */
 public class ShareActivity extends EditorActivity implements ShareVideoView,
-    OnOptionsToShareListClickListener {
+    OnOptionsToShareListClickListener, DialogInterface.OnCancelListener {
 
   private String LOG_TAG = ShareActivity.class.getCanonicalName();
 
@@ -90,17 +83,13 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @BindView(R.id.fab_share_room)
   FloatingActionButton fabShareRoom;
 
-  TextView exportDialogMessage;
-
   private OptionsToShareAdapter optionsShareAdapter;
-  private Dialog exportDialog;
   private ProgressDialog checkingUserProgressDialog;
   private AlertDialog exportErrorDialog;
   private boolean isAcceptedUploadWithMobileNetwork;
   private boolean isWifiConnected = false;
   private boolean isMobileNetworkConnected = false;
-  private AdView adView;
-  private View exportDialogView;
+  private TranscodingDialog transcodingDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +118,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   protected void onPause() {
     super.onPause();
-    exportDialog.dismiss();
+    transcodingDialog.hide();
     checkingUserProgressDialog.dismiss();
     if (exportErrorDialog != null) {
       exportErrorDialog.dismiss();
@@ -156,26 +145,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   }
 
   private void initBarProgressDialog() {
-    LayoutInflater dialogLayout = LayoutInflater.from(ShareActivity.this);
-    exportDialogView = dialogLayout.inflate(R.layout.dialog_progress_export, null);
-
-    exportDialog = new Dialog(ShareActivity.this, R.style.VideonaDialog);
-    //exportDialog.setContentView(DialogView);
-    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-    lp.copyFrom(exportDialog.getWindow().getAttributes());
-    lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-    lp.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.65);
-    exportDialog.getWindow().setAttributes(lp);
-
-    exportDialogMessage = (TextView) exportDialogView.findViewById(R.id.exportDialogMessage);
-
-    Button cancel = (Button) exportDialogView.findViewById(R.id.cancel_btn);
-    cancel.setOnClickListener(v -> {
-        exportDialog.dismiss();
-        presenter.cancelExportation();
-    });
-    exportDialog.setCancelable(false);
-    exportDialog.setCanceledOnTouchOutside(false);
+    transcodingDialog = new TranscodingDialog(this, R.style.VideonaDialog,
+        getString(R.string.dialog_title_export_project), getString(R.string.dialog_message_export_project),
+        this);
 
     checkingUserProgressDialog = new ProgressDialog(ShareActivity.this, R.style.VideonaDialog);
     checkingUserProgressDialog.setTitle(R.string.progress_dialog_title_checking_info_user);
@@ -186,11 +158,6 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     checkingUserProgressDialog.setProgressPercentFormat(null);
     checkingUserProgressDialog.setCanceledOnTouchOutside(false);
     checkingUserProgressDialog.setCancelable(false);
-  }
-
-  @NonNull
-  private DialogInterface.OnClickListener onClickCancelExportation() {
-    return (dialog, which) -> presenter.cancelExportation();
   }
 
   private void setupBottomBar(BottomBar bottomBar) {
@@ -358,8 +325,8 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   @Override
   public void hideExportProgressDialogCanceled() {
     runOnUiThread(() -> {
-      if (exportDialog != null) {
-        exportDialog.dismiss();
+      if (transcodingDialog != null) {
+        transcodingDialog.dismiss();
       }
     });
   }
@@ -413,16 +380,12 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showAdsView() {
-    adView = exportDialogView.findViewById(R.id.adView);
-    adView.loadAd(new AdRequest.Builder().build());
-    exportDialog.setContentView(exportDialogView);
+    transcodingDialog.showAds();
   }
 
   @Override
   public void hideAdsView() {
-    CardView adsCardView = exportDialogView.findViewById(R.id.adsCardView);
-    adsCardView.setVisibility(View.GONE);
-    exportDialog.setContentView(exportDialogView);
+    transcodingDialog.hideAds();
   }
 
   private void navigateToProjectDetails() {
@@ -514,7 +477,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showProgressDialogVideoExporting() {
-    exportDialog.show();
+    transcodingDialog.showTranscodingDialog();
   }
 
   @Override
@@ -525,7 +488,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
         projectHasBeenExported = true;
         initVideoPlayerFromFilePath(mediaPath);
       }
-      exportDialog.dismiss();
+      transcodingDialog.hide();
     });
   }
 
@@ -542,14 +505,14 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
 
   @Override
   public void showVideoExportError(int cause) {
-    exportDialog.dismiss();
+    transcodingDialog.dismiss();
     showVideoExportErrorDialog(cause);
   }
 
   @Override
   public void showExportProgress(final int progressMsg) {
     runOnUiThread(() -> {
-      if (exportDialog != null) {
+      if (transcodingDialog != null) {
         String progressMessage = "";
         switch (progressMsg) {
           case VMCompositionExportSession.EXPORT_STAGE_WAIT_FOR_TRANSCODING:
@@ -574,7 +537,7 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
             progressMessage = getString(R.string.export_apply_watermark);
             break;
         }
-        exportDialogMessage.setText(progressMessage);
+        transcodingDialog.updateTranscodingMessage(progressMessage);
       }
     });
   }
@@ -618,4 +581,11 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
       exportErrorDialog.show();
     });
   }
+
+  @Override
+  public void onCancel(DialogInterface dialog) {
+    presenter.cancelExportation();
+  }
+
+
 }

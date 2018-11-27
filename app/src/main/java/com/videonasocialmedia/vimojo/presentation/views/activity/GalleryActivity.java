@@ -1,6 +1,5 @@
 package com.videonasocialmedia.vimojo.presentation.views.activity;
 
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,20 +11,14 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -36,6 +29,7 @@ import com.videonasocialmedia.vimojo.presentation.mvp.views.GalleryPagerView;
 import com.videonasocialmedia.vimojo.presentation.views.fragment.VideoGalleryFragment;
 import com.videonasocialmedia.vimojo.presentation.views.listener.OnSelectionModeListener;
 import com.videonasocialmedia.vimojo.utils.Utils;
+import com.videonasocialmedia.vimojo.utils.dialog.transcoding.TranscodingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +46,7 @@ import butterknife.OnClick;
  * Created by jca on 20/5/15.
  */
 public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageChangeListener,
-        GalleryPagerView, OnSelectionModeListener {
+        GalleryPagerView, OnSelectionModeListener, DialogInterface.OnCancelListener {
     public final String TAG = getClass().getCanonicalName();
     public static final int REQUEST_CODE_IMPORT_VIDEO = 1;
     private final String MASTERS_FRAGMENT_TAG="MASTERS";
@@ -70,14 +64,9 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
     LinearLayout selectionMode;
 
     private MyPagerAdapter adapterViewPager;
-    private int selectedPage = 0;
     private int countVideosSelected = 0;
-    private AlertDialog dialog;
-    private Dialog exportDialog;
-    private AdView adView;
-    private View exportDialogView;
-    private TextView exportDialogMessage;
     private Uri videoImportedUri;
+    private TranscodingDialog transcodingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +84,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         setupViewPager(savedInstanceState);
         setupPagerTabStrip();
         Log.d(TAG, "....done!!");
-        initImportProgressDialog();
+        initTranscodingDialog();
     }
 
     @Override
@@ -158,7 +147,6 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-        selectedPage = position;
     }
 
     @Override
@@ -167,22 +155,18 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void showAdsView() {
-        adView = exportDialogView.findViewById(R.id.adView);
-        adView.loadAd(new AdRequest.Builder().build());
-        exportDialog.setContentView(exportDialogView);
+        transcodingDialog.showAds();
     }
 
     @Override
     public void hideAdsView() {
-        CardView adsCardView = exportDialogView.findViewById(R.id.adsCardView);
-        adsCardView.setVisibility(View.GONE);
-        exportDialog.setContentView(exportDialogView);
+        transcodingDialog.hideAds();
     }
 
     @Override
     public void showImportingError(String message) {
-        if (exportDialog.isShowing()) {
-            exportDialog.dismiss();
+        if (transcodingDialog.isShowing()) {
+            transcodingDialog.hide();
         }
         Snackbar snackbar = Snackbar.make(videoCounter, message,
             Snackbar.LENGTH_LONG);
@@ -191,9 +175,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void showImportingDialog() {
-        runOnUiThread(() -> {
-            exportDialog.show();
-        });
+        transcodingDialog.showTranscodingDialog();
     }
 
     @OnClick(R.id.button_ok_gallery)
@@ -224,26 +206,10 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
         }
     }
 
-    private void initImportProgressDialog() {
-        LayoutInflater dialogLayout = LayoutInflater.from(GalleryActivity.this);
-        exportDialogView = dialogLayout.inflate(R.layout.dialog_progress_export, null);
-
-        exportDialog = new Dialog(GalleryActivity.this, R.style.VideonaDialog);
-        //exportDialog.setContentView(DialogView);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(exportDialog.getWindow().getAttributes());
-        lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-        lp.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.65);
-        exportDialog.getWindow().setAttributes(lp);
-
-        exportDialogMessage = (TextView) exportDialogView.findViewById(R.id.exportDialogMessage);
-
-        Button cancel = (Button) exportDialogView.findViewById(R.id.cancel_btn);
-        cancel.setOnClickListener(v -> {
-            exportDialog.dismiss();
-        });
-        exportDialog.setCancelable(false);
-        exportDialog.setCanceledOnTouchOutside(false);
+    private void initTranscodingDialog() {
+        transcodingDialog = new TranscodingDialog(this, R.style.VideonaDialog,
+            getString(R.string.gallery_dialog_title), getString(R.string.gallery_dialog_message),
+            this);
 
     }
 
@@ -294,7 +260,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
                 }
             };
 
-            dialog = builder.setCancelable(false)
+            AlertDialog dialog = builder.setCancelable(false)
                 .setTitle(title)
                 .setMessage(getString(R.string.confirmDeleteMessage))
                 .setPositiveButton(R.string.dialog_accept_delete_clip, dialogClickListener)
@@ -314,8 +280,8 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void navigate() {
-        if (exportDialog.isShowing()) {
-            exportDialog.dismiss();
+        if (transcodingDialog.isShowing()) {
+            transcodingDialog.hide();
         }
             Intent intent;
             intent = new Intent(VimojoApplication.getAppContext(), EditActivity.class);
@@ -374,6 +340,11 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onConfirmSelection() {
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        galleryPagerPresenter.cancelImportingVideo();
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter {
