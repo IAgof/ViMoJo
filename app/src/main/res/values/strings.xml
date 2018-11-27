@@ -161,6 +161,7 @@
     <string name="dialog_cancel_delete_clip">No</string>
     <string name="gallery_dialog_title">Add video</string>
     <string name="gallery_dialog_message">Importing video to project</string>
+    <string name="gallery_transcoding_error">Error importing video.</string>
 
     <!-- Gallery projects activity -->
     <string name="galleryProjectActivityTitle">Projects</string>

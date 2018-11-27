@@ -165,6 +165,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void showImportingError(String message) {
+        this.videoImportedUri = null;
         if (transcodingDialog.isShowing()) {
             transcodingDialog.hide();
         }
@@ -344,6 +345,7 @@ public class GalleryActivity extends VimojoActivity implements ViewPager.OnPageC
 
     @Override
     public void onCancel(DialogInterface dialog) {
+        this.videoImportedUri = null;
         galleryPagerPresenter.cancelImportingVideo();
     }
 

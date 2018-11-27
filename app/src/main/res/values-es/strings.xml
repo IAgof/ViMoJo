@@ -162,6 +162,8 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
     <string name="gallery_dialog_title">Añadir vídeo</string>
     <string name="gallery_dialog_message">Importando vídeo al proyecto</string>
+    <string name="gallery_transcoding_error">Error importando vídeo.</string>
+
     <!-- Gallery projects activity -->
     <string name="dialog_project_remove_message">Borrar proyecto</string>
     <string name="dialog_project_remove_accept">Sí</string>

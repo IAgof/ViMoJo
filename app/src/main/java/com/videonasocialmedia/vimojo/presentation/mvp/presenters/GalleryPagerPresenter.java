@@ -271,11 +271,17 @@ public class GalleryPagerPresenter extends VimojoPresenter
             importingVideoJob.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
-            galleryPagerView.showImportingError("Interrupted exception");
+            Log.e(LOG_TAG, "GalleryPagerPresenter, " + e.getMessage());
+            Crashlytics.log("GalleryPagerPresenter, Interrupted exception");
+            Crashlytics.logException(e);
+            galleryPagerView.showImportingError(context.getString(R.string.gallery_transcoding_error));
             return;
         } catch (ExecutionException e) {
             e.printStackTrace();
-            galleryPagerView.showImportingError("Executed exception");
+            Log.e(LOG_TAG, "GalleryPagerPresenter, " + e.getMessage());
+            Crashlytics.log("GalleryPagerPresenter, Executed exception");
+            Crashlytics.logException(e);
+            galleryPagerView.showImportingError(context.getString(R.string.gallery_transcoding_error));
             return;
         }
         addVideoListToProject(Collections.singletonList(
@@ -307,23 +313,5 @@ public class GalleryPagerPresenter extends VimojoPresenter
             importingVideoJob.cancel(true);
         }
     }
-
-//    @Override
-//    public void onRemoveMediaItemFromTrackError() {
-//    }
-//
-//  @Override
-//  public void onTrackUpdated(Track track) {
-//
-//  }
-//
-//    @Override
-//    public void onTrackRemoved(Track track) {
-//
-//    }
-//
-//    @Override
-//    public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
-//    }
 
 }
