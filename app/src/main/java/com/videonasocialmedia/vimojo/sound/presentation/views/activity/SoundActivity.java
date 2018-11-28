@@ -108,6 +108,9 @@ public class SoundActivity extends EditorActivity implements SoundView,
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(tabId -> {
       switch (tabId){
+        case (R.id.tab_record):
+          navigateTo(RecordCamera2Activity.class);
+          break;
         case(R.id.tab_editactivity):
           navigateTo(EditActivity.class);
           break;
@@ -137,9 +140,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
     switch (item.getItemId()) {
-      case R.id.action_toolbar_record:
-        navigateTo(RecordCamera2Activity.class);
-        return true;
       case R.id.action_toolbar_music:
         navigateTo(MusicListActivity.class);
         return true;
