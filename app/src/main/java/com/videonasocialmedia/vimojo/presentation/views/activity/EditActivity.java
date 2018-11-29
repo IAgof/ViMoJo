@@ -103,7 +103,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
           }
-        bottomBar.selectTabWithId(R.id.tab_editactivity);
         setupBottomBar(bottomBar);
         setupActivityButtons();
         setVideonaPlayerListener(this);
@@ -184,6 +183,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 .getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
       }
     }
+    bottomBar.selectTabWithId(R.id.tab_editactivity);
     videonaTimeLine.setListener(this);
     Futures.addCallback(editPresenter.updatePresenter(), new FutureCallback<Object>() {
       @Override
