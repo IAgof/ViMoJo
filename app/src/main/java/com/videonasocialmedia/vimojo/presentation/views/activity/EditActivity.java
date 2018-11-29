@@ -103,6 +103,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
           }
+        bottomBar.selectTabWithId(R.id.tab_editactivity);
         setupBottomBar(bottomBar);
         setupActivityButtons();
         setVideonaPlayerListener(this);
@@ -123,9 +124,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
     switch (item.getItemId()) {
-      case R.id.action_toolbar_record:
-        navigateTo(RecordCamera2Activity.class);
-        return true;
       case R.id.action_toolbar_video_gallery:
         navigateTo(GalleryActivity.class);
         return true;
@@ -157,6 +155,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(tabId -> {
       switch (tabId){
+        case (R.id.tab_record):
+          navigateTo(RecordCamera2Activity.class);
+          break;
         case(R.id.tab_sound):
           navigateTo(SoundActivity.class);
           break;
@@ -183,7 +184,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 .getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
       }
     }
-    bottomBar.selectTabWithId(R.id.tab_editactivity);
     videonaTimeLine.setListener(this);
     Futures.addCallback(editPresenter.updatePresenter(), new FutureCallback<Object>() {
       @Override
@@ -370,6 +370,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void enableBottomBar() {
       runOnUiThread(() -> {
+        bottomBar.getTabWithId(R.id.tab_record).setEnabled(true);
         bottomBar.getTabWithId(R.id.tab_sound).setEnabled(true);
         bottomBar.getTabWithId(R.id.tab_share).setEnabled(true);
       });
@@ -378,6 +379,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void disableBottomBar() {
       runOnUiThread(() -> {
+        bottomBar.getTabWithId(R.id.tab_record).setEnabled(false);
         bottomBar.getTabWithId(R.id.tab_sound).setEnabled(false);
         bottomBar.getTabWithId(R.id.tab_share).setEnabled(false);
       });
@@ -386,6 +388,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void changeAlphaBottomBar(float alpha) {
       runOnUiThread(() -> {
+        bottomBar.getTabWithId(R.id.tab_record).setAlpha(alpha);
         bottomBar.getTabWithId(R.id.tab_sound).setAlpha(alpha);
         bottomBar.getTabWithId(R.id.tab_share).setAlpha(alpha);
       });

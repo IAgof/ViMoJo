@@ -19,11 +19,4 @@
         app:showAsAction="always"
         />
 
-    <item
-        android:id="@+id/action_toolbar_record"
-        android:icon="@drawable/common_navigate_record"
-        android:title="@string/menuRecord"
-        app:showAsAction="always"
-        />
-
 </menu>

@@ -14,9 +14,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -144,6 +147,28 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
     }
   }
 
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+      return true;
+    }
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        drawerLayout.openDrawer(GravityCompat.START);
+        return true;
+      default:
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
   private void initBarProgressDialog() {
     transcodingDialog = new TranscodingDialog(this, R.style.VideonaDialog,
         getString(R.string.dialog_title_export_project), getString(R.string.dialog_message_export_project),
@@ -163,6 +188,9 @@ public class ShareActivity extends EditorActivity implements ShareVideoView,
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(tabId -> {
       switch (tabId) {
+        case (R.id.tab_record):
+          showNewProjectCreationDialog(R.id.button_record_navigator);
+          break;
         case (R.id.tab_editactivity):
           showNewProjectCreationDialog(R.id.button_edit_navigator);
           break;
