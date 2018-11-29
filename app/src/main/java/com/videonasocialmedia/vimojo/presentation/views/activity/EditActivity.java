@@ -103,7 +103,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
           }
-        setupBottomBar(bottomBar);
         setupActivityButtons();
         setVideonaPlayerListener(this);
       }
@@ -167,8 +166,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     });
   }
 
+  private void initBottomBar() {
+    bottomBar.selectTabWithId(R.id.tab_editactivity);
+  }
+
   @Override
   protected void onStart() {
+    bottomBar.selectTabWithId(R.id.tab_editactivity);
       super.onStart();
       videonaTimeLine.initVideoListRecycler(isLandscapeOriented());
   }
@@ -176,6 +180,8 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   protected void onResume() {
     super.onResume();
+    setupBottomBar(bottomBar);
+    initBottomBar();
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
@@ -183,7 +189,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 .getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
       }
     }
-    bottomBar.selectTabWithId(R.id.tab_editactivity);
     videonaTimeLine.setListener(this);
     Futures.addCallback(editPresenter.updatePresenter(), new FutureCallback<Object>() {
       @Override
