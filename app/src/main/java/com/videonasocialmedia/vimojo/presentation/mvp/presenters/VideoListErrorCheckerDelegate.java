@@ -29,11 +29,6 @@ public class VideoListErrorCheckerDelegate {
           message = message + video.getVideoError();
         }
       }
-      // Check temp files path
-      if (video.isTranscodingTempFileFinished() && video.getTempPath() != null
-          && !(new File(video.getTempPath()).exists())) {
-        addFailedVideoToList = true;
-      }
       if (addFailedVideoToList) {
         failedVideos.add(video);
       }

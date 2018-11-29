@@ -38,11 +38,6 @@ public class TranscodingDialog extends Dialog {
   private OnCancelListener listener;
 
 
-  public TranscodingDialog(@NonNull Context context) {
-    super(context);
-    this.contex = context;
-  }
-
   public TranscodingDialog(@NonNull Context context, int themeResId, String title,
                            String message, @Nullable OnCancelListener cancelListener) {
     super(context, themeResId);
@@ -51,12 +46,6 @@ public class TranscodingDialog extends Dialog {
     this.message = message;
     this.listener = cancelListener;
     initComponentsDialog();
-  }
-
-  protected TranscodingDialog(@NonNull Context context, boolean cancelable,
-                              @Nullable OnCancelListener cancelListener) {
-    super(context, cancelable, cancelListener);
-    this.contex = context;
   }
 
   private void initComponentsDialog() {

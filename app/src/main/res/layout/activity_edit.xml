@@ -32,6 +32,7 @@
                     android:layout_marginRight="16dp">
 
                     <LinearLayout
+                        android:id="@+id/linear_layout_edit_trim"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -60,6 +61,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linear_layout_edit_split"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -88,6 +90,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linear_layout_edit_duplicate"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -116,6 +119,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linear_layout_edit_text"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"

@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -68,12 +69,20 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   private final int ID_BUTTON_FAB_CENTER = 2;
 
   // UI elements
+  @Nullable @BindView(R.id.linear_layout_edit_duplicate)
+  LinearLayout linearLayoutDuplicate;
     @Nullable @BindView(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
+  @Nullable @BindView(R.id.linear_layout_edit_trim)
+  LinearLayout linearLayoutTrim;
     @Nullable @BindView(R.id.button_edit_trim)
     ImageButton editTrimButton;
+  @Nullable @BindView(R.id.linear_layout_edit_split)
+  LinearLayout linearLayoutSplit;
     @Nullable @BindView(R.id.button_edit_split)
     ImageButton editSplitButton;
+  @Nullable @BindView(R.id.linear_layout_edit_text)
+  LinearLayout linearLayoutText;
     @Nullable @BindView(R.id.button_edit_add_text)
     ImageButton editTextButton;
 
@@ -172,7 +181,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
   @Override
   protected void onStart() {
-    bottomBar.selectTabWithId(R.id.tab_editactivity);
       super.onStart();
       videonaTimeLine.initVideoListRecycler(isLandscapeOriented());
   }
@@ -243,9 +251,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         startActivity(intent);
     }
 
-    @Optional @OnClick(R.id.button_edit_duplicate)
+    @Optional @OnClick(R.id.linear_layout_edit_duplicate)
     public void onClickEditDuplicate() {
-        if (!editDuplicateButton.isEnabled())
+        if (!linearLayoutDuplicate.isEnabled())
             return;
         navigateTo(VideoDuplicateActivity.class, currentVideoIndex);
     }
@@ -257,23 +265,23 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         finish();
     }
 
-   @Optional @OnClick(R.id.button_edit_trim)
+   @Optional @OnClick(R.id.linear_layout_edit_trim)
     public void onClickEditTrim() {
-        if (!editTrimButton.isEnabled())
+        if (!linearLayoutTrim.isEnabled())
             return;
         navigateTo(VideoTrimActivity.class, currentVideoIndex);
     }
 
-    @Optional @OnClick(R.id.button_edit_split)
+    @Optional @OnClick(R.id.linear_layout_edit_split)
     public void onClickEditSplit() {
-        if (!editSplitButton.isEnabled())
+        if (!linearLayoutSplit.isEnabled())
             return;
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
     }
 
-    @Optional @OnClick (R.id.button_edit_add_text)
+    @Optional @OnClick (R.id.linear_layout_edit_text)
     public void onClickEditText() {
-      if (!editTextButton.isEnabled()) {
+      if (!linearLayoutText.isEnabled()) {
         return;
       }
       navigateTo( VideoEditTextActivity.class, currentVideoIndex);
@@ -355,20 +363,20 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
     public void enableEditActions() {
       runOnUiThread(() -> {
-        editTrimButton.setEnabled(true);
-        editSplitButton.setEnabled(true);
-        editTextButton.setEnabled(true);
-        editDuplicateButton.setEnabled(true);
+        linearLayoutTrim.setEnabled(true);
+        linearLayoutSplit.setEnabled(true);
+        linearLayoutText.setEnabled(true);
+        linearLayoutDuplicate.setEnabled(true);
       });
     }
 
     @Override
     public void disableEditActions() {
       runOnUiThread(() -> {
-        editTrimButton.setEnabled(false);
-        editSplitButton.setEnabled(false);
-        editTextButton.setEnabled(false);
-        editDuplicateButton.setEnabled(false);
+        linearLayoutTrim.setEnabled(false);
+        linearLayoutSplit.setEnabled(false);
+        linearLayoutText.setEnabled(false);
+        linearLayoutDuplicate.setEnabled(false);
       });
   }
 
@@ -430,7 +438,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
   @Override
   public void disableEditTextAction() {
-    editTextButton.setVisibility(View.GONE);
+    linearLayoutText.setVisibility(View.GONE);
   }
 
   private void updatePlayer() {
