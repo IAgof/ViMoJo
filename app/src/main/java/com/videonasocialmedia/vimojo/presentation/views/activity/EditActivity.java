@@ -183,13 +183,13 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   protected void onStart() {
       super.onStart();
       videonaTimeLine.initVideoListRecycler(isLandscapeOriented());
+      initBottomBar();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
     setupBottomBar(bottomBar);
-    initBottomBar();
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
