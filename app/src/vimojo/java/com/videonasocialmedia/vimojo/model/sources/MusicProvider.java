@@ -30,13 +30,13 @@ public class MusicProvider {
     musicList.add(new Music(R.drawable.ic_mirror_mirror, "Mirror Mirror", R.raw.mirror_mirror,
         R.color.colorPrimary,
         context.getString(R.string.activity_music_title_mirror_mirror), "03:05", 185000));
-    musicList.add(new Music(R.drawable.ic_lusciousness, "Lusciousness", R.raw.lusciousness,
+    /*musicList.add(new Music(R.drawable.ic_lusciousness, "Lusciousness", R.raw.lusciousness,
         R.color.colorPrimary,
-        context.getString(R.string.activity_music_title_lusciousness), "03:24", 204000));
-   /* musicList.add(new Music(R.drawable.ic_club_thump, "Club Thump", R.raw.club_thump,
+        context.getString(R.string.activity_music_title_lusciousness), "03:24", 204000)); */
+    musicList.add(new Music(R.drawable.ic_club_thump, "Club Thump", R.raw.club_thump,
         R.color.colorPrimary,
         context.getString(R.string.activity_music_title_club_thump), "02:55", 175000));
-    musicList.add(new Music(R.drawable.ic_blue_macaw, "Blue Macaw", R.raw.blue_macaw,
+   /* musicList.add(new Music(R.drawable.ic_blue_macaw, "Blue Macaw", R.raw.blue_macaw,
         R.color.colorPrimary,
         context.getString(R.string.activity_music_title_blue_macaw), "03:51", 231000));
     musicList.add(new Music(R.drawable.ic_arp_bounce, "Arp Bounce", R.raw.arp_bounce,
