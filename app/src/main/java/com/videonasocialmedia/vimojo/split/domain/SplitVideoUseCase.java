@@ -32,7 +32,7 @@ public class SplitVideoUseCase {
     static final int AUTOSPLIT_MS_RANGE = 10;
     private AddVideoToProjectUseCase addVideoToProjectUseCase;
     private ModifyVideoDurationUseCase modifyVideoDurationUseCase;
-    Video endVideo;
+    protected Video endVideo;
     private Project currentProject;
     private MediaRepository mediaRepository;
 
@@ -66,9 +66,9 @@ public class SplitVideoUseCase {
 
             @Override
             public void onAddMediaItemToTrackSuccess(Media media) {
-                runTrimTasks(initialVideo, endVideo);
                 // TODO(jliarte): 19/07/18 handle composition update
-                listener.onSuccessSplittingVideo(initialVideo, endVideo);
+                listener.onSuccessSplittingVideo(currentProject, initialVideo, endVideo);
+                runTrimTasks(initialVideo, endVideo);
             }
         });
     }

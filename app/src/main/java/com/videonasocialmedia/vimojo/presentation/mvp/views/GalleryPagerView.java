@@ -23,4 +23,12 @@ public interface GalleryPagerView {
     void navigate();
 
     void showDialogVideosNotAddedFromGallery(ArrayList<Integer> listVideoId);
+
+    void showAdsView();
+
+    void hideAdsView();
+
+    void showImportingError(String message);
+
+    void showImportingDialog();
 }

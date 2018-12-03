@@ -40,6 +40,7 @@ import com.videonasocialmedia.vimojo.main.VimojoActivity;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditorPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditorActivityView;
 import com.videonasocialmedia.vimojo.presentation.views.customviews.CircleImageView;
+import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.views.activity.SettingsActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.SoundActivity;
 import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
@@ -76,7 +77,7 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
   @BindView(R.id.text_dialog)
   EditText editTextDialog;
   @BindView(R.id.edit_activity_drawer_layout)
-  DrawerLayout drawerLayout;
+  protected DrawerLayout drawerLayout;
   @BindView(R.id.navigator_view)
   NavigationView navigationView;
   @BindView(R.id.container_navigator)
@@ -281,6 +282,8 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
             navigateTo(SoundActivity.class);
           if (resourceId == R.id.button_edit_navigator)
             navigateTo(EditActivity.class);
+          if (resourceId == R.id.button_record_navigator)
+            navigateTo(RecordCamera2Activity.class);
           break;
       }
     };

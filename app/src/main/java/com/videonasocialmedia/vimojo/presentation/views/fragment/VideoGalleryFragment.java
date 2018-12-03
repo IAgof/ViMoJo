@@ -16,6 +16,10 @@ import android.view.ViewGroup;
 import com.victor.loading.book.BookLoading;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
+import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
+import com.videonasocialmedia.vimojo.main.VimojoApplication;
+import com.videonasocialmedia.vimojo.main.modules.FragmentPresentersModule;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.VideoGalleryPresenter;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoGalleryView;
 import com.videonasocialmedia.vimojo.main.VimojoActivity;
@@ -29,6 +33,8 @@ import com.videonasocialmedia.vimojo.utils.recyclerselectionsupport.MultiItemSel
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -38,13 +44,14 @@ import butterknife.Unbinder;
  */
 public class VideoGalleryFragment extends VideonaFragment implements VideoGalleryView,
         RecyclerViewClickListener, OnTransitionClickListener {
+    @Inject
+    protected VideoGalleryPresenter videoGalleryPresenter;
     public static final int SELECTION_MODE_SINGLE = 0;
     public static final int SELECTION_MODE_MULTIPLE = 1;
     public static final int GALLERY_COLS_LANDSCAPE = 6;
     private static final int GALLERY_COLS_PORTRAIT = 4;
     protected TimeChangesHandler timeChangesHandler = new TimeChangesHandler();
     protected VideoGalleryAdapter videoGalleryAdapter;
-    protected VideoGalleryPresenter videoGalleryPresenter;
     protected Video selectedVideo;
     protected int folder;
     protected OnSelectionModeListener onSelectionModeListener;
@@ -78,6 +85,15 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
         super.onCreate(savedInstanceState);
         folder = this.getArguments().getInt("FOLDER", VideoGalleryPresenter.EDITED_FOLDER);
         selectionMode = this.getArguments().getInt("SELECTION_MODE", SELECTION_MODE_SINGLE);
+        FragmentPresentersComponent getFragmentPresentersComponent = initComponent();
+        getFragmentPresentersComponent.inject(this);
+    }
+
+    private FragmentPresentersComponent initComponent() {
+        return DaggerFragmentPresentersComponent.builder()
+            .fragmentPresentersModule(new FragmentPresentersModule(this))
+            .systemComponent(((VimojoApplication) getActivity().getApplication()).getSystemComponent())
+            .build();
     }
 
     @Nullable
@@ -85,8 +101,6 @@ public class VideoGalleryFragment extends VideonaFragment implements VideoGaller
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.edit_fragment_catalog, container, false);
         unbinder = ButterKnife.bind(this, v);
-        if (videoGalleryPresenter == null)
-            videoGalleryPresenter = new VideoGalleryPresenter(this);
         int galleryColumns = GALLERY_COLS_LANDSCAPE;
         if ( ((VimojoActivity)this.getActivity()).isPortraitOriented()) {
             galleryColumns = GALLERY_COLS_PORTRAIT;

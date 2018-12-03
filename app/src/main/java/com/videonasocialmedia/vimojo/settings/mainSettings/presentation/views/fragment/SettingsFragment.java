@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
-import com.videonasocialmedia.vimojo.init.presentation.views.activity.InitRegisterLoginActivity;
 import com.videonasocialmedia.vimojo.main.DaggerFragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.FragmentPresentersComponent;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -32,7 +31,6 @@ import com.videonasocialmedia.vimojo.presentation.views.activity.TermsOfServiceA
 import com.videonasocialmedia.vimojo.settings.licensesVimojo.presentation.view.activity.LicensesActivity;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.presenters.PreferencesPresenter;
 import com.videonasocialmedia.vimojo.settings.mainSettings.presentation.mvp.views.PreferencesView;
-import com.videonasocialmedia.vimojo.store.presentation.view.activity.VimojoStoreActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 
 import java.util.ArrayList;
@@ -67,8 +65,8 @@ public class SettingsFragment extends PreferenceFragment implements
     context = VimojoApplication.getAppContext();
 
     initPreferences();
-    FragmentPresentersComponent fragmentPresentersComponent = initComponent();
-    fragmentPresentersComponent.inject(this);
+    FragmentPresentersComponent getFragmentPresentersComponent = initComponent();
+    getFragmentPresentersComponent.inject(this);
   }
 
   @Override

@@ -53,7 +53,7 @@ public class NewClipImporter {
     executorPool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(N_THREADS));
   }
 
-  public void adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
+  public ListenableFuture<Video> adaptVideoToVideonaFormat(Project currentProject, Video video, int videoPosition,
                                         int cameraRotation, int retries) {
     Log.d(TAG, "Adapt video at position " + videoPosition);
     String destVideoRecorded = Constants.PATH_APP_MASTERS + File.separator
@@ -78,14 +78,17 @@ public class NewClipImporter {
 //    saveVideoToAdapt(video, destVideoRecorded, videoPosition, cameraRotation, retries);
     VideoToAdapt videoToAdapt = new VideoToAdapt(video, destVideoRecorded, videoPosition,
             cameraRotation, retries);
+    ListenableFuture<Video> adaptingJob = null;
     try {
-      adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat, adaptListener);
+      adaptingJob = adaptVideoToFormatUseCase.adaptVideo(currentProject, videoToAdapt, videoFormat,
+          adaptListener);
       // TODO(jliarte): 18/07/18 should chain with adapt job
       applyAVTransitions(video, currentProject);
     } catch (IOException e) {
       e.printStackTrace();
       adaptListener.onErrorAdapting(video, "adaptVideoToFormatUseCase");
     }
+    return adaptingJob;
   }
 
   protected final <T> ListenableFuture<T> executeUseCaseCall(Callable<T> callable) {

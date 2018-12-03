@@ -15,6 +15,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSession.ExportListener;
 import com.videonasocialmedia.videonamediaframework.pipeline.VMCompositionExportSessionImpl;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.importer.model.entities.VideoToAdapt;
 import com.videonasocialmedia.vimojo.importer.repository.VideoToAdaptDataSource;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -52,7 +53,8 @@ public class ExportProjectUseCase implements ExportListener {
    * Main use case method.
    */
   public void export(Project currentProject, String pathWatermark,
-                     String nativeLibPath, OnExportFinishedListener onExportFinishedListener) {
+                     String nativeLibPath, TextToDrawable drawableGenerator,
+                     OnExportFinishedListener onExportFinishedListener) {
     this.project = currentProject;
     String tempPathIntermediateAudioFilesDirectory =
             project.getProjectPathIntermediateAudioMixedFiles();
@@ -60,7 +62,8 @@ public class ExportProjectUseCase implements ExportListener {
     // TODO(jliarte): 23/04/18 remove this android dependency!!
     String outputFilesDirectory = Constants.PATH_APP;
     vmCompositionExportSession = new VMCompositionExportSessionImpl(project.getVMComposition(),
-            outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath, this);
+            outputFilesDirectory, tempPathIntermediateAudioFilesDirectory, tempAudioPath,
+            drawableGenerator, this);
 
     this.onExportFinishedListener = onExportFinishedListener;
     isExportCanceled = false;

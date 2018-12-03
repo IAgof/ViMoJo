@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.roughike.bottombar.BottomBar;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
@@ -29,6 +30,8 @@ import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrack;
 import com.videonasocialmedia.vimojo.sound.presentation.views.custom.CardViewAudioTrackListener;
 import com.videonasocialmedia.vimojo.utils.IntentConstants;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -105,6 +108,9 @@ public class SoundActivity extends EditorActivity implements SoundView,
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(tabId -> {
       switch (tabId){
+        case (R.id.tab_record):
+          navigateTo(RecordCamera2Activity.class);
+          break;
         case(R.id.tab_editactivity):
           navigateTo(EditActivity.class);
           break;
@@ -134,9 +140,6 @@ public class SoundActivity extends EditorActivity implements SoundView,
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
     switch (item.getItemId()) {
-      case R.id.action_toolbar_record:
-        navigateTo(RecordCamera2Activity.class);
-        return true;
       case R.id.action_toolbar_music:
         navigateTo(MusicListActivity.class);
         return true;
@@ -231,8 +234,9 @@ public class SoundActivity extends EditorActivity implements SoundView,
   }
 
   @Override
-  public void showWarningTempFile() {
+  public void showWarningTempFile(ArrayList<Video> failedVideos) {
     warningTranscodingFilesButton.setVisibility(View.VISIBLE);
+    videoTrack.setFailedVideos(failedVideos);
   }
 
   @Override

@@ -18,10 +18,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MediaListTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.MediaListTimeLineAdapter;
+
+import java.util.ArrayList;
 
 /**
  * Created by alvaro on 10/04/17.
@@ -310,5 +313,9 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
   public void updateClipSelection(int currentClipIndex) {
     mediaListTimeLineAdapter.updateSelection(currentClipIndex);
     recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(currentClipIndex + 1);
+  }
+
+  public void setFailedVideos(ArrayList<Video> failedVideos) {
+    mediaListTimeLineAdapter.setFailedVideos(failedVideos);
   }
 }

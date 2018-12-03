@@ -1,52 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_music_title_going_higher">Epic rock music featuring electric guitars, drums, bass and strings</string>
-    <string name="activity_music_title_ukulele">Happy and light music featuring ukulele, finger snapping, pizzicato strings and drums</string>
-    <string name="activity_music_title_jazzy_frenchy">Jazz music featuring acoustic guitar, double bass, accordion and vibes</string>
-    <string name="activity_music_title_acoustic_breeze">Acoustic music with a soft and mellow mood featuring folk guitar and cello</string>
+
+    <string name="activity_music_title_arp_bounce">Geographer \nDance and electronic music | Drama</string>
+    <string name="activity_music_title_blue_macaw">Quincas Moreira \Dance and electronic music | Inspiration</string>
+    <string name="activity_music_title_club_thump">Gunnar Olsen \nDance and electronic music | Trance</string>
+    <string name="activity_music_title_lusciousness">Asher Fulero \nDance and electronic music | Romantic</string>
+    <string name="activity_music_title_mirror_mirror">Diamond Ortiz \nR&amp;B and soul | Happy</string>
+    <string name="activity_music_title_the_missing_link">The Whole Other \nChillout and electronic music | Groove</string>
+    <string name="activity_music_title_the_toe_jam">Diamond Ortiz \nDance and electronic music | Funky</string>
 
     <string name="licenseMusic">
-
-        GOING HIGHER\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            https://www.bensound.com/royalty-free-music/track/going-higher\n\n
-
-        UKELELE\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            http://www.bensound.com/royalty-free-music/track/ukulele\n\n
-
-        JAZZY-FRENCHY\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            https://www.bensound.com/royalty-free-music/track/jazzy-frenchy\n\n
-
-        ACOUSTIC BREEZE\n
-            My music is licensed under a Creative Commons License:\n
-            You are free to use the music in your multimedia project (online videos(youtube,…),
-            websites, animations, etc.) as long as you credit me, For example:\n
-            "Music: www.bensound.com" or "Royalty Free Music from Bensound"\n\n
-
-            You can read the full legal agreement here: Creative commons - Attribution - No Derivative Works\n
-            https://creativecommons.org/licenses/by-nd/3.0/legalcode\n
-            http://www.bensound.com/index.php?route=product/search&amp;search=ACOUSTIC%20BREEZE\n\n
-   </string>
+    • Toe Kam, Diamond Ortiz, https://www.youtube.com/channel/UC8IxuOt9Z4Fr0EOff4wSx_Q \n\n
+    • Club Thump, Gunnar Olsen \n\n
+    • Arp Bounce, Geographer, https://www.youtube.com/channel/UCcB_tnqYHwPzADwUdeppIIQ \n\n
+    • The Missing Link, The Whole Other, https://www.youtube.com/channel/UCxfzyJ-HvEZbGmubAmfcsfQ \n\n
+    • Mirror Mirror, Diamond Ortiz, https://www.youtube.com/channel/UC8IxuOt9Z4Fr0EOff4wSx_Q \n\n
+    • Lusciousness, Asher Fulero, https://www.youtube.com/channel/UCKn6_1iFFC5fxSmFgVC9Fsw \n\n
+    • Blue Macaw, Quincas Moreira, https://www.youtube.com/channel/UCL1zFMJb0sthwdAlGjGbdyg \n\n
+    </string>
 
     <string name="vimojo_kit_web">"https://vimojo.co/mojokit/?utm_source=vimojo_android&amp;utm_medium=app_link"</string>
     <string name="vimojo_platform_base">https://platform.vimojo.co</string>

@@ -20,6 +20,7 @@ import com.videonasocialmedia.vimojo.composition.repository.ProjectRepository;
 import com.videonasocialmedia.vimojo.domain.editor.AddVideoToProjectUseCase;
 import com.videonasocialmedia.vimojo.domain.editor.ApplyAVTransitionsUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
+import com.videonasocialmedia.vimojo.importer.helpers.NewClipImporter;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.main.VimojoTestApplication;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
@@ -81,6 +82,8 @@ public class GalleryPagerPresenterTest {
   private Project currentProject;
   @Mock BackgroundExecutor mockedBackgroundExecutor;
   @Mock UserEventTracker mockedUserEventTracker;
+  @Mock NewClipImporter mockedNewClipImporter;
+  private boolean showAds;
 
   @Before
   public void injectMocks() {
@@ -218,7 +221,8 @@ public class GalleryPagerPresenterTest {
             mockedApplyAVTransitionsUseCase,
             mockedSharedPreferences,
             mockedProjectInstanceCache, mockedUpdateComposition,
-            mockedSetCompositionResolution, mockedBackgroundExecutor, mockedUserEventTracker);
+            mockedSetCompositionResolution, mockedNewClipImporter, showAds, mockedBackgroundExecutor,
+            mockedUserEventTracker);
   }
 
   public void setAProject() {

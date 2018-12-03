@@ -130,6 +130,7 @@ public class VideoTimeLineAdapter
 
   public void setFailedVideos(ArrayList<Video> failedVideos) {
     this.failedVideos = failedVideos;
+    notifyDataSetChanged();
   }
 
   public void initMovement(int position) {

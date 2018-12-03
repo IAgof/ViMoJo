@@ -160,6 +160,9 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="dialog_accept_delete_clip">Sí</string>
     <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
+    <string name="gallery_dialog_title">Añadir vídeo</string>
+    <string name="gallery_dialog_message">Importando vídeo al proyecto</string>
+    <string name="gallery_transcoding_error">Error importando vídeo.</string>
 
     <!-- Gallery projects activity -->
     <string name="dialog_project_remove_message">Borrar proyecto</string>
@@ -705,6 +708,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_change_user_name">¿Quiere cambiar su nombre de usuario?</string>
     <string name="dialog_change_email">¿Quiere cambiar su dirección de email?</string>
 
+    <string name="bottom_bar_record">Grabar</string>
     <string name="bottom_bar_edit">Editar</string>
     <string name="bottom_bar_sound">Audio</string>
     <string name="bottom_bar_share">Compartir</string>

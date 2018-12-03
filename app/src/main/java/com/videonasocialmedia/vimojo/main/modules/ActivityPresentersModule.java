@@ -295,10 +295,11 @@ public class ActivityPresentersModule {
           AddVideoToProjectUseCase addVideoToProjectUseCase,
           ApplyAVTransitionsUseCase applyAVTransitionsUseCase, SharedPreferences sharedPreferences,
           UpdateComposition updateComposition, SetCompositionResolution setCompositionResolution,
+          NewClipImporter newClipImporter, @Named("showAds") boolean showAds,
           BackgroundExecutor backgroundExecutor, UserEventTracker userEventTracker) {
     return new GalleryPagerPresenter((GalleryActivity) activity, activity, addVideoToProjectUseCase,
             applyAVTransitionsUseCase, sharedPreferences, projectInstanceCache, updateComposition,
-            setCompositionResolution, backgroundExecutor, userEventTracker);
+            setCompositionResolution, newClipImporter, showAds, backgroundExecutor, userEventTracker);
   }
 
  /* @Provides @PerActivity
@@ -331,11 +332,12 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   SplitPreviewPresenter provideSplitPresenter(SharedPreferences sharedPreferences,
           UserEventTracker userEventTracker, SplitVideoUseCase splitVideoUseCase,
+          UpdateComposition updateComposition, UpdateMedia updateMedia,
           @Named("amIAVerticalApp") boolean amIAVerticalApp,
           BackgroundExecutor backgroundExecutor) {
     return new SplitPreviewPresenter(activity, (VideoSplitActivity) activity, sharedPreferences,
-        userEventTracker, splitVideoUseCase, projectInstanceCache, amIAVerticalApp,
-        backgroundExecutor);
+        userEventTracker, splitVideoUseCase, updateComposition, updateMedia, projectInstanceCache,
+        amIAVerticalApp, backgroundExecutor);
   }
 
   @Provides @PerActivity

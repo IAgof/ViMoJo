@@ -1,4 +1,11 @@
 <tabs>
+
+    <tab
+        id="@+id/tab_record"
+        title="@string/bottom_bar_record"
+        icon="@drawable/common_navigate_record"
+        />
+
     <tab
         id="@+id/tab_editactivity"
         title="@string/bottom_bar_edit"
