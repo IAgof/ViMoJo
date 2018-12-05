@@ -8,6 +8,7 @@ package com.videonasocialmedia.vimojo.split.presentation.mvp.presenters;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
@@ -17,8 +18,8 @@ import com.videonasocialmedia.videonamediaframework.model.media.exceptions.Illeg
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.BuildConfig;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.UpdateMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
@@ -65,11 +66,13 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class SplitPreviewPresenterTest {
     @Mock private Context mockedContext;
     @Mock private SplitView mockedSplitView;
+    @Mock private SharedPreferences mockedSharedPreferences;
     @Mock private UserEventTracker mockedUserEventTracker;
     @Mock private SplitVideoUseCase mockedSplitVideoUseCase;
+    @Mock UpdateComposition mockedUpdateComposition;
+    @Mock private UpdateMedia mockedUpdateMedia;
     @Mock ProjectInstanceCache mockedProjectInstanceCache;
     private Project currentProject;
-    @Mock UpdateComposition mockedUpdateComposition;
     private boolean amIAVerticalApp;
     @Mock BackgroundExecutor mockedBackgroundExecutor;
 
@@ -84,8 +87,9 @@ public class SplitPreviewPresenterTest {
     public void constructorSetsUserTracker() {
         UserEventTracker userEventTracker = UserEventTracker.getInstance();
         SplitPreviewPresenter presenter = new SplitPreviewPresenter(mockedContext,
-                mockedSplitView, userEventTracker, mockedSplitVideoUseCase,
-                mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
+                mockedSplitView, mockedSharedPreferences, userEventTracker, mockedSplitVideoUseCase,
+                mockedUpdateComposition, mockedUpdateMedia, mockedProjectInstanceCache,
+                amIAVerticalApp, mockedBackgroundExecutor);
 
         assertThat(presenter.userEventTracker, is(userEventTracker));
     }
@@ -240,7 +244,8 @@ public class SplitPreviewPresenterTest {
     @NonNull
     private SplitPreviewPresenter getSplitPreviewPresenter() {
         SplitPreviewPresenter splitPreviewPresenter = new SplitPreviewPresenter(mockedContext,
-            mockedSplitView, mockedUserEventTracker, mockedSplitVideoUseCase,
+            mockedSplitView, mockedSharedPreferences, mockedUserEventTracker,
+            mockedSplitVideoUseCase, mockedUpdateComposition, mockedUpdateMedia,
             mockedProjectInstanceCache, amIAVerticalApp, mockedBackgroundExecutor);
         splitPreviewPresenter.currentProject = currentProject;
         return splitPreviewPresenter;

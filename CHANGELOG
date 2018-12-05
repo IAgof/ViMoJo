@@ -1,3 +1,13 @@
+v0.24.1
+- Added option to delete music or voice over track from sound room.
+- Update icons and update user experience editing clips.
+
+v0.24.0
+- Updates navigation to other screens from edit room.
+
+v0.23.0
+- Fixed problems playing video compositions.
+
 v0.22.0
 - Improved mix of audio in exportation process.
 

@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
@@ -116,32 +117,23 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
-    public void musicSelectedOptions(boolean musicInProject) {
+    public void musicSelected() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             acceptCancelScene = Scene.getSceneForLayout(sceneRoot,
                     R.layout.activity_music_detail_scene_accept_cancel, this);
             deleteSecene = Scene.getSceneForLayout(sceneRoot,
                     R.layout.activity_music_detail_scene_delete, this);
-            if (musicInProject) {
-                TransitionManager.go(deleteSecene);
-            } else {
-                TransitionManager.go(acceptCancelScene);
-            }
-
+            TransitionManager.go(acceptCancelScene);
         } else {
             LayoutInflater inflater = this.getLayoutInflater();
-            if (musicInProject) {
-                inflater.inflate(R.layout.activity_music_detail_scene_delete, sceneRoot);
-            } else {
-                inflater.inflate(R.layout.activity_music_detail_scene_accept_cancel, sceneRoot);
-            }
+            inflater.inflate(R.layout.activity_music_detail_scene_accept_cancel, sceneRoot);
         }
         ButterKnife.bind(this);
     }
 
     @Override
-    public void setMusic(Music music, boolean scene) {
-        musicSelectedOptions(scene);
+    public void setMusic(Music music) {
+        musicSelected();
         updateCoverInfo(music);
         seekBarVolume.setProgress((int)(music.getVolume()*100));
         this.music = music;
@@ -173,6 +165,11 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
+    public void sendCrashlyticsLog(String messageLog) {
+        Crashlytics.log(messageLog);
+    }
+
+    @Override
     public void attachView(Context context) {
         videonaPlayer.attachView(context);
     }
@@ -188,6 +185,11 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
     }
 
     @Override
+    public void playPreview() {
+        videonaPlayer.playPreview();
+    }
+
+    @Override
     public void setAspectRatioVerticalVideos(int height) {
         videonaPlayer.setAspectRatioVerticalVideos(height);
     }
@@ -199,11 +201,6 @@ public class MusicDetailActivity extends VimojoActivity implements MusicDetailVi
         presenter.addMusic(music, volume);
         TransitionManager.go(deleteSecene);
         ButterKnife.bind(this);
-    }
-
-    @Optional @OnClick(R.id.delete_music)
-    public void deleteMusic() {
-        presenter.removeMusic(music);
     }
 
     private void goToMusicList() {

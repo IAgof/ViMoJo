@@ -68,7 +68,7 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="upload_video_with_mobile_network">¿Quieres subir vídeo usando los datos de tu tarifa móvil?</string>
     <string name="connect_to_network">Por favor, conecte su móvil a la red móvil o wifi</string>
     <string name="upload_video_register_login">Para subir vídeos, primero tiene que registrarse o inicar sesión</string>
-    <string name="upload_video_complete_project_info">Para subir vídeos necesita completar toda la información de proyecto</string>
+    <string name="upload_video_complete_project_info">¿Quieres completar la información del proyecto antes de subir el vídeo?</string>
     <string name="progress_dialog_title_checking_info_user">Comprobando información</string>
     <string name="progress_dialog_message_checking_user_auth">Comprobando autenticación</string>
     <string name="cancel_exportation">Cancelar</string>
@@ -128,12 +128,22 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="editTextActionLabel">Hecho</string>
     <string name="titleVideosNotFound">Videos no encontrados en el teléfono</string>
     <string name="messageVideosNotFound">Algunos vídeos no serán cargados en el proyecto</string>
+    <string name="text_edit_trim">Recortar</string>
+    <string name="text_edit_split">Dividir</string>
+    <string name="text_edit_duplicate">Duplicar</string>
+    <string name="text_edit_text">Texto</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">El número máximo de líneas a dibujar son dos</string>
     <string name="edit_text_hint_VideoEditText">Escribe aquí tu texto</string>
     <string name="edit">Editar</string>
     <string name="edit_text_checkbox">Sombreado</string>
+
+    <!-- Sound activity -->
+    <string name="dialog_sound_delete_music">¿Quieres borrar esta pista de audio?</string>
+    <string name="dialog_sound_accept_delete">si</string>
+    <string name="dialog_sound_cancel_delete">no</string>
+    <string name="error_removing_audio">Problema borrando música del proyecto</string>
 
     <!-- Gallery activity -->
     <string name="galleryProjectActivityTitle">Proyectos</string>
@@ -150,6 +160,9 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="dialog_accept_delete_clip">Sí</string>
     <string name="dialog_cancel_delete_clip">No</string>
     <string name="error_video_format">Error, formato de vídeo diferente al del proyecto </string>
+    <string name="gallery_dialog_title">Añadir vídeo</string>
+    <string name="gallery_dialog_message">Importando vídeo al proyecto</string>
+    <string name="gallery_transcoding_error">Error importando vídeo.</string>
 
     <!-- Gallery projects activity -->
     <string name="dialog_project_remove_message">Borrar proyecto</string>
@@ -159,6 +172,8 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="dialog_title_update_assets_progress_dialog">Actualizando archivos</string>
     <string name="dialog_message_update_assets_progress_dialog">Descargando los archivos de la composición, por favor espere.</string>
     <string name="update_assets_remaining">restantes.</string>
+    <string name="gallery_project_new">Nuevo proyecto</string>
+    <string name="project_list_empty_error">Error listando mis proyectos</string>
 
     <!-- Detail project activity -->
     <string name="detail_project_title">Título</string>
@@ -361,6 +376,8 @@ Con ella es posible crear piezas audiovisuales rápidamente y de calidad profesi
     <string name="drawerProjectLocation">Localización</string>
     <string name="drawerProjectDate">Fecha</string>
     <string name="drawerProjectCurrent">Proyecto actual</string>
+    <string name="drawerSendFeedback">Sugerencias</string>
+    <string name="menuRecord">Grabar</string>
 
     <!-- ShopListActivity -->
     <string name="buy_now">Compra ahora por</string>
@@ -691,6 +708,7 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="dialog_change_user_name">¿Quiere cambiar su nombre de usuario?</string>
     <string name="dialog_change_email">¿Quiere cambiar su dirección de email?</string>
 
+    <string name="bottom_bar_record">Grabar</string>
     <string name="bottom_bar_edit">Editar</string>
     <string name="bottom_bar_sound">Audio</string>
     <string name="bottom_bar_share">Compartir</string>
@@ -717,8 +735,6 @@ Con respecto a las funcionalidades y herramientas de la Aplicación que permiten
     <string name="preposition_of">de</string>
     <string name="alert_dialog_title_music">Música</string>
     <string name="alert_dialog_title_message_adding_music">Problema añadiendo música al proyecto</string>
-    <string name="alert_dialog_title_message_removing_music">Problema borrando música del proyecto</string>
-
 
     <string name="onNoVideosRetrieved">Error, no hay vídeos en el proyecto</string>
     <string name="menuGallery">Galería</string>

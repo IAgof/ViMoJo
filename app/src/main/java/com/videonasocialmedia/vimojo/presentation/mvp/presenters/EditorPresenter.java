@@ -18,7 +18,6 @@ import com.videonasocialmedia.videonamediaframework.model.VMComposition;
 import com.videonasocialmedia.videonamediaframework.model.media.Media;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
-import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
@@ -170,8 +169,10 @@ public class EditorPresenter extends VimojoPresenter
       Crashlytics.log("Error getting copy VMComposition " + illegalItemOnTrack);
     }
     editorActivityView.init(vmCompositionCopy);
-    List<Video> videoList;
-    videoList = (List<Video>) vmCompositionCopy.getMediaTrack().getItems().listIterator();
+    List<Video> videoList = new ArrayList<>();
+    for (Media media: vmCompositionCopy.getMediaTrack().getItems()) {
+      videoList.add((Video) media);
+    }
     checkIfIsNeededRelaunchTranscodingTempFileTaskVideos(videoList);
     List<Video> checkedVideoList = checkMediaPathVideosExistOnDevice(videoList);
     //Relaunch videos only if Project has videos. Fix problem removing all videos from Edit screen.
@@ -386,5 +387,10 @@ public class EditorPresenter extends VimojoPresenter
     return this.executeUseCaseCall(() -> {
       initPreviewFromProject();
     });
+  }
+
+  public void resetPlayer() {
+    this.currentProject = projectInstanceCache.getCurrentProject();
+    initPreviewFromProject();
   }
 }

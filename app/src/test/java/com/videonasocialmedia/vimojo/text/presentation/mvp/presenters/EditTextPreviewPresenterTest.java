@@ -135,16 +135,6 @@ public class EditTextPreviewPresenterTest {
   }
 
   @Test
-  public void updatePresenterHideSeekBarPlayerView() {
-    EditTextPreviewPresenter editTextPreviewPresenter = getEditTextPreviewPresenter();
-    int videoIndexOnTrack = 0;
-
-    editTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
-
-    verify(mockedEditTextView).setSeekBarLayoutEnabled(false);
-  }
-
-  @Test
   public void updatePresenterIfVideoHasTextSetVideoTextParamsView() {
     EditTextPreviewPresenter editTextPreviewPresenter = getEditTextPreviewPresenter();
     int videoIndexOnTrack = 0;
@@ -187,8 +177,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.setCheckboxShadow(isShadowSelected);
 
-    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
-        Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected);
   }
 
   @Test
@@ -205,8 +194,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
-        Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected);
   }
 
   @Test
@@ -223,8 +211,7 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView, atLeast(2)).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
-        Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected);
   }
 
   @Test
@@ -241,12 +228,11 @@ public class EditTextPreviewPresenterTest {
 
     verify(mockedEditTextView).setPositionEditText(textPosition);
     verify(mockedEditTextView).hideKeyboard();
-    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
-        Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected);
   }
 
   @Test
-  public void onTextChangedUpdatePlayerImageText() {
+  public void onTextChangedUpdatePlayerImageTextIfPlayerReady() {
     EditTextPreviewPresenter spyEditTextPreviewPresenter = spy(getEditTextPreviewPresenter());
     int videoIndexOnTrack = 0;
     spyEditTextPreviewPresenter.updatePresenter(videoIndexOnTrack);
@@ -254,11 +240,11 @@ public class EditTextPreviewPresenterTest {
     String text = "some text changed";
     String textPosition = video.getClipTextPosition();
     boolean isShadowSelected = video.hasClipTextShadow();
+    spyEditTextPreviewPresenter.isPlayerReady = true;
 
     spyEditTextPreviewPresenter.onTextChanged(text);
 
-    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
-        Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected);
   }
 
   @Test
@@ -284,8 +270,7 @@ public class EditTextPreviewPresenterTest {
 
     spyEditTextPreviewPresenter.playerReady();
 
-    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected,
-        Constants.DEFAULT_VIMOJO_WIDTH, Constants.DEFAULT_VIMOJO_HEIGHT);
+    verify(mockedEditTextView).setImageText(text, textPosition, isShadowSelected);
 
   }
 

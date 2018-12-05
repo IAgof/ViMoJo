@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_music_title_going_higher">Música rock épica con guitarras eléctricas, batería, bajo y cuerdas</string>
-    <string name="activity_music_title_ukulele">Música alegre y ligera de ukulele, con chasquido de dedos, cuerdas pizzicato y tambores</string>
-    <string name="activity_music_title_jazzy_frenchy">Música de jazz con guitarra acústica, contrabajo, acordeón y xilófono</string>
-    <string name="activity_music_title_acoustic_breeze">Música acústica con un ambiente suave y apacible de guitarra y violoncello</string>
+    <string name="activity_music_title_arp_bounce">Geographer \nMúsica dance y electrónica | Dramática</string>
+    <string name="activity_music_title_blue_macaw">Quincas Moreira \nMúsica dance y electrónica | Inspiradora</string>
+    <string name="activity_music_title_club_thump">Gunnar Olsen \nMúsica dance y electrónica | Trance</string>
+    <string name="activity_music_title_lusciousness">Asher Fulero \nMúsica dance y electrónica | Romántica</string>
+    <string name="activity_music_title_mirror_mirror">Diamond Ortiz \nR&amp;B y soul | Feliz</string>
+    <string name="activity_music_title_the_missing_link">The Whole Other \nMúsica chillout y electrónica | Groove</string>
+    <string name="activity_music_title_the_toe_jam">Diamond Ortiz \nMúsica dance y electrónica | Funky</string>
 
     <string name="vimojo_kit_web">"https://vimojo.co/kitmojo/?utm_source=vimojo_android&amp;utm_medium=app_link"</string>
 </resources>

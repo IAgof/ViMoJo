@@ -1,5 +1,6 @@
 package com.videonasocialmedia.vimojo.sound.presentation.mvp.presenters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.videonasocialmedia.videonamediaframework.model.media.Music;
@@ -12,11 +13,15 @@ import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoFrameRate;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoQuality;
 import com.videonasocialmedia.videonamediaframework.model.media.utils.VideoResolution;
+import com.videonasocialmedia.vimojo.asset.domain.usecase.RemoveMedia;
+import com.videonasocialmedia.vimojo.composition.domain.RemoveTrack;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateComposition;
+import com.videonasocialmedia.vimojo.composition.domain.usecase.UpdateTrack;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.model.entities.editor.ProjectInfo;
 import com.videonasocialmedia.vimojo.sound.domain.ModifyTrackUseCase;
+import com.videonasocialmedia.vimojo.sound.domain.RemoveAudioUseCase;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.SoundView;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicDetailActivity;
 import com.videonasocialmedia.vimojo.sound.presentation.views.activity.MusicListActivity;
@@ -43,10 +48,15 @@ import static org.powermock.api.mockito.PowerMockito.when;
 /**
  */
 public class SoundPresenterTest {
+  @Mock Context mockedContext;
   @Mock SoundView mockedSoundView;
   @Mock ModifyTrackUseCase mockedModifyTrackUseCase;
   @Mock ProjectInstanceCache mockedProjectInstantCache;
   @Mock UpdateComposition mockedUpdateComposition;
+  @Mock RemoveAudioUseCase mockedRemoveAudioUseCase;
+  @Mock RemoveMedia mockedRemoveMedia;
+  @Mock UpdateTrack mockedUpdateTrack;
+  @Mock RemoveTrack mockedRemoveTrack;
   private Project currentProject;
   private boolean voiceOverAvailable;
   @Mock BackgroundExecutor mockedBackgroundExecutor;
@@ -130,7 +140,7 @@ public class SoundPresenterTest {
 
     spySoundPresenter.checkVoiceOverFeatureToggle();
 
-    verify(mockedSoundView).addVoiceOverOptionToFab();
+    verify(mockedSoundView).addVoiceOverOptionToToolbar();
   }
 
   @Test
@@ -155,36 +165,12 @@ public class SoundPresenterTest {
     verify(mockedSoundView).showTrackAudioSecond();
   }
 
-  @Test
-  public void navigateToMusicGoToDetailsIfProjectHasMusic() throws IllegalItemOnTrack {
-    SoundPresenter soundPresenter = getSoundPresenter();
-    //Add music
-    int fakeDuration = 59;
-    Music music = new Music("some/path", Music.DEFAULT_VOLUME, fakeDuration);
-    currentProject.getAudioTracks().get(INDEX_AUDIO_TRACK_MUSIC).insertItem(music);
-    assertThat(currentProject.hasMusic(), is(true));
-
-    soundPresenter.navigateToMusic();
-
-    verify(mockedSoundView).navigateToMusicDetail(MusicDetailActivity.class,
-        currentProject.getMusic().getMediaPath());
-  }
-
-  @Test
-  public void navigateToMusicGoToMusicListIfProjectHasNotMusic() throws IllegalItemOnTrack {
-    SoundPresenter soundPresenter = getSoundPresenter();
-    assertThat(currentProject.hasMusic(), is(false));
-
-    soundPresenter.navigateToMusic();
-
-    verify(mockedSoundView).navigateToMusicList(MusicListActivity.class);
-  }
-
   @NonNull
   private SoundPresenter getSoundPresenter() {
-    SoundPresenter soundPresenter = new SoundPresenter(mockedSoundView, mockedModifyTrackUseCase,
-        mockedProjectInstantCache, mockedUpdateComposition, voiceOverAvailable,
-        mockedBackgroundExecutor, mockedUserEventTracker);
+    SoundPresenter soundPresenter = new SoundPresenter(mockedContext, mockedSoundView,
+        mockedModifyTrackUseCase, mockedProjectInstantCache, mockedUpdateComposition,
+        mockedRemoveAudioUseCase, mockedRemoveMedia, mockedUpdateTrack, mockedRemoveTrack,
+        voiceOverAvailable, mockedBackgroundExecutor, mockedUserEventTracker);
     soundPresenter.currentProject = currentProject;
     return soundPresenter;
   }

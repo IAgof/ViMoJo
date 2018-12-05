@@ -15,23 +15,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.roughike.bottombar.BottomBar;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.playback.VideonaPlayer;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.main.VimojoApplication;
-import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.vimojo.presentation.mvp.presenters.EditPresenter;
-
 import com.videonasocialmedia.vimojo.presentation.mvp.views.EditActivityView;
 import com.videonasocialmedia.vimojo.presentation.mvp.views.VideoTranscodingErrorNotifier;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -41,9 +42,7 @@ import com.videonasocialmedia.vimojo.split.presentation.views.activity.VideoSpli
 import com.videonasocialmedia.vimojo.text.presentation.views.activity.VideoEditTextActivity;
 import com.videonasocialmedia.vimojo.trim.presentation.views.activity.VideoTrimActivity;
 import com.videonasocialmedia.vimojo.utils.Constants;
-import com.videonasocialmedia.vimojo.utils.FabUtils;
 import com.videonasocialmedia.vimojo.videonaTimeLine.view.customview.VideonaTimeLine;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,20 +69,26 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   private final int ID_BUTTON_FAB_CENTER = 2;
 
   // UI elements
+  @Nullable @BindView(R.id.linear_layout_edit_duplicate)
+  LinearLayout linearLayoutDuplicate;
     @Nullable @BindView(R.id.button_edit_duplicate)
     ImageButton editDuplicateButton;
+  @Nullable @BindView(R.id.linear_layout_edit_trim)
+  LinearLayout linearLayoutTrim;
     @Nullable @BindView(R.id.button_edit_trim)
     ImageButton editTrimButton;
+  @Nullable @BindView(R.id.linear_layout_edit_split)
+  LinearLayout linearLayoutSplit;
     @Nullable @BindView(R.id.button_edit_split)
     ImageButton editSplitButton;
+  @Nullable @BindView(R.id.linear_layout_edit_text)
+  LinearLayout linearLayoutText;
     @Nullable @BindView(R.id.button_edit_add_text)
     ImageButton editTextButton;
 
   @Nullable @BindView(R.id.videona_time_line)
   VideonaTimeLine videonaTimeLine;
 
-    @Nullable @BindView(R.id.fab_edit_room)
-    FloatingActionsMenu fabMenu;
     @Nullable @BindView(R.id.bottomBar)
     BottomBar bottomBar;
     @Nullable @BindView(R.id.relative_layout_activity_edit)
@@ -92,7 +97,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     ImageButton warningTranscodingFilesButton;
 
     private int currentVideoIndex = 0;
-    private FloatingActionButton newFab;
 
   private String warningTranscodingFilesMessage;
 
@@ -108,11 +112,36 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         if (savedInstanceState != null) {
             this.currentVideoIndex = savedInstanceState.getInt(Constants.CURRENT_VIDEO_INDEX);
           }
-        setupBottomBar(bottomBar);
-        setupFabMenu();
         setupActivityButtons();
         setVideonaPlayerListener(this);
       }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        getMenuInflater().inflate(R.menu.menu_editor_activity, menu);
+        return true;
+    }
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    switch (item.getItemId()) {
+      case R.id.action_toolbar_video_gallery:
+        navigateTo(GalleryActivity.class);
+        return true;
+      case android.R.id.home:
+        drawerLayout.openDrawer(GravityCompat.START);
+        return true;
+      default:
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
 
   private void setupActivityButtons() {
     String currentTheme = editPresenter.getCurrentTheme();
@@ -133,6 +162,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   private void setupBottomBar(BottomBar bottomBar) {
     bottomBar.setOnTabSelectListener(tabId -> {
       switch (tabId){
+        case (R.id.tab_record):
+          navigateTo(RecordCamera2Activity.class);
+          break;
         case(R.id.tab_sound):
           navigateTo(SoundActivity.class);
           break;
@@ -143,43 +175,21 @@ public class EditActivity extends EditorActivity implements EditActivityView,
     });
   }
 
-   private void setupFabMenu() {
-     addAndConfigurateFabButton(ID_BUTTON_FAB_TOP,
-             R.drawable.common_navigate_record, R.color.colorWhite);
-     addAndConfigurateFabButton(ID_BUTTON_FAB_CENTER,
-             R.drawable.common_navigate_gallery, R.color.colorWhite);
-  }
-
-  private void addAndConfigurateFabButton(int id, int icon, int color) {
-    newFab = FabUtils.createNewFabMini(id, icon, color);
-    onClickFabButton(newFab);
-    fabMenu.addButton(newFab);
-  }
-
-  private void onClickFabButton(final FloatingActionButton fab) {
-    fab.setOnClickListener(v -> {
-      switch (fab.getId()){
-        case ID_BUTTON_FAB_TOP:
-          fabMenu.collapse();
-            navigateTo(RecordCamera2Activity.class);
-            break;
-        case ID_BUTTON_FAB_CENTER:
-          fabMenu.collapse();
-          navigateTo(GalleryActivity.class);
-          break;
-      }
-    });
+  private void initBottomBar() {
+    bottomBar.selectTabWithId(R.id.tab_editactivity);
   }
 
   @Override
   protected void onStart() {
       super.onStart();
       videonaTimeLine.initVideoListRecycler(isLandscapeOriented());
+      initBottomBar();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    setupBottomBar(bottomBar);
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       if (bundle.containsKey(Constants.CURRENT_VIDEO_INDEX)) {
@@ -187,7 +197,6 @@ public class EditActivity extends EditorActivity implements EditActivityView,
                 .getIntExtra(Constants.CURRENT_VIDEO_INDEX, 0);
       }
     }
-    bottomBar.selectTabWithId(R.id.tab_editactivity);
     videonaTimeLine.setListener(this);
     Futures.addCallback(editPresenter.updatePresenter(), new FutureCallback<Object>() {
       @Override
@@ -242,9 +251,9 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         startActivity(intent);
     }
 
-    @Optional @OnClick(R.id.button_edit_duplicate)
+    @Optional @OnClick(R.id.linear_layout_edit_duplicate)
     public void onClickEditDuplicate() {
-        if (!editDuplicateButton.isEnabled())
+        if (!linearLayoutDuplicate.isEnabled())
             return;
         navigateTo(VideoDuplicateActivity.class, currentVideoIndex);
     }
@@ -256,23 +265,23 @@ public class EditActivity extends EditorActivity implements EditActivityView,
         finish();
     }
 
-   @Optional @OnClick(R.id.button_edit_trim)
+   @Optional @OnClick(R.id.linear_layout_edit_trim)
     public void onClickEditTrim() {
-        if (!editTrimButton.isEnabled())
+        if (!linearLayoutTrim.isEnabled())
             return;
         navigateTo(VideoTrimActivity.class, currentVideoIndex);
     }
 
-    @Optional @OnClick(R.id.button_edit_split)
+    @Optional @OnClick(R.id.linear_layout_edit_split)
     public void onClickEditSplit() {
-        if (!editSplitButton.isEnabled())
+        if (!linearLayoutSplit.isEnabled())
             return;
         navigateTo(VideoSplitActivity.class, currentVideoIndex);
     }
 
-    @Optional @OnClick (R.id.button_edit_add_text)
+    @Optional @OnClick (R.id.linear_layout_edit_text)
     public void onClickEditText() {
-      if (!editTextButton.isEnabled()) {
+      if (!linearLayoutText.isEnabled()) {
         return;
       }
       navigateTo( VideoEditTextActivity.class, currentVideoIndex);
@@ -354,26 +363,27 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
     public void enableEditActions() {
       runOnUiThread(() -> {
-        editTrimButton.setEnabled(true);
-        editSplitButton.setEnabled(true);
-        editTextButton.setEnabled(true);
-        editDuplicateButton.setEnabled(true);
+        linearLayoutTrim.setEnabled(true);
+        linearLayoutSplit.setEnabled(true);
+        linearLayoutText.setEnabled(true);
+        linearLayoutDuplicate.setEnabled(true);
       });
     }
 
     @Override
     public void disableEditActions() {
       runOnUiThread(() -> {
-        editTrimButton.setEnabled(false);
-        editSplitButton.setEnabled(false);
-        editTextButton.setEnabled(false);
-        editDuplicateButton.setEnabled(false);
+        linearLayoutTrim.setEnabled(false);
+        linearLayoutSplit.setEnabled(false);
+        linearLayoutText.setEnabled(false);
+        linearLayoutDuplicate.setEnabled(false);
       });
   }
 
   @Override
   public void enableBottomBar() {
       runOnUiThread(() -> {
+        bottomBar.getTabWithId(R.id.tab_record).setEnabled(true);
         bottomBar.getTabWithId(R.id.tab_sound).setEnabled(true);
         bottomBar.getTabWithId(R.id.tab_share).setEnabled(true);
       });
@@ -382,6 +392,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void disableBottomBar() {
       runOnUiThread(() -> {
+        bottomBar.getTabWithId(R.id.tab_record).setEnabled(false);
         bottomBar.getTabWithId(R.id.tab_sound).setEnabled(false);
         bottomBar.getTabWithId(R.id.tab_share).setEnabled(false);
       });
@@ -390,6 +401,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
   @Override
   public void changeAlphaBottomBar(float alpha) {
       runOnUiThread(() -> {
+        bottomBar.getTabWithId(R.id.tab_record).setAlpha(alpha);
         bottomBar.getTabWithId(R.id.tab_sound).setAlpha(alpha);
         bottomBar.getTabWithId(R.id.tab_share).setAlpha(alpha);
       });
@@ -426,7 +438,7 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
   @Override
   public void disableEditTextAction() {
-    editTextButton.setVisibility(View.GONE);
+    linearLayoutText.setVisibility(View.GONE);
   }
 
   private void updatePlayer() {
@@ -471,6 +483,11 @@ public class EditActivity extends EditorActivity implements EditActivityView,
 
   @Override
   public void playerReady() {
+    // Do nothing
+  }
+
+  @Override
+  public void updatedSeekbarProgress(int progress) {
     // Do nothing
   }
 

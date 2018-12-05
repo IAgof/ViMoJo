@@ -1,38 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".presentation.views.activity.EditorActivity"
     >
 
-
     <item
-        android:id="@+id/action_more"
-        android:icon="@drawable/edit_activity_ic_options"
-        android:orderInCategory="100"
-        android:title="More"
-        app:showAsAction="always">
-
-        <menu>
-            <item
-                android:id="@+id/action_settings_edit_gallery"
-                android:icon="@drawable/menu_gallery"
-                android:title="@string/menuGallery"
-                app:showAsAction="never"
-                />
-            <item
-                android:id="@+id/action_settings_suggestions"
-                android:icon="@drawable/activity_user_profile_email"
-                android:title="@string/menuSuggestions"
-                app:showAsAction="never"/>
-
-            <item
-                android:id="@+id/action_settings_edit_options"
-                android:icon="@drawable/menu_settings"
-                android:title="@string/menuSettings"
-                app:showAsAction="never"/>
-        </menu>
-
-    </item>
-
+        android:id="@+id/action_toolbar_video_gallery"
+        android:icon="@drawable/menu_gallery"
+        android:title="@string/menuGallery"
+        app:showAsAction="always"
+        />
 </menu>

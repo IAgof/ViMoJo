@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -17,10 +18,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.videonasocialmedia.videonamediaframework.model.Constants;
+import com.videonasocialmedia.videonamediaframework.model.media.Video;
 import com.videonasocialmedia.videonamediaframework.model.media.track.Track;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.sound.presentation.mvp.views.MediaListTimeLineRecyclerViewClickListener;
 import com.videonasocialmedia.vimojo.sound.presentation.views.adapter.MediaListTimeLineAdapter;
+
+import java.util.ArrayList;
 
 /**
  * Created by alvaro on 10/04/17.
@@ -35,6 +39,7 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
   private TextView textTitleMediaBlocks;
   private SeekBar seekBarMediaBlock;
   private Switch switchMuteMedia;
+  private ImageButton deleteAudio;
   private RelativeLayout relativeLayoutMediaVolume;
 
   private CardViewAudioTrackListener listener;
@@ -105,6 +110,7 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
       case Constants.INDEX_MEDIA_TRACK:
         setImageTrack(R.drawable.activity_edit_sound_original_down);
         setTitleTrack(context.getString(R.string.title_track_clip_video));
+        hideDeleteAudio();
         break;
       case Constants.INDEX_AUDIO_TRACK_MUSIC:
         setImageTrack(R.drawable.activity_edit_sound_music_down);
@@ -136,6 +142,8 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
     switchMuteMedia = (Switch) findViewById(R.id.switchMute);
     switchMuteMedia.setOnCheckedChangeListener(onClickMuteAudioListener());
     relativeLayoutMediaVolume = (RelativeLayout) findViewById(R.id.relative_layout_audio_volume);
+    deleteAudio = (ImageButton) findViewById(R.id.delete_audio);
+    deleteAudio.setOnClickListener(onClickDeleteAudioListener());
   }
 
   private SeekBar.OnSeekBarChangeListener onClickSeekBarProgressListener() {
@@ -169,6 +177,15 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
     };
   }
 
+
+  private OnClickListener onClickDeleteAudioListener() {
+    return new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        listener.onClickDeleteAudio(id);
+      }
+    };
+  }
 
   @NonNull
   private OnClickListener onClickImageTrackListener() {
@@ -244,6 +261,10 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
     textTitleMediaBlocks.setText(title);
   }
 
+  private void hideDeleteAudio() {
+    deleteAudio.setVisibility(View.GONE);
+  }
+
   @Override
   public void setImageTrack(int resourceId) {
     imageMediaBlocks.setImageResource(resourceId);
@@ -292,5 +313,9 @@ public class CardViewAudioTrack extends CardView implements CardViewTrack,
   public void updateClipSelection(int currentClipIndex) {
     mediaListTimeLineAdapter.updateSelection(currentClipIndex);
     recyclerViewTimeLineMediaBlocks.smoothScrollToPosition(currentClipIndex + 1);
+  }
+
+  public void setFailedVideos(ArrayList<Video> failedVideos) {
+    mediaListTimeLineAdapter.setFailedVideos(failedVideos);
   }
 }

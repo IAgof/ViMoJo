@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.videonasocialmedia.videonamediaframework.model.media.exceptions.IllegalItemOnTrack;
 import com.videonasocialmedia.vimojo.asset.domain.usecase.GetCompositionAssets;
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
@@ -21,7 +22,6 @@ import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.views.Gall
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.views.activity.DetailProjectActivity;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.presentation.views.activity.EditActivity;
-import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.share.presentation.views.activity.ShareActivity;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.UserEventTracker;
@@ -51,8 +51,8 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
   private GetCompositions getCompositions;
   private GetCompositionAssets getCompositionAssets;
   private boolean watermarkIsForced;
-  private boolean amIVerticalApp;
   protected boolean cloudBackupAvailable;
+  private boolean amIAVerticalApp;
 
   @Inject
   public GalleryProjectListPresenter(
@@ -80,7 +80,7 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     this.getCompositions = getCompositions;
     this.getCompositionAssets = getCompositionAssets;
     this.watermarkIsForced = watermarkIsForced;
-    this.amIVerticalApp = amIAVerticalApp;
+    this.amIAVerticalApp = amIAVerticalApp;
     this.cloudBackupAvailable = cloudBackupAvailable;
   }
 
@@ -176,21 +176,21 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
                     if (projectList != null && projectList.size() > 0) {
                       galleryProjectListView.showProjectList(projectList);
                     } else {
-                      galleryProjectListView.createDefaultProject();
+                      galleryProjectListView.createDefaultProjectListEmpty();
                     }
                   }
                   @Override
                   public void onFailure(Throwable t) {
-                    // TODO(jliarte): 7/08/18 review this case
-                    galleryProjectListView.createDefaultProject();
+                    galleryProjectListView.hideLoading();
+                    galleryProjectListView.showErrorNoProjectsFound();
                   }
                 });
   }
 
-  public void createNewProject(String rootPath, String privatePath,
-                               Drawable drawableFadeTransitionVideo) {
+  public void createNewProjectListEmpty(String rootPath, String privatePath,
+                                        Drawable drawableFadeTransitionVideo) {
     Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
-            isWatermarkActivated(), drawableFadeTransitionVideo, amIVerticalApp);
+            isWatermarkActivated(), drawableFadeTransitionVideo, amIAVerticalApp);
     projectInstanceCache.setCurrentProject(project);
     executeUseCaseCall(() -> saveComposition.saveComposition(project));
   }
@@ -237,6 +237,43 @@ public class GalleryProjectListPresenter extends VimojoPresenter {
     // TODO(jliarte): 20/04/18 don't change current project instance, but pass projectId to load
     // project from @DetailProjectActivity
     galleryProjectListView.navigateTo(DetailProjectActivity.class);
+  }
+
+  public void createNewProject(String rootPath, String privatePath,
+                               Drawable drawableFadeTransitionVideo) {
+    clearProjectDataFromSharedPreferences();
+    Futures.addCallback(setNewProject(rootPath, privatePath, drawableFadeTransitionVideo),
+        new FutureCallback<Object>() {
+          @Override
+          public void onSuccess(@Nullable Object result) {
+            galleryProjectListView.goToRecordOrGalleryScreen();
+          }
+
+          @Override
+          public void onFailure(Throwable t) {
+            // TODO(jliarte): 18/07/18 handle error saving?
+            galleryProjectListView.goToRecordOrGalleryScreen();
+          }
+        });
+  }
+
+  private ListenableFuture<?> setNewProject(String rootPath, String privatePath,
+                                            Drawable drawableFadeTransitionVideo) {
+    Project project = createDefaultProjectUseCase.createProject(rootPath, privatePath,
+        watermarkIsSelected(), drawableFadeTransitionVideo, amIAVerticalApp);
+    projectInstanceCache.setCurrentProject(project);
+    return executeUseCaseCall(() -> saveComposition.saveComposition(project));
+  }
+
+  private void clearProjectDataFromSharedPreferences() {
+    SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
+    preferencesEditor.putLong(ConfigPreferences.VIDEO_DURATION, 0);
+    preferencesEditor.putInt(ConfigPreferences.NUMBER_OF_CLIPS, 0);
+    preferencesEditor.apply();
+  }
+
+  private boolean watermarkIsSelected() {
+    return watermarkIsForced || projectInstanceCache.getCurrentProject().hasWatermark();
   }
 
 }

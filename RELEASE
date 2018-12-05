@@ -1,2 +1,5 @@
-v0.23.0
-- Fixed problems playing video compositions.
+v0.25.0
+- Imported video from device gallery.
+- Updated music resources, 7 new songs.
+- Fixed bugs in camera, splitting video and improved navigation between screens.
+

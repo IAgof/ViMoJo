@@ -103,7 +103,7 @@ public class VoiceOverVolumePresenter extends VimojoPresenter {
         executeUseCaseCall(() -> {
             Music voiceOver = currentProject.getVoiceOver();
             removeAudioUseCase.removeMusic(currentProject, voiceOver,
-                    INDEX_AUDIO_TRACK_VOICE_OVER, new OnRemoveMediaFinishedListener() {
+                    new OnRemoveMediaFinishedListener() {
                         @Override
                         public void onRemoveMediaItemFromTrackSuccess(List<Media> removedMedias) {
 

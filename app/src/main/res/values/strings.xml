@@ -65,7 +65,7 @@
     <string name="upload_video_with_mobile_network">Do you want to upload video with mobile network?</string>
     <string name="connect_to_network">Please connect your device to network, cellular or wifi</string>
     <string name="upload_video_register_login">For uploading videos, you need to register or login first.</string>
-    <string name="upload_video_complete_project_info">For uploading videos, you need to complete project details.</string>
+    <string name="upload_video_complete_project_info">Do you want to add project details information before uploading video?</string>
     <string name="progress_dialog_title_checking_info_user">Checking info</string>
     <string name="progress_dialog_message_checking_user_auth">Checking user auth</string>
     <string name="cancel_exportation">Cancel</string>
@@ -128,6 +128,16 @@
     <string name="editTextActionLabel">Done</string>
     <string name="titleVideosNotFound">Videos not found in device</string>
     <string name="messageVideosNotFound">Some videos will not be loaded into project</string>
+    <string name="text_edit_trim">Trim</string>
+    <string name="text_edit_split">Split</string>
+    <string name="text_edit_duplicate">Duplicate</string>
+    <string name="text_edit_text">Text</string>
+
+    <!-- Sound activity -->
+    <string name="dialog_sound_delete_music">Do you want to delete this item?</string>
+    <string name="dialog_sound_accept_delete">yes</string>
+    <string name="dialog_sound_cancel_delete">no</string>
+    <string name="error_removing_audio">Problem removing item in project</string>
 
     <!--VideoEditText activity-->
     <string name="error_videoEdit">The maximum number of lines to draw is two</string>
@@ -149,6 +159,9 @@
     <string name="error_video_format">Video format different to video project </string>
     <string name="dialog_accept_delete_clip">Yes</string>
     <string name="dialog_cancel_delete_clip">No</string>
+    <string name="gallery_dialog_title">Add video</string>
+    <string name="gallery_dialog_message">Importing video to project</string>
+    <string name="gallery_transcoding_error">Error importing video.</string>
 
     <!-- Gallery projects activity -->
     <string name="galleryProjectActivityTitle">Projects</string>
@@ -159,6 +172,8 @@
     <string name="dialog_title_update_assets_progress_dialog">Updating composition assets</string>
     <string name="dialog_message_update_assets_progress_dialog">Downloading files for your composition, please wait.</string>
     <string name="update_assets_remaining">remaining.</string>
+    <string name="gallery_project_new">New project</string>
+    <string name="project_list_empty_error">Error getting my projects</string>
 
     <!-- Detail project activity -->
     <string name="detail_project_title">Title</string>
@@ -387,6 +402,10 @@
     <string name="drawerProjectLocation">Project location</string>
     <string name="drawerProjectDate">Project date</string>
     <string name="drawerProjectCurrent">Current project</string>
+    <string name="drawerSendFeedback">Send Feedback</string>
+    <string name="menuRecord">Record</string>
+    <string name="menuMusic">Music</string>
+    <string name="menuVoiceOver">Voice over</string>
 
     <!-- VimojoStoreActivity -->
     <string name="buy_now">Buy now</string>
@@ -2503,6 +2522,7 @@ and Conditions.\n\n
     <string name="dialog_change_user_name">Do you want to change your username?</string>
     <string name="dialog_change_email">Do you want to change your email?</string>
 
+    <string name="bottom_bar_record">Record</string>
     <string name="bottom_bar_edit">Edit</string>
     <string name="bottom_bar_sound">Sound</string>
     <string name="bottom_bar_share">Share</string>
@@ -2523,7 +2543,6 @@ and Conditions.\n\n
     <string name="preposition_of">of</string>
     <string name="alert_dialog_title_music">Music</string>
     <string name="alert_dialog_title_message_adding_music">Problem adding music in project</string>
-    <string name="alert_dialog_title_message_removing_music">Problem removing music in project</string>
 
 
     <string name="onNoVideosRetrieved">Not video retrieved</string>

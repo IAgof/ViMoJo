@@ -341,11 +341,42 @@ public class UserEventTracker {
         }
     }
 
+    public void trackMusicRemoved(Project project) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                AnalyticsConstants.EDIT_ACTION_MUSIC_REMOVE);
+            String musicTitle = "";
+            if (project.getMusic() != null) {
+                musicTitle = project.getMusic().getTitle();
+            }
+            eventProperties.put(AnalyticsConstants.MUSIC_TITLE, musicTitle);
+            addProjectEventProperties(project, eventProperties);
+            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void trackVoiceOverSet(Project project) {
         JSONObject eventProperties = new JSONObject();
         try {
             eventProperties.put(AnalyticsConstants.EDIT_ACTION,
                     AnalyticsConstants.EDIT_ACTION_VOICE_OVER_SET);
+            addProjectEventProperties(project, eventProperties);
+            Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
+            this.trackEvent(trackingEvent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void trackVoiceOverRemoved(Project project) {
+        JSONObject eventProperties = new JSONObject();
+        try {
+            eventProperties.put(AnalyticsConstants.EDIT_ACTION,
+                AnalyticsConstants.EDIT_ACTION_VOICE_OVER_REMOVED);
             addProjectEventProperties(project, eventProperties);
             Event trackingEvent = new Event(AnalyticsConstants.VIDEO_EDITED, eventProperties);
             this.trackEvent(trackingEvent);

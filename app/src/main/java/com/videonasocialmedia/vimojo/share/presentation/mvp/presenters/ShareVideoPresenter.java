@@ -15,6 +15,7 @@ import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.result.Credentials;
 import com.crashlytics.android.Crashlytics;
 import com.videonasocialmedia.videonamediaframework.model.media.Video;
+import com.videonasocialmedia.videonamediaframework.utils.TextToDrawable;
 import com.videonasocialmedia.vimojo.BuildConfig;
 import com.videonasocialmedia.vimojo.R;
 import com.videonasocialmedia.vimojo.auth0.UserAuth0Helper;
@@ -98,6 +99,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
   private boolean showAds;
   private boolean showSocialNetworksDecision;
   private boolean uploadToPlatformAvailable;
+  private boolean userHasCompletedDialogDetailProject = false;
 
   @Inject
   public ShareVideoPresenter(
@@ -229,7 +231,8 @@ public class ShareVideoPresenter extends VimojoPresenter {
     shareVideoViewReference.get().showProgressDialogVideoExporting();
     isAppExportingProject = true;
     String nativeLibPath = context.getApplicationInfo().nativeLibraryDir;
-    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, nativeLibPath,
+    TextToDrawable drawableGenerator = new TextToDrawable(context);
+    exportUseCase.export(currentProject, Constants.PATH_WATERMARK, nativeLibPath, drawableGenerator,
         new OnExportFinishedListener() {
       @Override
       public void onExportError(int error, Exception exception) {
@@ -289,7 +292,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
       return;
     }
 
-    if (!areThereProjectFieldsCompleted(currentProject)) {
+    if (!areThereProjectFieldsCompleted(currentProject) && !userHasCompletedDialogDetailProject) {
       shareVideoViewReference.get().showDialogNeedToCompleteDetailProjectFields();
       return;
     }
@@ -461,5 +464,10 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
   private void fetchUserFeatures() {
     fetchUserFeatures.fetch();
+  }
+
+  public void userDoesNotWantToCompleteProjectDetails() {
+    this.userHasCompletedDialogDetailProject = true;
+    processNetworkClicked(OptionsToShareList.typeVimojoNetwork, videoPath);
   }
 }

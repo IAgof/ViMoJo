@@ -43,8 +43,8 @@ public class MediaListTimeLineAdapter
   private MediaListTimeLineRecyclerViewClickListener mediaListTimeLineListener;
   private Context context;
   private List<Media> mediaList;
-
   private int selectedVideoPosition = 0;
+  private ArrayList<Video> failedVideos = new ArrayList<>();
 
   public MediaListTimeLineAdapter(MediaListTimeLineRecyclerViewClickListener mediaTimeLineListener,
                                   int trackId) {
@@ -68,6 +68,11 @@ public class MediaListTimeLineAdapter
     holder.audioThumb.setSelected(position == selectedVideoPosition);
     String duration = getTimeForVideoInPosition(position);
     holder.textDurationClip.setText(duration);
+    if (failedVideos.indexOf(mediaCurrent) >= 0) {
+      holder.enableWarningIcon();
+    } else {
+      holder.disableWarningIcon();
+    }
   }
 
   private String getTimeForVideoInPosition(int position) {
@@ -133,11 +138,18 @@ public class MediaListTimeLineAdapter
     this.mediaList = mediaList;
   }
 
+  public void setFailedVideos(ArrayList<Video> failedVideos) {
+    this.failedVideos = failedVideos;
+    notifyDataSetChanged();
+  }
+
   class MediaViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
     @BindView(R.id.text_duration_clip)
     TextView textDurationClip;
     @BindView(R.id.timeline_audio_thumb)
     ImageView audioThumb;
+    @BindView(R.id.image_audio_warning)
+    ImageView videoWarning;
 
     public MediaViewHolder(View itemView) {
       super(itemView);
@@ -156,6 +168,14 @@ public class MediaListTimeLineAdapter
 
     @Override
     public void onItemClear() {
+    }
+
+    public void enableWarningIcon() {
+      videoWarning.setVisibility(View.VISIBLE);
+    }
+
+    public void disableWarningIcon() {
+      videoWarning.setVisibility(View.GONE);
     }
   }
 }

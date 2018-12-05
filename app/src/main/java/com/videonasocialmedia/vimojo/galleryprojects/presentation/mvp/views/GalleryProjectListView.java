@@ -15,7 +15,7 @@ import java.util.List;
 public interface GalleryProjectListView {
   void showProjectList(List<Project> projectList);
 
-  void createDefaultProject();
+  void createDefaultProjectListEmpty();
 
   void navigateTo(Class cls);
 
@@ -36,4 +36,8 @@ public interface GalleryProjectListView {
   void updateUpdateAssetsProgressDialog(int remaining);
 
   void showDeleteConfirmDialog(Project project);
+
+  void goToRecordOrGalleryScreen();
+
+  void showErrorNoProjectsFound();
 }
