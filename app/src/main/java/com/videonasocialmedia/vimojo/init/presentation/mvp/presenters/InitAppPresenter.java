@@ -369,11 +369,17 @@ public class InitAppPresenter extends VimojoPresenter {
 
   public void onAppUpgraded(String androidId) {
     checkPrehistericUser();
+    //set value false to show theme light (hide switch theme dark until improve to implementation)
+    setValueDarkThemePreference();
     updateFeatureToggleFreeUser();
     trackAppStartupProperties(false);
     trackUserProfile(androidId);
     // Repeat this method for security, if user delete app data miss this configs.
     checkCamera2FrameRateAndResolutionSupported();
+  }
+
+  private void setValueDarkThemePreference() {
+    sharedPreferences.edit().putBoolean(ConfigPreferences.THEME_APP_DARK, false).apply();
   }
 
   private void updateFeatureToggleFreeUser() {
