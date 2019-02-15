@@ -56,10 +56,10 @@
             app:actionLayout="@layout/switch_drawer_item">
         </item>
 
-        <item
+        <!--<item
             android:id="@+id/menu_navview_user_profile"
             android:icon="@drawable/activity_drawer_user_profile"
-            android:title="@string/drawerUserProfile"/>
+            android:title="@string/drawerUserProfile"/>-->
         <item
             android:id="@+id/menu_navview_platform"
             android:icon="@drawable/activity_drawer_platform"

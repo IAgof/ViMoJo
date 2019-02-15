@@ -25,6 +25,9 @@ import com.videonasocialmedia.vimojo.cameraSettings.repository.CameraSettingsDat
 import com.videonasocialmedia.vimojo.composition.domain.model.Project;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.CreateDefaultProjectUseCase;
 import com.videonasocialmedia.vimojo.composition.domain.usecase.SaveComposition;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.model.FeatureToggle;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.UpdateUserFeatures;
+import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
@@ -39,8 +42,10 @@ import com.videonasocialmedia.vimojo.view.VimojoPresenter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -66,13 +71,15 @@ public class InitAppPresenter extends VimojoPresenter {
   private final Context context;
   private final InitAppView initAppView;
   private final CameraSettingsDataSource cameraSettingsRepository;
+  private final FeatureRepository featureRepository;
   private final ProjectInstanceCache projectInstanceCache;
   private final SaveComposition saveComposition;
   private RunSyncAdapterHelper runSyncAdapterHelper;
   private CreateDefaultProjectUseCase createDefaultProjectUseCase;
+  private UpdateUserFeatures updateUserFeaturesUseCase;
   private SharedPreferences sharedPreferences;
   private CameraSettings cameraSettings;
-  private UserAuth0Helper userAuth0Helper;
+  //private UserAuth0Helper userAuth0Helper;
   private UserEventTracker userEventTracker;
 
   private boolean watermarkIsForced;
@@ -85,6 +92,8 @@ public class InitAppPresenter extends VimojoPresenter {
   @Inject
   public InitAppPresenter(
       Context context, InitAppView initAppView, SharedPreferences sharedPreferences,
+      FeatureRepository featureRepository,
+      UpdateUserFeatures updateUserFeaturesUseCase,
       CreateDefaultProjectUseCase createDefaultProjectUseCase,
       CameraSettingsDataSource cameraSettingsRepository,
       RunSyncAdapterHelper runSyncAdapterHelper, ProjectInstanceCache projectInstanceCache,
@@ -99,12 +108,14 @@ public class InitAppPresenter extends VimojoPresenter {
     this.context = context;
     this.initAppView = initAppView;
     this.sharedPreferences = sharedPreferences;
+    this.featureRepository = featureRepository;
+    this.updateUserFeaturesUseCase = updateUserFeaturesUseCase;
     this.createDefaultProjectUseCase = createDefaultProjectUseCase;
     this.cameraSettingsRepository = cameraSettingsRepository;
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
-    this.userAuth0Helper = userAuth0Helper;
+    //this.userAuth0Helper = userAuth0Helper;
     this.userEventTracker = userEventTracker;
     this.saveComposition = saveComposition;
     this.watermarkIsForced = watermarkIsForced;
@@ -239,7 +250,7 @@ public class InitAppPresenter extends VimojoPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
-    if (amIAVerticalApp || !userAuth0Helper.isLogged()) {
+    if (amIAVerticalApp) { //  if (amIAVerticalApp || !userAuth0Helper.isLogged())
       initAppView.screenOrientationPortrait();
     } else {
       initAppView.screenOrientationLandscape();
@@ -266,21 +277,21 @@ public class InitAppPresenter extends VimojoPresenter {
   }
 
   public void setNavigation() {
-    if (!vimojoPlatformAvailable) {
+   // if (!vimojoPlatformAvailable) {
       initAppView.navigate(RecordCamera2Activity.class);
-      return;
-    }
-    checkLogin();
+    // return;
+   // }
+   // checkLogin();
   }
 
-  protected void checkLogin() {
+  /*protected void checkLogin() {
     if (userAuth0Helper.isLogged()) {
       userEventTracker.trackUserLoggedIn(true);
       initAppView.navigate(RecordCamera2Activity.class);
     } else {
       initAppView.navigateToRegisterLogin();
     }
-  }
+  }*/
 
   public void trackUserProfileGeneralTraits() {
     userEventTracker.trackUserProfileGeneralTraits();
@@ -358,11 +369,66 @@ public class InitAppPresenter extends VimojoPresenter {
 
   public void onAppUpgraded(String androidId) {
     checkPrehistericUser();
+    updateFeatureToggleFreeUser();
     trackAppStartupProperties(false);
     trackUserProfile(androidId);
     // Repeat this method for security, if user delete app data miss this configs.
     checkCamera2FrameRateAndResolutionSupported();
   }
 
+  private void updateFeatureToggleFreeUser() {
 
+    List<FeatureToggle> featuresToggleFreeUser = new ArrayList();
+
+    FeatureToggle featureToggleForceWatermark = featureRepository.
+            getById(Constants.USER_FEATURE_FORCE_WATERMARK);
+    featureToggleForceWatermark.setEnabled(Constants.DEFAULT_FORCE_WATERMARK);
+    featuresToggleFreeUser.add(featureToggleForceWatermark);
+
+    FeatureToggle featureToggleWatermark = featureRepository.getById(Constants.USER_FEATURE_WATERMARK);
+    featureToggleWatermark.setEnabled(Constants.DEFAULT_WATERMARK);
+     featuresToggleFreeUser.add(featureToggleWatermark);
+
+    FeatureToggle featureToggleStore = featureRepository.getById(Constants.FEATURE_VIMOJO_STORE);
+    featureToggleStore.setEnabled(Constants.DEFAULT_VIMOJO_STORE);
+    featuresToggleFreeUser.add(featureToggleStore);
+
+    FeatureToggle featureToggleFTP = featureRepository.getById(Constants.USER_FEATURE_FTP_PUBLISHING);
+    featureToggleFTP.setEnabled(Constants.DEFAULT_FTP);
+    featuresToggleFreeUser.add(featureToggleFTP);
+
+    FeatureToggle featureToggleADS = featureRepository.getById(Constants.FEATURE_ADS_ENABLED);
+    featureToggleADS.setEnabled(Constants.DEFAULT_SHOW_ADS);
+    featuresToggleFreeUser.add(featureToggleADS);
+
+    FeatureToggle featureToggleVoiceOver = featureRepository.getById(Constants.USER_FEATURE_VOICE_OVER);
+    featureToggleVoiceOver.setEnabled(Constants.DEFAULT_VOICE_OVER);
+    featuresToggleFreeUser.add(featureToggleVoiceOver);
+
+    FeatureToggle featureToggleCameraPro = featureRepository.getById(Constants.USER_FEATURE_CAMERA_PRO);
+    featureToggleCameraPro.setEnabled(Constants.DEFAULT_CAMERA_PRO);
+    featuresToggleFreeUser.add(featureToggleCameraPro);
+
+    FeatureToggle featureToggleFrameRate = featureRepository.
+            getById(Constants.USER_FEATURE_SELECT_FRAME_RATE);
+    featureToggleFrameRate.setEnabled(Constants.DEFAULT_SELECT_FRAME_RATE);
+    featuresToggleFreeUser.add(featureToggleFrameRate);
+
+    FeatureToggle featureToggleResolution = featureRepository.
+            getById(Constants.USER_FEATURE_SELECT_RESOLUTION);
+    featureToggleResolution.setEnabled(Constants.DEFAULT_SELECT_RESOLUTION);
+    featuresToggleFreeUser.add(featureToggleResolution);
+
+    FeatureToggle featureToggleCloudBackup = featureRepository.
+            getById(Constants.USER_FEATURE_CLOUD_BACKUP);
+    featureToggleCloudBackup.setEnabled(Constants.DEFAULT_CLOUD_BACKUP);
+    featuresToggleFreeUser.add(featureToggleCloudBackup);
+
+    FeatureToggle featureToggleUploadPlatform = featureRepository.
+            getById(Constants.USER_FEATURE_UPLOAD_TO_PLATFORM);
+    featureToggleUploadPlatform.setEnabled(Constants.DEFAULT_UPLOAD_TO_PLATFORM);
+    featuresToggleFreeUser.add(featureToggleUploadPlatform);
+
+    updateUserFeaturesUseCase.update(featuresToggleFreeUser);
+  }
 }
