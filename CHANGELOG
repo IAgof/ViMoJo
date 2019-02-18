@@ -1,3 +1,8 @@
+v0.25.0
+- Imported video from device gallery.
+- Updated music resources, 7 new songs.
+- Fixed bugs in camera, splitting video and improved navigation between screens.
+
 v0.24.1
 - Added option to delete music or voice over track from sound room.
 - Update icons and update user experience editing clips.

@@ -71,7 +71,7 @@ public class InitRegisterLoginPresenter extends VimojoPresenter {
       public void onSuccess(Credentials credentials) {
         Log.d(LOG_TAG, "Logged in: " + credentials.getAccessToken());
         initRegisterLoginView.pauseVideo();
-        fetchUserFeatures.fetch();
+        //fetchUserFeatures.fetch();
         initRegisterLoginView.navigateToRecordCamera2();
       }
 

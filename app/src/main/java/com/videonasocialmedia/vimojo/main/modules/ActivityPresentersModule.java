@@ -48,6 +48,8 @@ import com.videonasocialmedia.vimojo.export.domain.ExportProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.GetVideoFormatFromCurrentProjectUseCase;
 import com.videonasocialmedia.vimojo.export.domain.RelaunchTranscoderTempBackgroundUseCase;
 import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.FetchUserFeatures;
+import com.videonasocialmedia.vimojo.featuresToggles.domain.usecase.UpdateUserFeatures;
+import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepository;
 import com.videonasocialmedia.vimojo.galleryprojects.domain.CheckIfProjectHasBeenExportedUseCase;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.DetailProjectPresenter;
 import com.videonasocialmedia.vimojo.galleryprojects.presentation.mvp.presenters.GalleryProjectListPresenter;
@@ -377,7 +379,8 @@ public class ActivityPresentersModule {
   @Provides @PerActivity
   InitAppPresenter provideInitAppPresenter(
           SharedPreferences sharedPreferences,
-          CreateDefaultProjectUseCase createDefaultProjectUseCase,
+          FeatureRepository featureRepository, UpdateUserFeatures updateUserFeatures,
+                  CreateDefaultProjectUseCase createDefaultProjectUseCase,
           CameraSettingsDataSource cameraSettingsRepository,
           RunSyncAdapterHelper runSyncAdapterHelper, SaveComposition saveComposition,
           @Named("watermarkIsForced") boolean watermarkIsForced,
@@ -388,8 +391,8 @@ public class ActivityPresentersModule {
           UserAuth0Helper userAuth0Helper, UserEventTracker userEventTracker,
           BackgroundExecutor backgroundExecutor) {
     return new InitAppPresenter(activity, (InitAppActivity) activity, sharedPreferences,
-            createDefaultProjectUseCase, cameraSettingsRepository, runSyncAdapterHelper,
-            (ProjectInstanceCache) activity.getApplication(), saveComposition,
+            featureRepository, updateUserFeatures, createDefaultProjectUseCase, cameraSettingsRepository,
+            runSyncAdapterHelper,(ProjectInstanceCache) activity.getApplication(), saveComposition,
             watermarkIsForced, showAds, amIAVerticalApp, defaultResolutionSetting, isAppOutOfDate,
             vimojoPlatformAvailable, userAuth0Helper, userEventTracker, backgroundExecutor);
   }

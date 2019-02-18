@@ -107,7 +107,8 @@ public class VimojoApplication extends Application implements ProjectInstanceCac
                 .vimojoApplicationModule(getVimojoApplicationModule())
                 .dataRepositoriesModule(getDataRepositoriesModule())
                 .build().inject(this);
-        fetchFeatureToggles();
+
+        //fetchFeatureToggles();
     }
 
     private void setupUserEventTracker() {

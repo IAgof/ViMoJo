@@ -46,6 +46,7 @@
             android:id="@+id/switch_theme_dark"
             android:title="@string/drawer_dark_theme"
             android:icon="@drawable/ic_locked"
+            android:visible="false"
             app:actionLayout="@layout/switch_drawer_item">
         </item>
 
@@ -56,10 +57,13 @@
             app:actionLayout="@layout/switch_drawer_item">
         </item>
 
-        <item
+       <item
             android:id="@+id/menu_navview_user_profile"
             android:icon="@drawable/activity_drawer_user_profile"
-            android:title="@string/drawerUserProfile"/>
+            android:title="@string/drawerUserProfile"
+            android:visible="false">
+       </item>
+
         <item
             android:id="@+id/menu_navview_platform"
             android:icon="@drawable/activity_drawer_platform"
