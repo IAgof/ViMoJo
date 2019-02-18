@@ -70,8 +70,8 @@ android {
     productFlavors {
         vimojo {
             applicationId "com.videonasocialmedia.vimojo.main"
-            versionCode 136 // 20181130
-            versionName "0.25.0" // 20181130
+            versionCode 136 // 20190218
+            versionName "0.26.0" // 20190218
             resValue "string", "app_out_of_date", "2018-06-30" // 20170731
             resValue "string", "app_name", "Vimojo"
             resValue "string", "content_authority", applicationId + '.provider'
