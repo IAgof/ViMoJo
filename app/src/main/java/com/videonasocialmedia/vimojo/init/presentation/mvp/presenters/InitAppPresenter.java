@@ -31,6 +31,7 @@ import com.videonasocialmedia.vimojo.featuresToggles.repository.FeatureRepositor
 import com.videonasocialmedia.vimojo.init.presentation.mvp.views.InitAppView;
 import com.videonasocialmedia.vimojo.main.ProjectInstanceCache;
 import com.videonasocialmedia.vimojo.record.presentation.views.activity.RecordCamera2Activity;
+import com.videonasocialmedia.vimojo.repository.ReadPolicy;
 import com.videonasocialmedia.vimojo.sync.helper.RunSyncAdapterHelper;
 import com.videonasocialmedia.vimojo.utils.ConfigPreferences;
 import com.videonasocialmedia.vimojo.utils.Constants;
@@ -79,7 +80,7 @@ public class InitAppPresenter extends VimojoPresenter {
   private UpdateUserFeatures updateUserFeaturesUseCase;
   private SharedPreferences sharedPreferences;
   private CameraSettings cameraSettings;
-  //private UserAuth0Helper userAuth0Helper;
+  private UserAuth0Helper userAuth0Helper;
   private UserEventTracker userEventTracker;
 
   private boolean watermarkIsForced;
@@ -115,7 +116,7 @@ public class InitAppPresenter extends VimojoPresenter {
     this.runSyncAdapterHelper = runSyncAdapterHelper;
     this.projectInstanceCache = projectInstanceCache;
     this.vimojoPlatformAvailable = vimojoPlatformAvailable;
-    //this.userAuth0Helper = userAuth0Helper;
+    this.userAuth0Helper = userAuth0Helper;
     this.userEventTracker = userEventTracker;
     this.saveComposition = saveComposition;
     this.watermarkIsForced = watermarkIsForced;
@@ -250,7 +251,8 @@ public class InitAppPresenter extends VimojoPresenter {
 
   public void init() {
     runSyncAdapterHelper.runSyncAdapterPeriodically();
-    if (amIAVerticalApp) { //  if (amIAVerticalApp || !userAuth0Helper.isLogged())
+    //  if (amIAVerticalApp || !userAuth0Helper.isLogged())
+    if (amIAVerticalApp) {
       initAppView.screenOrientationPortrait();
     } else {
       initAppView.screenOrientationLandscape();
@@ -277,6 +279,7 @@ public class InitAppPresenter extends VimojoPresenter {
   }
 
   public void setNavigation() {
+    // Launched last Google Play version without platform, remove login
    // if (!vimojoPlatformAvailable) {
       initAppView.navigate(RecordCamera2Activity.class);
     // return;
@@ -284,14 +287,14 @@ public class InitAppPresenter extends VimojoPresenter {
    // checkLogin();
   }
 
-  /*protected void checkLogin() {
+  protected void checkLogin() {
     if (userAuth0Helper.isLogged()) {
       userEventTracker.trackUserLoggedIn(true);
       initAppView.navigate(RecordCamera2Activity.class);
     } else {
       initAppView.navigateToRegisterLogin();
     }
-  }*/
+  }
 
   public void trackUserProfileGeneralTraits() {
     userEventTracker.trackUserProfileGeneralTraits();
@@ -371,6 +374,7 @@ public class InitAppPresenter extends VimojoPresenter {
     checkPrehistericUser();
     //set value false to show theme light (hide switch theme dark until improve to implementation)
     setValueDarkThemePreference();
+    // Launched Google Play last version without platform February 2019
     updateFeatureToggleFreeUser();
     trackAppStartupProperties(false);
     trackUserProfile(androidId);
@@ -391,49 +395,75 @@ public class InitAppPresenter extends VimojoPresenter {
     featureToggleForceWatermark.setEnabled(Constants.DEFAULT_FORCE_WATERMARK);
     featuresToggleFreeUser.add(featureToggleForceWatermark);
 
-    FeatureToggle featureToggleWatermark = featureRepository.getById(Constants.USER_FEATURE_WATERMARK);
-    featureToggleWatermark.setEnabled(Constants.DEFAULT_WATERMARK);
-     featuresToggleFreeUser.add(featureToggleWatermark);
+    FeatureToggle featureToggleWatermark = featureRepository.getById(Constants.USER_FEATURE_WATERMARK,
+        ReadPolicy.LOCAL_ONLY);
+    if (featureToggleForceWatermark != null) {
+      featureToggleWatermark.setEnabled(Constants.DEFAULT_WATERMARK);
+      featuresToggleFreeUser.add(featureToggleWatermark);
+    }
 
-    FeatureToggle featureToggleStore = featureRepository.getById(Constants.FEATURE_VIMOJO_STORE);
-    featureToggleStore.setEnabled(Constants.DEFAULT_VIMOJO_STORE);
-    featuresToggleFreeUser.add(featureToggleStore);
+    FeatureToggle featureToggleStore = featureRepository.getById(Constants.FEATURE_VIMOJO_STORE,
+        ReadPolicy.LOCAL_ONLY);
+    if (featureToggleStore != null) {
+      featureToggleStore.setEnabled(Constants.DEFAULT_VIMOJO_STORE);
+      featuresToggleFreeUser.add(featureToggleStore);
+    }
 
-    FeatureToggle featureToggleFTP = featureRepository.getById(Constants.USER_FEATURE_FTP_PUBLISHING);
-    featureToggleFTP.setEnabled(Constants.DEFAULT_FTP);
-    featuresToggleFreeUser.add(featureToggleFTP);
+    FeatureToggle featureToggleFTP = featureRepository.getById(Constants.USER_FEATURE_FTP_PUBLISHING,
+        ReadPolicy.LOCAL_ONLY);
+    if (featureToggleFTP != null) {
+      featureToggleFTP.setEnabled(Constants.DEFAULT_FTP);
+      featuresToggleFreeUser.add(featureToggleFTP);
+    }
 
-    FeatureToggle featureToggleADS = featureRepository.getById(Constants.FEATURE_ADS_ENABLED);
-    featureToggleADS.setEnabled(Constants.DEFAULT_SHOW_ADS);
-    featuresToggleFreeUser.add(featureToggleADS);
+    FeatureToggle featureToggleADS = featureRepository.getById(Constants.FEATURE_ADS_ENABLED,
+        ReadPolicy.LOCAL_ONLY);
+    if (featureToggleADS != null) {
+      featureToggleADS.setEnabled(Constants.DEFAULT_SHOW_ADS);
+      featuresToggleFreeUser.add(featureToggleADS);
+    }
 
-    FeatureToggle featureToggleVoiceOver = featureRepository.getById(Constants.USER_FEATURE_VOICE_OVER);
-    featureToggleVoiceOver.setEnabled(Constants.DEFAULT_VOICE_OVER);
-    featuresToggleFreeUser.add(featureToggleVoiceOver);
+    FeatureToggle featureToggleVoiceOver = featureRepository.getById(Constants.USER_FEATURE_VOICE_OVER,
+        ReadPolicy.LOCAL_ONLY);
+    if (featureToggleVoiceOver != null) {
+      featureToggleVoiceOver.setEnabled(Constants.DEFAULT_VOICE_OVER);
+      featuresToggleFreeUser.add(featureToggleVoiceOver);
+    }
 
-    FeatureToggle featureToggleCameraPro = featureRepository.getById(Constants.USER_FEATURE_CAMERA_PRO);
-    featureToggleCameraPro.setEnabled(Constants.DEFAULT_CAMERA_PRO);
-    featuresToggleFreeUser.add(featureToggleCameraPro);
+    FeatureToggle featureToggleCameraPro = featureRepository.getById(Constants.USER_FEATURE_CAMERA_PRO,
+        ReadPolicy.LOCAL_ONLY);
+    if (featureToggleCameraPro != null) {
+      featureToggleCameraPro.setEnabled(Constants.DEFAULT_CAMERA_PRO);
+      featuresToggleFreeUser.add(featureToggleCameraPro);
+    }
 
     FeatureToggle featureToggleFrameRate = featureRepository.
-            getById(Constants.USER_FEATURE_SELECT_FRAME_RATE);
-    featureToggleFrameRate.setEnabled(Constants.DEFAULT_SELECT_FRAME_RATE);
-    featuresToggleFreeUser.add(featureToggleFrameRate);
+            getById(Constants.USER_FEATURE_SELECT_FRAME_RATE, ReadPolicy.LOCAL_ONLY);
+    if (featureToggleFrameRate != null) {
+      featureToggleFrameRate.setEnabled(Constants.DEFAULT_SELECT_FRAME_RATE);
+      featuresToggleFreeUser.add(featureToggleFrameRate);
+    }
 
     FeatureToggle featureToggleResolution = featureRepository.
-            getById(Constants.USER_FEATURE_SELECT_RESOLUTION);
-    featureToggleResolution.setEnabled(Constants.DEFAULT_SELECT_RESOLUTION);
-    featuresToggleFreeUser.add(featureToggleResolution);
+            getById(Constants.USER_FEATURE_SELECT_RESOLUTION, ReadPolicy.LOCAL_ONLY);
+    if (featureToggleResolution != null) {
+      featureToggleResolution.setEnabled(Constants.DEFAULT_SELECT_RESOLUTION);
+      featuresToggleFreeUser.add(featureToggleResolution);
+    }
 
     FeatureToggle featureToggleCloudBackup = featureRepository.
-            getById(Constants.USER_FEATURE_CLOUD_BACKUP);
-    featureToggleCloudBackup.setEnabled(Constants.DEFAULT_CLOUD_BACKUP);
-    featuresToggleFreeUser.add(featureToggleCloudBackup);
+            getById(Constants.USER_FEATURE_CLOUD_BACKUP, ReadPolicy.LOCAL_ONLY);
+    if (featureToggleCloudBackup != null) {
+      featureToggleCloudBackup.setEnabled(Constants.DEFAULT_CLOUD_BACKUP);
+      featuresToggleFreeUser.add(featureToggleCloudBackup);
+    }
 
     FeatureToggle featureToggleUploadPlatform = featureRepository.
-            getById(Constants.USER_FEATURE_UPLOAD_TO_PLATFORM);
-    featureToggleUploadPlatform.setEnabled(Constants.DEFAULT_UPLOAD_TO_PLATFORM);
-    featuresToggleFreeUser.add(featureToggleUploadPlatform);
+            getById(Constants.USER_FEATURE_UPLOAD_TO_PLATFORM, ReadPolicy.LOCAL_ONLY);
+    if (featureToggleUploadPlatform != null) {
+      featureToggleUploadPlatform.setEnabled(Constants.DEFAULT_UPLOAD_TO_PLATFORM);
+      featuresToggleFreeUser.add(featureToggleUploadPlatform);
+    }
 
     updateUserFeaturesUseCase.update(featuresToggleFreeUser);
   }
