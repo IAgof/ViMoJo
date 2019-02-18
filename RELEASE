@@ -1,5 +1,3 @@
-v0.25.0
-- Imported video from device gallery.
-- Updated music resources, 7 new songs.
-- Fixed bugs in camera, splitting video and improved navigation between screens.
-
+v0.26.0
+- Launched version without platform and login, activated features pro for all users, camera pro,
+voice over, ftp.

@@ -196,9 +196,9 @@ public abstract class EditorActivity extends VimojoActivity implements EditorAct
                 case R.id.menu_navview_new_project:
                   showNewProjectCreationDialog(R.id.menu_navview_new_project);
                   return false;
-                case R.id.menu_navview_user_profile:
+                /*case R.id.menu_navview_user_profile:
                   navigateTo(UserProfileActivity.class);
-                  return false;
+                  return false;*/
                 case R.id.menu_navview_platform:
                   int platformId = BuildConfig.DEBUG ? R.string.vimojo_platform_base_debug
                           : R.string.vimojo_platform;

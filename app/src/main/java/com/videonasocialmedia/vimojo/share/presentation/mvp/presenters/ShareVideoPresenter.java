@@ -456,7 +456,7 @@ public class ShareVideoPresenter extends VimojoPresenter {
 
       @Override
       public void onSuccess(@NonNull Credentials credentials) {
-        fetchUserFeatures();
+  //      fetchUserFeatures();
         shareVideoViewReference.get().successLoginAuth0();
       }
     });

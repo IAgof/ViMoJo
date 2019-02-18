@@ -141,4 +141,10 @@ public class FeatureRepository extends VimojoRepository<FeatureToggle> {
     }
     return features;
   }
+
+  //Only update in local
+  public void updateUserFeatures(List<FeatureToggle> featuresToggle) {
+    localDataSource.update(featuresToggle);
+    cacheDataSource.update(featuresToggle);
+  }
 }

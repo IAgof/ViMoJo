@@ -162,14 +162,14 @@ public class Constants {
    */
   public static final boolean DEFAULT_FORCE_WATERMARK = false;
 
-  public static final boolean DEFAULT_FTP = false;
+  public static final boolean DEFAULT_FTP = true;
   public static final boolean DEFAULT_SHOW_ADS = true;
-  public static final boolean DEFAULT_VIMOJO_STORE = true;
-  public static final boolean DEFAULT_VOICE_OVER = false;
+  public static final boolean DEFAULT_VIMOJO_STORE = false;
+  public static final boolean DEFAULT_VOICE_OVER = true;
   public static final boolean DEFAULT_WATERMARK = true;
-  public static final boolean DEFAULT_CAMERA_PRO = false;
-  public static final boolean DEFAULT_SELECT_FRAME_RATE = false;
-  public static final boolean DEFAULT_SELECT_RESOLUTION = false;
+  public static final boolean DEFAULT_CAMERA_PRO = true;
+  public static final boolean DEFAULT_SELECT_FRAME_RATE = true;
+  public static final boolean DEFAULT_SELECT_RESOLUTION = true;
   public static final boolean DEFAULT_CLOUD_BACKUP = false;
   public static final boolean DEFAULT_UPLOAD_TO_PLATFORM = false;
 }
